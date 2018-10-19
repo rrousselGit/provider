@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/rrousselGit/provider.svg?branch=master)](https://travis-ci.org/rrousselGit/provider)
+[![pub package](https://img.shields.io/pub/v/provider.svg)](https://pub.dartlang.org/packages/provider)
+
 An helper to easily exposes a value using `InheritedWidget` without having to write one.
 
 This is especially useful with patterns such as BLoC or when storing our state inside `InheritedWidget`.
