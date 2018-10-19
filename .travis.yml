@@ -14,6 +14,7 @@ before_script:
   - export PATH=$PATH:$PWD/flutter/bin
   - export PATH=$PATH:$PWD/flutter/bin/cache/dart-sdk/bin
 script:
+  - set -e
   - flutter doctor
   - dartfmt --set-exit-if-changed
   - dartanalyzer --fatal-infos --fatal-warnings
