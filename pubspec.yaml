@@ -1,0 +1,16 @@
+name: provider
+description: An helper to easily exposes a value using InheritedWidget without having to write one.
+version: 0.0.1
+# homepage: https://www.example.com
+author: Remi Rousselet <darky12s@gmail.com>
+
+environment:
+  sdk: ">=2.0.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
