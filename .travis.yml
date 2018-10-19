@@ -1,3 +1,4 @@
+language: bash
 os:
   - linux
 sudo: false
@@ -11,8 +12,8 @@ addons:
 before_script:
   - git clone https://github.com/flutter/flutter.git -b beta
   - export PATH=$PATH:$PWD/flutter/bin/flutter
-  - flutter doctor
 script:
+  - flutter doctor
   - dartfmt --set-exit-if-changed
   - dartanalyzer --fatal-infos --fatal-warnings
   - flutter packages get
