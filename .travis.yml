@@ -3,13 +3,14 @@ os:
   - osx
 sudo: false
 before_script:
-  - git clone https://github.com/flutter/flutter.git -b beta
-  - export PATH=$PATH:$PWD/flutter/bin
-  - export PATH=$PATH:$PWD/flutter/bin/cache/dart-sdk/bin
+  - mkdir /flutter
+  - git clone https://github.com/flutter/flutter.git -b beta /flutter
+  - export PATH=$PATH:/flutter/bin
+  - export PATH=$PATH:/flutter/bin/cache/dart-sdk/bin
+  - flutter doctor
 script:
   # abort on error
   - set -e
-  - flutter doctor
   - pwd
   - ls
   - flutter packages get
