@@ -2,7 +2,7 @@ An helper to easily exposes a value using `InheritedWidget` without having to wr
 
 ## Usage
 
-A simple usage example:
+`Provider` usage:
 
 ```dart
 import 'package:provider/provider.dart';
@@ -25,5 +25,22 @@ main() {
       )
     )
   );
+}
+```
+
+`StatefulProvider` usage
+
+```dart
+class Model {}
+
+class Stateless extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StatefulProvider(
+      // we voluntary reuse the previous value
+      valueBuilder: (Model old) =>  old ?? Model(),
+      // child: ...,
+    );
+  }
 }
 ```
