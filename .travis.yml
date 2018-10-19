@@ -11,7 +11,8 @@ addons:
       - libstdc++6
 before_script:
   - git clone https://github.com/flutter/flutter.git -b beta
-  - export PATH=$PATH:$PWD/flutter/bin/flutter
+  - export PATH=$PATH:$PWD/flutter/bin
+  - export PATH=$PATH:$PWD/flutter/bin/cache/dart-sdk/bin
 script:
   - flutter doctor
   - dartfmt --set-exit-if-changed
