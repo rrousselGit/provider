@@ -1,0 +1,20 @@
+name: example
+version: 1.0.0
+homepage: https://github.com/rrousselGit/provider
+author: Remi Rousselet <darky12s@gmail.com>
+
+environment:
+  sdk: ">=2.0.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: 1.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+dependency_overrides:
+  provider:
+    path: ../
