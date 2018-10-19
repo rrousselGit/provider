@@ -10,9 +10,9 @@ script:
   # abort on error
   - set -e
   - flutter doctor
+  - flutter packages get
   - flutter format --set-exit-if-changed lib example test
   - flutter analyze --no-current-package lib test/ example/
-  - flutter packages get
   - flutter test --no-pub --coverage
   # export coverage
   - bash <(curl -s https://codecov.io/bash)
