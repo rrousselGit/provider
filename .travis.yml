@@ -3,6 +3,7 @@ os:
   - osx
 sudo: false
 before_script:
+  - pwd
   - mkdir /flutter
   - git clone https://github.com/flutter/flutter.git -b beta /flutter
   - export PATH=$PATH:/flutter/bin
