@@ -10,8 +10,8 @@ script:
   # abort on error
   - set -e
   - flutter doctor
-  - dartfmt --set-exit-if-changed lib
-  - dartanalyzer --fatal-infos --fatal-warnings
+  - dartfmt --set-exit-if-changed lib example test
+  - dartanalyzer --fatal-infos --fatal-warnings lib example test
   - flutter packages get
   - flutter test --no-pub --coverage
   # export coverage
