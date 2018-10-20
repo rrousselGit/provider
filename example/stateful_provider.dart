@@ -14,13 +14,18 @@ class Bloc {
   Bloc() {
     stream = _streamController.stream.asBroadcastStream();
   }
+
+  void dipose() {
+    _streamController.close();
+  }
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StatefulProvider<Bloc>(
-      valueBuilder: (old) => old ?? Bloc(),
+      valueBuilder: (_, old) => old ?? Bloc(),
+      onDispose: (_, value) => value.dipose(),
       child: Example(),
     );
   }

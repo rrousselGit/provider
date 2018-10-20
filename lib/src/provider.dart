@@ -43,8 +43,8 @@ class Provider<T> extends InheritedWidget {
 /// class Stateless extends StatelessWidget {
 ///   @override
 ///   Widget build(BuildContext context) {
-///     return StatefulProvider(
-///       valueBuilder: (Model old) =>  old ?? Model(),
+///     return StatefulProvider<Model>(
+///       valueBuilder: (context, old) =>  old ?? Model(),
 ///       child: ...,
 ///     );
 ///   }
@@ -54,11 +54,19 @@ class StatefulProvider<T> extends StatefulWidget {
   /// [valueBuilder] is called on [initState] and [didUpdateWidget]
   /// [previous] is the previous value returned by [valueBuilder].
   /// It is `null` on the first call
-  final T Function(T previous) valueBuilder;
+  /// [valueBuilder] must not be null.
+  final T Function(BuildContext context, T previous) valueBuilder;
+  /// [onDispose] is a callback called when [StatefulProvider] is
+  /// removed for the widget tree, and pass the current value as parameter.
+  /// It is useful when the provided object needs to have a custom dipose behavior,
+  /// such as closing streams.
+  final void Function(BuildContext context, T value) onDispose;
   final Widget child;
 
-  const StatefulProvider({Key key, this.valueBuilder, this.child})
-      : super(key: key);
+  const StatefulProvider(
+      {Key key, @required this.valueBuilder, this.child, this.onDispose})
+      : assert(valueBuilder != null),
+        super(key: key);
 
   @override
   _StatefulProviderState<T> createState() => _StatefulProviderState<T>();
@@ -80,6 +88,14 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   }
 
   @override
+    void dispose() {
+      super.dispose();
+      if (widget.onDispose != null) {
+        widget.onDispose(context, _value);
+      }
+    }
+
+  @override
   Widget build(BuildContext context) {
     return Provider(
       value: _value,
@@ -88,6 +104,6 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   }
 
   void _buildValue() {
-    _value = widget.valueBuilder(_value);
+    _value = widget.valueBuilder(context, _value);
   }
 }
