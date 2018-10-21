@@ -56,6 +56,7 @@ class StatefulProvider<T> extends StatefulWidget {
   /// It is `null` on the first call
   /// [valueBuilder] must not be null.
   final T Function(BuildContext context, T previous) valueBuilder;
+
   /// [onDispose] is a callback called when [StatefulProvider] is
   /// removed for the widget tree, and pass the current value as parameter.
   /// It is useful when the provided object needs to have a custom dipose behavior,
@@ -88,12 +89,12 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   }
 
   @override
-    void dispose() {
-      super.dispose();
-      if (widget.onDispose != null) {
-        widget.onDispose(context, _value);
-      }
+  void dispose() {
+    super.dispose();
+    if (widget.onDispose != null) {
+      widget.onDispose(context, _value);
     }
+  }
 
   @override
   Widget build(BuildContext context) {
