@@ -42,9 +42,9 @@ class Model {}
 class Stateless extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StatefulProvider(
+    return StatefulProvider<Model>(
       // we voluntary reuse the previous value
-      valueBuilder: (Model old) =>  old ?? Model(),
+      valueBuilder: (_, old) =>  old ?? Model(),
       // child: ...,
     );
   }
