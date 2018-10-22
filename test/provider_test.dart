@@ -101,7 +101,7 @@ void main() {
     await tester.pumpWidget(
       Provider<int>(
         value: 24,
-        shouldNotify: updateShouldNotify,
+        updateShouldNotify: updateShouldNotify,
         child: builder,
       ),
     );
@@ -113,7 +113,7 @@ void main() {
     await tester.pumpWidget(
       Provider<int>(
         value: 25,
-        shouldNotify: updateShouldNotify,
+        updateShouldNotify: updateShouldNotify,
         child: builder,
       ),
     );
@@ -127,7 +127,7 @@ void main() {
     await tester.pumpWidget(
       Provider<int>(
         value: 25,
-        shouldNotify: updateShouldNotify,
+        updateShouldNotify: updateShouldNotify,
         child: builder,
       ),
     );

@@ -20,14 +20,15 @@ class Provider<T> extends InheritedWidget {
   /// It should return [false] when there's no need to update its dependents.
   ///
   /// The default behavior is `previous == current`
-  final bool Function(T previous, T current) shouldNotify;
+  final bool Function(T previous, T current) _updateShouldNotify;
 
   const Provider({
     Key key,
     this.value,
     Widget child,
-    this.shouldNotify,
-  }) : super(key: key, child: child);
+    bool Function(T previous, T current) updateShouldNotify,
+  })  : _updateShouldNotify = updateShouldNotify,
+        super(key: key, child: child);
 
   /// Obtain the nearest Provider<T> and returns its value.
   ///
@@ -44,8 +45,8 @@ class Provider<T> extends InheritedWidget {
 
   @override
   bool updateShouldNotify(Provider<T> oldWidget) {
-    if (shouldNotify != null) {
-      return shouldNotify(oldWidget.value, value);
+    if (_updateShouldNotify != null) {
+      return _updateShouldNotify(oldWidget.value, value);
     }
     return oldWidget.value != value;
   }
@@ -139,7 +140,7 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   Widget build(BuildContext context) {
     return Provider(
       value: _value,
-      shouldNotify: widget.updateShouldNotify,
+      updateShouldNotify: widget.updateShouldNotify,
       child: widget.child,
     );
   }
