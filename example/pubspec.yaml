@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  provider: 1.0.0
+  provider: 1.1.1
 
 dev_dependencies:
   flutter_test:

@@ -8,10 +8,27 @@ Type _typeOf<T>() => T;
 /// An helper to easily exposes a value using [InheritedWidget]
 /// without having to write one.
 class Provider<T> extends InheritedWidget {
+  /// The value exposed to other widgets.
+  ///
+  /// You can obtain this value this widget's descendants
+  /// using [Provider.of] method
   final T value;
 
-  const Provider({Key key, this.value, Widget child})
-      : super(key: key, child: child);
+  // has a different name then the actual method
+  // so that it can have documentation
+  /// A callback called whenever [InheritedWidget.updateShouldNotify] is called.
+  /// It should return [false] when there's no need to update its dependents.
+  ///
+  /// The default behavior is `previous == current`
+  final bool Function(T previous, T current) _updateShouldNotify;
+
+  const Provider({
+    Key key,
+    this.value,
+    Widget child,
+    bool Function(T previous, T current) updateShouldNotify,
+  })  : _updateShouldNotify = updateShouldNotify,
+        super(key: key, child: child);
 
   /// Obtain the nearest Provider<T> and returns its value.
   ///
@@ -28,6 +45,9 @@ class Provider<T> extends InheritedWidget {
 
   @override
   bool updateShouldNotify(Provider<T> oldWidget) {
+    if (_updateShouldNotify != null) {
+      return _updateShouldNotify(oldWidget.value, value);
+    }
     return oldWidget.value != value;
   }
 }
@@ -53,9 +73,15 @@ class Provider<T> extends InheritedWidget {
 class StatefulProvider<T> extends StatefulWidget {
   /// [valueBuilder] is called on [initState] and [didUpdateWidget]
   /// [previous] is the previous value returned by [valueBuilder].
-  /// It is `null` on the first call
-  /// [valueBuilder] must not be null.
+  /// [previous] is `null` on the first call
+  /// Since it is called on [initState] and [didUpdateWidget], it is not
+  /// possible to subscribe to an [InheritedWidget] using this method.
+  /// Use [didChangeDependencies] instead.
   final T Function(BuildContext context, T previous) valueBuilder;
+
+  /// [didChangeDependencies] is a hook to [State.didChangeDependencies]
+  /// It can be used to build/update values depending on an [InheritedWidget]
+  final T Function(BuildContext context, T value) didChangeDependencies;
 
   /// [onDispose] is a callback called when [StatefulProvider] is
   /// removed for the widget tree, and pass the current value as parameter.
@@ -63,10 +89,16 @@ class StatefulProvider<T> extends StatefulWidget {
   /// such as closing streams.
   final void Function(BuildContext context, T value) onDispose;
   final Widget child;
+  final bool Function(T previous, T current) updateShouldNotify;
 
-  const StatefulProvider(
-      {Key key, @required this.valueBuilder, this.child, this.onDispose})
-      : assert(valueBuilder != null),
+  const StatefulProvider({
+    Key key,
+    this.valueBuilder,
+    this.child,
+    this.onDispose,
+    this.didChangeDependencies,
+    this.updateShouldNotify,
+  })  : assert(valueBuilder != null || didChangeDependencies != null),
         super(key: key);
 
   @override
@@ -89,22 +121,33 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.didChangeDependencies != null) {
+      _value = widget.didChangeDependencies(context, _value);
+    }
+  }
+
+  @override
   void dispose() {
-    super.dispose();
     if (widget.onDispose != null) {
       widget.onDispose(context, _value);
     }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Provider(
       value: _value,
+      updateShouldNotify: widget.updateShouldNotify,
       child: widget.child,
     );
   }
 
   void _buildValue() {
-    _value = widget.valueBuilder(context, _value);
+    if (widget.valueBuilder != null) {
+      _value = widget.valueBuilder(context, _value);
+    }
   }
 }
