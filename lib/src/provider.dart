@@ -53,9 +53,15 @@ class Provider<T> extends InheritedWidget {
 class StatefulProvider<T> extends StatefulWidget {
   /// [valueBuilder] is called on [initState] and [didUpdateWidget]
   /// [previous] is the previous value returned by [valueBuilder].
-  /// It is `null` on the first call
-  /// [valueBuilder] must not be null.
+  /// [previous] is `null` on the first call
+  /// Since it is called on [initState] and [didUpdateWidget], it is not
+  /// possible to subscribe to an [InheritedWidget] using this method.
+  /// Use [didChangeDependencies] instead.
   final T Function(BuildContext context, T previous) valueBuilder;
+
+  /// [didChangeDependencies] is a hook to [State.didChangeDependencies]
+  /// It can be used to build/update values depending on an [InheritedWidget]
+  final T Function(BuildContext context, T value) didChangeDependencies;
 
   /// [onDispose] is a callback called when [StatefulProvider] is
   /// removed for the widget tree, and pass the current value as parameter.
@@ -64,9 +70,13 @@ class StatefulProvider<T> extends StatefulWidget {
   final void Function(BuildContext context, T value) onDispose;
   final Widget child;
 
-  const StatefulProvider(
-      {Key key, @required this.valueBuilder, this.child, this.onDispose})
-      : assert(valueBuilder != null),
+  const StatefulProvider({
+    Key key,
+    this.valueBuilder,
+    this.child,
+    this.onDispose,
+    this.didChangeDependencies,
+  })  : assert(valueBuilder != null || didChangeDependencies != null),
         super(key: key);
 
   @override
@@ -89,11 +99,19 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.didChangeDependencies != null) {
+      _value = widget.didChangeDependencies(context, _value);
+    }
+  }
+
+  @override
   void dispose() {
-    super.dispose();
     if (widget.onDispose != null) {
       widget.onDispose(context, _value);
     }
+    super.dispose();
   }
 
   @override
@@ -105,6 +123,8 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   }
 
   void _buildValue() {
-    _value = widget.valueBuilder(context, _value);
+    if (widget.valueBuilder != null) {
+      _value = widget.valueBuilder(context, _value);
+    }
   }
 }
