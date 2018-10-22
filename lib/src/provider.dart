@@ -8,10 +8,26 @@ Type _typeOf<T>() => T;
 /// An helper to easily exposes a value using [InheritedWidget]
 /// without having to write one.
 class Provider<T> extends InheritedWidget {
+  /// The value exposed to other widgets.
+  ///
+  /// You can obtain this value this widget's descendants
+  /// using [Provider.of] method
   final T value;
 
-  const Provider({Key key, this.value, Widget child})
-      : super(key: key, child: child);
+  // has a different name then the actual method
+  // so that it can have documentation
+  /// A callback called whenever [InheritedWidget.updateShouldNotify] is called.
+  /// It should return [false] when there's no need to update its dependents.
+  ///
+  /// The default behavior is `previous == current`
+  final bool Function(T previous, T current) shouldNotify;
+
+  const Provider({
+    Key key,
+    this.value,
+    Widget child,
+    this.shouldNotify,
+  }) : super(key: key, child: child);
 
   /// Obtain the nearest Provider<T> and returns its value.
   ///
@@ -28,6 +44,9 @@ class Provider<T> extends InheritedWidget {
 
   @override
   bool updateShouldNotify(Provider<T> oldWidget) {
+    if (shouldNotify != null) {
+      return shouldNotify(oldWidget.value, value);
+    }
     return oldWidget.value != value;
   }
 }
@@ -69,6 +88,7 @@ class StatefulProvider<T> extends StatefulWidget {
   /// such as closing streams.
   final void Function(BuildContext context, T value) onDispose;
   final Widget child;
+  final bool Function(T previous, T current) updateShouldNotify;
 
   const StatefulProvider({
     Key key,
@@ -76,6 +96,7 @@ class StatefulProvider<T> extends StatefulWidget {
     this.child,
     this.onDispose,
     this.didChangeDependencies,
+    this.updateShouldNotify,
   })  : assert(valueBuilder != null || didChangeDependencies != null),
         super(key: key);
 
@@ -118,6 +139,7 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   Widget build(BuildContext context) {
     return Provider(
       value: _value,
+      shouldNotify: widget.updateShouldNotify,
       child: widget.child,
     );
   }

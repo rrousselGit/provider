@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
+Type _typeof<T>() => T;
+
 void main() {
   test('assets', () {
     expect(() => StatefulProvider(), throwsAssertionError);
@@ -143,5 +145,63 @@ void main() {
     expect(disposeCount, equals(1));
     expect(value, equals(42));
     expect(context, equals(element));
+  });
+
+  testWidgets('update should notify', (tester) async {
+    int old;
+    int curr;
+    int callCount = 0;
+    final updateShouldNotify = (int o, int c) {
+      callCount++;
+      old = o;
+      curr = c;
+      return o != c;
+    };
+
+    int buildCount = 0;
+    int buildValue;
+    final builder = Builder(builder: (BuildContext context) {
+      buildValue = Provider.of(context);
+      buildCount++;
+      return Container();
+    });
+
+    await tester.pumpWidget(
+      StatefulProvider<int>(
+        valueBuilder: (_, __) => 24,
+        updateShouldNotify: updateShouldNotify,
+        child: builder,
+      ),
+    );
+    expect(callCount, equals(0));
+    expect(buildCount, equals(1));
+    expect(buildValue, equals(24));
+
+    // value changed
+    await tester.pumpWidget(
+      StatefulProvider<int>(
+        valueBuilder: (_, __) => 25,
+        updateShouldNotify: updateShouldNotify,
+        child: builder,
+      ),
+    );
+    expect(callCount, equals(1));
+    expect(old, equals(24));
+    expect(curr, equals(25));
+    expect(buildCount, equals(2));
+    expect(buildValue, equals(25));
+
+    // value didnt' change
+    await tester.pumpWidget(
+      StatefulProvider<int>(
+        valueBuilder: (_, __) => 25,
+        updateShouldNotify: updateShouldNotify,
+        child: builder,
+      ),
+    );
+    expect(callCount, equals(2));
+    expect(old, equals(25));
+    expect(curr, equals(25));
+    expect(buildCount, equals(2));
   });
 }

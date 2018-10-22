@@ -78,4 +78,62 @@ void main() {
     // didn't get rebuilt
     expect(buildCount, equals(2));
   });
+
+  testWidgets('update should notify', (tester) async {
+    int old;
+    int curr;
+    int callCount = 0;
+    final updateShouldNotify = (int o, int c) {
+      callCount++;
+      old = o;
+      curr = c;
+      return o != c;
+    };
+
+    int buildCount = 0;
+    int buildValue;
+    final builder = Builder(builder: (BuildContext context) {
+      buildValue = Provider.of(context);
+      buildCount++;
+      return Container();
+    });
+
+    await tester.pumpWidget(
+      Provider<int>(
+        value: 24,
+        shouldNotify: updateShouldNotify,
+        child: builder,
+      ),
+    );
+    expect(callCount, equals(0));
+    expect(buildCount, equals(1));
+    expect(buildValue, equals(24));
+
+    // value changed
+    await tester.pumpWidget(
+      Provider<int>(
+        value: 25,
+        shouldNotify: updateShouldNotify,
+        child: builder,
+      ),
+    );
+    expect(callCount, equals(1));
+    expect(old, equals(24));
+    expect(curr, equals(25));
+    expect(buildCount, equals(2));
+    expect(buildValue, equals(25));
+
+    // value didnt' change
+    await tester.pumpWidget(
+      Provider<int>(
+        value: 25,
+        shouldNotify: updateShouldNotify,
+        child: builder,
+      ),
+    );
+    expect(callCount, equals(2));
+    expect(old, equals(25));
+    expect(curr, equals(25));
+    expect(buildCount, equals(2));
+  });
 }
