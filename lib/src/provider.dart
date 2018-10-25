@@ -274,6 +274,8 @@ class ValueListenableModelProvider<T, Token> extends AnimatedWidget {
   Widget build(BuildContext context) {
     return ModelProvider<T, Token>(
       value: valueListenable.value,
+      updateShouldNotify: _updateShouldNotify,
+      updateShouldNotifyDependent: _updateShouldNotifyDependent,
       child: child,
     );
   }
