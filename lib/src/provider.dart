@@ -5,6 +5,20 @@ typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
 typedef UpdateShouldNotifyDependent<T, Token> = bool Function(
     T previous, T current, Set<Token> dependencies);
 
+// used to generate fake types for tags
+class _Tag implements Type {
+  final Object obj;
+
+  _Tag(this.obj) : assert(obj != null);
+
+  bool operator ==(Object other) {
+    return other is _Tag && other.obj == obj;
+  }
+
+  @override
+  int get hashCode => obj.hashCode;
+}
+
 /// Necessary to obtain generic [Type]
 /// see https://stackoverflow.com/questions/52891537/how-to-get-generic-type
 /// and https://github.com/dart-lang/sdk/issues/11923
@@ -12,29 +26,37 @@ Type _typeOf<T>() => T;
 
 mixin _Provider<T> on InheritedWidget {
   T get value;
-  bool Function(T previous, T current) get _updateShouldNotify;
+  bool Function(T previous, T current) get shouldNotify;
 
   @override
   bool updateShouldNotify(_Provider<T> oldWidget) {
-    if (_updateShouldNotify != null) {
-      return _updateShouldNotify(oldWidget.value, value);
+    if (shouldNotify != null) {
+      return shouldNotify(oldWidget.value, value);
     }
     return oldWidget.value != value;
   }
 }
 
-T _of<T>(BuildContext context, {bool listen = true}) {
+T _of<T>(BuildContext context,
+    {Object tag, Object aspect, bool listen = true}) {
+  assert(aspect == null || listen == false);
   // this is required to get generic Type
-  final type = _typeOf<Provider<T>>();
+  final type = tag != null ? _Tag(tag) : _typeOf<Provider<T>>();
   final _Provider<T> provider = listen
-      ? context.inheritFromWidgetOfExactType(type)
+      ? context.inheritFromWidgetOfExactType(type, aspect: aspect)
       : context.ancestorInheritedElementForWidgetOfExactType(type)?.widget;
+  assert(provider?.value == null || provider?.value is T);
   return provider?.value;
 }
 
-InheritedElement _elementOf<T>(BuildContext context) {
-  return context
-      .ancestorInheritedElementForWidgetOfExactType(_typeOf<Provider<T>>());
+InheritedElement _elementOf<T>(BuildContext context, {Object tag}) {
+  Type type = tag != null ? _Tag(tag) : _typeOf<Provider<T>>();
+  final element = context.ancestorInheritedElementForWidgetOfExactType(type);
+  assert(() {
+    final _Provider<T> provider = element?.widget;
+    return provider?.value == null || provider?.value is T;
+  }());
+  return element;
 }
 
 /// An helper to easily exposes a value using [InheritedModel]
@@ -46,31 +68,39 @@ class Provider<T> extends InheritedWidget with _Provider<T> {
   /// using [Provider.of] method
   final T value;
 
+  final Object tag;
+
   // has a different name then the actual method
   // so that it can have documentation
   /// A callback called whenever [InheritedModel.updateShouldNotify] is called.
   /// It should return [false] when there's no need to update its dependents.
   ///
   /// The default behavior is `previous == current`
-  final bool Function(T previous, T current) _updateShouldNotify;
+  @visibleForTesting
+  final bool Function(T previous, T current) shouldNotify;
 
   Provider({
+    this.tag,
     Key key,
     this.value,
     Widget child,
-    bool Function(T previous, T current) updateShouldNotify,
-  })  : _updateShouldNotify = updateShouldNotify,
+    this.shouldNotify,
+  })  : runtimeType = tag != null ? _Tag(tag) : _typeOf<Provider<T>>(),
         super(key: key, child: child);
+
+  @override
+  final Type runtimeType;
 
   /// Obtain the nearest Provider<T> and returns its value.
   ///
   /// If [listen] is true (default), later value changes will
   /// trigger a new [build] to widgets, and [didChangeDependencies] for [StatefulWidget]
-  static T of<T>(BuildContext context, {bool listen = true}) =>
-      _of(context, listen: listen);
+  static T of<T>(BuildContext context,
+          {Object tag, Object aspect, bool listen = true}) =>
+      _of(context, listen: listen, aspect: aspect, tag: tag);
 
-  static InheritedElement elementOf<T>(BuildContext context) =>
-      _elementOf<T>(context);
+  static InheritedElement elementOf<T>(BuildContext context, {Object tag}) =>
+      _elementOf<T>(context, tag: tag);
 }
 
 class ModelProvider<T, Token> extends InheritedModel<Token> with _Provider<T> {
@@ -80,46 +110,49 @@ class ModelProvider<T, Token> extends InheritedModel<Token> with _Provider<T> {
   /// using [Provider.of] method
   final T value;
 
+  final Object tag;
+
   // has a different name then the actual method
   // so that it can have documentation
   /// A callback called whenever [InheritedModel.updateShouldNotify] is called.
   /// It should return [false] when there's no need to update its dependents.
   ///
   /// The default behavior is `previous == current`
-  final bool Function(T previous, T current) _updateShouldNotify;
+  @visibleForTesting
+  final bool Function(T previous, T current) shouldNotify;
 
   final bool Function(T previous, T current, Set<Token> dependencies)
-      _updateShouldNotifyDependent;
+      shouldNotifyDependent;
 
   ModelProvider({
     Key key,
+    this.tag,
     this.value,
     Widget child,
-    bool Function(T previous, T current) updateShouldNotify,
-    bool Function(T previous, T current, Set<Token> dependencies)
-        updateShouldNotifyDependent,
-  })  : _updateShouldNotify = updateShouldNotify,
-        _updateShouldNotifyDependent = updateShouldNotifyDependent,
+    this.shouldNotify,
+    this.shouldNotifyDependent,
+  })  :
+        // we voluntary overrides to Provider<T> so that it is compatible with `Provider.of`
+        runtimeType = tag != null ? _Tag(tag) : _typeOf<Provider<T>>(),
         super(key: key, child: child);
 
-  // We override runtimeType so that it is accessible using Provider.of
   @override
-  Type get runtimeType => _typeOf<Provider<T>>();
+  final Type runtimeType;
 
   @override
   bool updateShouldNotifyDependent(
       ModelProvider<T, Token> oldWidget, Set<Token> dependencies) {
-    if (_updateShouldNotifyDependent != null) {
-      return _updateShouldNotifyDependent(oldWidget.value, value, dependencies);
+    if (shouldNotifyDependent != null) {
+      return shouldNotifyDependent(oldWidget.value, value, dependencies);
     }
     return true;
   }
 }
 
-/// A wrapper over [Provider] to make exposing complex objets
+/// A wrapper over [Provider] and [ModelProvider] to expose complex objets
 ///
-/// It is usuallt used to create once an object, to not recreate it on every [build] call
-/// without having to manually create a [StatefulWidget]
+/// It is usually used to create **not** recreate the provided value on every [build]
+/// call, without having to manually create a [StatefulWidget]
 ///
 /// ```
 /// class Model {}
@@ -153,14 +186,7 @@ class StatefulProvider<T> extends StatefulWidget {
   /// such as closing streams.
   final void Function(BuildContext context, T value) onDispose;
   final Widget child;
-  final bool Function(T previous, T current) updateShouldNotify;
-
-  /// Obtain the nearest Provider<T> and returns its value.
-  ///
-  /// If [listen] is true (default), later value changes will
-  /// trigger a new [build] to widgets, and [didChangeDependencies] for [StatefulWidget]
-  static T of<T>(BuildContext context, {bool listen = true}) =>
-      _of(context, listen: listen);
+  final bool Function(T previous, T current) shouldNotify;
 
   const StatefulProvider({
     Key key,
@@ -168,7 +194,7 @@ class StatefulProvider<T> extends StatefulWidget {
     this.child,
     this.onDispose,
     this.didChangeDependencies,
-    this.updateShouldNotify,
+    this.shouldNotify,
   })  : assert(valueBuilder != null || didChangeDependencies != null),
         super(key: key);
 
@@ -211,7 +237,7 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   Widget build(BuildContext context) {
     return Provider(
       value: _value,
-      updateShouldNotify: widget.updateShouldNotify,
+      shouldNotify: widget.shouldNotify,
       child: widget.child,
     );
   }
@@ -262,20 +288,20 @@ class ValueListenableModelProvider<T, Token> extends AnimatedWidget {
 
   ValueListenableModelProvider({
     Key key,
-    UpdateShouldNotify<T> updateShouldNotify,
-    UpdateShouldNotifyDependent<T, Token> updateShouldNotifyDependent,
+    UpdateShouldNotify<T> shouldNotify,
+    UpdateShouldNotifyDependent<T, Token> shouldNotifyDependent,
     this.child,
     this.valueListenable,
-  })  : _updateShouldNotify = updateShouldNotify,
-        _updateShouldNotifyDependent = updateShouldNotifyDependent,
+  })  : _updateShouldNotify = shouldNotify,
+        _updateShouldNotifyDependent = shouldNotifyDependent,
         super(key: key, listenable: valueListenable);
 
   @override
   Widget build(BuildContext context) {
     return ModelProvider<T, Token>(
       value: valueListenable.value,
-      updateShouldNotify: _updateShouldNotify,
-      updateShouldNotifyDependent: _updateShouldNotifyDependent,
+      shouldNotify: _updateShouldNotify,
+      shouldNotifyDependent: _updateShouldNotifyDependent,
       child: child,
     );
   }

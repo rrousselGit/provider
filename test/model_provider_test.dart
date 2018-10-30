@@ -22,9 +22,9 @@ void main() {
     );
 
     await tester.pumpWidget(
-      Provider<double>(
+      ModelProvider<double, int>(
         value: 24.0,
-        child: Provider<int>(
+        child: ModelProvider<int, int>(
           value: 42,
           child: builder,
         ),
@@ -38,9 +38,9 @@ void main() {
 
     // nothing changed
     await tester.pumpWidget(
-      Provider<double>(
+      ModelProvider<double, int>(
         value: 24.0,
-        child: Provider<int>(
+        child: ModelProvider<int, int>(
           value: 42,
           child: builder,
         ),
@@ -51,9 +51,9 @@ void main() {
 
     // changed a value we are subscribed to
     await tester.pumpWidget(
-      Provider<double>(
+      ModelProvider<double, int>(
         value: 24.0,
-        child: Provider<int>(
+        child: ModelProvider<int, int>(
           value: 43,
           child: builder,
         ),
@@ -67,9 +67,9 @@ void main() {
 
     // changed a value we are _not_ subscribed to
     await tester.pumpWidget(
-      Provider<double>(
+      ModelProvider<double, int>(
         value: 20.0,
-        child: Provider<int>(
+        child: ModelProvider<int, int>(
           value: 43,
           child: builder,
         ),
@@ -99,7 +99,7 @@ void main() {
     });
 
     await tester.pumpWidget(
-      Provider<int>(
+      ModelProvider<int, int>(
         value: 24,
         shouldNotify: updateShouldNotify,
         child: builder,
@@ -111,7 +111,7 @@ void main() {
 
     // value changed
     await tester.pumpWidget(
-      Provider<int>(
+      ModelProvider<int, int>(
         value: 25,
         shouldNotify: updateShouldNotify,
         child: builder,
@@ -125,7 +125,7 @@ void main() {
 
     // value didnt' change
     await tester.pumpWidget(
-      Provider<int>(
+      ModelProvider<int, int>(
         value: 25,
         shouldNotify: updateShouldNotify,
         child: builder,
@@ -142,11 +142,11 @@ void main() {
     Object barTag = "bar";
 
     await tester.pumpWidget(
-      Provider<int>(
+      ModelProvider<int, int>(
         key: ValueKey(fooTag),
         value: 24,
         tag: fooTag,
-        child: Provider<int>(
+        child: ModelProvider<int, int>(
           key: ValueKey(barTag),
           value: 42,
           tag: barTag,

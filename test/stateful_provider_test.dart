@@ -20,7 +20,7 @@ void main() {
   testWidgets('simple usage', (tester) async {
     int buildCount = 0;
     int previous;
-    int value;
+    Provider<int> value;
     BuildContext context;
 
     final valueBuilder = (BuildContext c, int p) {
@@ -31,14 +31,21 @@ void main() {
 
     final builder = Builder(
       builder: (context) {
-        value = Provider.of(context);
+        // subscribe to value
+        Provider.of<int>(context);
+        value = Provider.elementOf<int>(context)?.widget;
         return Container();
       },
     );
 
+    final updateShouldNotify = (int o, int c) {
+      return o != c;
+    };
+
     await tester.pumpWidget(
       StatefulProvider<int>(
         valueBuilder: valueBuilder,
+        shouldNotify: updateShouldNotify,
         child: builder,
       ),
     );
@@ -47,7 +54,7 @@ void main() {
 
     expect(buildCount, equals(1));
     expect(previous, isNull);
-    expect(value, equals(1));
+    expect(value.shouldNotify, equals(updateShouldNotify));
     expect(element, equals(context));
 
     await tester.pumpWidget(
@@ -59,7 +66,7 @@ void main() {
 
     expect(buildCount, equals(2));
     expect(previous, equals(1));
-    expect(value, equals(2));
+    expect(value.shouldNotify, isNull);
 
     // pump different widget to trigger dispose mecanism
     // no `onDispose` has been provided: should handle null
@@ -143,63 +150,5 @@ void main() {
     expect(disposeCount, equals(1));
     expect(value, equals(42));
     expect(context, equals(element));
-  });
-
-  testWidgets('update should notify', (tester) async {
-    int old;
-    int curr;
-    int callCount = 0;
-    final updateShouldNotify = (int o, int c) {
-      callCount++;
-      old = o;
-      curr = c;
-      return o != c;
-    };
-
-    int buildCount = 0;
-    int buildValue;
-    final builder = Builder(builder: (BuildContext context) {
-      buildValue = Provider.of(context);
-      buildCount++;
-      return Container();
-    });
-
-    await tester.pumpWidget(
-      StatefulProvider<int>(
-        valueBuilder: (_, __) => 24,
-        updateShouldNotify: updateShouldNotify,
-        child: builder,
-      ),
-    );
-    expect(callCount, equals(0));
-    expect(buildCount, equals(1));
-    expect(buildValue, equals(24));
-
-    // value changed
-    await tester.pumpWidget(
-      StatefulProvider<int>(
-        valueBuilder: (_, __) => 25,
-        updateShouldNotify: updateShouldNotify,
-        child: builder,
-      ),
-    );
-    expect(callCount, equals(1));
-    expect(old, equals(24));
-    expect(curr, equals(25));
-    expect(buildCount, equals(2));
-    expect(buildValue, equals(25));
-
-    // value didnt' change
-    await tester.pumpWidget(
-      StatefulProvider<int>(
-        valueBuilder: (_, __) => 25,
-        updateShouldNotify: updateShouldNotify,
-        child: builder,
-      ),
-    );
-    expect(callCount, equals(2));
-    expect(old, equals(25));
-    expect(curr, equals(25));
-    expect(buildCount, equals(2));
   });
 }
