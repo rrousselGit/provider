@@ -26,8 +26,14 @@ Type _typeOf<T>() => T;
 
 mixin _Provider<T> on InheritedWidget {
   T get value;
-  bool Function(T previous, T current) get shouldNotify;
+  UpdateShouldNotify<T> get shouldNotify;
 
+  // has a different name then the actual method
+  // so that it can have documentation
+  /// A callback called whenever [InheritedModel.updateShouldNotify] is called.
+  /// It should return [false] when there's no need to update its dependents.
+  ///
+  /// The default behavior is `previous != current`
   @override
   bool updateShouldNotify(_Provider<T> oldWidget) {
     if (shouldNotify != null) {
@@ -77,15 +83,16 @@ class Provider<T> extends InheritedWidget with _Provider<T> {
   ///
   /// The default behavior is `previous == current`
   @visibleForTesting
-  final bool Function(T previous, T current) shouldNotify;
+  final UpdateShouldNotify<T> shouldNotify;
 
   Provider({
     this.tag,
     Key key,
     this.value,
     Widget child,
-    this.shouldNotify,
-  })  : runtimeType = tag != null ? _Tag(tag) : _typeOf<Provider<T>>(),
+    UpdateShouldNotify<T> updateShouldNotify,
+  })  : shouldNotify = updateShouldNotify,
+        runtimeType = tag != null ? _Tag(tag) : _typeOf<Provider<T>>(),
         super(key: key, child: child);
 
   @override
@@ -119,19 +126,19 @@ class ModelProvider<T, Token> extends InheritedModel<Token> with _Provider<T> {
   ///
   /// The default behavior is `previous == current`
   @visibleForTesting
-  final bool Function(T previous, T current) shouldNotify;
+  final UpdateShouldNotify<T> shouldNotify;
 
-  final bool Function(T previous, T current, Set<Token> dependencies)
-      shouldNotifyDependent;
+  final UpdateShouldNotifyDependent<T, Token> shouldNotifyDependent;
 
   ModelProvider({
     Key key,
     this.tag,
     this.value,
     Widget child,
-    this.shouldNotify,
-    this.shouldNotifyDependent,
-  })  :
+    UpdateShouldNotify<T> updateShouldNotify,
+    UpdateShouldNotifyDependent<T, Token> updateShouldNotifyDependent,
+  })  : shouldNotify = updateShouldNotify,
+        shouldNotifyDependent = updateShouldNotifyDependent,
         // we voluntary overrides to Provider<T> so that it is compatible with `Provider.of`
         runtimeType = tag != null ? _Tag(tag) : _typeOf<Provider<T>>(),
         super(key: key, child: child);
@@ -139,9 +146,17 @@ class ModelProvider<T, Token> extends InheritedModel<Token> with _Provider<T> {
   @override
   final Type runtimeType;
 
+  static InheritedModelElement elementOf(BuildContext context, {Object tag}) {
+    final e = _elementOf(context, tag: tag);
+    assert(e is InheritedModelElement);
+    return e;
+  }
+
   @override
   bool updateShouldNotifyDependent(
-      ModelProvider<T, Token> oldWidget, Set<Token> dependencies) {
+    ModelProvider<T, Token> oldWidget,
+    Set<Token> dependencies,
+  ) {
     if (shouldNotifyDependent != null) {
       return shouldNotifyDependent(oldWidget.value, value, dependencies);
     }
@@ -186,7 +201,8 @@ class StatefulProvider<T> extends StatefulWidget {
   /// such as closing streams.
   final void Function(BuildContext context, T value) onDispose;
   final Widget child;
-  final bool Function(T previous, T current) shouldNotify;
+  final bool Function(T previous, T current) updateShouldNotify;
+  final Object tag;
 
   const StatefulProvider({
     Key key,
@@ -194,7 +210,8 @@ class StatefulProvider<T> extends StatefulWidget {
     this.child,
     this.onDispose,
     this.didChangeDependencies,
-    this.shouldNotify,
+    this.updateShouldNotify,
+    this.tag,
   })  : assert(valueBuilder != null || didChangeDependencies != null),
         super(key: key);
 
@@ -237,7 +254,7 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   Widget build(BuildContext context) {
     return Provider(
       value: _value,
-      shouldNotify: widget.shouldNotify,
+      updateShouldNotify: widget.updateShouldNotify,
       child: widget.child,
     );
   }
@@ -253,15 +270,14 @@ class ValueListenableProvider<T> extends AnimatedWidget {
   final ValueListenable<T> valueListenable;
   final Widget child;
 
-  final UpdateShouldNotify<T> _updateShouldNotify;
+  final UpdateShouldNotify<T> updateShouldNotify;
 
   ValueListenableProvider({
     Key key,
-    UpdateShouldNotify<T> updateShouldNotify,
+    this.updateShouldNotify,
     this.child,
     this.valueListenable,
-  })  : _updateShouldNotify = updateShouldNotify,
-        super(key: key, listenable: valueListenable);
+  }) : super(key: key, listenable: valueListenable);
 
   @override
   Widget build(BuildContext context) {
@@ -276,33 +292,123 @@ class ValueListenableModelProvider<T, Token> extends AnimatedWidget {
   final ValueListenable<T> valueListenable;
   final Widget child;
 
-  // has a different name then the actual method
-  // so that it can have documentation
-  /// A callback called whenever [InheritedModel.updateShouldNotify] is called.
-  /// It should return [false] when there's no need to update its dependents.
-  ///
-  /// The default behavior is `previous == current`
-  final UpdateShouldNotify<T> _updateShouldNotify;
-
-  final UpdateShouldNotifyDependent<T, Token> _updateShouldNotifyDependent;
+  final UpdateShouldNotify<T> updateShouldNotify;
+  final UpdateShouldNotifyDependent<T, Token> updateShouldNotifyDependent;
 
   ValueListenableModelProvider({
     Key key,
-    UpdateShouldNotify<T> shouldNotify,
-    UpdateShouldNotifyDependent<T, Token> shouldNotifyDependent,
+    this.updateShouldNotify,
+    this.updateShouldNotifyDependent,
     this.child,
     this.valueListenable,
-  })  : _updateShouldNotify = shouldNotify,
-        _updateShouldNotifyDependent = shouldNotifyDependent,
-        super(key: key, listenable: valueListenable);
+  }) : super(key: key, listenable: valueListenable);
 
   @override
   Widget build(BuildContext context) {
     return ModelProvider<T, Token>(
       value: valueListenable.value,
-      shouldNotify: _updateShouldNotify,
-      shouldNotifyDependent: _updateShouldNotifyDependent,
+      updateShouldNotify: updateShouldNotify,
+      updateShouldNotifyDependent: updateShouldNotifyDependent,
       child: child,
+    );
+  }
+}
+
+abstract class _StreamProvider<T>
+    extends StreamBuilderBase<T, AsyncSnapshot<T>> {
+  /// Creates a new [StreamBuilder] that builds itself based on the latest
+  /// snapshot of interaction with the specified [stream] and whose build
+  /// strategy is given by [builder]. The [initialData] is used to create the
+  /// initial snapshot. It is null by default.
+  const _StreamProvider({
+    Key key,
+    this.initialData,
+    Stream<T> stream,
+  }) : super(key: key, stream: stream);
+
+  /// The data that will be used to create the initial snapshot. Null by default.
+  final T initialData;
+
+  @override
+  AsyncSnapshot<T> initial() =>
+      AsyncSnapshot<T>.withData(ConnectionState.none, initialData);
+
+  @override
+  AsyncSnapshot<T> afterConnected(AsyncSnapshot<T> current) =>
+      current.inState(ConnectionState.waiting);
+
+  @override
+  AsyncSnapshot<T> afterData(AsyncSnapshot<T> current, T data) {
+    return AsyncSnapshot<T>.withData(ConnectionState.active, data);
+  }
+
+  @override
+  AsyncSnapshot<T> afterError(AsyncSnapshot<T> current, Object error) {
+    return AsyncSnapshot<T>.withError(ConnectionState.active, error);
+  }
+
+  @override
+  AsyncSnapshot<T> afterDone(AsyncSnapshot<T> current) =>
+      current.inState(ConnectionState.done);
+
+  @override
+  AsyncSnapshot<T> afterDisconnected(AsyncSnapshot<T> current) =>
+      current.inState(ConnectionState.none);
+
+  @override
+  Widget build(BuildContext context, AsyncSnapshot<T> currentSummary);
+}
+
+class StreamProvider<T> extends _StreamProvider<T> {
+  final Widget child;
+  final Object tag;
+  final UpdateShouldNotify<AsyncSnapshot<T>> updateShouldNotify;
+
+  const StreamProvider({
+    this.tag,
+    Key key,
+    T initialData,
+    this.updateShouldNotify,
+    Stream<T> stream,
+    this.child,
+  }) : super(key: key, stream: stream);
+
+  @override
+  Widget build(BuildContext context, AsyncSnapshot<T> currentSummary) {
+    return Provider<AsyncSnapshot<T>>(
+      tag: tag,
+      child: child,
+      value: currentSummary,
+      updateShouldNotify: updateShouldNotify,
+    );
+  }
+}
+
+class StreamModelProvider<T, Token> extends _StreamProvider<T> {
+  final Widget child;
+  final Object tag;
+  final UpdateShouldNotify<AsyncSnapshot<T>> updateShouldNotify;
+  final UpdateShouldNotifyDependent<AsyncSnapshot<T>, Token>
+      updateShouldNotifyDependent;
+
+  const StreamModelProvider({
+    this.tag,
+    Key key,
+    this.updateShouldNotify,
+    this.updateShouldNotifyDependent,
+    T initialData,
+    Stream<T> stream,
+    this.child,
+  }) : super(key: key, stream: stream);
+
+  @override
+  Widget build(BuildContext context, AsyncSnapshot<T> currentSummary) {
+    return ModelProvider<AsyncSnapshot<T>, Token>(
+      tag: tag,
+      child: child,
+      value: currentSummary,
+      updateShouldNotify: updateShouldNotify,
+      updateShouldNotifyDependent: updateShouldNotifyDependent,
     );
   }
 }

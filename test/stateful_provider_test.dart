@@ -45,7 +45,7 @@ void main() {
     await tester.pumpWidget(
       StatefulProvider<int>(
         valueBuilder: valueBuilder,
-        shouldNotify: updateShouldNotify,
+        updateShouldNotify: updateShouldNotify,
         child: builder,
       ),
     );
