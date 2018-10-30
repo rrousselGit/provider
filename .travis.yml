@@ -4,7 +4,7 @@ os:
 sudo: false
 before_script:
   - cd ..
-  - git clone https://github.com/flutter/flutter.git -b beta
+  - git clone https://github.com/flutter/flutter.git -b master
   - export PATH=$PATH:$PWD/flutter/bin
   - export PATH=$PATH:$PWD/flutter/bin/cache/dart-sdk/bin
   - flutter doctor
