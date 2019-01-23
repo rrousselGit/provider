@@ -24,8 +24,8 @@ class Provider<T> extends InheritedWidget {
 
   const Provider({
     Key key,
-    this.value,
-    Widget child,
+    @required this.value,
+    @required Widget child,
     bool Function(T previous, T current) updateShouldNotify,
   })  : _updateShouldNotify = updateShouldNotify,
         super(key: key, child: child);
