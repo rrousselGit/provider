@@ -1,6 +1,6 @@
 name: provider
 description: An helper to easily exposes a value using InheritedWidget without having to write one.
-version: 1.1.1
+version: 1.2.0-dev
 homepage: https://github.com/rrousselGit/provider
 author: Remi Rousselet <darky12s@gmail.com>
 
@@ -10,8 +10,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_hooks: '>=0.2.1 <1.0.0'
+  functional_widget_annotation: '>=0.3.0 <1.0.0'
 
 dev_dependencies:
+  functional_widget: ^0.4.0
+  build_runner: ^1.1.2
   pedantic: ^1.4.0
   flutter_test:
     sdk: flutter

@@ -1,9 +1,17 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:functional_widget_annotation/functional_widget_annotation.dart'
+    hide widget;
+
+part 'provider.g.dart';
 
 /// Necessary to obtain generic [Type]
 /// see https://stackoverflow.com/questions/52891537/how-to-get-generic-type
 /// and https://github.com/dart-lang/sdk/issues/11923
 Type _typeOf<T>() => T;
+
+typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
 
 /// A generic implementation of an [InheritedWidget]
 ///
@@ -29,7 +37,7 @@ class Provider<T> extends InheritedWidget {
     Key key,
     @required this.value,
     @required Widget child,
-    bool Function(T previous, T current) updateShouldNotify,
+    UpdateShouldNotify<T> updateShouldNotify,
   })  : _updateShouldNotify = updateShouldNotify,
         super(key: key, child: child);
 
@@ -164,4 +172,19 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
       _value = widget.valueBuilder(context, _value);
     }
   }
+}
+
+/// A [Provider] that exposes a value obtained from a [Hook].
+///
+/// [HookProvider] will rebuild and potentially expose a new value if the hooks used ask for it.
+@hwidget
+Widget hookProvider<T>(
+    {T hook(),
+    @required Widget child,
+    UpdateShouldNotify<T> updateShouldNotify}) {
+  return Provider<T>(
+    value: hook(),
+    child: child,
+    updateShouldNotify: updateShouldNotify,
+  );
 }

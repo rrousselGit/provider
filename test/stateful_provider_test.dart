@@ -4,12 +4,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-
-
 void main() {
   test('assets', () {
     expect(() => StatefulProvider<dynamic>(), throwsAssertionError);
-    expect(() => StatefulProvider(didChangeDependencies: (_, dynamic __) => null),
+    expect(
+        () => StatefulProvider(didChangeDependencies: (_, dynamic __) => null),
         isNot(throwsAssertionError));
     expect(() => StatefulProvider(valueBuilder: (_, dynamic __) => null),
         isNot(throwsAssertionError));
