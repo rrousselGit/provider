@@ -1,24 +1,28 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
+
+
 void main() {
   test('assets', () {
-    expect(() => StatefulProvider(), throwsAssertionError);
-    expect(() => StatefulProvider(didChangeDependencies: (_, __) => null),
+    expect(() => StatefulProvider<dynamic>(), throwsAssertionError);
+    expect(() => StatefulProvider(didChangeDependencies: (_, dynamic __) => null),
         isNot(throwsAssertionError));
-    expect(() => StatefulProvider(valueBuilder: (_, __) => null),
+    expect(() => StatefulProvider(valueBuilder: (_, dynamic __) => null),
         isNot(throwsAssertionError));
     expect(
         () => StatefulProvider(
-              valueBuilder: (_, __) => null,
-              didChangeDependencies: (_, __) => null,
+              valueBuilder: (_, dynamic __) => null,
+              didChangeDependencies: (_, dynamic __) => null,
             ),
         isNot(throwsAssertionError));
   });
 
   testWidgets('simple usage', (tester) async {
-    int buildCount = 0;
+    var buildCount = 0;
     int previous;
     int value;
     BuildContext context;
@@ -67,7 +71,7 @@ void main() {
   });
 
   testWidgets('didChangeDependencies', (tester) async {
-    int dependenciesCount = 0;
+    var dependenciesCount = 0;
     BuildContext context;
     int value;
     int previous;
@@ -114,7 +118,7 @@ void main() {
   });
 
   testWidgets('dispose', (tester) async {
-    int disposeCount = 0;
+    var disposeCount = 0;
     int value;
     BuildContext context;
 
@@ -148,7 +152,7 @@ void main() {
   testWidgets('update should notify', (tester) async {
     int old;
     int curr;
-    int callCount = 0;
+    var callCount = 0;
     final updateShouldNotify = (int o, int c) {
       callCount++;
       old = o;
@@ -156,7 +160,7 @@ void main() {
       return o != c;
     };
 
-    int buildCount = 0;
+    var buildCount = 0;
     int buildValue;
     final builder = Builder(builder: (BuildContext context) {
       buildValue = Provider.of(context);
@@ -166,7 +170,7 @@ void main() {
 
     await tester.pumpWidget(
       StatefulProvider<int>(
-        valueBuilder: (_, __) => 24,
+        valueBuilder: (_, dynamic __) => 24,
         updateShouldNotify: updateShouldNotify,
         child: builder,
       ),
@@ -178,7 +182,7 @@ void main() {
     // value changed
     await tester.pumpWidget(
       StatefulProvider<int>(
-        valueBuilder: (_, __) => 25,
+        valueBuilder: (_, dynamic __) => 25,
         updateShouldNotify: updateShouldNotify,
         child: builder,
       ),
@@ -192,7 +196,7 @@ void main() {
     // value didnt' change
     await tester.pumpWidget(
       StatefulProvider<int>(
-        valueBuilder: (_, __) => 25,
+        valueBuilder: (_, dynamic __) => 25,
         updateShouldNotify: updateShouldNotify,
         child: builder,
       ),

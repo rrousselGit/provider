@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   testWidgets('simple usage', (tester) async {
-    int buildCount = 0;
+    var buildCount = 0;
     int value;
     double second;
     String missing;
@@ -82,7 +82,7 @@ void main() {
   testWidgets('update should notify', (tester) async {
     int old;
     int curr;
-    int callCount = 0;
+    var callCount = 0;
     final updateShouldNotify = (int o, int c) {
       callCount++;
       old = o;
@@ -90,7 +90,7 @@ void main() {
       return o != c;
     };
 
-    int buildCount = 0;
+    var buildCount = 0;
     int buildValue;
     final builder = Builder(builder: (BuildContext context) {
       buildValue = Provider.of(context);

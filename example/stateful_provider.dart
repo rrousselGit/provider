@@ -8,7 +8,7 @@ void main() {
 }
 
 class Bloc {
-  StreamController<int> _streamController = StreamController();
+  final StreamController<int> _streamController = StreamController();
   Stream<int> stream;
 
   Bloc() {
@@ -23,6 +23,7 @@ class Bloc {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return StatefulProvider<Bloc>(
       valueBuilder: (_, old) => old ?? Bloc(),
       onDispose: (_, value) => value.dipose(),
@@ -37,7 +38,7 @@ class Example extends StatelessWidget {
     return StreamBuilder<int>(
       stream: Provider.of<Bloc>(context).stream,
       builder: (context, snapshot) {
-        return Text(snapshot.data.toString() ?? "Foo");
+        return Text(snapshot.data.toString() ?? 'Foo');
       },
     );
   }
