@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// Necessary to obtain generic [Type]
@@ -49,6 +50,12 @@ class Provider<T> extends InheritedWidget {
       return _updateShouldNotify(oldWidget.value, value);
     }
     return oldWidget.value != value;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<T>('value', value));
   }
 }
 
