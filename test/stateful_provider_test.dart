@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use_from_same_package
+// ignore_for_file: deprecated_member_use
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
