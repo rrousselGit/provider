@@ -2,6 +2,7 @@
 
 - Added: `HookProvider`, a `Provider` that creates its value from a `Hook`.
 - Deprecated `StatefulProvider`. Either make a `StatefulWidget` or use `HookProvider`.
+- Integrated the widget inspector, so that `Provider` widget shows the current value.
 
 # 1.1.1
 
