@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/rrousselGit/provider.svg?branch=master)](https://travis-ci.org/rrousselGit/provider)
-[![pub package](https://img.shields.io/pub/v/provider.svg)](https://pub.dartlang.org/packages/provider)
+
+[![pub package](https://img.shields.io/pub/v/provider.svg)](https://pub.dartlang.org/packages/provider) [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider)
 
 An helper to easily exposes a value using `InheritedWidget` without having to write one.
 
