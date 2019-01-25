@@ -118,7 +118,7 @@ class StatefulProvider<T> extends StatefulWidget {
   final bool Function(T previous, T current) updateShouldNotify;
 
   /// Allows to specify parameters to [StatefulProvider]
-  const StatefulProvider({
+  StatefulProvider({
     Key key,
     this.valueBuilder,
     this.child,
