@@ -62,6 +62,12 @@ class Provider<T> extends InheritedWidget {
     }
     return oldWidget.value != value;
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<T>('value', value));
+  }
 }
 
 /// A wrapper over [Provider] to make exposing complex objets
