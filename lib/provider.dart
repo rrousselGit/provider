@@ -1,4 +1,9 @@
 library provider;
 
-// ignore: deprecated_member_use
-export 'src/provider.dart' show Provider, StatefulProvider, HookProvider;
+export 'src/provider.dart'
+    show
+        Provider,
+// ignore: deprecated_member_use, deprecated_member_use_from_same_package
+        StatefulProvider,
+        HookProvider,
+        Consumer;

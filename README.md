@@ -20,6 +20,20 @@ Descendants of `Provider` and now obtain this value using the static `Provider.o
 var value = Provider.of<int>(context);
 ```
 
+You can also use `Consumer` widget to insert a descendant, useful when both creating a `Provider` and using it:
+
+```dart
+Provider<int>(
+  value: 42,
+  child: Consumer<int>(
+    builder: (context, value) => Text(value.toString()),
+  )
+)
+```
+
+____
+
+
 
 Note that you can freely use multiple providers with different type together:
 
