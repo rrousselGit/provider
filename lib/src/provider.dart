@@ -70,6 +70,26 @@ class Provider<T> extends InheritedWidget {
   }
 }
 
+/// Obtain [Provider<T>] from its ancestors and pass its value to [builder].
+///
+/// [builder] must not be null and may be called multiple times (such as when provided value change).
+class Consumer<T> extends StatelessWidget {
+  /// Build a widget tree based on the value from a [Provider<T>].
+  ///
+  /// Must not be null.
+  final Widget Function(BuildContext context, T value) builder;
+
+  /// Consumes a [Provider<T>]
+  Consumer({Key key, @required this.builder})
+      : assert(builder != null),
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return builder(context, Provider.of<T>(context));
+  }
+}
+
 /// A wrapper over [Provider] to make exposing complex objets
 ///
 /// It is usuallt used to create once an object, to not recreate it on every [State.build] call

@@ -1,3 +1,7 @@
+# 1.3.0
+
+- Added `Consumer`, useful when we need to both expose and consume a value simultaneously.
+
 # 1.2.0
 
 - Added: `HookProvider`, a `Provider` that creates its value from a `Hook`.
