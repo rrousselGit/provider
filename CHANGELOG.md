@@ -1,3 +1,9 @@
+# 1.4.0
+
+- Reintroduced `StatefulProvider` with a modified prototype. 
+The second argument of `valueBuilder` and `didChangeDependencies` have been removed.
+And `valueBuilder` is now called only once for the whole life-cycle of `StatefulProvider`.
+
 # 1.3.0
 
 - Added `Consumer`, useful when we need to both expose and consume a value simultaneously.
