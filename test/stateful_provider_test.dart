@@ -1,208 +1,77 @@
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:mockito/mockito.dart';
+import 'package:provider/src/provider.dart';
+
+class ValueBuilder extends Mock {
+  int call(BuildContext context);
+}
+
+class Dispose extends Mock {
+  void call(BuildContext context, int value);
+}
 
 void main() {
-  test('assets', () {
-    expect(() => StatefulProvider<dynamic>(), throwsAssertionError);
+  test('asserts', () {
     expect(
-        () => StatefulProvider(didChangeDependencies: (_, dynamic __) => null),
-        isNot(throwsAssertionError));
-    expect(() => StatefulProvider(valueBuilder: (_, dynamic __) => null),
-        isNot(throwsAssertionError));
-    expect(
-        () => StatefulProvider(
-              valueBuilder: (_, dynamic __) => null,
-              didChangeDependencies: (_, dynamic __) => null,
-            ),
-        isNot(throwsAssertionError));
+      () => StatefulProvider<dynamic>(valueBuilder: null, child: null),
+      throwsAssertionError,
+    );
+    // don't throw
+    StatefulProvider<dynamic>(valueBuilder: (_) => null, child: null);
   });
 
-  testWidgets('simple usage', (tester) async {
-    var buildCount = 0;
-    int previous;
-    int value;
-    BuildContext context;
-
-    final valueBuilder = (BuildContext c, int p) {
-      previous = p;
-      context = c;
-      return ++buildCount;
-    };
-
-    final builder = Builder(
-      builder: (context) {
-        value = Provider.of(context);
-        return Container();
-      },
-    );
-
-    await tester.pumpWidget(
-      StatefulProvider<int>(
-        valueBuilder: valueBuilder,
-        child: builder,
-      ),
-    );
-
-    final element = tester.element(find.byElementType(StatefulElement).first);
-
-    expect(buildCount, equals(1));
-    expect(previous, isNull);
-    expect(value, equals(1));
-    expect(element, equals(context));
-
-    await tester.pumpWidget(
-      StatefulProvider<int>(
-        valueBuilder: valueBuilder,
-        child: builder,
-      ),
-    );
-
-    expect(buildCount, equals(2));
-    expect(previous, equals(1));
-    expect(value, equals(2));
-
-    // pump different widget to trigger dispose mecanism
-    // no `onDispose` has been provided: should handle null
+  testWidgets('calls valueBuilder only once', (tester) async {
+    final builder = ValueBuilder();
+    await tester.pumpWidget(StatefulProvider<int>(
+      valueBuilder: builder,
+      child: Container(),
+    ));
+    await tester.pumpWidget(StatefulProvider<int>(
+      valueBuilder: builder,
+      child: Container(),
+    ));
     await tester.pumpWidget(Container());
-  });
 
-  testWidgets('didChangeDependencies', (tester) async {
-    var dependenciesCount = 0;
-    BuildContext context;
-    int value;
-    int previous;
-
-    final dependencies = (BuildContext c, int v) {
-      context = c;
-      dependenciesCount++;
-      previous = v;
-      value = Provider.of<double>(context).toInt();
-      return value;
-    };
-
-    await tester.pumpWidget(
-      Provider<double>(
-        value: 42.0,
-        child: StatefulProvider<int>(
-          didChangeDependencies: dependencies,
-          child: Container(),
-        ),
-      ),
-    );
-
-    final element = tester.element(find.byElementType(StatefulElement).first);
-
-    expect(dependenciesCount, equals(1));
-    expect(previous, isNull);
-    expect(value, equals(42));
-    expect(context, equals(element));
-
-    await tester.pumpWidget(
-      Provider<double>(
-        value: 43.0,
-        child: StatefulProvider<int>(
-          didChangeDependencies: dependencies,
-          child: Container(),
-        ),
-      ),
-    );
-
-    expect(dependenciesCount, equals(2));
-    expect(previous, equals(42));
-    expect(value, equals(43));
-    expect(context, equals(element));
+    verify(builder(any)).called(1);
   });
 
   testWidgets('dispose', (tester) async {
-    var disposeCount = 0;
-    int value;
-    BuildContext context;
-
-    final dispose = (BuildContext c, int v) {
-      context = c;
-      disposeCount++;
-      value = v;
-    };
-
-    final valueBuilder = (BuildContext context, int previous) => 42;
+    final dispose = Dispose();
+    const key = ValueKey(42);
 
     await tester.pumpWidget(
       StatefulProvider<int>(
-        valueBuilder: valueBuilder,
+        key: key,
+        valueBuilder: (_) => 42,
         onDispose: dispose,
         child: Container(),
       ),
     );
 
-    final element = tester.element(find.byElementType(StatefulElement).first);
+    final context = tester.element(find.byKey(key));
 
-    await tester.pump();
-    // pump different widget to trigger dispose mecanism
+    verifyZeroInteractions(dispose);
     await tester.pumpWidget(Container());
-
-    expect(disposeCount, equals(1));
-    expect(value, equals(42));
-    expect(context, equals(element));
+    verify(dispose(context, 42)).called(1);
   });
 
   testWidgets('update should notify', (tester) async {
-    int old;
-    int curr;
-    var callCount = 0;
-    final updateShouldNotify = (int o, int c) {
-      callCount++;
-      old = o;
-      curr = c;
-      return o != c;
-    };
-
-    var buildCount = 0;
-    int buildValue;
-    final builder = Builder(builder: (BuildContext context) {
-      buildValue = Provider.of(context);
-      buildCount++;
-      return Container();
-    });
+    final shouldNotify = (int a, int b) => true;
 
     await tester.pumpWidget(
       StatefulProvider<int>(
-        valueBuilder: (_, dynamic __) => 24,
-        updateShouldNotify: updateShouldNotify,
-        child: builder,
+        valueBuilder: (_) => 42,
+        updateShouldNotify: shouldNotify,
+        child: Container(),
       ),
     );
-    expect(callCount, equals(0));
-    expect(buildCount, equals(1));
-    expect(buildValue, equals(24));
 
-    // value changed
-    await tester.pumpWidget(
-      StatefulProvider<int>(
-        valueBuilder: (_, dynamic __) => 25,
-        updateShouldNotify: updateShouldNotify,
-        child: builder,
-      ),
-    );
-    expect(callCount, equals(1));
-    expect(old, equals(24));
-    expect(curr, equals(25));
-    expect(buildCount, equals(2));
-    expect(buildValue, equals(25));
+    final provider =
+        tester.widget(find.byWidgetPredicate((w) => w is Provider<int>))
+            as Provider<int>;
 
-    // value didnt' change
-    await tester.pumpWidget(
-      StatefulProvider<int>(
-        valueBuilder: (_, dynamic __) => 25,
-        updateShouldNotify: updateShouldNotify,
-        child: builder,
-      ),
-    );
-    expect(callCount, equals(2));
-    expect(old, equals(25));
-    expect(curr, equals(25));
-    expect(buildCount, equals(2));
+    expect(debugGetProviderUpdateShouldNotify(provider), shouldNotify);
   });
 }

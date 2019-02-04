@@ -23,9 +23,8 @@ class Bloc {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // ignore: deprecated_member_use
     return StatefulProvider<Bloc>(
-      valueBuilder: (_, old) => old ?? Bloc(),
+      valueBuilder: (_) => Bloc(),
       onDispose: (_, value) => value.dipose(),
       child: Example(),
     );

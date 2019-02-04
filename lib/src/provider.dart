@@ -1,10 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:functional_widget_annotation/functional_widget_annotation.dart'
-    hide widget;
-
-part 'provider.g.dart';
 
 /// Necessary to obtain generic [Type]
 /// see https://stackoverflow.com/questions/52891537/how-to-get-generic-type
@@ -70,6 +66,12 @@ class Provider<T> extends InheritedWidget {
   }
 }
 
+@visibleForTesting
+// ignore: public_member_api_docs
+UpdateShouldNotify<T> debugGetProviderUpdateShouldNotify<T>(
+        Provider<T> provider) =>
+    provider._updateShouldNotify;
+
 /// Obtain [Provider<T>] from its ancestors and pass its value to [builder].
 ///
 /// [builder] must not be null and may be called multiple times (such as when provided value change).
@@ -90,38 +92,40 @@ class Consumer<T> extends StatelessWidget {
   }
 }
 
-/// A wrapper over [Provider] to make exposing complex objets
+/// A [Provider] that can also create and dispose an object.
 ///
-/// It is usuallt used to create once an object, to not recreate it on every [State.build] call
-/// without having to manually create a [StatefulWidget]
+/// It is usually used to avoid making a [StatefulWidget] for something trivial, such as instanciating a BLoC.
+///
+/// [StatefulBuilder] is the equivalent of a [State.initState] combined with [State.dispose].
+/// As such, [valueBuilder] is called only once and is unable to use [InheritedWidget]; which makes it impossible to update the created value.
+///
+/// If this is too limiting, consider instead [HookProvider], which offer a much more advanced control over the created value.
+///
+/// The following example instanciate a `Model` once, and dispose it when [StatefulProvider] is removed from the tree.
 ///
 /// ```
-/// class Model {}
+/// class Model {
+///   void dispose() {}
+/// }
 ///
 /// class Stateless extends StatelessWidget {
 ///   @override
 ///   Widget build(BuildContext context) {
 ///     return StatefulProvider<Model>(
-///       valueBuilder: (context, old) =>  old ?? Model(),
+///       valueBuilder: (context) =>  Model(),
+///       dispose: (context, value) => value.dispose(),
 ///       child: ...,
 ///     );
 ///   }
 /// }
 /// ```
-@Deprecated('Prefer HookBuilder combined with useState hook instead')
 class StatefulProvider<T> extends StatefulWidget {
-  /// [valueBuilder] is called on [State.initState] and [State.didUpdateWidget]
+  /// A function that creates the provided value.
   ///
-  /// The second argument of [valueBuilder] is the previous value returned by [valueBuilder].
-  /// This value will be `null` on the first call.
+  /// [valueBuilder] must not be null and is called only once for the life-cycle of [StatefulProvider].
   ///
   /// It is not possible to obtain an [InheritedWidget] from [valueBuilder].
-  /// Use [didChangeDependencies] instead.
-  final T Function(BuildContext context, T previous) valueBuilder;
-
-  /// [didChangeDependencies] is a hook to [State.didChangeDependencies]
-  /// It can be used to build/update values depending on an [InheritedWidget]
-  final T Function(BuildContext context, T value) didChangeDependencies;
+  final T Function(BuildContext context) valueBuilder;
 
   /// [onDispose] is a callback called when [StatefulProvider] is
   /// removed for the widget tree, and pass the current value as parameter.
@@ -140,40 +144,24 @@ class StatefulProvider<T> extends StatefulWidget {
   /// Allows to specify parameters to [StatefulProvider]
   StatefulProvider({
     Key key,
-    this.valueBuilder,
-    this.child,
+    @required this.valueBuilder,
+    @required this.child,
     this.onDispose,
-    this.didChangeDependencies,
     this.updateShouldNotify,
-  })  : assert(valueBuilder != null || didChangeDependencies != null),
+  })  : assert(valueBuilder != null),
         super(key: key);
 
   @override
   _StatefulProviderState<T> createState() => _StatefulProviderState<T>();
 }
 
-@deprecated
 class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   T _value;
 
   @override
   void initState() {
     super.initState();
-    _buildValue();
-  }
-
-  @override
-  void didUpdateWidget(StatefulProvider<T> oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _buildValue();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (widget.didChangeDependencies != null) {
-      _value = widget.didChangeDependencies(context, _value);
-    }
+    _value = widget.valueBuilder(context);
   }
 
   @override
@@ -192,25 +180,103 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
       child: widget.child,
     );
   }
-
-  void _buildValue() {
-    if (widget.valueBuilder != null) {
-      _value = widget.valueBuilder(context, _value);
-    }
-  }
 }
 
-/// A [Provider] that exposes a value obtained from a [Hook].
+/// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
 ///
-/// [HookProvider] will rebuild and potentially expose a new value if the hooks used ask for it.
-@hwidget
-Widget hookProvider<T>(
-    {T hook(),
-    @required Widget child,
-    UpdateShouldNotify<T> updateShouldNotify}) {
-  return Provider<T>(
-    value: hook(),
-    child: child,
-    updateShouldNotify: updateShouldNotify,
-  );
+/// This is especially useful to create complex providers, without having to make a `StatefulWidget`.
+///
+/// The following example uses BLoC pattern to create a BLoC, provide its value, and dispose it when the provider is removed from the tree.
+///
+/// ```dart
+/// HookProvider<MyBloc>(
+///   hook: () {
+///     final bloc = useMemoized(() => MyBloc());
+///     useEffect(() => bloc.dispose, [bloc]);
+///     return bloc;
+///   },
+///   child: // ...
+/// )
+/// ```
+class HookProvider<T> extends HookWidget {
+  /// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
+  ///
+  /// This is especially useful to create complex providers, without having to make a `StatefulWidget`.
+  ///
+  /// The following example uses BLoC pattern to create a BLoC, provide its value, and dispose it when the provider is removed from the tree.
+  ///
+  /// ```dart
+  /// HookProvider<MyBloc>(
+  ///   hook: () {
+  ///     final bloc = useMemoized(() => MyBloc());
+  ///     useEffect(() => bloc.dispose, [bloc]);
+  ///     return bloc;
+  ///   },
+  ///   child: // ...
+  /// )
+  /// ```
+  const HookProvider(
+      {Key key, this.hook, @required this.child, this.updateShouldNotify})
+      : super(key: key);
+
+  /// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
+  ///
+  /// This is especially useful to create complex providers, without having to make a `StatefulWidget`.
+  ///
+  /// The following example uses BLoC pattern to create a BLoC, provide its value, and dispose it when the provider is removed from the tree.
+  ///
+  /// ```dart
+  /// HookProvider<MyBloc>(
+  ///   hook: () {
+  ///     final bloc = useMemoized(() => MyBloc());
+  ///     useEffect(() => bloc.dispose, [bloc]);
+  ///     return bloc;
+  ///   },
+  ///   child: // ...
+  /// )
+  /// ```
+  final T Function() hook;
+
+  /// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
+  ///
+  /// This is especially useful to create complex providers, without having to make a `StatefulWidget`.
+  ///
+  /// The following example uses BLoC pattern to create a BLoC, provide its value, and dispose it when the provider is removed from the tree.
+  ///
+  /// ```dart
+  /// HookProvider<MyBloc>(
+  ///   hook: () {
+  ///     final bloc = useMemoized(() => MyBloc());
+  ///     useEffect(() => bloc.dispose, [bloc]);
+  ///     return bloc;
+  ///   },
+  ///   child: // ...
+  /// )
+  /// ```
+  final Widget child;
+
+  /// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
+  ///
+  /// This is especially useful to create complex providers, without having to make a `StatefulWidget`.
+  ///
+  /// The following example uses BLoC pattern to create a BLoC, provide its value, and dispose it when the provider is removed from the tree.
+  ///
+  /// ```dart
+  /// HookProvider<MyBloc>(
+  ///   hook: () {
+  ///     final bloc = useMemoized(() => MyBloc());
+  ///     useEffect(() => bloc.dispose, [bloc]);
+  ///     return bloc;
+  ///   },
+  ///   child: // ...
+  /// )
+  /// ```
+  final bool Function(T, T) updateShouldNotify;
+
+  @override
+  Widget build(BuildContext context) => Provider<T>(
+        value: hook(),
+        child: child,
+        updateShouldNotify: updateShouldNotify,
+      );
 }
