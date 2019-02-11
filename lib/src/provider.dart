@@ -121,11 +121,10 @@ class Provider<T> extends InheritedWidget implements ProviderBase {
 ///
 /// Technically, these two are identical. [MultiProvider] will convert the array into a tree.
 /// This changes only the appearance of the code.
-class MultiProvider extends StatelessWidget {
+class MultiProvider extends StatelessWidget implements ProviderBase {
   /// Build a tree of providers from a list of [ProviderBase].
-  const MultiProvider({Key key, @required this.providers, @required this.child})
-      : assert(child != null),
-        assert(providers != null),
+  const MultiProvider({Key key, @required this.providers, this.child})
+      : assert(providers != null),
         super(key: key);
 
   /// The list of providers that will be transformed into a tree.
@@ -146,6 +145,15 @@ class MultiProvider extends StatelessWidget {
     }
     return tree;
   }
+
+  @override
+  MultiProvider cloneWithChild(Widget child) {
+    return MultiProvider(
+      key: key,
+      providers: providers,
+      child: child,
+    );
+  }
 }
 
 @visibleForTesting
@@ -153,26 +161,6 @@ class MultiProvider extends StatelessWidget {
 UpdateShouldNotify<T> debugGetProviderUpdateShouldNotify<T>(
         Provider<T> provider) =>
     provider._updateShouldNotify;
-
-/// Obtain [Provider<T>] from its ancestors and pass its value to [builder].
-///
-/// [builder] must not be null and may be called multiple times (such as when provided value change).
-class Consumer<T> extends StatelessWidget {
-  /// Build a widget tree based on the value from a [Provider<T>].
-  ///
-  /// Must not be null.
-  final Widget Function(BuildContext context, T value) builder;
-
-  /// Consumes a [Provider<T>]
-  Consumer({Key key, @required this.builder})
-      : assert(builder != null),
-        super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return builder(context, Provider.of<T>(context));
-  }
-}
 
 /// A [Provider] that can also create and dispose an object.
 ///
