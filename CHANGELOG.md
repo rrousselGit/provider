@@ -1,5 +1,6 @@
 # 1.5.0
 
+- new: Add `Consumer` with up to 6 parameters.
 - new: `MultiProvider`, a provider that makes a tree of provider more readable
 - new: `StreamProvider`, a stream that exposes to its descendants the current value of a `Stream`.
 
