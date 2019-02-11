@@ -12,7 +12,7 @@ typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
 /// A base class for providers so tha [MultiProvider] can regroup them into a linear list
 abstract class ProviderBase implements Widget {
   /// Clone the current provider with a new child.
-  /// 
+  ///
   /// All values, including [Key] must be preserved.
   ProviderBase cloneWithChild(Widget child);
 }
