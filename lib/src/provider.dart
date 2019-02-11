@@ -195,7 +195,7 @@ class Consumer<T> extends StatelessWidget {
 ///   Widget build(BuildContext context) {
 ///     return StatefulProvider<Model>(
 ///       valueBuilder: (context) =>  Model(),
-///       dispose: (context, value) => value.dispose(),
+///       onDispose: (context, value) => value.dispose(),
 ///       child: ...,
 ///     );
 ///   }
