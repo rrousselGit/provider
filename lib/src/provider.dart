@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -279,4 +281,49 @@ class HookProvider<T> extends HookWidget {
         child: child,
         updateShouldNotify: updateShouldNotify,
       );
+}
+
+@visibleForTesting
+// ignore: public_member_api_docs
+var useStreamSeam = useStream;
+
+/// A provider that exposes the current value of a `Stream` as an `AsyncSnapshot`.
+///
+/// Changing [stream] will stop listening to the previous [stream] and listen the new one.
+/// Removing [StreamProvider] from the tree will also stop listening to [stream].
+///
+/// To obtain the current value of type `T`, one must explicitly request `Provider.of<AsyncSnapshot<T>>`.
+/// It is also possible to use `StreamProvider.of<T>`.
+///
+/// ```dart
+/// Stream<int> foo;
+///
+/// StreamProvider<int>(
+///   stream: foo,
+///   child: Container(),
+/// );
+/// ```
+class StreamProvider<T> extends HookProvider<AsyncSnapshot<T>> {
+  /// Allow configuring [Key]
+  StreamProvider({
+    @required this.stream,
+    Key key,
+    T initialData,
+    Widget child,
+  })  : assert(stream != null),
+        super(
+            key: key,
+            hook: () => useStreamSeam(stream, initialData: initialData),
+            child: child);
+
+  /// Obtains the currently exposed value from [StreamProvider]
+  ///
+  /// [StreamProvider.of<T>] is a shorthand for [Provider.of<AsyncSnapshot<T>>].
+  static AsyncSnapshot<T> of<T>(BuildContext context) =>
+      Provider.of<AsyncSnapshot<T>>(context);
+
+  /// The currently listened [Stream].
+  ///
+  /// It is fine to change the instance of [stream].
+  final Stream<T> stream;
 }

@@ -117,3 +117,22 @@ HookProvider<MyBloc>(
   child: // ...
 )
 ```
+
+### StreamProvider
+
+A provider that exposes the current value of a `Stream` as an `AsyncSnapshot`.
+
+Changing [stream] will stop listening to the previous [stream] and listen the new one.
+
+Removing [StreamProvider] from the tree will also stop listening to [stream].
+To obtain the current value of type `T`, one must explicitly request `Provider.of<AsyncSnapshot<T>>`.
+It is also possible to use `StreamProvider.of<T>`.
+
+```dart
+Stream<int> foo;
+
+StreamProvider<int>(
+  stream: foo,
+  child: Container(),
+);
+```
