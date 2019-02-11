@@ -11,6 +11,9 @@ typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
 
 /// A base class for providers so tha [MultiProvider] can regroup them into a linear list
 abstract class ProviderBase implements Widget {
+  /// Clone the current provider with a new child.
+  /// 
+  /// All values, including [Key] must be preserved.
   ProviderBase cloneWithChild(Widget child);
 }
 
@@ -207,7 +210,6 @@ class StatefulProvider<T> extends StatefulWidget implements ProviderBase {
   })  : assert(valueBuilder != null),
         super(key: key);
 
-
   /// A function that creates the provided value.
   ///
   /// [valueBuilder] must not be null and is called only once for the life-cycle of [StatefulProvider].
@@ -228,7 +230,6 @@ class StatefulProvider<T> extends StatefulWidget implements ProviderBase {
 
   /// A customizable implementation for [InheritedWidget.updateShouldNotify]
   final bool Function(T previous, T current) updateShouldNotify;
-
 
   @override
   _StatefulProviderState<T> createState() => _StatefulProviderState<T>();
@@ -305,8 +306,7 @@ class HookProvider<T> extends HookWidget implements ProviderBase {
   ///   child: // ...
   /// )
   /// ```
-  const HookProvider(
-      {Key key, this.hook, this.child, this.updateShouldNotify})
+  const HookProvider({Key key, this.hook, this.child, this.updateShouldNotify})
       : super(key: key);
 
   /// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)

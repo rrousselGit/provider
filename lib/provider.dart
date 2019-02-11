@@ -1,4 +1,10 @@
 library provider;
 
 export 'src/provider.dart'
-    show Provider, StatefulProvider, HookProvider, Consumer, MultiProvider, ProviderBase;
+    show
+        Provider,
+        StatefulProvider,
+        HookProvider,
+        Consumer,
+        MultiProvider,
+        ProviderBase;
