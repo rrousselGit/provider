@@ -52,7 +52,8 @@ class Consumer3<A, B, C> extends StatelessWidget {
   /// Build a widget tree based on the value from a [Provider<T>].
   ///
   /// Must not be null.
-  final Widget Function(BuildContext context, A value, B value2, C value3) builder;
+  final Widget Function(BuildContext context, A value, B value2, C value3)
+      builder;
 
   /// Consumes a [Provider<T>]
   Consumer3({Key key, @required this.builder})
@@ -77,7 +78,8 @@ class Consumer4<A, B, C, D> extends StatelessWidget {
   /// Build a widget tree based on the value from a [Provider<T>].
   ///
   /// Must not be null.
-  final Widget Function(BuildContext context, A value, B value2, C value3, D value4) builder;
+  final Widget Function(
+      BuildContext context, A value, B value2, C value3, D value4) builder;
 
   /// Consumes a [Provider<T>]
   Consumer4({Key key, @required this.builder})
@@ -103,7 +105,9 @@ class Consumer5<A, B, C, D, E> extends StatelessWidget {
   /// Build a widget tree based on the value from a [Provider<T>].
   ///
   /// Must not be null.
-  final Widget Function(BuildContext context, A value, B value2, C value3, D value4, E value5) builder;
+  final Widget Function(
+          BuildContext context, A value, B value2, C value3, D value4, E value5)
+      builder;
 
   /// Consumes a [Provider<T>]
   Consumer5({Key key, @required this.builder})
@@ -130,7 +134,8 @@ class Consumer6<A, B, C, D, E, F> extends StatelessWidget {
   /// Build a widget tree based on the value from a [Provider<T>].
   ///
   /// Must not be null.
-  final Widget Function(BuildContext context, A value, B value2, C value3, D value4, E value5, F value6) builder;
+  final Widget Function(BuildContext context, A value, B value2, C value3,
+      D value4, E value5, F value6) builder;
 
   /// Consumes a [Provider<T>]
   Consumer6({Key key, @required this.builder})
