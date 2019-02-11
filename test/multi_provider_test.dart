@@ -4,16 +4,22 @@ import 'package:provider/provider.dart';
 
 void main() {
   group('MultiProvider', () {
+    test('cloneWithChild works', () {
+      final provider = MultiProvider(
+        providers: [],
+        child: Container(),
+        key: const ValueKey(42),
+      );
+
+      final newChild = Container();
+      final clone = provider.cloneWithChild(newChild);
+      expect(clone.child, newChild);
+      expect(clone.providers, provider.providers);
+      expect(clone.key, provider.key);
+    });
     test('throw if providers is null', () {
       expect(
         () => MultiProvider(providers: null, child: Container()),
-        throwsAssertionError,
-      );
-    });
-    test('throw if child is null', () {
-      expect(
-        // ignore: prefer_const_constructors
-        () => MultiProvider(child: null, providers: []),
         throwsAssertionError,
       );
     });
