@@ -1,6 +1,7 @@
 # 1.5.0
 
 - new: `MultiProvider`, a provider that makes a tree of provider more readable
+- new: `StreamProvider`, a stream that exposes to its descendants the current value of a `Stream`.
 
 # 1.4.0
 

@@ -6,5 +6,6 @@ export 'src/provider.dart'
         StatefulProvider,
         HookProvider,
         Consumer,
+        StreamProvider,
         MultiProvider,
         ProviderBase;

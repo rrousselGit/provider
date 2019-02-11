@@ -31,9 +31,7 @@ Provider<int>(
 )
 ```
 
-____
-
-
+---
 
 Note that you can freely use multiple providers with different type together:
 
@@ -54,13 +52,11 @@ var value = Provider.of<int>(context);
 var value2 = Provider.of<String>(context);
 ```
 
-
 ## Existing Providers:
 
 ### Provider
 
 A simple provider which takes the exposed value directly:
-
 
 ```dart
 Provider<int>(
@@ -118,7 +114,6 @@ HookProvider<MyBloc>(
 )
 ```
 
-
 ## MultiProvider
 
 A provider that exposes that merges multiple other providers into one.
@@ -156,3 +151,22 @@ MultiProvider(
 
 Technically, these two are identical. `MultiProvider` will convert the array into a tree.
 This changes only the appearance of the code.
+
+### StreamProvider
+
+A provider that exposes the current value of a `Stream` as an `AsyncSnapshot`.
+
+Changing [stream] will stop listening to the previous [stream] and listen the new one.
+
+Removing [StreamProvider] from the tree will also stop listening to [stream].
+To obtain the current value of type `T`, one must explicitly request `Provider.of<AsyncSnapshot<T>>`.
+It is also possible to use `StreamProvider.of<T>`.
+
+```dart
+Stream<int> foo;
+
+StreamProvider<int>(
+  stream: foo,
+  child: Container(),
+);
+```
