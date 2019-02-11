@@ -1,3 +1,7 @@
+# 1.5.0
+
+- new: `StreamProvider`, a stream that exposes to its descendants the current value of a `Stream`.
+
 # 1.4.0
 
 - Reintroduced `StatefulProvider` with a modified prototype. 
