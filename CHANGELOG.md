@@ -1,3 +1,7 @@
+# 1.5.0
+
+- new: `MultiProvider`, a provider that makes a tree of provider more readable
+
 # 1.4.0
 
 - Reintroduced `StatefulProvider` with a modified prototype. 

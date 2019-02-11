@@ -9,11 +9,16 @@ Type _typeOf<T>() => T;
 
 typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
 
+/// A base class for providers so tha [MultiProvider] can regroup them into a linear list
+abstract class ProviderBase implements Widget {
+  ProviderBase cloneWithChild(Widget child);
+}
+
 /// A generic implementation of an [InheritedWidget]
 ///
 /// It is possible to customize the behavior of [InheritedWidget.updateShouldNotify]
 /// by passing a callback with the desired behavior.
-class Provider<T> extends InheritedWidget {
+class Provider<T> extends InheritedWidget implements ProviderBase {
   /// The value exposed to other widgets.
   ///
   /// You can obtain this value this widget's descendants
@@ -32,7 +37,7 @@ class Provider<T> extends InheritedWidget {
   const Provider({
     Key key,
     @required this.value,
-    @required Widget child,
+    Widget child,
     UpdateShouldNotify<T> updateShouldNotify,
   })  : _updateShouldNotify = updateShouldNotify,
         super(key: key, child: child);
@@ -63,6 +68,78 @@ class Provider<T> extends InheritedWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<T>('value', value));
+  }
+
+  @override
+  Provider<T> cloneWithChild(Widget child) {
+    return Provider<T>(
+      key: key,
+      value: value,
+      child: child,
+      updateShouldNotify: _updateShouldNotify,
+    );
+  }
+}
+
+/// A provider that exposes that merges multiple other providers into one.
+///
+/// [MultiProvider] is used to improve the readability and reduce the boilerplate of
+/// having many nested providers.
+///
+/// As such, we're going from:
+///
+/// ```dart
+/// Provider<Foo>(
+///   value: foo,
+///   child: Provider<Bar>(
+///     value: bar,
+///     child: Provider<Baz>(
+///       value: baz,
+///       child: someWidget,
+///     )
+///   )
+/// )
+/// ```
+///
+/// To:
+///
+/// ```dart
+/// MultiProvider(
+///   providers: [
+///     Provider<Foo>(value: foo),
+///     Provider<Bar>(value: bar),
+///     Provider<Baz>(value: baz),
+///   ],
+///   child: someWidget,
+/// )
+/// ```
+///
+/// Technically, these two are identical. [MultiProvider] will convert the array into a tree.
+/// This changes only the appearance of the code.
+class MultiProvider extends StatelessWidget {
+  /// Build a tree of providers from a list of [ProviderBase].
+  const MultiProvider({Key key, @required this.providers, @required this.child})
+      : assert(child != null),
+        assert(providers != null),
+        super(key: key);
+
+  /// The list of providers that will be transformed into a tree.
+  ///
+  /// The tree is created from top to bottom. The first item because to topmost provider, while the last item it the direct parent of [child].
+  final List<ProviderBase> providers;
+
+  /// The child of the latest provider.
+  ///
+  /// If [providers] is empty, then [MultiProvider] just returns [child].
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    var tree = child;
+    for (final provider in providers.reversed) {
+      tree = provider.cloneWithChild(tree);
+    }
+    return tree;
   }
 }
 
@@ -119,7 +196,18 @@ class Consumer<T> extends StatelessWidget {
 ///   }
 /// }
 /// ```
-class StatefulProvider<T> extends StatefulWidget {
+class StatefulProvider<T> extends StatefulWidget implements ProviderBase {
+  /// Allows to specify parameters to [StatefulProvider]
+  StatefulProvider({
+    Key key,
+    @required this.valueBuilder,
+    this.child,
+    this.onDispose,
+    this.updateShouldNotify,
+  })  : assert(valueBuilder != null),
+        super(key: key);
+
+
   /// A function that creates the provided value.
   ///
   /// [valueBuilder] must not be null and is called only once for the life-cycle of [StatefulProvider].
@@ -141,18 +229,20 @@ class StatefulProvider<T> extends StatefulWidget {
   /// A customizable implementation for [InheritedWidget.updateShouldNotify]
   final bool Function(T previous, T current) updateShouldNotify;
 
-  /// Allows to specify parameters to [StatefulProvider]
-  StatefulProvider({
-    Key key,
-    @required this.valueBuilder,
-    @required this.child,
-    this.onDispose,
-    this.updateShouldNotify,
-  })  : assert(valueBuilder != null),
-        super(key: key);
 
   @override
   _StatefulProviderState<T> createState() => _StatefulProviderState<T>();
+
+  @override
+  StatefulProvider<T> cloneWithChild(Widget child) {
+    return StatefulProvider<T>(
+      child: child,
+      valueBuilder: valueBuilder,
+      key: key,
+      onDispose: onDispose,
+      updateShouldNotify: updateShouldNotify,
+    );
+  }
 }
 
 class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
@@ -198,7 +288,7 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
 ///   child: // ...
 /// )
 /// ```
-class HookProvider<T> extends HookWidget {
+class HookProvider<T> extends HookWidget implements ProviderBase {
   /// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
   ///
   /// This is especially useful to create complex providers, without having to make a `StatefulWidget`.
@@ -216,7 +306,7 @@ class HookProvider<T> extends HookWidget {
   /// )
   /// ```
   const HookProvider(
-      {Key key, this.hook, @required this.child, this.updateShouldNotify})
+      {Key key, this.hook, this.child, this.updateShouldNotify})
       : super(key: key);
 
   /// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
@@ -279,4 +369,14 @@ class HookProvider<T> extends HookWidget {
         child: child,
         updateShouldNotify: updateShouldNotify,
       );
+
+  @override
+  HookProvider<T> cloneWithChild(Widget child) {
+    return HookProvider<T>(
+      key: key,
+      child: child,
+      hook: hook,
+      updateShouldNotify: updateShouldNotify,
+    );
+  }
 }

@@ -71,16 +71,16 @@ Provider<int>(
 
 ### StatefulProvider
 
-A [Provider] that can also create and dispose an object.
+A provider that can also create and dispose an object.
 
-It is usually used to avoid making a [StatefulWidget] for something trivial, such as instanciating a BLoC.
+It is usually used to avoid making a `StatefulWidget` for something trivial, such as instanciating a BLoC.
 
-[StatefulBuilder] is the equivalent of a [State.initState] combined with [State.dispose].
-As such, [valueBuilder] is called only once and is unable to use [InheritedWidget]; which makes it impossible to update the created value.
+`StatefulBuilder` is the equivalent of a `State.initState` combined with `State.dispose`.
+As such, `valueBuilder` is called only once and is unable to use `InheritedWidget`; which makes it impossible to update the created value.
 
-If this is too limiting, consider instead [HookProvider], which offer a much more advanced control over the created value.
+If this is too limiting, consider instead `HookProvider`, which offer a much more advanced control over the created value.
 
-The following example instanciate a `Model` once, and dispose it when [StatefulProvider] is removed from the tree.
+The following example instanciate a `Model` once, and dispose it when `StatefulProvider` is removed from the tree.
 
 ```dart
 class Model {
@@ -117,3 +117,42 @@ HookProvider<MyBloc>(
   child: // ...
 )
 ```
+
+
+## MultiProvider
+
+A provider that exposes that merges multiple other providers into one.
+
+`MultiProvider` is used to improve the readability and reduce the boilerplate of
+having many nested providers.
+
+As such, we're going from:
+
+```dart
+Provider<Foo>(
+  value: foo,
+  child: Provider<Bar>(
+    value: bar,
+    child: Provider<Baz>(
+      value: baz,
+      child: someWidget,
+    )
+  )
+)
+```
+
+To:
+
+```dart
+MultiProvider(
+  providers: [
+    Provider<Foo>(value: foo),
+    Provider<Bar>(value: bar),
+    Provider<Baz>(value: baz),
+  ],
+  child: someWidget,
+)
+```
+
+Technically, these two are identical. `MultiProvider` will convert the array into a tree.
+This changes only the appearance of the code.
