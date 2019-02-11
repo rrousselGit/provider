@@ -13,6 +13,21 @@ class Dispose extends Mock {
 }
 
 void main() {
+  test('cloneWithChild works', () {
+    final provider = StatefulProvider(
+      valueBuilder: (_) => 42,
+      child: Container(),
+      key: const ValueKey(42),
+      updateShouldNotify: (int _, int __) => true,
+    );
+
+    final newChild = Container();
+    final clone = provider.cloneWithChild(newChild);
+    expect(clone.child, newChild);
+    expect(clone.valueBuilder, provider.valueBuilder);
+    expect(clone.key, provider.key);
+    expect(provider.updateShouldNotify, clone.updateShouldNotify);
+  });
   test('asserts', () {
     expect(
       () => StatefulProvider<dynamic>(valueBuilder: null, child: null),

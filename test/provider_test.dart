@@ -2,9 +2,26 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/src/provider.dart';
 
 void main() {
   group('Provider', () {
+    test('cloneWithChild works', () {
+      final provider = Provider(
+        value: 42,
+        child: Container(),
+        key: const ValueKey(42),
+        updateShouldNotify: (int _, int __) => true,
+      );
+
+      final newChild = Container();
+      final clone = provider.cloneWithChild(newChild);
+      expect(clone.child, newChild);
+      expect(clone.value, provider.value);
+      expect(clone.key, provider.key);
+      expect(debugGetProviderUpdateShouldNotify(provider),
+          debugGetProviderUpdateShouldNotify(clone));
+    });
     testWidgets('diagnosticable', (tester) async {
       await tester.pumpWidget(Provider<int>(
         child: Container(),

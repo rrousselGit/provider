@@ -5,9 +5,24 @@ import 'package:provider/provider.dart';
 
 void main() {
   group('HookProvider', () {
-    ValueNotifier<int> state;
+    test('cloneWithChild works', () {
+      final provider = HookProvider(
+        hook: () => 42,
+        child: Container(),
+        key: const ValueKey(42),
+        updateShouldNotify: (int _, int __) => true,
+      );
+
+      final newChild = Container();
+      final clone = provider.cloneWithChild(newChild);
+      expect(clone.child, newChild);
+      expect(clone.hook, provider.hook);
+      expect(clone.key, provider.key);
+      expect(provider.updateShouldNotify, clone.updateShouldNotify);
+    });
 
     testWidgets('pass down value', (tester) async {
+      ValueNotifier<int> state;
       await tester.pumpWidget(HookProvider(
         child: Container(),
         hook: () {
