@@ -183,7 +183,8 @@ void main() {
         child: Container(),
       ));
       final listener = verify(notifier.addListener(captureAny)).captured.first
-          as VoidCallback;      clearInteractions(notifier);
+          as VoidCallback;
+      clearInteractions(notifier);
 
       await tester.pumpWidget(ChangeNotifierProvider.stateful(
         builder: () {
