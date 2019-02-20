@@ -4,6 +4,16 @@ import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 
+class _ValueBuilderMock<T> extends Mock {
+  T call();
+}
+
+class _MockDisposer<T> extends Mock {
+  void call(T value);
+}
+
+class MockNotifier extends Mock implements ChangeNotifier {}
+
 class _BuilderMock extends Mock {
   Widget call(BuildContext context);
 }
@@ -72,14 +82,96 @@ void main() {
         );
       });
     });
-    testWidgets('builder called once', (tester) async {
-      // TODO:
+    testWidgets('stateful builder called once', (tester) async {
+      final notifier = MockNotifier();
+      final builder = _ValueBuilderMock<ChangeNotifier>();
+      when(builder()).thenReturn(notifier);
+
+      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+        builder: builder,
+        child: Container(),
+      ));
+
+      verify(builder()).called(1);
+      verifyNoMoreInteractions(builder);
+      clearInteractions(notifier);
+
+      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+        builder: builder,
+        child: Container(),
+      ));
+
+      verifyNoMoreInteractions(builder);
+      verifyNoMoreInteractions(notifier);
     });
+    // TODO: disposer can be live-changed
     testWidgets('dispose called on unmount', (tester) async {
-      // TODO:
+      final notifier = MockNotifier();
+      final builder = _ValueBuilderMock<ChangeNotifier>();
+      final dispose = _MockDisposer<ChangeNotifier>();
+      when(builder()).thenReturn(notifier);
+
+      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+        builder: builder,
+        disposer: dispose,
+        child: Container(),
+      ));
+
+      verify(builder()).called(1);
+      verifyNoMoreInteractions(builder);
+      final listener = verify(notifier.addListener(captureAny)).captured.first
+          as VoidCallback;
+      clearInteractions(notifier);
+
+      await tester.pumpWidget(Container());
+
+      verifyInOrder([
+        notifier.removeListener(listener),
+        dispose(notifier),
+        notifier.dispose(),
+      ]);
+      verifyNoMoreInteractions(dispose);
+      verifyNoMoreInteractions(builder);
+      verifyNoMoreInteractions(notifier);
+    });
+    testWidgets('dispose can be live changed', (tester) async {
+      final notifier = MockNotifier();
+      final dispose = _MockDisposer<ChangeNotifier>();
+      final dispose2 = _MockDisposer<ChangeNotifier>();
+
+      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+        builder: () => notifier,
+        disposer: dispose,
+        child: Container(),
+      ));
+      final listener = verify(notifier.addListener(captureAny)).captured.first
+          as VoidCallback;
+      clearInteractions(notifier);
+      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+        builder: () => notifier,
+        disposer: dispose2,
+        child: Container(),
+      ));
+
+      await tester.pumpWidget(Container());
+
+      verifyNoMoreInteractions(dispose);
+      verifyInOrder([
+        notifier.removeListener(listener),
+        dispose2(notifier),
+        notifier.dispose(),
+      ]);
+      verifyNoMoreInteractions(dispose2);
+      verifyNoMoreInteractions(notifier);
     });
     testWidgets('dispose can be null', (tester) async {
-      // TODO:
+      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+        builder: () => ChangeNotifier(),
+        disposer: null,
+        child: Container(),
+      ));
+
+      await tester.pumpWidget(Container());
     });
     testWidgets(
         'Changing from stateful to default constructor dispose correctly notifier from stateful',

@@ -506,14 +506,18 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends HookWidget
       return () {
         notifier.removeListener(listener);
       };
-    }, <dynamic>[child, notifier]);
+    }, <dynamic>[notifier]);
+
+    final disposer = useState(_disposer);
+    useValueChanged<Disposer<T>, void>(
+        _disposer, (_, __) => disposer.value = _disposer);
 
     useEffect(
       () {
         if (_notifier == null) {
           return () {
-            if (_disposer != null) {
-              _disposer(notifier);
+            if (disposer.value != null) {
+              disposer.value(notifier);
             }
             notifier.dispose();
           };
