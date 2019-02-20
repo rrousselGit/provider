@@ -597,26 +597,29 @@ class ValueListenableProvider<T> extends HookProvider<T> {
 /// The error that will be thrown if the Provider cannot be found in the
 /// Widget tree.
 class ProviderNotFoundError extends Error {
-  final String _type;
-  final String _currentWidget;
+  /// The type of the value being retrieved
+  final String valueType;
+
+  /// The type of the Widget requesting the value
+  final String widgetType;
 
   /// Create a ProviderNotFound error with the type represented as a String.
   ProviderNotFoundError(
-    this._type,
-    this._currentWidget,
+    this.valueType,
+    this.widgetType,
   );
 
   @override
   String toString() {
     return '''
-Error: Could not find the correct Provider<$_type> above this $_currentWidget Widget 
+Error: Could not find the correct Provider<$valueType> above this $widgetType Widget 
 
 To fix, please:
 
-  * Ensure the Provider<$_type> is an ancestor to this $_currentWidget Widget 
-  * Provide types to Provider<$_type>
-  * Provide types to Consumer<$_type>
-  * Provide types to Provider.of<$_type>()
+  * Ensure the Provider<$valueType> is an ancestor to this $widgetType Widget 
+  * Provide types to Provider<$valueType>
+  * Provide types to Consumer<$valueType>
+  * Provide types to Provider.of<$valueType>()
   * Always use package imports. Ex: `import 'package:my_app/my_code.dart';
   * Ensure the correct `context` is being used.
 
@@ -624,4 +627,15 @@ If none of these solutions work, please file a bug at:
 https://github.com/rrousselGit/provider/issues
       ''';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ProviderNotFoundError &&
+          runtimeType == other.runtimeType &&
+          valueType == other.valueType &&
+          widgetType == other.widgetType;
+
+  @override
+  int get hashCode => valueType.hashCode ^ widgetType.hashCode;
 }

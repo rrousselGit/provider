@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart' hide TypeMatcher;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
@@ -45,7 +45,6 @@ void main() {
       final p1 = Provider(key: k1, value: 42);
       final p2 = Provider(key: k2, value: 'foo');
       final p3 = Provider(key: k3, value: 44.0);
-      final throwsNotFound = throwsA(isInstanceOf<ProviderNotFoundError>());
 
       final keyChild = GlobalKey();
       await tester.pumpWidget(MultiProvider(
@@ -57,13 +56,22 @@ void main() {
 
       // p1 cannot access to /p2/p3
       expect(Provider.of<int>(k1.currentContext), 42);
-      expect(() => Provider.of<String>(k1.currentContext), throwsNotFound);
-      expect(() => Provider.of<double>(k1.currentContext), throwsNotFound);
+      expect(
+        () => Provider.of<String>(k1.currentContext),
+        throwsA(ProviderNotFoundError('String', 'Provider<int>')),
+      );
+      expect(
+        () => Provider.of<double>(k1.currentContext),
+        throwsA(ProviderNotFoundError('double', 'Provider<int>')),
+      );
 
       // p2 can access only p1
       expect(Provider.of<int>(k2.currentContext), 42);
       expect(Provider.of<String>(k2.currentContext), 'foo');
-      expect(() => Provider.of<double>(k2.currentContext), throwsNotFound);
+      expect(
+        () => Provider.of<double>(k2.currentContext),
+        throwsA(ProviderNotFoundError('double', 'Provider<String>')),
+      );
 
       // p3 can access both p1 and p2
       expect(Provider.of<int>(k3.currentContext), 42);

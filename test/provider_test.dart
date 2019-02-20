@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart' hide TypeMatcher;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
@@ -110,11 +110,12 @@ void main() {
     });
 
     testWidgets('throws an error if no provider found', (tester) async {
-      await tester.pumpWidget(
-        const Builder(builder: Provider.of),
-      );
+      await tester.pumpWidget(const Builder(builder: Provider.of));
 
-      expect(tester.takeException(), isInstanceOf<ProviderNotFoundError>());
+      expect(
+        tester.takeException(),
+        ProviderNotFoundError('Widget', 'Builder'),
+      );
     });
 
     testWidgets('update should notify', (tester) async {
