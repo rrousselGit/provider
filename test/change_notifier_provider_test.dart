@@ -173,6 +173,7 @@ void main() {
       await tester.pumpWidget(changeNotifierProvider);
 
       clearInteractions(builder);
+      // ignore: invalid_use_of_protected_member
       notifier.notifyListeners();
       await Future<void>.value();
       await tester.pump();
