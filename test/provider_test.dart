@@ -41,7 +41,6 @@ void main() {
       var buildCount = 0;
       int value;
       double second;
-      String missing;
 
       // We voluntarily reuse the builder instance so that later call to pumpWidget
       // don't call builder again unless subscribed to an inheritedWidget
@@ -49,7 +48,6 @@ void main() {
         builder: (context) {
           buildCount++;
           value = Provider.of(context);
-          missing = Provider.of(context);
           second = Provider.of(context, listen: false);
           return Container();
         },
@@ -67,7 +65,6 @@ void main() {
 
       expect(value, equals(42));
       expect(second, equals(24.0));
-      expect(missing, isNull);
       expect(buildCount, equals(1));
 
       // nothing changed
@@ -95,7 +92,6 @@ void main() {
       );
       expect(value, equals(43));
       expect(second, equals(24.0));
-      expect(missing, isNull);
       // got rebuilt
       expect(buildCount, equals(2));
 
@@ -111,6 +107,14 @@ void main() {
       );
       // didn't get rebuilt
       expect(buildCount, equals(2));
+    });
+
+    testWidgets('throws an error if no provider found', (tester) async {
+      await tester.pumpWidget(
+        const Builder(builder: Provider.of),
+      );
+
+      expect(tester.takeException(), isInstanceOf<ProviderNotFoundError>());
     });
 
     testWidgets('update should notify', (tester) async {
