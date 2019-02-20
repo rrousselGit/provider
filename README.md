@@ -170,3 +170,19 @@ StreamProvider<int>(
   child: Container(),
 );
 ```
+
+### ValueListenableProvider
+
+Expose the current value of a [ValueListenable].
+
+Changing [valueListenable] will stop listening to the previous [valueListenable] and listen the new one.
+Removing [ValueListenableProvider] from the tree will also stop listening to [valueListenable].
+
+```dart
+ValueListenable<int> foo;
+
+ValueListenableProvider<int>(
+  valueListenable: foo,
+  child: Container(),
+);
+```

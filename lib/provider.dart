@@ -9,4 +9,6 @@ export 'src/provider.dart'
         HookProvider,
         StreamProvider,
         MultiProvider,
+        ValueListenableProvider,
+        ChangeNotifierProvider,
         ProviderBase;

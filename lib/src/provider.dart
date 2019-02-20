@@ -415,3 +415,168 @@ class StreamProvider<T> extends HookProvider<AsyncSnapshot<T>> {
   /// It is fine to change the instance of [stream].
   final Stream<T> stream;
 }
+
+/// An handler for the disposal of an object
+typedef void Disposer<T>(T value);
+
+/// A function that creates an object
+typedef T ValueBuilder<T>();
+
+/// Expose a [ChangeNotifier] subclass and ask its depends to rebuild whenever [ChangeNotifier.notifyListeners] is called
+///
+/// Listeners to [ChangeNotifier] only rebuilds when [ChangeNotifier.notifyListeners] is called, even if [ChangeNotifierProvider] is rebuilt.
+///
+/// ```dart
+/// class MyModel extends ChangeNotifier {
+///   int _value;
+///
+///   int get value => _value;
+///
+///   set value(int value) {
+///     _value = value;
+///     notifyListeners();
+///   }
+/// }
+///
+///
+/// // ...
+///
+/// ChangeNotifierProfider<MyModel>.stateful(
+///   builder: () => MyModel(),
+///   child: Container(),
+/// )
+/// ```
+class ChangeNotifierProvider<T extends ChangeNotifier> extends HookWidget
+    implements ProviderBase {
+  /// Allow configuring [Key]
+  ///
+  /// [notifier] must not be `null`
+  const ChangeNotifierProvider({Key key, @required T notifier, this.child})
+      : assert(notifier != null),
+        _notifier = notifier,
+        _builder = null,
+        _disposer = null,
+        super(key: key);
+
+  /// Allow configuring [Key]
+  ///
+  /// [disposer] will be called when [ChangeNotifierProvider] is removed from the tree.
+  /// Or when switching from [ChangeNotifierProvider.stateful] to [ChangeNotifierProvider] constructor.
+  ///
+  /// [builder] must not be `null`
+  const ChangeNotifierProvider.stateful({
+    Key key,
+    @required ValueBuilder<T> builder,
+    Disposer<T> disposer,
+    this.child,
+  })  : assert(builder != null),
+        _builder = builder,
+        _notifier = null,
+        _disposer = disposer,
+        super(key: key);
+
+  ChangeNotifierProvider._(
+      Key key, this.child, this._builder, this._disposer, this._notifier)
+      : super(key: key);
+
+  static bool _alwaysUpdate(
+          ChangeNotifier previousValue, ChangeNotifier newValue) =>
+      true;
+
+  /// The widget below this widget in the tree.
+  ///
+  /// {@macro flutter.widgets.child}
+  final Widget child;
+
+  final T _notifier;
+  final ValueBuilder<T> _builder;
+  final Disposer<T> _disposer;
+
+  @override
+  Widget build(BuildContext context) {
+    final notifier = useMemoized<T>(
+      () => _notifier ?? _builder(),
+      <dynamic>[_notifier],
+    );
+
+    useEffect(
+      () {
+        if (_notifier == null) {
+          return () {
+            _disposer(notifier);
+            notifier.dispose();
+          };
+        }
+      },
+      <dynamic>[notifier],
+    );
+
+    final buildCount = useState<int>(0);
+
+    useEffect(() {
+      final listener = () => buildCount.value++;
+      notifier.addListener(listener);
+      return () {
+        notifier.removeListener(listener);
+      };
+    }, <dynamic>[child, notifier]);
+
+    return useMemoized(
+      () {
+        return Provider<T>(
+          child: child,
+          value: notifier,
+          updateShouldNotify: _alwaysUpdate,
+        );
+      },
+      <dynamic>[buildCount.value, child, notifier],
+    );
+  }
+
+  @override
+  ChangeNotifierProvider<T> cloneWithChild(Widget child) {
+    return ChangeNotifierProvider<T>._(
+      key,
+      child,
+      _builder,
+      _disposer,
+      _notifier,
+    );
+  }
+}
+
+@visibleForTesting
+// ignore: public_member_api_docs
+var useValueListenableSeam = useValueListenable;
+
+/// Expose the current value of a [ValueListenable].
+///
+/// Changing [valueListenable] will stop listening to the previous [valueListenable] and listen the new one.
+/// Removing [ValueListenableProvider] from the tree will also stop listening to [valueListenable].
+///
+///
+/// ```dart
+/// ValueListenable<int> foo;
+///
+/// ValueListenableProvider<int>(
+///   valueListenable: foo,
+///   child: Container(),
+/// );
+class ValueListenableProvider<T> extends HookProvider<T> {
+  /// Allow configuring [Key]
+  ValueListenableProvider({
+    @required this.valueListenable,
+    Key key,
+    Widget child,
+  })  : assert(valueListenable != null),
+        super(
+          key: key,
+          hook: () => useValueListenableSeam(valueListenable),
+          child: child,
+        );
+
+  /// The currently listened [Stream].
+  ///
+  /// It is fine to change the instance of [valueListenable].
+  final ValueListenable<T> valueListenable;
+}

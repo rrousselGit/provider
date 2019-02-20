@@ -1,3 +1,8 @@
+# 1.6.0
+
+- new: `ChangeNotifierProvider`, similar to scoped_model that exposes `ChangeNotifer` subclass and rebuilds dependents only when `notifyListeners` is called.
+- new: `ValueListenableProvider`, a provider that rebuilds whenever the value passed to a `ValueNotifier` change.
+
 # 1.5.0
 
 - new: Add `Consumer` with up to 6 parameters.
