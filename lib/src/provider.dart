@@ -499,6 +499,15 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends HookWidget
       <dynamic>[_notifier],
     );
 
+    final buildCount = useState<int>(0);
+    useEffect(() {
+      final listener = () => buildCount.value++;
+      notifier.addListener(listener);
+      return () {
+        notifier.removeListener(listener);
+      };
+    }, <dynamic>[child, notifier]);
+
     useEffect(
       () {
         if (_notifier == null) {
@@ -513,15 +522,6 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends HookWidget
       <dynamic>[notifier],
     );
 
-    final buildCount = useState<int>(0);
-
-    useEffect(() {
-      final listener = () => buildCount.value++;
-      notifier.addListener(listener);
-      return () {
-        notifier.removeListener(listener);
-      };
-    }, <dynamic>[child, notifier]);
 
     return useMemoized(
       () {
