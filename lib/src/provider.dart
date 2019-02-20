@@ -522,7 +522,6 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends HookWidget
       <dynamic>[notifier],
     );
 
-
     return useMemoized(
       () {
         return Provider<T>(
