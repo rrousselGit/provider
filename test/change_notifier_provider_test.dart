@@ -78,6 +78,9 @@ void main() {
     testWidgets('dispose called on unmount', (tester) async {
       // TODO:
     });
+    testWidgets('dispose can be null', (tester) async {
+      // TODO:
+    });
     testWidgets(
         'Changing from stateful to default constructor dispose correctly notifier from stateful',
         (tester) async {

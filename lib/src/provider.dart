@@ -503,7 +503,9 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends HookWidget
       () {
         if (_notifier == null) {
           return () {
-            _disposer(notifier);
+            if (_disposer != null) {
+              _disposer(notifier);
+            }
             notifier.dispose();
           };
         }
