@@ -60,7 +60,10 @@ class Provider<T> extends InheritedWidget implements ProviderBase {
             as Provider<T>;
 
     if (provider == null) {
-      throw ProviderNotFoundError();
+      throw ProviderNotFoundError(
+        T.toString(),
+        context.widget.runtimeType.toString(),
+      );
     }
 
     return provider.value;
@@ -594,18 +597,29 @@ class ValueListenableProvider<T> extends HookProvider<T> {
 /// The error that will be thrown if the Provider cannot be found in the
 /// Widget tree.
 class ProviderNotFoundError extends Error {
+  final String _type;
+  final String _currentWidget;
+
+  /// Create a ProviderNotFound error with the type represented as a String.
+  ProviderNotFoundError(
+    this._type,
+    this._currentWidget,
+  );
+
   @override
   String toString() {
-    return '''Error: Could not find the correct Provider.
-    
+    return '''
+Error: Could not find the correct Provider<$_type> above this $_currentWidget Widget 
+
 To fix, please:
-          
-  * Provide types to Provider<MyClass>
-  * Provide types to Consumer<MyClass> 
-  * Provide types to Provider.of<MyClass>() 
+
+  * Ensure the Provider<$_type> is an ancestor to this $_currentWidget Widget 
+  * Provide types to Provider<$_type>
+  * Provide types to Consumer<$_type>
+  * Provide types to Provider.of<$_type>()
   * Always use package imports. Ex: `import 'package:my_app/my_code.dart';
   * Ensure the correct `context` is being used.
-  
+
 If none of these solutions work, please file a bug at:
 https://github.com/rrousselGit/provider/issues
       ''';
