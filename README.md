@@ -116,7 +116,7 @@ HookProvider<MyBloc>(
 
 ## MultiProvider
 
-A provider that exposes that merges multiple other providers into one.
+A provider that merges multiple other providers into one.
 
 `MultiProvider` is used to improve the readability and reduce the boilerplate of
 having many nested providers.
