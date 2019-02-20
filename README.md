@@ -186,3 +186,30 @@ ValueListenableProvider<int>(
   child: Container(),
 );
 ```
+
+### ChangeNotifierProvider
+
+Expose a [ChangeNotifier] subclass and ask its depends to rebuild whenever [ChangeNotifier.notifyListeners] is called
+
+Listeners to [ChangeNotifier] only rebuilds when [ChangeNotifier.notifyListeners] is called, even if [ChangeNotifierProvider] is rebuilt.
+
+```dart
+class MyModel extends ChangeNotifier {
+  int _value;
+
+  int get value => _value;
+
+  set value(int value) {
+    _value = value;
+    notifyListeners();
+  }
+}
+
+
+// ...
+
+ChangeNotifierProfider<MyModel>.stateful(
+  builder: () => MyModel(),
+  child: Container(),
+)
+```
