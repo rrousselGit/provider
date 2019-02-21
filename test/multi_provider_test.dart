@@ -1,6 +1,15 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart' hide TypeMatcher;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:matcher/matcher.dart';
 import 'package:provider/provider.dart';
+
+Type _typeOf<T>() => T;
+
+Matcher throwsProviderNotFound({Type widgetType, Type valueType}) {
+  return throwsA(const TypeMatcher<ProviderNotFoundError>()
+      .having((err) => err.valueType, 'valueType', valueType)
+      .having((err) => err.widgetType, 'widgetType', widgetType));
+}
 
 void main() {
   group('MultiProvider', () {
@@ -37,16 +46,7 @@ void main() {
       expect(find.text('Foo'), findsOneWidget);
     });
 
-    testWidgets('MultiProvider with empty providers returns child',
-        (tester) async {
-      await tester.pumpWidget(const MultiProvider(
-        providers: [],
-        child: Text('Foo', textDirection: TextDirection.ltr),
-      ));
-
-      expect(find.text('Foo'), findsOneWidget);
-    });
-    testWidgets('MultiProvider with empty providers returns child',
+    testWidgets('MultiProvider children can only access parent providers',
         (tester) async {
       final k1 = GlobalKey();
       final k2 = GlobalKey();
@@ -65,13 +65,25 @@ void main() {
 
       // p1 cannot access to /p2/p3
       expect(Provider.of<int>(k1.currentContext), 42);
-      expect(Provider.of<String>(k1.currentContext), isNull);
-      expect(Provider.of<double>(k1.currentContext), isNull);
+      expect(
+        () => Provider.of<String>(k1.currentContext),
+        throwsProviderNotFound(
+            valueType: String, widgetType: _typeOf<Provider<int>>()),
+      );
+      expect(
+        () => Provider.of<double>(k1.currentContext),
+        throwsProviderNotFound(
+            valueType: double, widgetType: _typeOf<Provider<int>>()),
+      );
 
       // p2 can access only p1
       expect(Provider.of<int>(k2.currentContext), 42);
       expect(Provider.of<String>(k2.currentContext), 'foo');
-      expect(Provider.of<double>(k2.currentContext), isNull);
+      expect(
+        () => Provider.of<double>(k2.currentContext),
+        throwsProviderNotFound(
+            valueType: double, widgetType: _typeOf<Provider<String>>()),
+      );
 
       // p3 can access both p1 and p2
       expect(Provider.of<int>(k3.currentContext), 42);

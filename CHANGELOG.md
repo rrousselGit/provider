@@ -1,3 +1,7 @@
+# 1.6.1
+
+- `Provider.of<T>` now crashes with a `ProviderNotFoundException` when no `Provider<T>` are found in the ancestors of the context used.
+
 # 1.6.0
 
 - new: `ChangeNotifierProvider`, similar to scoped_model that exposes `ChangeNotifer` subclass and rebuilds dependents only when `notifyListeners` is called.
