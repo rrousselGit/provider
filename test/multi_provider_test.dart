@@ -1,6 +1,15 @@
 import 'package:flutter/widgets.dart' hide TypeMatcher;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:matcher/matcher.dart';
 import 'package:provider/provider.dart';
+
+Type _typeOf<T>() => T;
+
+Matcher throwsProviderNotFound({Type widgetType, Type valueType}) {
+  return throwsA(const TypeMatcher<ProviderNotFoundError>()
+      .having((err) => err.valueType, 'valueType', valueType)
+      .having((err) => err.widgetType, 'widgetType', widgetType));
+}
 
 void main() {
   group('MultiProvider', () {
@@ -58,11 +67,13 @@ void main() {
       expect(Provider.of<int>(k1.currentContext), 42);
       expect(
         () => Provider.of<String>(k1.currentContext),
-        throwsA(ProviderNotFoundError('String', 'Provider<int>')),
+        throwsProviderNotFound(
+            valueType: String, widgetType: _typeOf<Provider<int>>()),
       );
       expect(
         () => Provider.of<double>(k1.currentContext),
-        throwsA(ProviderNotFoundError('double', 'Provider<int>')),
+        throwsProviderNotFound(
+            valueType: double, widgetType: _typeOf<Provider<int>>()),
       );
 
       // p2 can access only p1
@@ -70,7 +81,8 @@ void main() {
       expect(Provider.of<String>(k2.currentContext), 'foo');
       expect(
         () => Provider.of<double>(k2.currentContext),
-        throwsA(ProviderNotFoundError('double', 'Provider<String>')),
+        throwsProviderNotFound(
+            valueType: double, widgetType: _typeOf<Provider<String>>()),
       );
 
       // p3 can access both p1 and p2

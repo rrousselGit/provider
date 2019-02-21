@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart' hide TypeMatcher;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
+import 'package:test_api/test_api.dart' show TypeMatcher;
 
 void main() {
   group('Provider', () {
@@ -110,11 +111,31 @@ void main() {
     });
 
     testWidgets('throws an error if no provider found', (tester) async {
-      await tester.pumpWidget(const Builder(builder: Provider.of));
+      await tester.pumpWidget(Builder(builder: (context) {
+        Provider.of<String>(context);
+        return Container();
+      }));
 
       expect(
         tester.takeException(),
-        ProviderNotFoundError('Widget', 'Builder'),
+        const TypeMatcher<ProviderNotFoundError>()
+            .having((err) => err.valueType, 'valueType', String)
+            .having((err) => err.widgetType, 'widgetType', Builder)
+            .having((err) => err.toString(), 'toString()', '''
+Error: Could not find the correct Provider<String> above this Builder Widget 
+
+To fix, please:
+
+  * Ensure the Provider<String> is an ancestor to this Builder Widget 
+  * Provide types to Provider<String>
+  * Provide types to Consumer<String>
+  * Provide types to Provider.of<String>()
+  * Always use package imports. Ex: `import 'package:my_app/my_code.dart';
+  * Ensure the correct `context` is being used.
+
+If none of these solutions work, please file a bug at:
+https://github.com/rrousselGit/provider/issues
+'''),
       );
     });
 

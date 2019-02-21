@@ -60,10 +60,7 @@ class Provider<T> extends InheritedWidget implements ProviderBase {
             as Provider<T>;
 
     if (provider == null) {
-      throw ProviderNotFoundError(
-        T.toString(),
-        context.widget.runtimeType.toString(),
-      );
+      throw ProviderNotFoundError(T, context.widget.runtimeType);
     }
 
     return provider.value;
@@ -598,10 +595,10 @@ class ValueListenableProvider<T> extends HookProvider<T> {
 /// Widget tree.
 class ProviderNotFoundError extends Error {
   /// The type of the value being retrieved
-  final String valueType;
+  final Type valueType;
 
   /// The type of the Widget requesting the value
-  final String widgetType;
+  final Type widgetType;
 
   /// Create a ProviderNotFound error with the type represented as a String.
   ProviderNotFoundError(
@@ -625,17 +622,6 @@ To fix, please:
 
 If none of these solutions work, please file a bug at:
 https://github.com/rrousselGit/provider/issues
-      ''';
+''';
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ProviderNotFoundError &&
-          runtimeType == other.runtimeType &&
-          valueType == other.valueType &&
-          widgetType == other.widgetType;
-
-  @override
-  int get hashCode => valueType.hashCode ^ widgetType.hashCode;
 }
