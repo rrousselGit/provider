@@ -1,3 +1,5 @@
+# 2.0.0
+
 # 1.6.1
 
 - `Provider.of<T>` now crashes with a `ProviderNotFoundException` when no `Provider<T>` are found in the ancestors of the context used.
@@ -15,9 +17,9 @@
 
 # 1.4.0
 
-- Reintroduced `StatefulProvider` with a modified prototype. 
-The second argument of `valueBuilder` and `didChangeDependencies` have been removed.
-And `valueBuilder` is now called only once for the whole life-cycle of `StatefulProvider`.
+- Reintroduced `StatefulProvider` with a modified prototype.
+  The second argument of `valueBuilder` and `didChangeDependencies` have been removed.
+  And `valueBuilder` is now called only once for the whole life-cycle of `StatefulProvider`.
 
 # 1.3.0
 
@@ -38,4 +40,3 @@ And `valueBuilder` is now called only once for the whole life-cycle of `Stateful
 
 - `onDispose` has been added to `StatefulProvider`
 - `BuildContext` is now passed to `valueBuilder` callback
-
