@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
 /// Necessary to obtain generic [Type]
 /// see https://stackoverflow.com/questions/52891537/how-to-get-generic-type
@@ -268,118 +267,6 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
   }
 }
 
-/// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
-///
-/// This is especially useful to create complex providers, without having to make a `StatefulWidget`.
-///
-/// The following example uses BLoC pattern to create a BLoC, provide its value, and dispose it when the provider is removed from the tree.
-///
-/// ```dart
-/// HookProvider<MyBloc>(
-///   hook: () {
-///     final bloc = useMemoized(() => MyBloc());
-///     useEffect(() => bloc.dispose, [bloc]);
-///     return bloc;
-///   },
-///   child: // ...
-/// )
-/// ```
-class HookProvider<T> extends HookWidget implements ProviderBase {
-  /// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
-  ///
-  /// This is especially useful to create complex providers, without having to make a `StatefulWidget`.
-  ///
-  /// The following example uses BLoC pattern to create a BLoC, provide its value, and dispose it when the provider is removed from the tree.
-  ///
-  /// ```dart
-  /// HookProvider<MyBloc>(
-  ///   hook: () {
-  ///     final bloc = useMemoized(() => MyBloc());
-  ///     useEffect(() => bloc.dispose, [bloc]);
-  ///     return bloc;
-  ///   },
-  ///   child: // ...
-  /// )
-  /// ```
-  const HookProvider({Key key, this.hook, this.child, this.updateShouldNotify})
-      : super(key: key);
-
-  /// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
-  ///
-  /// This is especially useful to create complex providers, without having to make a `StatefulWidget`.
-  ///
-  /// The following example uses BLoC pattern to create a BLoC, provide its value, and dispose it when the provider is removed from the tree.
-  ///
-  /// ```dart
-  /// HookProvider<MyBloc>(
-  ///   hook: () {
-  ///     final bloc = useMemoized(() => MyBloc());
-  ///     useEffect(() => bloc.dispose, [bloc]);
-  ///     return bloc;
-  ///   },
-  ///   child: // ...
-  /// )
-  /// ```
-  final T Function() hook;
-
-  /// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
-  ///
-  /// This is especially useful to create complex providers, without having to make a `StatefulWidget`.
-  ///
-  /// The following example uses BLoC pattern to create a BLoC, provide its value, and dispose it when the provider is removed from the tree.
-  ///
-  /// ```dart
-  /// HookProvider<MyBloc>(
-  ///   hook: () {
-  ///     final bloc = useMemoized(() => MyBloc());
-  ///     useEffect(() => bloc.dispose, [bloc]);
-  ///     return bloc;
-  ///   },
-  ///   child: // ...
-  /// )
-  /// ```
-  final Widget child;
-
-  /// A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
-  ///
-  /// This is especially useful to create complex providers, without having to make a `StatefulWidget`.
-  ///
-  /// The following example uses BLoC pattern to create a BLoC, provide its value, and dispose it when the provider is removed from the tree.
-  ///
-  /// ```dart
-  /// HookProvider<MyBloc>(
-  ///   hook: () {
-  ///     final bloc = useMemoized(() => MyBloc());
-  ///     useEffect(() => bloc.dispose, [bloc]);
-  ///     return bloc;
-  ///   },
-  ///   child: // ...
-  /// )
-  /// ```
-  final bool Function(T, T) updateShouldNotify;
-
-  @override
-  Widget build(BuildContext context) => Provider<T>(
-        value: hook(),
-        child: child,
-        updateShouldNotify: updateShouldNotify,
-      );
-
-  @override
-  HookProvider<T> cloneWithChild(Widget child) {
-    return HookProvider<T>(
-      key: key,
-      child: child,
-      hook: hook,
-      updateShouldNotify: updateShouldNotify,
-    );
-  }
-}
-
-@visibleForTesting
-// ignore: public_member_api_docs
-var useStreamSeam = useStream;
-
 /// A provider that exposes the current value of a `Stream` as an `AsyncSnapshot`.
 ///
 /// Changing [stream] will stop listening to the previous [stream] and listen the new one.
@@ -591,8 +478,7 @@ class ValueListenableProvider<T> extends HookProvider<T> {
   final ValueListenable<T> valueListenable;
 }
 
-/// The error that will be thrown if the Provider cannot be found in the
-/// Widget tree.
+/// The error that will be thrown if [Provider.of<T>] fails to find a [Provider<T>] as ancestor of the [BuildContext] used.
 class ProviderNotFoundError extends Error {
   /// The type of the value being retrieved
   final Type valueType;
