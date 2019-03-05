@@ -184,3 +184,49 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
     );
   }
 }
+
+/// Expose the current value of a [ValueListenable].
+///
+/// Changing [listenable] will stop listening to the previous [listenable] and listen the new one.
+/// Removing [ValueListenableProvider] from the tree will also stop listening to [listenable].
+///
+///
+/// ```dart
+/// ValueListenable<int> foo;
+///
+/// ValueListenableProvider<int>(
+///   listenable: foo,
+///   child: Container(),
+/// );
+class ValueListenableProvider<T> extends AnimatedWidget
+    implements ProviderBase {
+  /// Allow configuring [Key]
+  ValueListenableProvider({
+    Key key,
+    @required ValueListenable<T> listenable,
+    this.child,
+  }) : super(key: key, listenable: listenable);
+
+  @override
+  ValueListenable<T> get listenable => super.listenable as ValueListenable<T>;
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider<T>(
+      value: listenable.value,
+      child: child,
+      // purposefully omit `updateShouldNotify` to use the default comparison (operator==)
+    );
+  }
+
+  @override
+  ProviderBase cloneWithChild(Widget child) {
+    return ValueListenableProvider(
+      key: key,
+      listenable: listenable,
+      child: child,
+    );
+  }
+}
