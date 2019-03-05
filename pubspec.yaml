@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_hooks: ">=0.2.1 <1.0.0"
 
 dev_dependencies:
   pedantic: ^1.4.0
