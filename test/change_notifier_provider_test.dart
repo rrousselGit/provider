@@ -8,10 +8,6 @@ class _ValueBuilderMock<T> extends Mock {
   T call();
 }
 
-class _MockDisposer<T> extends Mock {
-  void call(T value);
-}
-
 class MockNotifier extends Mock implements ChangeNotifier {}
 
 class _BuilderMock extends Mock {
@@ -62,7 +58,7 @@ void main() {
       test('throws if builder is null', () {
         expect(
           // ignore: prefer_const_constructors
-          () => ChangeNotifierProvider.stateful(
+          () => ChangeNotifierProvider.builder(
                 builder: null,
               ),
           throwsAssertionError,
@@ -71,7 +67,7 @@ void main() {
       testWidgets('pass down key', (tester) async {
         final keyProvider = GlobalKey();
 
-        await tester.pumpWidget(ChangeNotifierProvider.stateful(
+        await tester.pumpWidget(ChangeNotifierProvider.builder(
           key: keyProvider,
           builder: () => ChangeNotifier(),
           child: Container(),
@@ -87,7 +83,7 @@ void main() {
       final builder = _ValueBuilderMock<ChangeNotifier>();
       when(builder()).thenReturn(notifier);
 
-      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+      await tester.pumpWidget(ChangeNotifierProvider.builder(
         builder: builder,
         child: Container(),
       ));
@@ -96,7 +92,7 @@ void main() {
       verifyNoMoreInteractions(builder);
       clearInteractions(notifier);
 
-      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+      await tester.pumpWidget(ChangeNotifierProvider.builder(
         builder: builder,
         child: Container(),
       ));
@@ -107,12 +103,10 @@ void main() {
     testWidgets('dispose called on unmount', (tester) async {
       final notifier = MockNotifier();
       final builder = _ValueBuilderMock<ChangeNotifier>();
-      final dispose = _MockDisposer<ChangeNotifier>();
       when(builder()).thenReturn(notifier);
 
-      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+      await tester.pumpWidget(ChangeNotifierProvider.builder(
         builder: builder,
-        disposer: dispose,
         child: Container(),
       ));
 
@@ -126,47 +120,14 @@ void main() {
 
       verifyInOrder([
         notifier.removeListener(listener),
-        dispose(notifier),
         notifier.dispose(),
       ]);
-      verifyNoMoreInteractions(dispose);
       verifyNoMoreInteractions(builder);
       verifyNoMoreInteractions(notifier);
     });
-    testWidgets('dispose can be live changed', (tester) async {
-      final notifier = MockNotifier();
-      final dispose = _MockDisposer<ChangeNotifier>();
-      final dispose2 = _MockDisposer<ChangeNotifier>();
-
-      await tester.pumpWidget(ChangeNotifierProvider.stateful(
-        builder: () => notifier,
-        disposer: dispose,
-        child: Container(),
-      ));
-      final listener = verify(notifier.addListener(captureAny)).captured.first
-          as VoidCallback;
-      clearInteractions(notifier);
-      await tester.pumpWidget(ChangeNotifierProvider.stateful(
-        builder: () => notifier,
-        disposer: dispose2,
-        child: Container(),
-      ));
-
-      await tester.pumpWidget(Container());
-
-      verifyNoMoreInteractions(dispose);
-      verifyInOrder([
-        notifier.removeListener(listener),
-        dispose2(notifier),
-        notifier.dispose(),
-      ]);
-      verifyNoMoreInteractions(dispose2);
-      verifyNoMoreInteractions(notifier);
-    });
     testWidgets('dispose can be null', (tester) async {
-      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+      await tester.pumpWidget(ChangeNotifierProvider.builder(
         builder: () => ChangeNotifier(),
-        disposer: null,
         child: Container(),
       ));
 
@@ -186,7 +147,7 @@ void main() {
           as VoidCallback;
       clearInteractions(notifier);
 
-      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+      await tester.pumpWidget(ChangeNotifierProvider.builder(
         builder: () {
           return notifier2;
         },
@@ -203,13 +164,11 @@ void main() {
         'Changing from stateful to default constructor dispose correctly stateful notifier',
         (tester) async {
       final notifier = MockNotifier();
-      final dispose = _MockDisposer<ChangeNotifier>();
       var notifier2 = ChangeNotifier();
       final key = GlobalKey();
 
-      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+      await tester.pumpWidget(ChangeNotifierProvider.builder(
         builder: () => notifier,
-        disposer: dispose,
         child: Container(),
       ));
       final listener = verify(notifier.addListener(captureAny)).captured.first
@@ -226,15 +185,13 @@ void main() {
 
       verifyInOrder([
         notifier.removeListener(listener),
-        dispose(notifier),
         notifier.dispose(),
       ]);
       verifyNoMoreInteractions(notifier);
     });
     testWidgets('dispose can be null', (tester) async {
-      await tester.pumpWidget(ChangeNotifierProvider.stateful(
+      await tester.pumpWidget(ChangeNotifierProvider.builder(
         builder: () => ChangeNotifier(),
-        disposer: null,
         child: Container(),
       ));
 
