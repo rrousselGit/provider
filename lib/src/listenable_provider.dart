@@ -9,7 +9,7 @@ typedef void Disposer<T>(T value);
 typedef T ValueBuilder<T>();
 
 class ListenableProvider<T extends Listenable> extends StatefulWidget
-    implements ProviderBase {
+    implements SingleChildClonableWidget {
   const ListenableProvider({
     Key key,
     @required this.listenable,
@@ -139,7 +139,7 @@ class _ListenableProviderState<T extends Listenable>
 }
 
 class ChangeNotifierProvider<T extends ChangeNotifier>
-    extends ListenableProvider<T> implements ProviderBase {
+    extends ListenableProvider<T> implements SingleChildClonableWidget {
   static void _disposer(ChangeNotifier notifier) => notifier.dispose();
 
   const ChangeNotifierProvider({
@@ -199,7 +199,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
 ///   child: Container(),
 /// );
 class ValueListenableProvider<T> extends AnimatedWidget
-    implements ProviderBase {
+    implements SingleChildClonableWidget {
   /// Allow configuring [Key]
   ValueListenableProvider({
     Key key,
@@ -222,7 +222,7 @@ class ValueListenableProvider<T> extends AnimatedWidget
   }
 
   @override
-  ProviderBase cloneWithChild(Widget child) {
+  SingleChildClonableWidget cloneWithChild(Widget child) {
     return ValueListenableProvider(
       key: key,
       listenable: listenable,

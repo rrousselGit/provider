@@ -11,18 +11,18 @@ Type _typeOf<T>() => T;
 typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
 
 /// A base class for providers so tha [MultiProvider] can regroup them into a linear list
-abstract class ProviderBase implements Widget {
+abstract class SingleChildClonableWidget implements Widget {
   /// Clone the current provider with a new child.
   ///
   /// All values, including [Key] must be preserved.
-  ProviderBase cloneWithChild(Widget child);
+  SingleChildClonableWidget cloneWithChild(Widget child);
 }
 
 /// A generic implementation of an [InheritedWidget]
 ///
 /// It is possible to customize the behavior of [InheritedWidget.updateShouldNotify]
 /// by passing a callback with the desired behavior.
-class Provider<T> extends InheritedWidget implements ProviderBase {
+class Provider<T> extends InheritedWidget implements SingleChildClonableWidget {
   /// The value exposed to other widgets.
   ///
   /// You can obtain this value this widget's descendants
@@ -125,8 +125,8 @@ class Provider<T> extends InheritedWidget implements ProviderBase {
 ///
 /// Technically, these two are identical. [MultiProvider] will convert the array into a tree.
 /// This changes only the appearance of the code.
-class MultiProvider extends StatelessWidget implements ProviderBase {
-  /// Build a tree of providers from a list of [ProviderBase].
+class MultiProvider extends StatelessWidget implements SingleChildClonableWidget {
+  /// Build a tree of providers from a list of [SingleChildClonableWidget].
   const MultiProvider({Key key, @required this.providers, this.child})
       : assert(providers != null),
         super(key: key);
@@ -134,7 +134,7 @@ class MultiProvider extends StatelessWidget implements ProviderBase {
   /// The list of providers that will be transformed into a tree.
   ///
   /// The tree is created from top to bottom. The first item because to topmost provider, while the last item it the direct parent of [child].
-  final List<ProviderBase> providers;
+  final List<SingleChildClonableWidget> providers;
 
   /// The child of the latest provider.
   ///
@@ -193,7 +193,7 @@ UpdateShouldNotify<T> debugGetProviderUpdateShouldNotify<T>(
 ///   }
 /// }
 /// ```
-class StatefulProvider<T> extends StatefulWidget implements ProviderBase {
+class StatefulProvider<T> extends StatefulWidget implements SingleChildClonableWidget {
   /// Allows to specify parameters to [StatefulProvider]
   StatefulProvider({
     Key key,
