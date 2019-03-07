@@ -129,7 +129,8 @@ class Provider<T> extends InheritedWidget implements SingleChildClonableWidget {
 ///
 /// Technically, these two are identical. [MultiProvider] will convert the array into a tree.
 /// This changes only the appearance of the code.
-class MultiProvider extends StatelessWidget implements SingleChildClonableWidget {
+class MultiProvider extends StatelessWidget
+    implements SingleChildClonableWidget {
   /// Build a tree of providers from a list of [SingleChildClonableWidget].
   const MultiProvider({Key key, @required this.providers, this.child})
       : assert(providers != null),
@@ -195,7 +196,8 @@ UpdateShouldNotify<T> debugGetProviderUpdateShouldNotify<T>(
 ///   }
 /// }
 /// ```
-class StatefulProvider<T> extends StatefulWidget implements SingleChildClonableWidget {
+class StatefulProvider<T> extends StatefulWidget
+    implements SingleChildClonableWidget {
   /// Allows to specify parameters to [StatefulProvider]
   StatefulProvider({
     Key key,

@@ -2,8 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 
-
-
 class ListenableProvider<T extends Listenable> extends StatefulWidget
     implements SingleChildClonableWidget {
   const ListenableProvider({
@@ -39,7 +37,7 @@ class ListenableProvider<T extends Listenable> extends StatefulWidget
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('listenable', listenable));
+    properties.add(DiagnosticsProperty<Listenable>('listenable', listenable));
   }
 
   @override
@@ -72,7 +70,7 @@ class _ListenableProviderState<T extends Listenable>
   ///
   /// It is used to differentiate external rebuilds from rebuilds caused by the listenable emitting an event.
   /// This allows [InheritedWidget.updateShouldNotify] to return true only in the latter scenario.
-  int buildCount = 0;
+  int _buildCount;
   UpdateShouldNotify<T> updateShouldNotify;
   T listenable;
 
@@ -84,18 +82,20 @@ class _ListenableProviderState<T extends Listenable>
 
   void listener() {
     setState(() {
-      buildCount++;
+      _buildCount ??= 0;
+      _buildCount++;
     });
   }
 
   void startListening() {
-    listenable = widget.listenable ?? widget.builder(context);
+    listenable = widget.listenable ??
+        (widget.builder != null ? widget.builder(context) : null);
     updateShouldNotify = createUpdateShouldNotify();
-    listenable.addListener(listener);
+    listenable?.addListener(listener);
   }
 
-  void stopListening() {
-    listenable.removeListener(listener);
+  void stopListening(ListenableProvider<T> widget) {
+    listenable?.removeListener(listener);
     if (widget.dispose != null) {
       // if we have a dispose, then we're using builder constructor so we can safely call the method
       widget.dispose(context, listenable);
@@ -104,8 +104,8 @@ class _ListenableProviderState<T extends Listenable>
   }
 
   UpdateShouldNotify<T> createUpdateShouldNotify() {
-    final capturedBuildCount = buildCount;
-    return updateShouldNotify = (_, __) => buildCount == capturedBuildCount;
+    final capturedBuildCount = _buildCount;
+    return updateShouldNotify = (_, __) => _buildCount != capturedBuildCount;
   }
 
   @override
@@ -113,7 +113,7 @@ class _ListenableProviderState<T extends Listenable>
     super.didUpdateWidget(oldWidget);
     if (didChangeBetweenDefaultAndBuilderConstructor(oldWidget, widget) ||
         widget.listenable != oldWidget.listenable) {
-      stopListening();
+      stopListening(oldWidget);
       startListening();
     }
   }
@@ -121,7 +121,7 @@ class _ListenableProviderState<T extends Listenable>
   @override
   Widget build(BuildContext context) {
     return Provider<T>(
-      value: widget.listenable,
+      value: listenable,
       child: widget.child,
       updateShouldNotify: updateShouldNotify,
     );
@@ -129,14 +129,15 @@ class _ListenableProviderState<T extends Listenable>
 
   @override
   void dispose() {
-    stopListening();
+    stopListening(widget);
     super.dispose();
   }
 }
 
 class ChangeNotifierProvider<T extends ChangeNotifier>
     extends ListenableProvider<T> implements SingleChildClonableWidget {
-  static void _disposer(BuildContext context, ChangeNotifier notifier) => notifier.dispose();
+  static void _disposer(BuildContext context, ChangeNotifier notifier) =>
+      notifier?.dispose();
 
   const ChangeNotifierProvider({
     Key key,
