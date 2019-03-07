@@ -7,20 +7,6 @@ import 'package:flutter/foundation.dart';
 
 import 'common.dart';
 
-class _ValueBuilderMock<T> extends Mock {
-  T call(BuildContext context);
-}
-
-class DisposerMock<T> extends Mock {
-  void call(BuildContext context, T value);
-}
-
-class MockNotifier extends Mock implements ChangeNotifier {}
-
-class _BuilderMock extends Mock {
-  Widget call(BuildContext context);
-}
-
 void main() {
   group('ListenableProvider', () {
     test('debugFillProperties', () {
@@ -83,7 +69,7 @@ void main() {
     });
     group('stateful constructor', () {
       testWidgets('called with context', (tester) async {
-        final builder = _ValueBuilderMock<ChangeNotifier>();
+        final builder = ValueBuilderMock<ChangeNotifier>();
         final key = GlobalKey();
 
         await tester.pumpWidget(ListenableProvider<ChangeNotifier>.builder(
@@ -118,7 +104,7 @@ void main() {
     });
     testWidgets('stateful builder called once', (tester) async {
       final listenable = MockNotifier();
-      final builder = _ValueBuilderMock<Listenable>();
+      final builder = ValueBuilderMock<Listenable>();
       when(builder(any)).thenReturn(listenable);
 
       await tester.pumpWidget(ListenableProvider.builder(
@@ -142,7 +128,7 @@ void main() {
     });
     testWidgets('dispose called on unmount', (tester) async {
       final listenable = MockNotifier();
-      final builder = _ValueBuilderMock<Listenable>();
+      final builder = ValueBuilderMock<Listenable>();
       final disposer = DisposerMock<Listenable>();
       when(builder(any)).thenReturn(listenable);
 
@@ -247,7 +233,7 @@ void main() {
       await tester.pumpWidget(Container());
     });
     testWidgets('changing listenable rebuilds descendants', (tester) async {
-      final builder = _BuilderMock();
+      final builder = BuilderMock();
       when(builder(any)).thenReturn(Container());
 
       var listenable = ChangeNotifier();
@@ -288,7 +274,7 @@ void main() {
         (tester) async {
       final listenable = ChangeNotifier();
       final keyChild = GlobalKey();
-      final builder = _BuilderMock();
+      final builder = BuilderMock();
       when(builder(any)).thenReturn(Container());
 
       final child = Builder(
@@ -314,7 +300,7 @@ void main() {
     testWidgets('notifylistener rebuilds descendants', (tester) async {
       final listenable = ChangeNotifier();
       final keyChild = GlobalKey();
-      final builder = _BuilderMock();
+      final builder = BuilderMock();
       when(builder(any)).thenReturn(Container());
 
       final child = Builder(

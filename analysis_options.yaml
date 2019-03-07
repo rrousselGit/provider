@@ -1,7 +1,7 @@
 include: package:pedantic/analysis_options.yaml
 analyzer:
   exclude:
-    - '**/*.g.dart'
+    - "**/*.g.dart"
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false
@@ -65,7 +65,6 @@ linter:
     - prefer_typing_uninitialized_variables
     - recursive_getters
     - slash_for_doc_comments
-    - super_goes_last
     - test_types_in_equals
     - throw_in_finally
     - type_init_formals
