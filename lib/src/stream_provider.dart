@@ -28,6 +28,16 @@ class StreamProvider<T> extends StatefulWidget
         assert(builder != null),
         super(key: key);
 
+  const StreamProvider._({
+    Key key,
+    this.initialData,
+    this.stream,
+    this.builder,
+    this.child,
+    this.orElse,
+    this.updateShouldNotify,
+  }) : super(key: key);
+
   final ValueBuilder<StreamController<T>> builder;
   final T initialData;
   final Stream<T> stream;
@@ -39,9 +49,15 @@ class StreamProvider<T> extends StatefulWidget
   _StreamProviderState<T> createState() => _StreamProviderState<T>();
 
   @override
-  SingleChildClonableWidget cloneWithChild(Widget child) {
-    // TODO: implement cloneWithChild
-    return null;
+  StreamProvider<T> cloneWithChild(Widget child) {
+    return StreamProvider<T>._(
+      key: key,
+      initialData: initialData,
+      updateShouldNotify: updateShouldNotify,
+      orElse: orElse,
+      builder: builder,
+      child: child,
+    );
   }
 }
 
