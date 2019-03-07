@@ -76,6 +76,7 @@ void main() {
       await tester.pump();
 
       verify(shouldNotify(0, 1)).called(1);
+      verifyNoMoreInteractions(shouldNotify);
     });
 
     testWidgets('works with MultiProvider', (tester) async {

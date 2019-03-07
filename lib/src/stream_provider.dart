@@ -53,6 +53,7 @@ class StreamProvider<T> extends StatefulWidget
     return StreamProvider<T>._(
       key: key,
       initialData: initialData,
+      stream: stream,
       updateShouldNotify: updateShouldNotify,
       orElse: orElse,
       builder: builder,
@@ -84,7 +85,7 @@ class _StreamProviderState<T> extends State<StreamProvider<T>> {
     if (widget.builder != null) {
       controller = widget.builder(context);
     }
-    stream = widget.stream ?? controller.stream;
+    stream = widget.stream ?? controller?.stream;
   }
 
   @override
