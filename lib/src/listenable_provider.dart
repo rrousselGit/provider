@@ -2,11 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 
-/// An handler for the disposal of an object
-typedef void Disposer<T>(T value);
 
-/// A function that creates an object
-typedef T ValueBuilder<T>();
 
 class ListenableProvider<T extends Listenable> extends StatefulWidget
     implements SingleChildClonableWidget {
@@ -93,7 +89,7 @@ class _ListenableProviderState<T extends Listenable>
   }
 
   void startListening() {
-    listenable = widget.listenable ?? widget.builder();
+    listenable = widget.listenable ?? widget.builder(context);
     updateShouldNotify = createUpdateShouldNotify();
     listenable.addListener(listener);
   }
@@ -102,7 +98,7 @@ class _ListenableProviderState<T extends Listenable>
     listenable.removeListener(listener);
     if (widget.dispose != null) {
       // if we have a dispose, then we're using builder constructor so we can safely call the method
-      widget.dispose(listenable);
+      widget.dispose(context, listenable);
     }
     listenable = null;
   }
@@ -140,7 +136,7 @@ class _ListenableProviderState<T extends Listenable>
 
 class ChangeNotifierProvider<T extends ChangeNotifier>
     extends ListenableProvider<T> implements SingleChildClonableWidget {
-  static void _disposer(ChangeNotifier notifier) => notifier.dispose();
+  static void _disposer(BuildContext context, ChangeNotifier notifier) => notifier.dispose();
 
   const ChangeNotifierProvider({
     Key key,

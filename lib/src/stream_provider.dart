@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
+
+typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 
 class StreamProvider<T> extends StatelessWidget {
   const StreamProvider({
@@ -14,7 +18,7 @@ class StreamProvider<T> extends StatelessWidget {
   final T initialData;
   final Stream<T> stream;
   final Widget child;
-  final T Function(Object error) orElse;
+  final ErrorBuilder<T> orElse;
   final UpdateShouldNotify<T> updateShouldNotify;
 
   @override
@@ -22,12 +26,11 @@ class StreamProvider<T> extends StatelessWidget {
     return StreamBuilder<T>(
       stream: stream,
       initialData: initialData,
-      builder: (context, snapshot) {
-        T value = orElse != null
-            ? (snapshot.hasError ? orElse(snapshot.error) : snapshot.data)
-            : snapshot.requireData;
+      builder: (_, snapshot) {
         return Provider<T>(
-          value: value,
+          value: orElse != null
+            ? (snapshot.hasError ? orElse(context, snapshot.error) : snapshot.data)
+            : snapshot.requireData,
           child: child,
           updateShouldNotify: updateShouldNotify,
         );
