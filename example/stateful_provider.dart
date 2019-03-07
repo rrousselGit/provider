@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return StatefulProvider<Bloc>(
       valueBuilder: (_) => Bloc(),
-      onDispose: (_, value) => value.dipose(),
+      dispose: (_, value) => value.dipose(),
       child: Example(),
     );
   }

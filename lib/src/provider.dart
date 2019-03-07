@@ -1,7 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
+/// An handler for the disposal of an object
+typedef void Disposer<T>(BuildContext context, T value);
+
+/// A function that creates an object
+typedef T ValueBuilder<T>(BuildContext context);
 
 /// Necessary to obtain generic [Type]
 /// see https://stackoverflow.com/questions/52891537/how-to-get-generic-type
@@ -173,8 +177,6 @@ UpdateShouldNotify<T> debugGetProviderUpdateShouldNotify<T>(
 /// [StatefulBuilder] is the equivalent of a [State.initState] combined with [State.dispose].
 /// As such, [valueBuilder] is called only once and is unable to use [InheritedWidget]; which makes it impossible to update the created value.
 ///
-/// If this is too limiting, consider instead [HookProvider], which offer a much more advanced control over the created value.
-///
 /// The following example instanciate a `Model` once, and dispose it when [StatefulProvider] is removed from the tree.
 ///
 /// ```
@@ -187,7 +189,7 @@ UpdateShouldNotify<T> debugGetProviderUpdateShouldNotify<T>(
 ///   Widget build(BuildContext context) {
 ///     return StatefulProvider<Model>(
 ///       valueBuilder: (context) =>  Model(),
-///       onDispose: (context, value) => value.dispose(),
+///       dispose: (context, value) => value.dispose(),
 ///       child: ...,
 ///     );
 ///   }
@@ -199,7 +201,7 @@ class StatefulProvider<T> extends StatefulWidget implements SingleChildClonableW
     Key key,
     @required this.valueBuilder,
     this.child,
-    this.onDispose,
+    this.dispose,
     this.updateShouldNotify,
   })  : assert(valueBuilder != null),
         super(key: key);
@@ -209,13 +211,13 @@ class StatefulProvider<T> extends StatefulWidget implements SingleChildClonableW
   /// [valueBuilder] must not be null and is called only once for the life-cycle of [StatefulProvider].
   ///
   /// It is not possible to obtain an [InheritedWidget] from [valueBuilder].
-  final T Function(BuildContext context) valueBuilder;
+  final ValueBuilder<T> valueBuilder;
 
-  /// [onDispose] is a callback called when [StatefulProvider] is
+  /// [dispose] is a callback called when [StatefulProvider] is
   /// removed for the widget tree, and pass the current value as parameter.
   /// It is useful when the provided object needs to have a custom dipose behavior,
   /// such as closing streams.
-  final void Function(BuildContext context, T value) onDispose;
+  final Disposer<T> dispose;
 
   /// The widget below this widget in the tree.
   ///
@@ -223,7 +225,7 @@ class StatefulProvider<T> extends StatefulWidget implements SingleChildClonableW
   final Widget child;
 
   /// A customizable implementation for [InheritedWidget.updateShouldNotify]
-  final bool Function(T previous, T current) updateShouldNotify;
+  final UpdateShouldNotify<T> updateShouldNotify;
 
   @override
   _StatefulProviderState<T> createState() => _StatefulProviderState<T>();
@@ -234,7 +236,7 @@ class StatefulProvider<T> extends StatefulWidget implements SingleChildClonableW
       child: child,
       valueBuilder: valueBuilder,
       key: key,
-      onDispose: onDispose,
+      dispose: dispose,
       updateShouldNotify: updateShouldNotify,
     );
   }
@@ -251,8 +253,8 @@ class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
 
   @override
   void dispose() {
-    if (widget.onDispose != null) {
-      widget.onDispose(context, _value);
+    if (widget.dispose != null) {
+      widget.dispose(context, _value);
     }
     super.dispose();
   }
