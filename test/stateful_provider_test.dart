@@ -60,7 +60,7 @@ void main() {
       StatefulProvider<int>(
         key: key,
         valueBuilder: (_) => 42,
-        onDispose: dispose,
+        dispose: dispose,
         child: Container(),
       ),
     );

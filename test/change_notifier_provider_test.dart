@@ -4,8 +4,10 @@ import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 
+import 'common.dart';
+
 class _ValueBuilderMock<T> extends Mock {
-  T call();
+  T call(BuildContext context);
 }
 
 class MockNotifier extends Mock implements ChangeNotifier {}
@@ -69,7 +71,7 @@ void main() {
 
         await tester.pumpWidget(ChangeNotifierProvider.builder(
           key: keyProvider,
-          builder: () => ChangeNotifier(),
+          builder: (_) => ChangeNotifier(),
           child: Container(),
         ));
         expect(
@@ -81,14 +83,16 @@ void main() {
     testWidgets('stateful builder called once', (tester) async {
       final notifier = MockNotifier();
       final builder = _ValueBuilderMock<ChangeNotifier>();
-      when(builder()).thenReturn(notifier);
+      when(builder(any)).thenReturn(notifier);
 
       await tester.pumpWidget(ChangeNotifierProvider.builder(
         builder: builder,
         child: Container(),
       ));
 
-      verify(builder()).called(1);
+      final context = findElementOfWidget<ChangeNotifierProvider>();    
+
+      verify(builder(context)).called(1);
       verifyNoMoreInteractions(builder);
       clearInteractions(notifier);
 
@@ -103,14 +107,16 @@ void main() {
     testWidgets('dispose called on unmount', (tester) async {
       final notifier = MockNotifier();
       final builder = _ValueBuilderMock<ChangeNotifier>();
-      when(builder()).thenReturn(notifier);
+      when(builder(any)).thenReturn(notifier);
 
       await tester.pumpWidget(ChangeNotifierProvider.builder(
         builder: builder,
         child: Container(),
       ));
 
-      verify(builder()).called(1);
+      final context = findElementOfWidget<ChangeNotifierProvider>();    
+
+      verify(builder(context)).called(1);
       verifyNoMoreInteractions(builder);
       final listener = verify(notifier.addListener(captureAny)).captured.first
           as VoidCallback;
@@ -127,7 +133,7 @@ void main() {
     });
     testWidgets('dispose can be null', (tester) async {
       await tester.pumpWidget(ChangeNotifierProvider.builder(
-        builder: () => ChangeNotifier(),
+        builder: (_) => ChangeNotifier(),
         child: Container(),
       ));
 
@@ -148,7 +154,7 @@ void main() {
       clearInteractions(notifier);
 
       await tester.pumpWidget(ChangeNotifierProvider.builder(
-        builder: () {
+        builder: (_) {
           return notifier2;
         },
         child: Container(key: key),
@@ -168,7 +174,7 @@ void main() {
       final key = GlobalKey();
 
       await tester.pumpWidget(ChangeNotifierProvider.builder(
-        builder: () => notifier,
+        builder: (_) => notifier,
         child: Container(),
       ));
       final listener = verify(notifier.addListener(captureAny)).captured.first
@@ -191,7 +197,7 @@ void main() {
     });
     testWidgets('dispose can be null', (tester) async {
       await tester.pumpWidget(ChangeNotifierProvider.builder(
-        builder: () => ChangeNotifier(),
+        builder: (_) => ChangeNotifier(),
         child: Container(),
       ));
 
