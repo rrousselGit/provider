@@ -202,19 +202,21 @@ class ValueListenableProvider<T> extends AnimatedWidget
     Key key,
     @required ValueListenable<T> listenable,
     this.child,
+    this.updateShouldNotify,
   }) : super(key: key, listenable: listenable);
 
   @override
   ValueListenable<T> get listenable => super.listenable as ValueListenable<T>;
 
   final Widget child;
+  final UpdateShouldNotify<T> updateShouldNotify;
 
   @override
   Widget build(BuildContext context) {
     return Provider<T>(
       value: listenable.value,
       child: child,
-      // purposefully omit `updateShouldNotify` to use the default comparison (operator==)
+      updateShouldNotify: updateShouldNotify,
     );
   }
 
@@ -223,6 +225,7 @@ class ValueListenableProvider<T> extends AnimatedWidget
     return ValueListenableProvider(
       key: key,
       listenable: listenable,
+      updateShouldNotify: updateShouldNotify,
       child: child,
     );
   }
