@@ -208,7 +208,7 @@ class MyModel extends ChangeNotifier {
 
 // ...
 
-ChangeNotifierProfider<MyModel>.stateful(
+ChangeNotifierProvider<MyModel>.stateful(
   builder: () => MyModel(),
   child: Container(),
 )
