@@ -69,14 +69,14 @@ Provider<int>(
 
 A provider that can also create and dispose an object.
 
-It is usually used to avoid making a `StatefulWidget` for something trivial, such as instanciating a BLoC.
+It is usually used to avoid making a `StatefulWidget` for something trivial, such as instantiating a BLoC.
 
 `StatefulBuilder` is the equivalent of a `State.initState` combined with `State.dispose`.
 As such, `valueBuilder` is called only once and is unable to use `InheritedWidget`; which makes it impossible to update the created value.
 
 If this is too limiting, consider instead `HookProvider`, which offer a much more advanced control over the created value.
 
-The following example instanciate a `Model` once, and dispose it when `StatefulProvider` is removed from the tree.
+The following example instantiate a `Model` once, and dispose it when `StatefulProvider` is removed from the tree.
 
 ```dart
 class Model {
