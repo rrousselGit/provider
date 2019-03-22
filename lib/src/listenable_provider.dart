@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 
 class ListenableProvider<T extends Listenable> extends StatefulWidget
-    implements SingleChildClonableWidget {
+    implements SingleChildCloneableWidget {
   const ListenableProvider({
     Key key,
     @required this.listenable,
@@ -135,7 +135,7 @@ class _ListenableProviderState<T extends Listenable>
 }
 
 class ChangeNotifierProvider<T extends ChangeNotifier>
-    extends ListenableProvider<T> implements SingleChildClonableWidget {
+    extends ListenableProvider<T> implements SingleChildCloneableWidget {
   static void _disposer(BuildContext context, ChangeNotifier notifier) =>
       notifier?.dispose();
 
@@ -196,7 +196,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
 ///   child: Container(),
 /// );
 class ValueListenableProvider<T> extends AnimatedWidget
-    implements SingleChildClonableWidget {
+    implements SingleChildCloneableWidget {
   /// Allow configuring [Key]
   ValueListenableProvider({
     Key key,
@@ -221,7 +221,7 @@ class ValueListenableProvider<T> extends AnimatedWidget
   }
 
   @override
-  SingleChildClonableWidget cloneWithChild(Widget child) {
+  SingleChildCloneableWidget cloneWithChild(Widget child) {
     return ValueListenableProvider(
       key: key,
       listenable: listenable,
