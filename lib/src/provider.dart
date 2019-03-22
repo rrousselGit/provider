@@ -26,7 +26,8 @@ abstract class SingleChildCloneableWidget implements Widget {
 ///
 /// It is possible to customize the behavior of [InheritedWidget.updateShouldNotify]
 /// by passing a callback with the desired behavior.
-class Provider<T> extends InheritedWidget implements SingleChildCloneableWidget {
+class Provider<T> extends InheritedWidget
+    implements SingleChildCloneableWidget {
   /// The value exposed to other widgets.
   ///
   /// You can obtain this value this widget's descendants
