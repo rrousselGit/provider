@@ -14,13 +14,13 @@ Provider<int>(
 )
 ```
 
-Descendants of `Provider` and now obtain this value using the static `Provider.of<T>` method:
+Descendants of `Provider` can now obtain this value using the static `Provider.of<T>` method:
 
 ```dart
 var value = Provider.of<int>(context);
 ```
 
-You can also use `Consumer` widget to insert a descendant, useful when both creating a `Provider` and using it:
+You can also use a `Consumer` widget to insert a descendant, useful when both creating a `Provider` and using it:
 
 ```dart
 Provider<int>(
@@ -33,7 +33,7 @@ Provider<int>(
 
 ---
 
-Note that you can freely use multiple providers with different type together:
+Note that you can freely use multiple providers with different types together:
 
 ```dart
 Provider<int>(
@@ -74,8 +74,6 @@ It is usually used to avoid making a `StatefulWidget` for something trivial, suc
 `StatefulBuilder` is the equivalent of a `State.initState` combined with `State.dispose`.
 As such, `valueBuilder` is called only once and is unable to use `InheritedWidget`; which makes it impossible to update the created value.
 
-If this is too limiting, consider instead `HookProvider`, which offers a much more advanced control over the created value.
-
 The following example instantiates a `Model` once, and disposes it when `StatefulProvider` is removed from the tree.
 
 ```dart
@@ -93,25 +91,6 @@ class Stateless extends StatelessWidget {
     );
   }
 }
-```
-
-### HookProvider
-
-A provider which can use hooks from [flutter_hooks](https://github.com/rrousselGit/flutter_hooks)
-
-This is especially useful to create complex providers, without having to make a `StatefulWidget`.
-
-The following example uses BLoC pattern to create a BLoC, provide its value, and dispose it when the provider is removed from the tree.
-
-```dart
-HookProvider<MyBloc>(
-  hook: () {
-    final bloc = useMemoized(() => MyBloc());
-    useEffect(() => bloc.dispose, [bloc]);
-    return bloc;
-  },
-  child: // ...
-)
 ```
 
 ## MultiProvider
@@ -156,7 +135,7 @@ This changes only the appearance of the code.
 
 A provider that exposes the current value of a `Stream` as an `AsyncSnapshot`.
 
-Changing [stream] will stop listening to the previous [stream] and listen the new one.
+Changing [stream] will stop listening to the previous [stream] and listen to the new one.
 
 Removing [StreamProvider] from the tree will also stop listening to [stream].
 To obtain the current value of type `T`, one must explicitly request `Provider.of<AsyncSnapshot<T>>`.
@@ -175,7 +154,7 @@ StreamProvider<int>(
 
 Expose the current value of a [ValueListenable].
 
-Changing [valueListenable] will stop listening to the previous [valueListenable] and listen the new one.
+Changing [valueListenable] will stop listening to the previous [valueListenable] and listen to the new one.
 Removing [ValueListenableProvider] from the tree will also stop listening to [valueListenable].
 
 ```dart
@@ -189,7 +168,7 @@ ValueListenableProvider<int>(
 
 ### ChangeNotifierProvider
 
-Expose a [ChangeNotifier] subclass and ask its depends to rebuild whenever [ChangeNotifier.notifyListeners] is called
+Expose a [ChangeNotifier] subclass and ask its dependents to rebuild whenever [ChangeNotifier.notifyListeners] is called
 
 Listeners to [ChangeNotifier] only rebuilds when [ChangeNotifier.notifyListeners] is called, even if [ChangeNotifierProvider] is rebuilt.
 
