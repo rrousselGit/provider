@@ -15,7 +15,7 @@ class Bloc {
     stream = _streamController.stream.asBroadcastStream();
   }
 
-  void dipose() {
+  void dispose() {
     _streamController.close();
   }
 }
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return StatefulProvider<Bloc>(
       valueBuilder: (_) => Bloc(),
-      dispose: (_, value) => value.dipose(),
+      dispose: (_, value) => value.dispose(),
       child: Example(),
     );
   }
@@ -37,7 +37,7 @@ class Example extends StatelessWidget {
     return StreamBuilder<int>(
       stream: Provider.of<Bloc>(context).stream,
       builder: (context, snapshot) {
-        return Text(snapshot.data.toString() ?? 'Foo');
+        return Text(snapshot.data?.toString() ?? 'Foo');
       },
     );
   }

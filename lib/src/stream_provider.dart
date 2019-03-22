@@ -6,7 +6,7 @@ import 'package:provider/src/provider.dart';
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 
 class StreamProvider<T> extends StatefulWidget
-    implements SingleChildClonableWidget {
+    implements SingleChildCloneableWidget {
   const StreamProvider({
     Key key,
     this.initialData,
