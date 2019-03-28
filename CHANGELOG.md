@@ -1,5 +1,7 @@
 # 2.0.0
 
+- merged `Provider` and `StatefulProvider`
+
 # 1.6.1
 
 - `Provider.of<T>` now crashes with a `ProviderNotFoundException` when no `Provider<T>` are found in the ancestors of the context used.

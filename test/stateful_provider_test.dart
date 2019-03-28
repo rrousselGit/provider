@@ -14,8 +14,8 @@ class Dispose extends Mock {
 
 void main() {
   test('cloneWithChild works', () {
-    final provider = StatefulProvider(
-      valueBuilder: (_) => 42,
+    final provider = Provider(
+      builder: (_) => 42,
       child: Container(),
       key: const ValueKey(42),
       updateShouldNotify: (int _, int __) => true,
@@ -24,27 +24,27 @@ void main() {
     final newChild = Container();
     final clone = provider.cloneWithChild(newChild);
     expect(clone.child, newChild);
-    expect(clone.valueBuilder, provider.valueBuilder);
+    expect(clone.builder, provider.builder);
     expect(clone.key, provider.key);
     expect(provider.updateShouldNotify, clone.updateShouldNotify);
   });
   test('asserts', () {
     expect(
-      () => StatefulProvider<dynamic>(valueBuilder: null, child: null),
+      () => Provider<dynamic>(builder: null, child: null),
       throwsAssertionError,
     );
     // don't throw
-    StatefulProvider<dynamic>(valueBuilder: (_) => null, child: null);
+    Provider<dynamic>(builder: (_) => null, child: null);
   });
 
-  testWidgets('calls valueBuilder only once', (tester) async {
+  testWidgets('calls builder only once', (tester) async {
     final builder = ValueBuilder();
-    await tester.pumpWidget(StatefulProvider<int>(
-      valueBuilder: builder,
+    await tester.pumpWidget(Provider<int>(
+      builder: builder,
       child: Container(),
     ));
-    await tester.pumpWidget(StatefulProvider<int>(
-      valueBuilder: builder,
+    await tester.pumpWidget(Provider<int>(
+      builder: builder,
       child: Container(),
     ));
     await tester.pumpWidget(Container());
@@ -57,9 +57,9 @@ void main() {
     const key = ValueKey(42);
 
     await tester.pumpWidget(
-      StatefulProvider<int>(
+      Provider<int>(
         key: key,
-        valueBuilder: (_) => 42,
+        builder: (_) => 42,
         dispose: dispose,
         child: Container(),
       ),
@@ -73,12 +73,12 @@ void main() {
   });
 
   testWidgets('update should notify', (tester) async {
-    final shouldNotify = (int a, int b) => true;
+    final updateShouldNotify = (int a, int b) => true;
 
     await tester.pumpWidget(
-      StatefulProvider<int>(
-        valueBuilder: (_) => 42,
-        updateShouldNotify: shouldNotify,
+      Provider<int>(
+        builder: (_) => 42,
+        updateShouldNotify: updateShouldNotify,
         child: Container(),
       ),
     );
@@ -87,6 +87,6 @@ void main() {
         tester.widget(find.byWidgetPredicate((w) => w is Provider<int>))
             as Provider<int>;
 
-    expect(debugGetProviderUpdateShouldNotify(provider), shouldNotify);
+    expect(provider.updateShouldNotify, updateShouldNotify);
   });
 }

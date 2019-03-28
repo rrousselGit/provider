@@ -102,7 +102,7 @@ class _StreamProviderState<T> extends State<StreamProvider<T>> {
       stream: stream,
       initialData: widget.initialData,
       builder: (_, snapshot) {
-        return Provider<T>(
+        return Provider<T>.value(
           value: getValue(snapshot, context),
           child: widget.child,
           updateShouldNotify: widget.updateShouldNotify,

@@ -23,8 +23,8 @@ class Bloc {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StatefulProvider<Bloc>(
-      valueBuilder: (_) => Bloc(),
+    return Provider<Bloc>(
+      builder: (_) => Bloc(),
       dispose: (_, value) => value.dispose(),
       child: Example(),
     );

@@ -120,7 +120,7 @@ class _ListenableProviderState<T extends Listenable>
 
   @override
   Widget build(BuildContext context) {
-    return Provider<T>(
+    return Provider<T>.value(
       value: listenable,
       child: widget.child,
       updateShouldNotify: updateShouldNotify,
@@ -213,7 +213,7 @@ class ValueListenableProvider<T> extends AnimatedWidget
 
   @override
   Widget build(BuildContext context) {
-    return Provider<T>(
+    return Provider<T>.value(
       value: listenable.value,
       child: child,
       updateShouldNotify: updateShouldNotify,

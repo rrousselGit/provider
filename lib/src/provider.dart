@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/src/adaptative_builder_widget.dart';
 
 /// An handler for the disposal of an object
 typedef void Disposer<T>(BuildContext context, T value);
@@ -22,28 +23,8 @@ abstract class SingleChildCloneableWidget implements Widget {
   SingleChildCloneableWidget cloneWithChild(Widget child);
 }
 
-/// A generic implementation of an [InheritedWidget]
-///
-/// It is possible to customize the behavior of [InheritedWidget.updateShouldNotify]
-/// by passing a callback with the desired behavior.
-class Provider<T> extends InheritedWidget
-    implements SingleChildCloneableWidget {
-  /// The value exposed to other widgets.
-  ///
-  /// You can obtain this value this widget's descendants
-  /// using [Provider.of] method
-  final T value;
-
-  // has a different name then the actual method
-  // so that it can have documentation
-  /// A callback called whenever [InheritedWidget.updateShouldNotify] is called.
-  /// It should return `false` when there's no need to update its dependents.
-  ///
-  /// The default behavior is `previous == current`
-  final bool Function(T previous, T current) _updateShouldNotify;
-
-  /// Creates a [Provider] and pass down [value] to all of its descendants
-  const Provider({
+class _Provider<T> extends InheritedWidget {
+  const _Provider({
     Key key,
     @required this.value,
     Widget child,
@@ -51,47 +32,15 @@ class Provider<T> extends InheritedWidget
   })  : _updateShouldNotify = updateShouldNotify,
         super(key: key, child: child);
 
-  /// Obtain the nearest Provider<T> and returns its value.
-  ///
-  /// If [listen] is true (default), later value changes will
-  /// trigger a new [State.build] to widgets, and [State.didChangeDependencies] for [StatefulWidget]
-  static T of<T>(BuildContext context, {bool listen = true}) {
-    // this is required to get generic Type
-    final type = _typeOf<Provider<T>>();
-    final provider = listen
-        ? context.inheritFromWidgetOfExactType(type) as Provider<T>
-        : context.ancestorInheritedElementForWidgetOfExactType(type)?.widget
-            as Provider<T>;
-
-    if (provider == null) {
-      throw ProviderNotFoundError(T, context.widget.runtimeType);
-    }
-
-    return provider.value;
-  }
+  final T value;
+  final UpdateShouldNotify<T> _updateShouldNotify;
 
   @override
-  bool updateShouldNotify(Provider<T> oldWidget) {
+  bool updateShouldNotify(_Provider<T> oldWidget) {
     if (_updateShouldNotify != null) {
       return _updateShouldNotify(oldWidget.value, value);
     }
     return oldWidget.value != value;
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<T>('value', value));
-  }
-
-  @override
-  Provider<T> cloneWithChild(Widget child) {
-    return Provider<T>(
-      key: key,
-      value: value,
-      child: child,
-      updateShouldNotify: _updateShouldNotify,
-    );
   }
 }
 
@@ -166,20 +115,14 @@ class MultiProvider extends StatelessWidget
   }
 }
 
-@visibleForTesting
-// ignore: public_member_api_docs
-UpdateShouldNotify<T> debugGetProviderUpdateShouldNotify<T>(
-        Provider<T> provider) =>
-    provider._updateShouldNotify;
-
 /// A [Provider] that can also create and dispose an object.
 ///
 /// It is usually used to avoid making a [StatefulWidget] for something trivial, such as instanciating a BLoC.
 ///
 /// [StatefulBuilder] is the equivalent of a [State.initState] combined with [State.dispose].
-/// As such, [valueBuilder] is called only once and is unable to use [InheritedWidget]; which makes it impossible to update the created value.
+/// As such, [builder] is called only once and is unable to use [InheritedWidget]; which makes it impossible to update the created value.
 ///
-/// The following example instanciate a `Model` once, and dispose it when [StatefulProvider] is removed from the tree.
+/// The following example instanciate a `Model` once, and dispose it when [Provider] is removed from the tree.
 ///
 /// ```
 /// class Model {
@@ -189,7 +132,7 @@ UpdateShouldNotify<T> debugGetProviderUpdateShouldNotify<T>(
 /// class Stateless extends StatelessWidget {
 ///   @override
 ///   Widget build(BuildContext context) {
-///     return StatefulProvider<Model>(
+///     return Provider(<Model>(
 ///       valueBuilder: (context) =>  Model(),
 ///       dispose: (context, value) => value.dispose(),
 ///       child: ...,
@@ -197,26 +140,47 @@ UpdateShouldNotify<T> debugGetProviderUpdateShouldNotify<T>(
 ///   }
 /// }
 /// ```
-class StatefulProvider<T> extends StatefulWidget
+class Provider<T> extends AdaptativeBuilderWidget<T>
     implements SingleChildCloneableWidget {
-  /// Allows to specify parameters to [StatefulProvider]
-  StatefulProvider({
+  /// Obtain the nearest Provider<T> and returns its value.
+  ///
+  /// If [listen] is true (default), later value changes will
+  /// trigger a new [State.build] to widgets, and [State.didChangeDependencies] for [StatefulWidget]
+  static T of<T>(BuildContext context, {bool listen = true}) {
+    // this is required to get generic Type
+    final type = _typeOf<_Provider<T>>();
+    final provider = listen
+        ? context.inheritFromWidgetOfExactType(type) as _Provider<T>
+        : context.ancestorInheritedElementForWidgetOfExactType(type)?.widget
+            as _Provider<T>;
+
+    if (provider == null) {
+      throw ProviderNotFoundError(T, context.widget.runtimeType);
+    }
+
+    return provider.value;
+  }
+
+  /// Allows to specify parameters to [Provider]
+  const Provider({
     Key key,
-    @required this.valueBuilder,
-    this.child,
-    this.dispose,
+    @required ValueBuilder<T> builder,
     this.updateShouldNotify,
-  })  : assert(valueBuilder != null),
-        super(key: key);
+    this.dispose,
+    this.child,
+  })  : assert(builder != null),
+        super(key: key, builder: builder);
 
-  /// A function that creates the provided value.
-  ///
-  /// [valueBuilder] must not be null and is called only once for the life-cycle of [StatefulProvider].
-  ///
-  /// It is not possible to obtain an [InheritedWidget] from [valueBuilder].
-  final ValueBuilder<T> valueBuilder;
+  /// Allows to specify parameters to [Provider]
+  const Provider.value({
+    Key key,
+    @required T value,
+    this.updateShouldNotify,
+    this.child,
+  })  : dispose = null,
+        super.value(key: key, value: value);
 
-  /// [dispose] is a callback called when [StatefulProvider] is
+  /// [dispose] is a callback called when [Provider] is
   /// removed for the widget tree, and pass the current value as parameter.
   /// It is useful when the provided object needs to have a custom dipose behavior,
   /// such as closing streams.
@@ -231,41 +195,48 @@ class StatefulProvider<T> extends StatefulWidget
   final UpdateShouldNotify<T> updateShouldNotify;
 
   @override
-  _StatefulProviderState<T> createState() => _StatefulProviderState<T>();
+  _ProviderState<T> createState() => _ProviderState<T>();
 
   @override
-  StatefulProvider<T> cloneWithChild(Widget child) {
-    return StatefulProvider<T>(
-      child: child,
-      valueBuilder: valueBuilder,
-      key: key,
-      dispose: dispose,
-      updateShouldNotify: updateShouldNotify,
-    );
+  Provider<T> cloneWithChild(Widget child) {
+    return builder != null
+        ? Provider<T>(
+            child: child,
+            builder: builder,
+            key: key,
+            dispose: dispose,
+            updateShouldNotify: updateShouldNotify,
+          )
+        : Provider<T>.value(
+            key: key,
+            value: value,
+            updateShouldNotify: updateShouldNotify,
+            child: child,
+          );
   }
 }
 
-class _StatefulProviderState<T> extends State<StatefulProvider<T>> {
-  T _value;
-
-  @override
-  void initState() {
-    super.initState();
-    _value = widget.valueBuilder(context);
-  }
-
+class _ProviderState<T> extends State<Provider<T>>
+    with AdaptativeBuilderWidgetStateMixin<T, Provider<T>> {
   @override
   void dispose() {
     if (widget.dispose != null) {
-      widget.dispose(context, _value);
+      widget.dispose(context, value);
     }
     super.dispose();
   }
 
   @override
+  void didChangeValue(T previousValue) {
+    if (widget.dispose != null) {
+      widget.dispose(context, previousValue);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Provider(
-      value: _value,
+    return _Provider<T>(
+      value: value,
       updateShouldNotify: widget.updateShouldNotify,
       child: widget.child,
     );
