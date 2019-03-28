@@ -5,9 +5,6 @@ import 'package:provider/src/adaptative_builder_widget.dart';
 /// An handler for the disposal of an object
 typedef void Disposer<T>(BuildContext context, T value);
 
-/// A function that creates an object
-typedef T ValueBuilder<T>(BuildContext context);
-
 /// Necessary to obtain generic [Type]
 /// see https://stackoverflow.com/questions/52891537/how-to-get-generic-type
 /// and https://github.com/dart-lang/sdk/issues/11923
