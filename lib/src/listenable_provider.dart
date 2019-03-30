@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/src/adaptative_builder_widget.dart';
 import 'package:provider/src/provider.dart';
 
 class ListenableProvider<T extends Listenable> extends StatefulWidget

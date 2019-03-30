@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:provider/src/adaptative_builder_widget.dart';
 import 'package:provider/src/provider.dart';
 
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
