@@ -11,22 +11,22 @@ class StreamProvider<T> extends StatefulWidget
   const StreamProvider({
     Key key,
     this.initialData,
-    this.stream,
-    this.child,
-    this.orElse,
-    this.updateShouldNotify,
-  })  : builder = null,
-        super(key: key);
-
-  const StreamProvider.builder({
-    Key key,
-    this.initialData,
     this.builder,
     this.child,
     this.orElse,
     this.updateShouldNotify,
   })  : stream = null,
         assert(builder != null),
+        super(key: key);
+
+  const StreamProvider.value({
+    Key key,
+    this.initialData,
+    this.stream,
+    this.child,
+    this.orElse,
+    this.updateShouldNotify,
+  })  : builder = null,
         super(key: key);
 
   const StreamProvider._({
