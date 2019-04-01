@@ -3,83 +3,55 @@ import 'package:flutter/material.dart';
 import 'package:provider/src/adaptative_builder_widget.dart';
 import 'package:provider/src/provider.dart';
 
-class ListenableProvider<T extends Listenable> extends StatefulWidget
+class ListenableProvider<T extends Listenable>
+    extends AdaptativeBuilderWidget<T, T>
     implements SingleChildCloneableWidget {
   const ListenableProvider({
     Key key,
-    @required this.listenable,
+    @required T listenable,
     this.child,
   })  : dispose = null,
-        builder = null,
-        super(key: key);
+        super.value(key: key, value: listenable);
 
   const ListenableProvider.builder({
     Key key,
     this.dispose,
-    this.builder,
+    ValueBuilder<T> builder,
     this.child,
-  })  : listenable = null,
-        assert(builder != null),
-        super(key: key);
+  }) : super(key: key, builder: builder);
 
-  const ListenableProvider._({
-    Key key,
-    this.dispose,
-    this.builder,
-    this.listenable,
-    this.child,
-  }) : super(key: key);
-
-  final ValueBuilder<T> builder;
   final Disposer<T> dispose;
-  final T listenable;
   final Widget child;
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<Listenable>('listenable', listenable));
-  }
 
   @override
   _ListenableProviderState<T> createState() => _ListenableProviderState<T>();
 
   @override
-  ListenableProvider<T> cloneWithChild(Widget child) {
-    return ListenableProvider<T>._(
-      key: key,
-      builder: builder,
-      listenable: listenable,
-      dispose: dispose,
-      child: child,
-    );
+  SingleChildCloneableWidget cloneWithChild(Widget child) {
+    return builder != null
+        ? ListenableProvider.builder(
+            key: key,
+            builder: builder,
+            dispose: dispose,
+            child: child,
+          )
+        : ListenableProvider(
+            key: key,
+            listenable: value,
+            child: child,
+          );
   }
 }
 
 class _ListenableProviderState<T extends Listenable>
-    extends State<ListenableProvider<T>> {
-  static bool didChangeBetweenDefaultAndBuilderConstructor(
-    ListenableProvider oldWidget,
-    ListenableProvider widget,
-  ) =>
-      isBuilderConstructor(oldWidget) != isBuilderConstructor(widget);
-
-  static bool isBuilderConstructor(ListenableProvider provider) =>
-      provider.builder != null;
-
+    extends State<ListenableProvider<T>>
+    with AdaptativeBuilderWidgetStateMixin<T, T, ListenableProvider<T>> {
   /// The number of time [Listenable] called its listeners.
   ///
   /// It is used to differentiate external rebuilds from rebuilds caused by the listenable emitting an event.
   /// This allows [InheritedWidget.updateShouldNotify] to return true only in the latter scenario.
   int _buildCount;
   UpdateShouldNotify<T> updateShouldNotify;
-  T listenable;
-
-  @override
-  void initState() {
-    super.initState();
-    startListening();
-  }
 
   void listener() {
     setState(() {
@@ -88,20 +60,13 @@ class _ListenableProviderState<T extends Listenable>
     });
   }
 
-  void startListening() {
-    listenable = widget.listenable ??
-        (widget.builder != null ? widget.builder(context) : null);
+  void startListening(T listenable) {
     updateShouldNotify = createUpdateShouldNotify();
-    listenable?.addListener(listener);
+    listenable.addListener(listener);
   }
 
-  void stopListening(ListenableProvider<T> widget) {
+  void stopListening(T listenable) {
     listenable?.removeListener(listener);
-    if (widget.dispose != null) {
-      // if we have a dispose, then we're using builder constructor so we can safely call the method
-      widget.dispose(context, listenable);
-    }
-    listenable = null;
   }
 
   UpdateShouldNotify<T> createUpdateShouldNotify() {
@@ -110,28 +75,36 @@ class _ListenableProviderState<T extends Listenable>
   }
 
   @override
-  void didUpdateWidget(ListenableProvider<T> oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (didChangeBetweenDefaultAndBuilderConstructor(oldWidget, widget) ||
-        widget.listenable != oldWidget.listenable) {
-      stopListening(oldWidget);
-      startListening();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Provider<T>.value(
-      value: listenable,
+      value: value,
       child: widget.child,
       updateShouldNotify: updateShouldNotify,
     );
   }
 
   @override
+  T didBuild(T built) {
+    return built;
+  }
+
+  @override
+  void disposeBuilt(ListenableProvider<T> widget, T built) {
+    if (widget.dispose != null) {
+      widget.dispose(context, built);
+    }
+  }
+
+  @override
   void dispose() {
-    stopListening(widget);
+    stopListening(value);
     super.dispose();
+  }
+
+  @override
+  void changeValue(ListenableProvider<T> oldWidget, T oldValue, T newValue) {
+    if (oldValue != null) stopListening(oldValue);
+    if (newValue != null) startListening(newValue);
   }
 }
 
@@ -157,29 +130,21 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
           child: child,
         );
 
-  const ChangeNotifierProvider._({
-    Key key,
-    ValueBuilder<T> builder,
-    T listenable,
-    Widget child,
-  }) : super._(
-          key: key,
-          builder: builder,
-          listenable: listenable,
-          child: child,
-          dispose: _disposer,
-        );
-
   // While the behavior doesn't change between ChangeNotifierProvider and ListenableProvider
   // it is required to override `cloneWithChild` because the `runtimeType` is different, which Flutter use.
   @override
   ChangeNotifierProvider<T> cloneWithChild(Widget child) {
-    return ChangeNotifierProvider<T>._(
-      key: key,
-      listenable: listenable,
-      builder: builder,
-      child: child,
-    );
+    return builder != null
+        ? ChangeNotifierProvider.builder(
+            key: key,
+            builder: builder,
+            child: child,
+          )
+        : ChangeNotifierProvider(
+            key: key,
+            notifier: value,
+            child: child,
+          );
   }
 }
 

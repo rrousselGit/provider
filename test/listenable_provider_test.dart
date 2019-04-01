@@ -9,17 +9,6 @@ import 'common.dart';
 
 void main() {
   group('ListenableProvider', () {
-    test('debugFillProperties', () {
-      final provider = ListenableProvider(listenable: null, child: Container());
-      final builder = DiagnosticPropertiesBuilder();
-
-      provider.debugFillProperties(builder);
-      expect(
-        builder.properties
-            .any((d) => d.name == 'listenable' && d.value == null),
-        true,
-      );
-    });
     testWidgets('works with MultiProvider', (tester) async {
       final key = GlobalKey();
       var listenable = ChangeNotifier();

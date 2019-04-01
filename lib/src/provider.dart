@@ -137,7 +137,7 @@ class MultiProvider extends StatelessWidget
 ///   }
 /// }
 /// ```
-class Provider<T> extends AdaptativeBuilderWidget<T>
+class Provider<T> extends AdaptativeBuilderWidget<T, T>
     implements SingleChildCloneableWidget {
   /// Obtain the nearest Provider<T> and returns its value.
   ///
@@ -214,22 +214,7 @@ class Provider<T> extends AdaptativeBuilderWidget<T>
 }
 
 class _ProviderState<T> extends State<Provider<T>>
-    with AdaptativeBuilderWidgetStateMixin<T, Provider<T>> {
-  @override
-  void dispose() {
-    if (widget.dispose != null) {
-      widget.dispose(context, value);
-    }
-    super.dispose();
-  }
-
-  @override
-  void didChangeValue(T previousValue) {
-    if (widget.dispose != null) {
-      widget.dispose(context, previousValue);
-    }
-  }
-
+    with AdaptativeBuilderWidgetStateMixin<T, T, Provider<T>> {
   @override
   Widget build(BuildContext context) {
     return _Provider<T>(
@@ -237,6 +222,16 @@ class _ProviderState<T> extends State<Provider<T>>
       updateShouldNotify: widget.updateShouldNotify,
       child: widget.child,
     );
+  }
+
+  @override
+  T didBuild(T built) => built;
+
+  @override
+  void disposeBuilt(Provider<T> widget, T built) {
+    if (widget.dispose != null) {
+      widget.dispose(context, built);
+    }
   }
 }
 
