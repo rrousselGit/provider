@@ -5,8 +5,30 @@ import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'common.dart';
 
+class ValueNotifierMock<T> extends Mock implements ValueNotifier<T> {}
+
 void main() {
   group('valueListenableProvider', () {
+    testWidgets(
+        'disposing ValueListenableProvider on a builder constructor disposes of the ValueNotifier',
+        (tester) async {
+      final mock = ValueNotifierMock<int>();
+      await tester.pumpWidget(ValueListenableProvider<int>(
+        builder: (_) => mock,
+        child: Container(),
+      ));
+
+      final listener =
+          verify(mock.addListener(captureAny)).captured.first as VoidCallback;
+
+      clearInteractions(mock);
+      await tester.pumpWidget(Container());
+      verifyInOrder([
+        mock.removeListener(listener),
+        mock.dispose(),
+      ]);
+      verifyNoMoreInteractions(mock);
+    });
     testWidgets('rebuilds when value change', (tester) async {
       final listenable = ValueNotifier(0);
 
@@ -15,7 +37,7 @@ void main() {
               textDirection: TextDirection.ltr));
 
       await tester.pumpWidget(ValueListenableProvider.value(
-        listenable: listenable,
+        valueListenable: listenable,
         child: child,
       ));
 
@@ -37,13 +59,13 @@ void main() {
       final child = Builder(builder: builder);
 
       await tester.pumpWidget(ValueListenableProvider.value(
-        listenable: listenable,
+        valueListenable: listenable,
         child: child,
       ));
       verify(builder(any)).called(1);
 
       await tester.pumpWidget(ValueListenableProvider.value(
-        listenable: listenable,
+        valueListenable: listenable,
         child: child,
       ));
       verifyNoMoreInteractions(builder);
@@ -53,7 +75,7 @@ void main() {
       final key = GlobalKey();
       await tester.pumpWidget(ValueListenableProvider.value(
         key: key,
-        listenable: ValueNotifier(42),
+        valueListenable: ValueNotifier(42),
         child: Container(),
       ));
 
@@ -65,7 +87,7 @@ void main() {
 
       var notifier = ValueNotifier(0);
       await tester.pumpWidget(ValueListenableProvider.value(
-        listenable: notifier,
+        valueListenable: notifier,
         updateShouldNotify: shouldNotify,
         child: Container(),
       ));
@@ -83,12 +105,46 @@ void main() {
       final key = GlobalKey();
       await tester.pumpWidget(MultiProvider(
         providers: [
-          ValueListenableProvider.value(listenable: ValueNotifier(42))
+          ValueListenableProvider.value(valueListenable: ValueNotifier(42))
         ],
         child: Container(key: key),
       ));
 
       expect(Provider.of<int>(key.currentContext), 42);
+    });
+
+    test('works with MultiProvider #2', () {
+      final provider = ValueListenableProvider.value(
+        key: const Key('42'),
+        valueListenable: ValueNotifier<int>(42),
+        child: Container(),
+      );
+      var child2 = Container();
+      final clone = provider.cloneWithChild(child2);
+
+      expect(clone.child, child2);
+      expect(clone.key, provider.key);
+      expect(clone.builder, provider.builder);
+      expect(clone.value, provider.value);
+      expect(clone.updateShouldNotify, provider.updateShouldNotify);
+      expect(clone.builder, provider.builder);
+    });
+    test('works with MultiProvider #3', () {
+      final provider = ValueListenableProvider<int>(
+        builder: (_) => ValueNotifier<int>(42),
+        dispose: (_, n) {},
+        child: Container(),
+        key: const Key('42'),
+      );
+      var child2 = Container();
+      final clone = provider.cloneWithChild(child2);
+
+      expect(clone.child, child2);
+      expect(clone.key, provider.key);
+      expect(clone.builder, provider.builder);
+      expect(clone.value, provider.value);
+      expect(clone.updateShouldNotify, provider.updateShouldNotify);
+      expect(clone.builder, provider.builder);
     });
   });
 }

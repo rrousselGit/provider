@@ -149,50 +149,90 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
 }
 
 /// Expose the current value of a [ValueListenable].
-///
-/// Changing [listenable] will stop listening to the previous [listenable] and listen the new one.
-/// Removing [ValueListenableProvider] from the tree will also stop listening to [listenable].
-///
-///
-/// ```dart
-/// ValueListenable<int> foo;
-///
-/// ValueListenableProvider<int>(
-///   listenable: foo,
-///   child: Container(),
-/// );
-class ValueListenableProvider<T> extends AnimatedWidget
+class ValueListenableProvider<T>
+    extends AdaptativeBuilderWidget<ValueListenable<T>, ValueNotifier<T>>
     implements SingleChildCloneableWidget {
-  /// Allow configuring [Key]
-  ValueListenableProvider.value({
+  /// Listens to [valueListenable] and exposes its current value.
+  ///
+  /// Changing [valueListenable] will stop listening to the previous [valueListenable] and listen the new one.
+  /// Removing [ValueListenableProvider] from the tree will also stop listening to [valueListenable].
+  ///
+  /// ```dart
+  /// ValueListenable<int> foo;
+  ///
+  /// ValueListenableProvider<int>.value(
+  ///   valueListenable: foo,
+  ///   child: Container(),
+  /// );
+  /// ```
+  const ValueListenableProvider.value({
     Key key,
-    @required ValueListenable<T> listenable,
-    this.child,
     this.updateShouldNotify,
-  }) : super(key: key, listenable: listenable);
+    @required ValueListenable<T> valueListenable,
+    this.child,
+  })  : dispose = null,
+        super.value(key: key, value: valueListenable);
 
-  @override
-  ValueListenable<T> get listenable => super.listenable as ValueListenable<T>;
+  const ValueListenableProvider({
+    Key key,
+    this.updateShouldNotify,
+    ValueBuilder<ValueNotifier<T>> builder,
+    this.dispose,
+    this.child,
+  }) : super(key: key, builder: builder);
 
+  final Disposer<T> dispose;
   final Widget child;
   final UpdateShouldNotify<T> updateShouldNotify;
 
   @override
+  _ValueListenableProviderState<T> createState() =>
+      _ValueListenableProviderState<T>();
+
+  @override
+  ValueListenableProvider<T> cloneWithChild(Widget child) {
+    return builder != null
+        ? ValueListenableProvider(
+            key: key,
+            builder: builder,
+            dispose: dispose,
+            child: child,
+          )
+        : ValueListenableProvider.value(
+            key: key,
+            valueListenable: value,
+            child: child,
+          );
+  }
+}
+
+class _ValueListenableProviderState<T> extends State<ValueListenableProvider<T>>
+    with
+        AdaptativeBuilderWidgetStateMixin<ValueListenable<T>, ValueNotifier<T>,
+            ValueListenableProvider<T>> {
+  @override
   Widget build(BuildContext context) {
-    return Provider<T>.value(
-      value: listenable.value,
-      child: child,
-      updateShouldNotify: updateShouldNotify,
+    return ValueListenableBuilder<T>(
+      valueListenable: value,
+      builder: (_, value, child) {
+        return Provider<T>.value(
+          value: value,
+          child: widget.child,
+          updateShouldNotify: widget.updateShouldNotify,
+        );
+      },
+      child: widget.child,
     );
   }
 
   @override
-  SingleChildCloneableWidget cloneWithChild(Widget child) {
-    return ValueListenableProvider.value(
-      key: key,
-      listenable: listenable,
-      updateShouldNotify: updateShouldNotify,
-      child: child,
-    );
+  ValueListenable<T> didBuild(ValueNotifier<T> built) {
+    return built;
+  }
+
+  @override
+  void disposeBuilt(
+      ValueListenableProvider<T> oldWidget, ValueNotifier<T> built) {
+    built.dispose();
   }
 }
