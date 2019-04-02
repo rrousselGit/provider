@@ -1,6 +1,8 @@
 # 2.0.0
 
 - merged `Provider` and `StatefulProvider`
+- added a "builder" constructor to `ValueListenableProvider`
+- normalized providers constructors such that the default constructor is a "builder", and offer a `value` named constructor.
 
 # 1.6.1
 
