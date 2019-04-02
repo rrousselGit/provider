@@ -6,14 +6,14 @@ import 'package:provider/src/provider.dart';
 class ListenableProvider<T extends Listenable>
     extends AdaptativeBuilderWidget<T, T>
     implements SingleChildCloneableWidget {
-  const ListenableProvider({
+  const ListenableProvider.value({
     Key key,
     @required T listenable,
     this.child,
   })  : dispose = null,
         super.value(key: key, value: listenable);
 
-  const ListenableProvider.builder({
+  const ListenableProvider({
     Key key,
     this.dispose,
     ValueBuilder<T> builder,
@@ -29,13 +29,13 @@ class ListenableProvider<T extends Listenable>
   @override
   SingleChildCloneableWidget cloneWithChild(Widget child) {
     return builder != null
-        ? ListenableProvider.builder(
+        ? ListenableProvider(
             key: key,
             builder: builder,
             dispose: dispose,
             child: child,
           )
-        : ListenableProvider(
+        : ListenableProvider.value(
             key: key,
             listenable: value,
             child: child,
@@ -113,17 +113,17 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
   static void _disposer(BuildContext context, ChangeNotifier notifier) =>
       notifier?.dispose();
 
-  const ChangeNotifierProvider({
+  const ChangeNotifierProvider.value({
     Key key,
     T notifier,
     Widget child,
-  }) : super(key: key, listenable: notifier, child: child);
+  }) : super.value(key: key, listenable: notifier, child: child);
 
-  const ChangeNotifierProvider.builder({
+  const ChangeNotifierProvider({
     Key key,
     ValueBuilder<T> builder,
     Widget child,
-  }) : super.builder(
+  }) : super(
           key: key,
           builder: builder,
           dispose: _disposer,
@@ -135,12 +135,12 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
   @override
   ChangeNotifierProvider<T> cloneWithChild(Widget child) {
     return builder != null
-        ? ChangeNotifierProvider.builder(
+        ? ChangeNotifierProvider(
             key: key,
             builder: builder,
             child: child,
           )
-        : ChangeNotifierProvider(
+        : ChangeNotifierProvider.value(
             key: key,
             notifier: value,
             child: child,
@@ -164,7 +164,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
 class ValueListenableProvider<T> extends AnimatedWidget
     implements SingleChildCloneableWidget {
   /// Allow configuring [Key]
-  ValueListenableProvider({
+  ValueListenableProvider.value({
     Key key,
     @required ValueListenable<T> listenable,
     this.child,
@@ -188,7 +188,7 @@ class ValueListenableProvider<T> extends AnimatedWidget
 
   @override
   SingleChildCloneableWidget cloneWithChild(Widget child) {
-    return ValueListenableProvider(
+    return ValueListenableProvider.value(
       key: key,
       listenable: listenable,
       updateShouldNotify: updateShouldNotify,

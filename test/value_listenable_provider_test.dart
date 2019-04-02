@@ -14,7 +14,7 @@ void main() {
           builder: (context) => Text(Provider.of<int>(context).toString(),
               textDirection: TextDirection.ltr));
 
-      await tester.pumpWidget(ValueListenableProvider(
+      await tester.pumpWidget(ValueListenableProvider.value(
         listenable: listenable,
         child: child,
       ));
@@ -36,13 +36,13 @@ void main() {
       final listenable = ValueNotifier(0);
       final child = Builder(builder: builder);
 
-      await tester.pumpWidget(ValueListenableProvider(
+      await tester.pumpWidget(ValueListenableProvider.value(
         listenable: listenable,
         child: child,
       ));
       verify(builder(any)).called(1);
 
-      await tester.pumpWidget(ValueListenableProvider(
+      await tester.pumpWidget(ValueListenableProvider.value(
         listenable: listenable,
         child: child,
       ));
@@ -51,7 +51,7 @@ void main() {
 
     testWidgets('pass keys', (tester) async {
       final key = GlobalKey();
-      await tester.pumpWidget(ValueListenableProvider(
+      await tester.pumpWidget(ValueListenableProvider.value(
         key: key,
         listenable: ValueNotifier(42),
         child: Container(),
@@ -64,7 +64,7 @@ void main() {
       when(shouldNotify(0, 1)).thenReturn(true);
 
       var notifier = ValueNotifier(0);
-      await tester.pumpWidget(ValueListenableProvider(
+      await tester.pumpWidget(ValueListenableProvider.value(
         listenable: notifier,
         updateShouldNotify: shouldNotify,
         child: Container(),
@@ -82,7 +82,9 @@ void main() {
     testWidgets('works with MultiProvider', (tester) async {
       final key = GlobalKey();
       await tester.pumpWidget(MultiProvider(
-        providers: [ValueListenableProvider(listenable: ValueNotifier(42))],
+        providers: [
+          ValueListenableProvider.value(listenable: ValueNotifier(42))
+        ],
         child: Container(key: key),
       ));
 
