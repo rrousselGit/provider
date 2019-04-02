@@ -106,11 +106,11 @@ void main() {
             .having((err) => err.valueType, 'valueType', String)
             .having((err) => err.widgetType, 'widgetType', Builder)
             .having((err) => err.toString(), 'toString()', '''
-Error: Could not find the correct Provider<String> above this Builder Widget 
+Error: Could not find the correct Provider<String> above this Builder Widget
 
 To fix, please:
 
-  * Ensure the Provider<String> is an ancestor to this Builder Widget 
+  * Ensure the Provider<String> is an ancestor to this Builder Widget
   * Provide types to Provider<String>
   * Provide types to Consumer<String>
   * Provide types to Provider.of<String>()

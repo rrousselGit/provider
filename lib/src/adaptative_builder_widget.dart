@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+/// A function that creates an object of type [T].
 typedef ValueBuilder<T> = T Function(BuildContext context);
 
 abstract class AdaptativeBuilderWidget<T, B> extends StatefulWidget {
