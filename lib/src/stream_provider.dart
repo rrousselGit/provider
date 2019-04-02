@@ -6,42 +6,28 @@ import 'package:provider/src/provider.dart';
 
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 
-class StreamProvider<T> extends StatefulWidget
+class StreamProvider<T>
+    extends AdaptativeBuilderWidget<Stream<T>, StreamController<T>>
     implements SingleChildCloneableWidget {
   const StreamProvider({
+    @required ValueBuilder<StreamController<T>> builder,
     Key key,
     this.initialData,
-    this.builder,
     this.child,
     this.orElse,
     this.updateShouldNotify,
-  })  : stream = null,
-        assert(builder != null),
-        super(key: key);
+  }) : super(key: key, builder: builder);
 
   const StreamProvider.value({
+    @required Stream<T> stream,
     Key key,
     this.initialData,
-    this.stream,
     this.child,
     this.orElse,
     this.updateShouldNotify,
-  })  : builder = null,
-        super(key: key);
+  }) : super.value(key: key, value: stream);
 
-  const StreamProvider._({
-    Key key,
-    this.initialData,
-    this.stream,
-    this.builder,
-    this.child,
-    this.orElse,
-    this.updateShouldNotify,
-  }) : super(key: key);
-
-  final ValueBuilder<StreamController<T>> builder;
   final T initialData;
-  final Stream<T> stream;
   final Widget child;
   final ErrorBuilder<T> orElse;
   final UpdateShouldNotify<T> updateShouldNotify;
@@ -51,56 +37,34 @@ class StreamProvider<T> extends StatefulWidget
 
   @override
   StreamProvider<T> cloneWithChild(Widget child) {
-    return StreamProvider<T>._(
-      key: key,
-      initialData: initialData,
-      stream: stream,
-      updateShouldNotify: updateShouldNotify,
-      orElse: orElse,
-      builder: builder,
-      child: child,
-    );
+    return builder != null
+        ? StreamProvider(
+            key: key,
+            builder: builder,
+            child: child,
+            updateShouldNotify: updateShouldNotify,
+            initialData: initialData,
+            orElse: orElse,
+          )
+        : StreamProvider.value(
+            key: key,
+            stream: value,
+            child: child,
+            updateShouldNotify: updateShouldNotify,
+            initialData: initialData,
+            orElse: orElse,
+          );
   }
 }
 
-class _StreamProviderState<T> extends State<StreamProvider<T>> {
-  static bool didChangeBetweenDefaultAndBuilderConstructor(
-    StreamProvider oldWidget,
-    StreamProvider widget,
-  ) =>
-      isBuilderConstructor(oldWidget) != isBuilderConstructor(widget);
-
-  static bool isBuilderConstructor(StreamProvider provider) =>
-      provider.builder != null;
-
-  Stream<T> stream;
-  StreamController<T> controller;
-
-  @override
-  void initState() {
-    super.initState();
-    buildStream();
-  }
-
-  void buildStream() {
-    if (widget.builder != null) {
-      controller = widget.builder(context);
-    }
-    stream = widget.stream ?? controller?.stream;
-  }
-
-  @override
-  void didUpdateWidget(StreamProvider<T> oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (didChangeBetweenDefaultAndBuilderConstructor(oldWidget, widget)) {
-      buildStream();
-    }
-  }
-
+class _StreamProviderState<T> extends State<StreamProvider<T>>
+    with
+        AdaptativeBuilderWidgetStateMixin<Stream<T>, StreamController<T>,
+            StreamProvider<T>> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<T>(
-      stream: stream,
+      stream: value,
       initialData: widget.initialData,
       builder: (_, snapshot) {
         return Provider<T>.value(
@@ -124,8 +88,12 @@ class _StreamProviderState<T> extends State<StreamProvider<T>> {
   }
 
   @override
-  void dispose() {
-    controller?.close();
-    super.dispose();
+  void disposeBuilt(StreamProvider<T> oldWidget, StreamController<T> built) {
+    built?.close();
+  }
+
+  @override
+  Stream<T> didBuild(StreamController<T> built) {
+    return built?.stream;
   }
 }

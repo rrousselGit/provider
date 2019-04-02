@@ -158,7 +158,7 @@ void main() {
       expect(clone.key, provider.key);
       expect(clone.initialData, provider.initialData);
       expect(clone.builder, provider.builder);
-      expect(clone.stream, provider.stream);
+      expect(clone.value, provider.value);
       expect(clone.orElse, provider.orElse);
     });
     testWidgets('works with null', (tester) async {
@@ -187,6 +187,8 @@ void main() {
         ));
 
         expect(Provider.of<int>(key.currentContext), null);
+
+        await tester.pumpWidget(Container());
       });
 
       testWidgets('create and dispose stream with builder', (tester) async {
