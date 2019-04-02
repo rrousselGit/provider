@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/src/adaptative_builder_widget.dart';
+import 'package:provider/src/adaptive_builder_widget.dart';
 
 /// A function that disposes of [value].
 typedef Disposer<T> = void Function(BuildContext context, T value);
@@ -33,8 +33,8 @@ class _Provider<T> extends InheritedWidget {
   const _Provider({
     Key key,
     @required this.value,
-    Widget child,
     UpdateShouldNotify<T> updateShouldNotify,
+    Widget child,
   })  : _updateShouldNotify = updateShouldNotify,
         super(key: key, child: child);
 
@@ -86,8 +86,11 @@ class _Provider<T> extends InheritedWidget {
 class MultiProvider extends StatelessWidget
     implements SingleChildCloneableWidget {
   /// Build a tree of providers from a list of [SingleChildCloneableWidget].
-  const MultiProvider({@required this.providers, Key key, this.child})
-      : assert(providers != null),
+  const MultiProvider({
+    Key key,
+    @required this.providers,
+    this.child,
+  })  : assert(providers != null),
         super(key: key);
 
   /// The list of providers that will be transformed into a tree from top to
@@ -157,7 +160,7 @@ class MultiProvider extends StatelessWidget
 ///   }
 /// }
 /// ```
-class Provider<T> extends AdaptativeBuilderWidget<T, T>
+class Provider<T> extends AdaptiveBuilderWidget<T, T>
     implements SingleChildCloneableWidget {
   /// Obtains the nearest Provider<T> up its widget tree and returns its value.
   ///
@@ -237,7 +240,7 @@ class Provider<T> extends AdaptativeBuilderWidget<T, T>
 }
 
 class _ProviderState<T> extends State<Provider<T>>
-    with AdaptativeBuilderWidgetStateMixin<T, T, Provider<T>> {
+    with AdaptiveBuilderWidgetStateMixin<T, T, Provider<T>> {
   @override
   Widget build(BuildContext context) {
     return _Provider<T>(

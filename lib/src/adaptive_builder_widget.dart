@@ -3,15 +3,15 @@ import 'package:flutter/widgets.dart';
 /// A function that creates an object of type [T].
 typedef ValueBuilder<T> = T Function(BuildContext context);
 
-abstract class AdaptativeBuilderWidget<T, B> extends StatefulWidget {
-  const AdaptativeBuilderWidget({
+abstract class AdaptiveBuilderWidget<T, B> extends StatefulWidget {
+  const AdaptiveBuilderWidget({
     Key key,
     @required this.builder,
   })  : assert(builder != null),
         value = null,
         super(key: key);
 
-  const AdaptativeBuilderWidget.value({
+  const AdaptiveBuilderWidget.value({
     Key key,
     @required this.value,
   })  : builder = null,
@@ -24,7 +24,7 @@ abstract class AdaptativeBuilderWidget<T, B> extends StatefulWidget {
       builder != null ? _ConstructorType.builder : _ConstructorType.value;
 
   @override
-  AdaptativeBuilderWidgetStateMixin<T, B, AdaptativeBuilderWidget<T, B>>
+  AdaptiveBuilderWidgetStateMixin<T, B, AdaptiveBuilderWidget<T, B>>
       createState();
 }
 
@@ -33,8 +33,8 @@ enum _ConstructorType {
   value,
 }
 
-mixin AdaptativeBuilderWidgetStateMixin<T, B,
-    W extends AdaptativeBuilderWidget<T, B>> on State<W> {
+mixin AdaptiveBuilderWidgetStateMixin<T, B,
+    W extends AdaptiveBuilderWidget<T, B>> on State<W> {
   T value;
   B _built;
 

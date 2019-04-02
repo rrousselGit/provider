@@ -1,30 +1,30 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:provider/src/adaptative_builder_widget.dart';
+import 'package:provider/src/adaptive_builder_widget.dart';
 import 'package:provider/src/provider.dart';
 
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 
 class StreamProvider<T>
-    extends AdaptativeBuilderWidget<Stream<T>, StreamController<T>>
+    extends AdaptiveBuilderWidget<Stream<T>, StreamController<T>>
     implements SingleChildCloneableWidget {
   const StreamProvider({
-    @required ValueBuilder<StreamController<T>> builder,
     Key key,
+    @required ValueBuilder<StreamController<T>> builder,
     this.initialData,
-    this.child,
     this.orElse,
     this.updateShouldNotify,
+    this.child,
   }) : super(key: key, builder: builder);
 
   const StreamProvider.value({
-    @required Stream<T> stream,
     Key key,
+    @required Stream<T> stream,
     this.initialData,
-    this.child,
     this.orElse,
     this.updateShouldNotify,
+    this.child,
   }) : super.value(key: key, value: stream);
 
   final T initialData;
@@ -59,7 +59,7 @@ class StreamProvider<T>
 
 class _StreamProviderState<T> extends State<StreamProvider<T>>
     with
-        AdaptativeBuilderWidgetStateMixin<Stream<T>, StreamController<T>,
+        AdaptiveBuilderWidgetStateMixin<Stream<T>, StreamController<T>,
             StreamProvider<T>> {
   @override
   Widget build(BuildContext context) {

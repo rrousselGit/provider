@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:provider/src/adaptative_builder_widget.dart';
+import 'package:provider/src/adaptive_builder_widget.dart';
 
 class BuilderMock extends Mock {
   void call(BuildContext context, int value);
@@ -29,7 +29,7 @@ class Foo {
   final int bar;
 }
 
-class Test extends AdaptativeBuilderWidget<int, Foo> {
+class Test extends AdaptiveBuilderWidget<int, Foo> {
   Test(
       {Key key,
       this.buildValue,
@@ -50,7 +50,7 @@ class Test extends AdaptativeBuilderWidget<int, Foo> {
 }
 
 class _TestState extends State<Test>
-    with AdaptativeBuilderWidgetStateMixin<int, Foo, Test> {
+    with AdaptiveBuilderWidgetStateMixin<int, Foo, Test> {
   @override
   Widget build(BuildContext context) {
     if (widget.buildValue != null) {

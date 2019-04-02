@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/src/adaptative_builder_widget.dart';
+import 'package:provider/src/adaptive_builder_widget.dart';
 import 'package:provider/src/provider.dart';
 
 class ListenableProvider<T extends Listenable>
-    extends AdaptativeBuilderWidget<T, T>
-    implements SingleChildCloneableWidget {
+    extends AdaptiveBuilderWidget<T, T> implements SingleChildCloneableWidget {
   const ListenableProvider.value({
     Key key,
     @required T listenable,
@@ -15,8 +14,8 @@ class ListenableProvider<T extends Listenable>
 
   const ListenableProvider({
     Key key,
+    @required ValueBuilder<T> builder,
     this.dispose,
-    ValueBuilder<T> builder,
     this.child,
   }) : super(key: key, builder: builder);
 
@@ -45,7 +44,7 @@ class ListenableProvider<T extends Listenable>
 
 class _ListenableProviderState<T extends Listenable>
     extends State<ListenableProvider<T>>
-    with AdaptativeBuilderWidgetStateMixin<T, T, ListenableProvider<T>> {
+    with AdaptiveBuilderWidgetStateMixin<T, T, ListenableProvider<T>> {
   /// The number of time [Listenable] called its listeners.
   ///
   /// It is used to differentiate external rebuilds from rebuilds caused by the listenable emitting an event.
@@ -115,13 +114,13 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
 
   const ChangeNotifierProvider.value({
     Key key,
-    T notifier,
+    @required T notifier,
     Widget child,
   }) : super.value(key: key, listenable: notifier, child: child);
 
   const ChangeNotifierProvider({
     Key key,
-    ValueBuilder<T> builder,
+    @required ValueBuilder<T> builder,
     Widget child,
   }) : super(
           key: key,
@@ -150,7 +149,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
 
 /// Expose the current value of a [ValueListenable].
 class ValueListenableProvider<T>
-    extends AdaptativeBuilderWidget<ValueListenable<T>, ValueNotifier<T>>
+    extends AdaptiveBuilderWidget<ValueListenable<T>, ValueNotifier<T>>
     implements SingleChildCloneableWidget {
   /// Listens to [valueListenable] and exposes its current value.
   ///
@@ -167,16 +166,16 @@ class ValueListenableProvider<T>
   /// ```
   const ValueListenableProvider.value({
     Key key,
-    this.updateShouldNotify,
     @required ValueListenable<T> valueListenable,
+    this.updateShouldNotify,
     this.child,
   })  : dispose = null,
         super.value(key: key, value: valueListenable);
 
   const ValueListenableProvider({
     Key key,
+    @required ValueBuilder<ValueNotifier<T>> builder,
     this.updateShouldNotify,
-    ValueBuilder<ValueNotifier<T>> builder,
     this.dispose,
     this.child,
   }) : super(key: key, builder: builder);
@@ -208,7 +207,7 @@ class ValueListenableProvider<T>
 
 class _ValueListenableProviderState<T> extends State<ValueListenableProvider<T>>
     with
-        AdaptativeBuilderWidgetStateMixin<ValueListenable<T>, ValueNotifier<T>,
+        AdaptiveBuilderWidgetStateMixin<ValueListenable<T>, ValueNotifier<T>,
             ValueListenableProvider<T>> {
   @override
   Widget build(BuildContext context) {
