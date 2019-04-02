@@ -51,9 +51,9 @@ void main() {
       final k1 = GlobalKey();
       final k2 = GlobalKey();
       final k3 = GlobalKey();
-      final p1 = Provider(key: k1, value: 42);
-      final p2 = Provider(key: k2, value: 'foo');
-      final p3 = Provider(key: k3, value: 44.0);
+      final p1 = Provider.value(key: k1, value: 42);
+      final p2 = Provider.value(key: k2, value: 'foo');
+      final p3 = Provider.value(key: k3, value: 44.0);
 
       final keyChild = GlobalKey();
       await tester.pumpWidget(MultiProvider(
@@ -63,8 +63,12 @@ void main() {
 
       expect(find.text('Foo'), findsOneWidget);
 
-      // p1 cannot access to /p2/p3
-      expect(Provider.of<int>(k1.currentContext), 42);
+      // p1 cannot access to p1/p2/p3
+      expect(
+        () => Provider.of<int>(k1.currentContext),
+        throwsProviderNotFound(
+            valueType: int, widgetType: _typeOf<Provider<int>>()),
+      );
       expect(
         () => Provider.of<String>(k1.currentContext),
         throwsProviderNotFound(
@@ -78,7 +82,11 @@ void main() {
 
       // p2 can access only p1
       expect(Provider.of<int>(k2.currentContext), 42);
-      expect(Provider.of<String>(k2.currentContext), 'foo');
+      expect(
+        () => Provider.of<String>(k2.currentContext),
+        throwsProviderNotFound(
+            valueType: String, widgetType: _typeOf<Provider<String>>()),
+      );
       expect(
         () => Provider.of<double>(k2.currentContext),
         throwsProviderNotFound(
@@ -88,7 +96,11 @@ void main() {
       // p3 can access both p1 and p2
       expect(Provider.of<int>(k3.currentContext), 42);
       expect(Provider.of<String>(k3.currentContext), 'foo');
-      expect(Provider.of<double>(k3.currentContext), 44);
+      expect(
+        () => Provider.of<double>(k3.currentContext),
+        throwsProviderNotFound(
+            valueType: double, widgetType: _typeOf<Provider<double>>()),
+      );
 
       // the child can access them all
       expect(Provider.of<int>(keyChild.currentContext), 42);
