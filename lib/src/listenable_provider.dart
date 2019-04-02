@@ -27,7 +27,7 @@ class ListenableProvider<T extends Listenable>
   _ListenableProviderState<T> createState() => _ListenableProviderState<T>();
 
   @override
-  SingleChildCloneableWidget cloneWithChild(Widget child) {
+  ListenableProvider<T> cloneWithChild(Widget child) {
     return builder != null
         ? ListenableProvider(
             key: key,

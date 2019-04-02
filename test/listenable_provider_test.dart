@@ -22,6 +22,47 @@ void main() {
 
       expect(Provider.of<ChangeNotifier>(key.currentContext), listenable);
     });
+    test('works with MultiProvider #2', () {
+      final provider = ListenableProvider.value(
+        key: const Key('42'),
+        listenable: ChangeNotifier(),
+        child: Container(),
+      );
+      var child2 = Container();
+      final clone = provider.cloneWithChild(child2);
+
+      expect(clone.child, child2);
+      expect(clone.key, provider.key);
+      expect(clone.builder, provider.builder);
+      expect(clone.value, provider.value);
+      expect(clone.builder, provider.builder);
+    });
+    test('works with MultiProvider #3', () {
+      final provider = ListenableProvider<ChangeNotifier>(
+        builder: (_) => ChangeNotifier(),
+        dispose: (_, n) {},
+        child: Container(),
+        key: const Key('42'),
+      );
+      var child2 = Container();
+      final clone = provider.cloneWithChild(child2);
+
+      expect(clone.child, child2);
+      expect(clone.key, provider.key);
+      expect(clone.builder, provider.builder);
+      expect(clone.value, provider.value);
+      expect(clone.builder, provider.builder);
+    });
+    testWidgets('works with null', (tester) async {
+      final key = GlobalKey();
+      await tester.pumpWidget(StreamProvider<int>.value(
+        stream: null,
+        child: Container(key: key),
+      ));
+
+      expect(Provider.of<int>(key.currentContext), null);
+    });
+
     group('default constructor', () {
       testWidgets('pass down key', (tester) async {
         final listenable = ChangeNotifier();

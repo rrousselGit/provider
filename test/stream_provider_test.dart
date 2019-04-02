@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/src/stream_provider.dart';
 
 import 'common.dart';
 
@@ -159,6 +158,28 @@ void main() {
       expect(clone.initialData, provider.initialData);
       expect(clone.builder, provider.builder);
       expect(clone.value, provider.value);
+      expect(clone.builder, provider.builder);
+      expect(clone.orElse, provider.orElse);
+    });
+    test('works with MultiProvider #3', () {
+      final provider = StreamProvider<int>(
+        builder: (_) => StreamController<int>(),
+        initialData: 42,
+        child: Container(),
+        orElse: (_, __) => 42,
+        key: const Key('42'),
+        updateShouldNotify: (_, __) => true,
+      );
+      var child2 = Container();
+      final clone = provider.cloneWithChild(child2);
+
+      expect(clone.child, child2);
+      expect(clone.updateShouldNotify, provider.updateShouldNotify);
+      expect(clone.key, provider.key);
+      expect(clone.initialData, provider.initialData);
+      expect(clone.builder, provider.builder);
+      expect(clone.value, provider.value);
+      expect(clone.builder, provider.builder);
       expect(clone.orElse, provider.orElse);
     });
     testWidgets('works with null', (tester) async {
