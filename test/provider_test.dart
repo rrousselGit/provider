@@ -8,7 +8,7 @@ import 'package:test_api/test_api.dart' show TypeMatcher;
 void main() {
   group('Provider', () {
     test('cloneWithChild works', () {
-      final provider = Provider(
+      final provider = Provider.value(
         value: 42,
         child: Container(),
         key: const ValueKey(42),
@@ -20,23 +20,7 @@ void main() {
       expect(clone.child, newChild);
       expect(clone.value, provider.value);
       expect(clone.key, provider.key);
-      expect(debugGetProviderUpdateShouldNotify(provider),
-          debugGetProviderUpdateShouldNotify(clone));
-    });
-    testWidgets('diagnosticable', (tester) async {
-      await tester.pumpWidget(Provider<int>(
-        child: Container(),
-        value: 42,
-      ));
-
-      var widget = tester.widget(find.byWidgetPredicate((w) => w is Provider));
-
-      final builder = DiagnosticPropertiesBuilder();
-      widget.debugFillProperties(builder);
-      expect(builder.properties.length, 1);
-
-      expect(builder.properties.first.name, 'value');
-      expect(builder.properties.first.value, 42);
+      expect(provider.updateShouldNotify, clone.updateShouldNotify);
     });
     testWidgets('simple usage', (tester) async {
       var buildCount = 0;
@@ -55,9 +39,9 @@ void main() {
       );
 
       await tester.pumpWidget(
-        Provider<double>(
+        Provider<double>.value(
           value: 24.0,
-          child: Provider<int>(
+          child: Provider<int>.value(
             value: 42,
             child: builder,
           ),
@@ -70,9 +54,9 @@ void main() {
 
       // nothing changed
       await tester.pumpWidget(
-        Provider<double>(
+        Provider<double>.value(
           value: 24.0,
-          child: Provider<int>(
+          child: Provider<int>.value(
             value: 42,
             child: builder,
           ),
@@ -83,9 +67,9 @@ void main() {
 
       // changed a value we are subscribed to
       await tester.pumpWidget(
-        Provider<double>(
+        Provider<double>.value(
           value: 24.0,
-          child: Provider<int>(
+          child: Provider<int>.value(
             value: 43,
             child: builder,
           ),
@@ -98,9 +82,9 @@ void main() {
 
       // changed a value we are _not_ subscribed to
       await tester.pumpWidget(
-        Provider<double>(
+        Provider<double>.value(
           value: 20.0,
-          child: Provider<int>(
+          child: Provider<int>.value(
             value: 43,
             child: builder,
           ),
@@ -159,7 +143,7 @@ https://github.com/rrousselGit/provider/issues
       });
 
       await tester.pumpWidget(
-        Provider<int>(
+        Provider<int>.value(
           value: 24,
           updateShouldNotify: updateShouldNotify,
           child: builder,
@@ -171,7 +155,7 @@ https://github.com/rrousselGit/provider/issues
 
       // value changed
       await tester.pumpWidget(
-        Provider<int>(
+        Provider<int>.value(
           value: 25,
           updateShouldNotify: updateShouldNotify,
           child: builder,
@@ -185,7 +169,7 @@ https://github.com/rrousselGit/provider/issues
 
       // value didnt' change
       await tester.pumpWidget(
-        Provider<int>(
+        Provider<int>.value(
           value: 25,
           updateShouldNotify: updateShouldNotify,
           child: builder,

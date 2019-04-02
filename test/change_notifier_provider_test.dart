@@ -15,19 +15,49 @@ void main() {
 
       await tester.pumpWidget(MultiProvider(
         providers: [
-          ChangeNotifierProvider(notifier: notifier),
+          ChangeNotifierProvider.value(notifier: notifier),
         ],
         child: Container(key: key),
       ));
 
       expect(Provider.of<ChangeNotifier>(key.currentContext), notifier);
     });
+    test('works with MultiProvider #2', () {
+      final provider = ChangeNotifierProvider.value(
+        key: const Key('42'),
+        notifier: ChangeNotifier(),
+        child: Container(),
+      );
+      var child2 = Container();
+      final clone = provider.cloneWithChild(child2);
+
+      expect(clone.child, child2);
+      expect(clone.key, provider.key);
+      expect(clone.builder, provider.builder);
+      expect(clone.value, provider.value);
+      expect(clone.builder, provider.builder);
+    });
+    test('works with MultiProvider #3', () {
+      final provider = ChangeNotifierProvider<ChangeNotifier>(
+        builder: (_) => ChangeNotifier(),
+        child: Container(),
+        key: const Key('42'),
+      );
+      var child2 = Container();
+      final clone = provider.cloneWithChild(child2);
+
+      expect(clone.child, child2);
+      expect(clone.key, provider.key);
+      expect(clone.builder, provider.builder);
+      expect(clone.value, provider.value);
+      expect(clone.builder, provider.builder);
+    });
     group('default constructor', () {
       testWidgets('pass down key', (tester) async {
         final notifier = ChangeNotifier();
         final keyProvider = GlobalKey();
 
-        await tester.pumpWidget(ChangeNotifierProvider(
+        await tester.pumpWidget(ChangeNotifierProvider.value(
           key: keyProvider,
           notifier: notifier,
           child: Container(),
@@ -40,7 +70,7 @@ void main() {
     });
     testWidgets('works with null (default)', (tester) async {
       final key = GlobalKey();
-      await tester.pumpWidget(ChangeNotifierProvider<ChangeNotifier>(
+      await tester.pumpWidget(ChangeNotifierProvider<ChangeNotifier>.value(
         notifier: null,
         child: Container(key: key),
       ));
@@ -49,7 +79,7 @@ void main() {
     });
     testWidgets('works with null (builder)', (tester) async {
       final key = GlobalKey();
-      await tester.pumpWidget(ChangeNotifierProvider<ChangeNotifier>.builder(
+      await tester.pumpWidget(ChangeNotifierProvider<ChangeNotifier>(
         builder: (_) => null,
         child: Container(key: key),
       ));
@@ -61,7 +91,7 @@ void main() {
         final builder = ValueBuilderMock<ChangeNotifier>();
         final key = GlobalKey();
 
-        await tester.pumpWidget(ChangeNotifierProvider<ChangeNotifier>.builder(
+        await tester.pumpWidget(ChangeNotifierProvider<ChangeNotifier>(
           key: key,
           builder: builder,
           child: Container(),
@@ -71,7 +101,7 @@ void main() {
       test('throws if builder is null', () {
         expect(
           // ignore: prefer_const_constructors
-          () => ChangeNotifierProvider.builder(
+          () => ChangeNotifierProvider(
                 builder: null,
               ),
           throwsAssertionError,
@@ -80,7 +110,7 @@ void main() {
       testWidgets('pass down key', (tester) async {
         final keyProvider = GlobalKey();
 
-        await tester.pumpWidget(ChangeNotifierProvider.builder(
+        await tester.pumpWidget(ChangeNotifierProvider(
           key: keyProvider,
           builder: (_) => ChangeNotifier(),
           child: Container(),
@@ -96,7 +126,7 @@ void main() {
       final builder = ValueBuilderMock<ChangeNotifier>();
       when(builder(any)).thenReturn(notifier);
 
-      await tester.pumpWidget(ChangeNotifierProvider.builder(
+      await tester.pumpWidget(ChangeNotifierProvider(
         builder: builder,
         child: Container(),
       ));
@@ -107,7 +137,7 @@ void main() {
       verifyNoMoreInteractions(builder);
       clearInteractions(notifier);
 
-      await tester.pumpWidget(ChangeNotifierProvider.builder(
+      await tester.pumpWidget(ChangeNotifierProvider(
         builder: builder,
         child: Container(),
       ));
@@ -120,7 +150,7 @@ void main() {
       final builder = ValueBuilderMock<ChangeNotifier>();
       when(builder(any)).thenReturn(notifier);
 
-      await tester.pumpWidget(ChangeNotifierProvider.builder(
+      await tester.pumpWidget(ChangeNotifierProvider(
         builder: builder,
         child: Container(),
       ));
@@ -140,7 +170,7 @@ void main() {
       verifyNoMoreInteractions(notifier);
     });
     testWidgets('dispose can be null', (tester) async {
-      await tester.pumpWidget(ChangeNotifierProvider.builder(
+      await tester.pumpWidget(ChangeNotifierProvider(
         builder: (_) => ChangeNotifier(),
         child: Container(),
       ));
@@ -153,7 +183,7 @@ void main() {
       final notifier = MockNotifier();
       var notifier2 = ChangeNotifier();
       final key = GlobalKey();
-      await tester.pumpWidget(ChangeNotifierProvider<ChangeNotifier>(
+      await tester.pumpWidget(ChangeNotifierProvider<ChangeNotifier>.value(
         notifier: notifier,
         child: Container(),
       ));
@@ -161,7 +191,7 @@ void main() {
           as VoidCallback;
       clearInteractions(notifier);
 
-      await tester.pumpWidget(ChangeNotifierProvider<ChangeNotifier>.builder(
+      await tester.pumpWidget(ChangeNotifierProvider<ChangeNotifier>(
         builder: (_) {
           return notifier2;
         },
@@ -181,7 +211,7 @@ void main() {
       var notifier2 = ChangeNotifier();
       final key = GlobalKey();
 
-      await tester.pumpWidget(ChangeNotifierProvider.builder(
+      await tester.pumpWidget(ChangeNotifierProvider(
         builder: (_) => notifier,
         child: Container(),
       ));
@@ -189,7 +219,7 @@ void main() {
       final listener = verify(notifier.addListener(captureAny)).captured.first
           as VoidCallback;
       clearInteractions(notifier);
-      await tester.pumpWidget(ChangeNotifierProvider(
+      await tester.pumpWidget(ChangeNotifierProvider.value(
         notifier: notifier2,
         child: Container(key: key),
       ));
@@ -205,7 +235,7 @@ void main() {
       verifyNoMoreInteractions(notifier);
     });
     testWidgets('dispose can be null', (tester) async {
-      await tester.pumpWidget(ChangeNotifierProvider.builder(
+      await tester.pumpWidget(ChangeNotifierProvider(
         builder: (_) => ChangeNotifier(),
         child: Container(),
       ));
@@ -218,7 +248,7 @@ void main() {
 
       var notifier = ChangeNotifier();
       Widget build() {
-        return ChangeNotifierProvider(
+        return ChangeNotifierProvider.value(
           notifier: notifier,
           child: Builder(builder: (context) {
             Provider.of<ChangeNotifier>(context);
@@ -262,7 +292,7 @@ void main() {
         builder: builder,
       );
 
-      await tester.pumpWidget(ChangeNotifierProvider(
+      await tester.pumpWidget(ChangeNotifierProvider.value(
         notifier: notifier,
         child: child,
       ));
@@ -270,7 +300,7 @@ void main() {
       verify(builder(any)).called(1);
       expect(Provider.of<ChangeNotifier>(keyChild.currentContext), notifier);
 
-      await tester.pumpWidget(ChangeNotifierProvider(
+      await tester.pumpWidget(ChangeNotifierProvider.value(
         notifier: notifier,
         child: child,
       ));
@@ -291,7 +321,7 @@ void main() {
           return builder(context);
         },
       );
-      var changeNotifierProvider = ChangeNotifierProvider(
+      var changeNotifierProvider = ChangeNotifierProvider.value(
         notifier: notifier,
         child: child,
       );

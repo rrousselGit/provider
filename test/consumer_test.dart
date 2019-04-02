@@ -51,12 +51,12 @@ void main() {
   final f = F();
   final provider = MultiProvider(
     providers: [
-      Provider(value: a),
-      Provider(value: b),
-      Provider(value: c),
-      Provider(value: d),
-      Provider(value: e),
-      Provider(value: f),
+      Provider.value(value: a),
+      Provider.value(value: b),
+      Provider.value(value: c),
+      Provider.value(value: d),
+      Provider.value(value: e),
+      Provider.value(value: f),
     ],
   );
 
