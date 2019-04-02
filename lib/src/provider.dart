@@ -162,9 +162,9 @@ class MultiProvider extends StatelessWidget
 /// ```
 class Provider<T> extends AdaptiveBuilderWidget<T, T>
     implements SingleChildCloneableWidget {
-  /// Obtains the nearest Provider<T> up its widget tree and returns its value.
+  /// Obtains the nearest [Provider<T>] up its widget tree and returns its value.
   ///
-  /// If [listen] is true (default), later value changes will trigger a new
+  /// If [listen] is `true` (default), later value changes will trigger a new
   /// [State.build] to widgets, and [State.didChangeDependencies] for
   /// [StatefulWidget].
   static T of<T>(BuildContext context, {bool listen = true}) {
