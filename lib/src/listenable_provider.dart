@@ -187,7 +187,9 @@ class ValueListenableProvider<T>
   ///
   /// [builder] must not be `null`.
   ///
-  /// {@macro provider.updateshouldnotify}
+  /// [updateShouldNotify] can optionally be passed to avoid unnecessaryly rebuilding dependants when nothing changed.
+  /// Defaults to `(previous, next) => previous == next`. See [InheritedWidget.updateShouldNotify] for more informations.
+  ///
   /// See also:
   ///   * [ValueListenable]
   ///   * [ListenableProvider], similar to [ValueListenableProvider] but for any kind of [Listenable].
@@ -224,7 +226,7 @@ class ValueListenableProvider<T>
   /// {@macro flutter.widgets.child}
   final Widget child;
 
-  /// {@macro provider.updateshouldnotify}
+  /// User-provided custom logic for [InheritedWidget.updateShouldNotify].
   final UpdateShouldNotify<T> updateShouldNotify;
 
   @override
