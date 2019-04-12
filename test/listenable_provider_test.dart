@@ -53,17 +53,8 @@ void main() {
       expect(clone.value, provider.value);
       expect(clone.builder, provider.builder);
     });
-    testWidgets('works with null', (tester) async {
-      final key = GlobalKey();
-      await tester.pumpWidget(StreamProvider<int>.value(
-        stream: null,
-        child: Container(key: key),
-      ));
 
-      expect(Provider.of<int>(key.currentContext), null);
-    });
-
-    group('default constructor', () {
+    group('value constructor', () {
       testWidgets('pass down key', (tester) async {
         final listenable = ChangeNotifier();
         final keyProvider = GlobalKey();
@@ -254,14 +245,7 @@ void main() {
       ]);
       verifyNoMoreInteractions(listenable);
     });
-    testWidgets('dispose can be null', (tester) async {
-      await tester.pumpWidget(ListenableProvider(
-        builder: (_) => ChangeNotifier(),
-        child: Container(),
-      ));
 
-      await tester.pumpWidget(Container());
-    });
     testWidgets('changing listenable rebuilds descendants', (tester) async {
       final builder = BuilderMock();
       when(builder(any)).thenReturn(Container());

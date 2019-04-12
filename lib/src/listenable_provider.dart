@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/src/adaptive_builder_widget.dart';
 import 'package:provider/src/provider.dart';
 
+/// Listens a [Listenable], expose it to its descendants
+/// and rebuilds dependents whenever the listener emits an event.
+///
+/// See also:
+///   * [ChangeNotifierProvider], a subclass of [ListenableProvider] specific to [ChangeNotifier].
+///   * [Listenable]
 class ListenableProvider<T extends Listenable>
     extends AdaptiveBuilderWidget<T, T> implements SingleChildCloneableWidget {
-  const ListenableProvider.value({
-    Key key,
-    @required T listenable,
-    this.child,
-  })  : dispose = null,
-        super.value(key: key, value: listenable);
-
+  /// Creates a [Listenable] using [builder] and subscribes to it.
+  ///
+  /// [dispose] can optionally passed to free resources
+  /// when [ListenableProvider] is removed from the tree.
+  ///
+  /// [builder] must not be `null`.
   const ListenableProvider({
     Key key,
     @required ValueBuilder<T> builder,
@@ -19,7 +24,27 @@ class ListenableProvider<T extends Listenable>
     this.child,
   }) : super(key: key, builder: builder);
 
+  /// Listens [listenable] and expose it to all of [ListenableProvider] descendants.
+  ///
+  /// Rebuilding [ListenableProvider] without
+  /// changing the instance of [listenable] will not rebuild dependants.
+  const ListenableProvider.value({
+    Key key,
+    @required T listenable,
+    this.child,
+  })  : dispose = null,
+        super.value(key: key, value: listenable);
+
+  /// Function used to dispose of an object created by [builder].
+  ///
+  /// [dispose] will be called whenever [ListenableProvider] is removed from the tree
+  /// or
   final Disposer<T> dispose;
+
+  /// The widget that is below the current [ListenableProvider] widget in the
+  /// tree.
+  ///
+  /// {@macro flutter.widgets.child}
   final Widget child;
 
   @override
@@ -107,27 +132,33 @@ class _ListenableProviderState<T extends Listenable>
   }
 }
 
+/// Listens a [ChangeNotifier], expose it to its descendants
+/// and rebuilds dependents whenever the [ChangeNotifier.notifyListeners] is called.
+///
+/// See also:
+///   * [ListenableProvider], similar to [ChangeNotifier] but works with any [Listenable].
+///   * [ChangeNotifier]
 class ChangeNotifierProvider<T extends ChangeNotifier>
     extends ListenableProvider<T> implements SingleChildCloneableWidget {
   static void _disposer(BuildContext context, ChangeNotifier notifier) =>
       notifier?.dispose();
 
+  /// Create a [ChangeNotifier] using [builder] function and automatically dispose it
+  /// when [ChangeNotifierProvider] is removed from the widget tree.
+  ///
+  /// [builder] must not be `null`.
+  const ChangeNotifierProvider({
+    Key key,
+    @required ValueBuilder<T> builder,
+    Widget child,
+  }) : super(key: key, builder: builder, dispose: _disposer, child: child);
+
+  /// Listens to [notifier] and expose it to all of [ChangeNotifierProvider] descendants.
   const ChangeNotifierProvider.value({
     Key key,
     @required T notifier,
     Widget child,
   }) : super.value(key: key, listenable: notifier, child: child);
-
-  const ChangeNotifierProvider({
-    Key key,
-    @required ValueBuilder<T> builder,
-    Widget child,
-  }) : super(
-          key: key,
-          builder: builder,
-          dispose: _disposer,
-          child: child,
-        );
 
   // While the behavior doesn't change between ChangeNotifierProvider and ListenableProvider
   // it is required to override `cloneWithChild` because the `runtimeType` is different, which Flutter use.
@@ -147,10 +178,26 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
   }
 }
 
-/// Expose the current value of a [ValueListenable].
+/// Listens to a [ValueListenable] and expose its current value.
 class ValueListenableProvider<T>
     extends AdaptiveBuilderWidget<ValueListenable<T>, ValueNotifier<T>>
     implements SingleChildCloneableWidget {
+  /// Creates a [ValueNotifier] using [builder] and automatically dispose it
+  /// when [ValueListenableProvider] is removed from the tree.
+  ///
+  /// [builder] must not be `null`.
+  ///
+  /// {@macro provider.updateshouldnotify}
+  /// See also:
+  ///   * [ValueListenable]
+  ///   * [ListenableProvider], similar to [ValueListenableProvider] but for any kind of [Listenable].
+  const ValueListenableProvider({
+    Key key,
+    @required ValueBuilder<ValueNotifier<T>> builder,
+    this.updateShouldNotify,
+    this.child,
+  }) : super(key: key, builder: builder);
+
   /// Listens to [valueListenable] and exposes its current value.
   ///
   /// Changing [valueListenable] will stop listening to the previous [valueListenable] and listen the new one.
@@ -169,19 +216,15 @@ class ValueListenableProvider<T>
     @required ValueListenable<T> valueListenable,
     this.updateShouldNotify,
     this.child,
-  })  : dispose = null,
-        super.value(key: key, value: valueListenable);
+  }) : super.value(key: key, value: valueListenable);
 
-  const ValueListenableProvider({
-    Key key,
-    @required ValueBuilder<ValueNotifier<T>> builder,
-    this.updateShouldNotify,
-    this.dispose,
-    this.child,
-  }) : super(key: key, builder: builder);
-
-  final Disposer<T> dispose;
+  /// The widget that is below the current [ValueListenableProvider] widget in the
+  /// tree.
+  ///
+  /// {@macro flutter.widgets.child}
   final Widget child;
+
+  /// {@macro provider.updateshouldnotify}
   final UpdateShouldNotify<T> updateShouldNotify;
 
   @override
@@ -191,12 +234,7 @@ class ValueListenableProvider<T>
   @override
   ValueListenableProvider<T> cloneWithChild(Widget child) {
     return builder != null
-        ? ValueListenableProvider(
-            key: key,
-            builder: builder,
-            dispose: dispose,
-            child: child,
-          )
+        ? ValueListenableProvider(key: key, builder: builder, child: child)
         : ValueListenableProvider.value(
             key: key,
             valueListenable: value,
