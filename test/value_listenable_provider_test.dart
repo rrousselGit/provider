@@ -132,6 +132,7 @@ void main() {
     test('works with MultiProvider #3', () {
       final provider = ValueListenableProvider<int>(
         builder: (_) => ValueNotifier<int>(42),
+        dispose: (_, n) {},
         child: Container(),
         key: const Key('42'),
       );
