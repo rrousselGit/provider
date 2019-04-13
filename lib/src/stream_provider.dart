@@ -9,7 +9,7 @@ typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 /// Listens to a [Stream<T>] and exposes [T] to its descendants.
 ///
 /// It is considered an error to pass a stream that can emit errors without providing
-/// an [orElse] method.
+/// an [catchError] method.
 ///
 /// {@template provider.streamprovider.initialdata}
 /// [initialData] determines the value exposed until the [Stream] emits a value.
@@ -34,7 +34,7 @@ class StreamProvider<T>
     Key key,
     @required ValueBuilder<StreamController<T>> builder,
     this.initialData,
-    this.orElse,
+    this.catchError,
     this.updateShouldNotify,
     this.child,
   }) : super(key: key, builder: builder);
@@ -44,7 +44,7 @@ class StreamProvider<T>
     Key key,
     @required Stream<T> stream,
     this.initialData,
-    this.orElse,
+    this.catchError,
     this.updateShouldNotify,
     this.child,
   }) : super.value(key: key, value: stream);
@@ -59,12 +59,12 @@ class StreamProvider<T>
 
   /// Optional function used whenever the [Stream] emits an error.
   ///
-  /// [orElse] will be called with the emitted error and
+  /// [catchError] will be called with the emitted error and
   /// is expected to return a fallback value without throwing.
   ///
   /// The returned value will then be exposed to the descendants of [StreamProvider]
   /// like any valid value.
-  final ErrorBuilder<T> orElse;
+  final ErrorBuilder<T> catchError;
 
   /// {@macro provider.updateshouldnotify}
   final UpdateShouldNotify<T> updateShouldNotify;
@@ -81,7 +81,7 @@ class StreamProvider<T>
             child: child,
             updateShouldNotify: updateShouldNotify,
             initialData: initialData,
-            orElse: orElse,
+            catchError: catchError,
           )
         : StreamProvider.value(
             key: key,
@@ -89,7 +89,7 @@ class StreamProvider<T>
             child: child,
             updateShouldNotify: updateShouldNotify,
             initialData: initialData,
-            orElse: orElse,
+            catchError: catchError,
           );
   }
 }
@@ -115,8 +115,8 @@ class _StreamProviderState<T> extends State<StreamProvider<T>>
 
   T getValue(AsyncSnapshot<T> snapshot, BuildContext context) {
     if (snapshot.hasError) {
-      if (widget.orElse != null) {
-        return widget.orElse(context, snapshot.error);
+      if (widget.catchError != null) {
+        return widget.catchError(context, snapshot.error);
       }
       // ignore: only_throw_errors
       throw snapshot.error;
