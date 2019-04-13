@@ -9,7 +9,7 @@ typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 /// Listens to a [Stream<T>] and exposes [T] to its descendants.
 ///
 /// It is considered an error to pass a stream that can emit errors without providing
-/// a [orElse] method.
+/// an [orElse] method.
 ///
 /// {@template provider.streamprovider.initialdata}
 /// [initialData] determines the value exposed until the [Stream] emits a value.
@@ -57,7 +57,7 @@ class StreamProvider<T>
   /// {@macro flutter.widgets.child}
   final Widget child;
 
-  /// Optional function used whenever the listened [Stream] emits an error.
+  /// Optional function used whenever the [Stream] emits an error.
   ///
   /// [orElse] will be called with the emitted error and
   /// is expected to return a fallback value without throwing.

@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/src/adaptive_builder_widget.dart';
 import 'package:provider/src/provider.dart';
 
-/// Listens a [Listenable], expose it to its descendants
+/// Listens to a [Listenable], expose it to its descendants
 /// and rebuilds dependents whenever the listener emits an event.
 ///
 /// See also:
 ///   * [ChangeNotifierProvider], a subclass of [ListenableProvider] specific to [ChangeNotifier].
+///   * [ValueListenableProvider], which listens to a [ValueListenable] but exposes only [ValueListenable.value] instead of the whole object.
 ///   * [Listenable]
 class ListenableProvider<T extends Listenable>
     extends AdaptiveBuilderWidget<T, T> implements SingleChildCloneableWidget {
@@ -38,7 +39,7 @@ class ListenableProvider<T extends Listenable>
   /// Function used to dispose of an object created by [builder].
   ///
   /// [dispose] will be called whenever [ListenableProvider] is removed from the tree
-  /// or
+  /// or when switching from [ListenableProvider] to [ListenableProvider.value] constructor.
   final Disposer<T> dispose;
 
   /// The widget that is below the current [ListenableProvider] widget in the
@@ -132,7 +133,7 @@ class _ListenableProviderState<T extends Listenable>
   }
 }
 
-/// Listens a [ChangeNotifier], expose it to its descendants
+/// Listens to a [ChangeNotifier], expose it to its descendants
 /// and rebuilds dependents whenever the [ChangeNotifier.notifyListeners] is called.
 ///
 /// See also:
@@ -143,7 +144,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
   static void _disposer(BuildContext context, ChangeNotifier notifier) =>
       notifier?.dispose();
 
-  /// Create a [ChangeNotifier] using [builder] function and automatically dispose it
+  /// Create a [ChangeNotifier] using the [builder] function and automatically dispose it
   /// when [ChangeNotifierProvider] is removed from the widget tree.
   ///
   /// [builder] must not be `null`.

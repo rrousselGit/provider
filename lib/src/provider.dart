@@ -146,7 +146,7 @@ class MultiProvider extends StatelessWidget
 ///
 /// {@template provider.updateshouldnotify}
 /// [updateShouldNotify] can optionally be passed to avoid unnecessaryly rebuilding dependants when nothing changed.
-/// Defaults to `(previous, next) => previous == next`. See [InheritedWidget.updateShouldNotify] for more informations.
+/// Defaults to `(previous, next) => previous != next`. See [InheritedWidget.updateShouldNotify] for more informations.
 /// {@endtemplate}
 /// ```
 /// class Model {
