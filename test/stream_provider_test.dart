@@ -92,7 +92,7 @@ void main() {
       verifyNoMoreInteractions(shouldNotify);
     });
 
-    testWidgets('throws if stream has error and orElse is missing',
+    testWidgets('throws if stream has error and catchError is missing',
         (tester) async {
       final controller = StreamController<int>();
 
@@ -106,15 +106,16 @@ void main() {
       await Future.microtask(tester.pump);
       expect(tester.takeException(), 42);
     });
-    testWidgets('calls orElse if present and stream has error', (tester) async {
+    testWidgets('calls catchError if present and stream has error',
+        (tester) async {
       final controller = StreamController<int>();
       final key = GlobalKey();
-      final orElse = ErrorBuilderMock<int>();
-      when(orElse(any, 42)).thenReturn(0);
+      final catchError = ErrorBuilderMock<int>();
+      when(catchError(any, 42)).thenReturn(0);
 
       await tester.pumpWidget(StreamProvider.value(
         stream: controller.stream,
-        orElse: orElse,
+        catchError: catchError,
         child: Container(key: key),
       ));
 
@@ -126,7 +127,7 @@ void main() {
 
       final context = findElementOfWidget<StreamProvider<int>>();
 
-      verify(orElse(context, 42));
+      verify(catchError(context, 42));
     });
 
     testWidgets('works with MultiProvider', (tester) async {
@@ -145,7 +146,7 @@ void main() {
         stream: const Stream<int>.empty(),
         initialData: 42,
         child: Container(),
-        orElse: (_, __) => 42,
+        catchError: (_, __) => 42,
         key: const Key('42'),
         updateShouldNotify: (_, __) => true,
       );
@@ -159,14 +160,14 @@ void main() {
       expect(clone.builder, provider.builder);
       expect(clone.value, provider.value);
       expect(clone.builder, provider.builder);
-      expect(clone.orElse, provider.orElse);
+      expect(clone.catchError, provider.catchError);
     });
     test('works with MultiProvider #3', () {
       final provider = StreamProvider<int>(
         builder: (_) => StreamController<int>(),
         initialData: 42,
         child: Container(),
-        orElse: (_, __) => 42,
+        catchError: (_, __) => 42,
         key: const Key('42'),
         updateShouldNotify: (_, __) => true,
       );
@@ -180,7 +181,7 @@ void main() {
       expect(clone.builder, provider.builder);
       expect(clone.value, provider.value);
       expect(clone.builder, provider.builder);
-      expect(clone.orElse, provider.orElse);
+      expect(clone.catchError, provider.catchError);
     });
     testWidgets('works with null', (tester) async {
       final key = GlobalKey();

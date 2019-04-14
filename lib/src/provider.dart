@@ -144,6 +144,10 @@ class MultiProvider extends StatelessWidget
 /// The following example instantiates a `Model` once, and disposes it when
 /// [Provider] is removed from the tree.
 ///
+/// {@template provider.updateshouldnotify}
+/// [updateShouldNotify] can optionally be passed to avoid unnecessaryly rebuilding dependants when nothing changed.
+/// Defaults to `(previous, next) => previous != next`. See [InheritedWidget.updateShouldNotify] for more informations.
+/// {@endtemplate}
 /// ```
 /// class Model {
 ///   void dispose() {}
