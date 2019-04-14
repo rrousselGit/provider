@@ -106,7 +106,8 @@ void main() {
       await Future.microtask(tester.pump);
       expect(tester.takeException(), 42);
     });
-    testWidgets('calls catchError if present and stream has error', (tester) async {
+    testWidgets('calls catchError if present and stream has error',
+        (tester) async {
       final controller = StreamController<int>();
       final key = GlobalKey();
       final catchError = ErrorBuilderMock<int>();
