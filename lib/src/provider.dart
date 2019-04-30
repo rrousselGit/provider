@@ -190,10 +190,10 @@ class Provider<T> extends AdaptiveBuilderWidget<T, T>
   const Provider({
     Key key,
     @required ValueBuilder<T> builder,
-    this.updateShouldNotify,
     this.dispose,
     this.child,
   })  : assert(builder != null),
+        updateShouldNotify = null,
         super(key: key, builder: builder);
 
   /// Allows to specify parameters to [Provider]
@@ -232,7 +232,6 @@ class Provider<T> extends AdaptiveBuilderWidget<T, T>
             builder: builder,
             key: key,
             dispose: dispose,
-            updateShouldNotify: updateShouldNotify,
           )
         : Provider<T>.value(
             key: key,

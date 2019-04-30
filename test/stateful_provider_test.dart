@@ -18,7 +18,6 @@ void main() {
       builder: (_) => 42,
       child: Container(),
       key: const ValueKey(42),
-      updateShouldNotify: (int _, int __) => true,
     );
 
     final newChild = Container();
@@ -70,23 +69,5 @@ void main() {
     verifyZeroInteractions(dispose);
     await tester.pumpWidget(Container());
     verify(dispose(context, 42)).called(1);
-  });
-
-  testWidgets('update should notify', (tester) async {
-    final updateShouldNotify = (int a, int b) => true;
-
-    await tester.pumpWidget(
-      Provider<int>(
-        builder: (_) => 42,
-        updateShouldNotify: updateShouldNotify,
-        child: Container(),
-      ),
-    );
-
-    final provider =
-        tester.widget(find.byWidgetPredicate((w) => w is Provider<int>))
-            as Provider<int>;
-
-    expect(provider.updateShouldNotify, updateShouldNotify);
   });
 }
