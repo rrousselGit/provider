@@ -1,33 +1,74 @@
 [![Build Status](https://travis-ci.org/rrousselGit/provider.svg?branch=master)](https://travis-ci.org/rrousselGit/provider)
 [![pub package](https://img.shields.io/pub/v/provider.svg)](https://pub.dartlang.org/packages/provider) [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider)
 
-A generic implementation of `InheritedWidget`. It allows to expose any kind of object, without having to manually write an `InheritedWidget` ourselves.
+A dependency injection system built with widgets for widgets. `provider` is mostly syntax sugar for `InheritedWidget`,
+to make common use-cases straightforward.
 
 ## Usage
 
-To expose a value, simply wrap any given part of your widget tree into any of the available `Provider` as such:
+### Exposing a value
+
+To expose a variable using `provider`, simply wrap any widget into one of the provider widgets from this packages
+and pass it your variable. Then, all descendants of the newly added provider widget can access this variable.
+
+A naive example would be to wrap the entire application into a `Provider` widget and pass it our variable:
 
 ```dart
-Provider<int>(
-  value: 42,
-  child: // ...
+Provider<String>.value(
+  value: 'Hello World',
+  child: MaterialApp(
+    home: Home(),
+  )
 )
 ```
 
-Descendants of `Provider` can now obtain this value using the static `Provider.of<T>` method:
+Alternatively for complex objects, most provider expose a constructor that takes a function to create the value.
+The provider will cal that function only once, when the widget is inserted in the tree, and expose the result.
+This is perfect to expose a complex object that never change over time without writing a `StatefulWidget`.
+
+The following creates and expose a `MyComplexClass`. And in the event where `Provider` is removed from the widget tree,
+the instantiated `MyComplexClass` will be disposed.
 
 ```dart
-var value = Provider.of<int>(context);
+Provider<MyComplexClass>(
+  builder: (context) => MyComplexClass(),
+  dispose: (context, value) => value.dispose()
+  child: SomeWidget(),
+)
 ```
 
-You can also use a `Consumer` widget to insert a descendant, useful when both creating a `Provider` and using it:
+### Reading a value
+
+The easiest way to read a value is using the a static method `Provider.of<T>(BuildContext context)`. This method will look
+up in widget tree starting from the widget associated to the `BuildContext` passed and it will return the nearest variable
+of type `T` found (or throw if nothing if found).
+
+TODO: link
+
+Combined with the first example of [exposing a value](), this widget will read the exposed `String` and render "Hello World".
 
 ```dart
-Provider<int>(
-  value: 42,
-  child: Consumer<int>(
-    builder: (context, value) => Text(value.toString()),
-  )
+class Home extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      /// Don't forget to pass the type of the object you want to obtain to `Provider.of`!
+      Provider.of<String>(context)
+    );
+  }
+}
+```
+
+Alternatively instead of using `Provider.of`, we can use the `Consumer` widget.
+
+This can be useful for performances optimisations or when it is difficult to obtain a `BuildContext` descendant of the provider.
+
+```dart
+Provider<String>.value(
+  value: 'Hello World',
+  child: Consumer<String>(
+    builder: (context, value) => Text(value);
+  ),
 )
 ```
 
@@ -52,55 +93,9 @@ var value = Provider.of<int>(context);
 var value2 = Provider.of<String>(context);
 ```
 
-## Existing Providers:
+### MultiProvider
 
-### Provider
-
-A simple provider which takes the exposed value directly:
-
-```dart
-Provider<int>(
-  value: 42,
-  child: // ...
-)
-```
-
-### StatefulProvider
-
-A provider that can also create and dispose an object.
-
-It is usually used to avoid making a `StatefulWidget` for something trivial, such as instantiating a BLoC.
-
-`StatefulBuilder` is the equivalent of a `State.initState` combined with `State.dispose`.
-As such, `valueBuilder` is called only once and is unable to use `InheritedWidget`; which makes it impossible to update the created value.
-
-The following example instantiates a `Model` once, and disposes it when `StatefulProvider` is removed from the tree.
-
-```dart
-class Model {
-  void dispose() {}
-}
-
-class Stateless extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return StatefulProvider<Model>(
-      valueBuilder: (context) =>  Model(),
-      onDispose: (context, value) => value.dispose(),
-      child: ...,
-    );
-  }
-}
-```
-
-## MultiProvider
-
-A provider that merges multiple other providers into one.
-
-`MultiProvider` is used to improve the readability and reduce the boilerplate of
-having many nested providers.
-
-As such, we're going from:
+In big applications where many values are injected, `Provider` can rapidly become pretty nested:
 
 ```dart
 Provider<Foo>(
@@ -115,7 +110,7 @@ Provider<Foo>(
 )
 ```
 
-To:
+In that situation, we can use `MultiProvider` to improve the readability:
 
 ```dart
 MultiProvider(
@@ -128,67 +123,4 @@ MultiProvider(
 )
 ```
 
-Technically, these two are identical. `MultiProvider` will convert the array into a tree.
-This changes only the appearance of the code.
-
-### StreamProvider
-
-A provider that exposes the current value of a `Stream` as an `AsyncSnapshot`.
-
-Changing [stream] will stop listening to the previous [stream] and listen to the new one.
-
-Removing [StreamProvider] from the tree will also stop listening to [stream].
-To obtain the current value of type `T`, one must explicitly request `Provider.of<AsyncSnapshot<T>>`.
-It is also possible to use `StreamProvider.of<T>`.
-
-```dart
-Stream<int> foo;
-
-StreamProvider<int>(
-  stream: foo,
-  child: Container(),
-);
-```
-
-### ValueListenableProvider
-
-Expose the current value of a [ValueListenable].
-
-Changing [valueListenable] will stop listening to the previous [valueListenable] and listen to the new one.
-Removing [ValueListenableProvider] from the tree will also stop listening to [valueListenable].
-
-```dart
-ValueListenable<int> foo;
-
-ValueListenableProvider<int>(
-  valueListenable: foo,
-  child: Container(),
-);
-```
-
-### ChangeNotifierProvider
-
-Expose a [ChangeNotifier] subclass and ask its dependents to rebuild whenever [ChangeNotifier.notifyListeners] is called
-
-Listeners to [ChangeNotifier] only rebuilds when [ChangeNotifier.notifyListeners] is called, even if [ChangeNotifierProvider] is rebuilt.
-
-```dart
-class MyModel extends ChangeNotifier {
-  int _value;
-
-  int get value => _value;
-
-  set value(int value) {
-    _value = value;
-    notifyListeners();
-  }
-}
-
-
-// ...
-
-ChangeNotifierProvider<MyModel>.stateful(
-  builder: () => MyModel(),
-  child: Container(),
-)
-```
+The behavior of both examples is strictly the same. `MultiProvider` only changes the appearance of the code.
