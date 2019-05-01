@@ -1,16 +1,22 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
 
+/// {@template provider.consumer}
 /// Obtain [Provider<T>] from its ancestors and pass its value to [builder].
 ///
 /// [builder] must not be null and may be called multiple times (such as when provided value change).
+/// {@endtemplate}
 class Consumer<T> extends StatelessWidget {
+  /// {@template provider.consumer.builder}
   /// Build a widget tree based on the value from a [Provider<T>].
   ///
   /// Must not be null.
+  /// {@endtemplate}
   final Widget Function(BuildContext context, T value) builder;
 
+  /// {@template provider.consumer.constructor}
   /// Consumes a [Provider<T>]
+  /// {@endtemplate}
   Consumer({Key key, @required this.builder})
       : assert(builder != null),
         super(key: key);
@@ -21,16 +27,12 @@ class Consumer<T> extends StatelessWidget {
   }
 }
 
-/// Obtain [Provider<T>] from its ancestors and pass its value to [builder].
-///
-/// [builder] must not be null and may be called multiple times (such as when provided value change).
+/// {@macro provider.consumer}
 class Consumer2<A, B> extends StatelessWidget {
-  /// Build a widget tree based on the value from a [Provider<T>].
-  ///
-  /// Must not be null.
+  /// {@macro provider.consumer.builder}
   final Widget Function(BuildContext context, A value, B value2) builder;
 
-  /// Consumes a [Provider<T>]
+  /// {@macro provider.consumer.constructor}
   Consumer2({Key key, @required this.builder})
       : assert(builder != null),
         super(key: key);
@@ -45,17 +47,13 @@ class Consumer2<A, B> extends StatelessWidget {
   }
 }
 
-/// Obtain [Provider<T>] from its ancestors and pass its value to [builder].
-///
-/// [builder] must not be null and may be called multiple times (such as when provided value change).
+/// {@macro provider.consumer}
 class Consumer3<A, B, C> extends StatelessWidget {
-  /// Build a widget tree based on the value from a [Provider<T>].
-  ///
-  /// Must not be null.
+  /// {@macro provider.consumer.builder}
   final Widget Function(BuildContext context, A value, B value2, C value3)
       builder;
 
-  /// Consumes a [Provider<T>]
+  /// {@macro provider.consumer.constructor}
   Consumer3({Key key, @required this.builder})
       : assert(builder != null),
         super(key: key);
@@ -71,17 +69,13 @@ class Consumer3<A, B, C> extends StatelessWidget {
   }
 }
 
-/// Obtain [Provider<T>] from its ancestors and pass its value to [builder].
-///
-/// [builder] must not be null and may be called multiple times (such as when provided value change).
+/// {@macro provider.consumer}
 class Consumer4<A, B, C, D> extends StatelessWidget {
-  /// Build a widget tree based on the value from a [Provider<T>].
-  ///
-  /// Must not be null.
+  /// {@macro provider.consumer.builder}
   final Widget Function(
       BuildContext context, A value, B value2, C value3, D value4) builder;
 
-  /// Consumes a [Provider<T>]
+  /// {@macro provider.consumer.constructor}
   Consumer4({Key key, @required this.builder})
       : assert(builder != null),
         super(key: key);
@@ -98,18 +92,14 @@ class Consumer4<A, B, C, D> extends StatelessWidget {
   }
 }
 
-/// Obtain [Provider<T>] from its ancestors and pass its value to [builder].
-///
-/// [builder] must not be null and may be called multiple times (such as when provided value change).
+/// {@macro provider.consumer}
 class Consumer5<A, B, C, D, E> extends StatelessWidget {
-  /// Build a widget tree based on the value from a [Provider<T>].
-  ///
-  /// Must not be null.
+  /// {@macro provider.consumer.builder}
   final Widget Function(
           BuildContext context, A value, B value2, C value3, D value4, E value5)
       builder;
 
-  /// Consumes a [Provider<T>]
+  /// {@macro provider.consumer.constructor}
   Consumer5({Key key, @required this.builder})
       : assert(builder != null),
         super(key: key);
@@ -127,17 +117,13 @@ class Consumer5<A, B, C, D, E> extends StatelessWidget {
   }
 }
 
-/// Obtain [Provider<T>] from its ancestors and pass its value to [builder].
-///
-/// [builder] must not be null and may be called multiple times (such as when provided value change).
+/// {@macro provider.consumer}
 class Consumer6<A, B, C, D, E, F> extends StatelessWidget {
-  /// Build a widget tree based on the value from a [Provider<T>].
-  ///
-  /// Must not be null.
+  /// {@macro provider.consumer.builder}
   final Widget Function(BuildContext context, A value, B value2, C value3,
       D value4, E value5, F value6) builder;
 
-  /// Consumes a [Provider<T>]
+  /// {@macro provider.consumer.constructor}
   Consumer6({Key key, @required this.builder})
       : assert(builder != null),
         super(key: key);
