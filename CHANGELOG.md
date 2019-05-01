@@ -1,5 +1,6 @@
 # 2.0.0
 
+- `Consumer` now takes an optional `child` argument for optimization purposes.
 - merged `Provider` and `StatefulProvider`
 - added a "builder" constructor to `ValueListenableProvider`
 - normalized providers constructors such that the default constructor is a "builder", and offer a `value` named constructor.
