@@ -3,26 +3,29 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
-class _Mock extends Mock {
-  Widget call(Foo foo);
+class ConsumerBuilderMock extends Mock {
+  Widget call(Combined foo);
 }
 
-class Foo {
+class Combined {
   final A a;
   final B b;
   final C c;
   final D d;
   final E e;
   final F f;
+  final Widget child;
   final BuildContext context;
 
-  Foo(this.context, this.a, [this.b, this.c, this.d, this.e, this.f]);
+  Combined(this.context, this.child, this.a,
+      [this.b, this.c, this.d, this.e, this.f]);
 
   @override
   // ignore: hash_and_equals
   bool operator ==(Object other) =>
-      other is Foo &&
+      other is Combined &&
       other.context == context &&
+      other.child == child &&
       other.a == a &&
       other.b == b &&
       other.c == c &&
@@ -60,7 +63,7 @@ void main() {
     ],
   );
 
-  final mock = _Mock();
+  final mock = ConsumerBuilderMock();
   setUp(() {
     when(mock(any)).thenReturn(Container());
   });
@@ -71,15 +74,20 @@ void main() {
   group('consumer', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
       final key = GlobalKey();
+      final child = Container();
 
       await tester.pumpWidget(
         provider.cloneWithChild(
           Consumer<A>(
-              key: key, builder: (context, value) => mock(Foo(context, value))),
+            key: key,
+            builder: (context, value, child) =>
+                mock(Combined(context, child, value)),
+            child: child,
+          ),
         ),
       );
 
-      verify(mock(Foo(key.currentContext, a)));
+      verify(mock(Combined(key.currentContext, child, a)));
     });
     testWidgets('crashed with no builder', (tester) async {
       expect(
@@ -92,16 +100,20 @@ void main() {
   group('consumer2', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
       final key = GlobalKey();
+      final child = Container();
 
       await tester.pumpWidget(
         provider.cloneWithChild(
           Consumer2<A, B>(
-              key: key,
-              builder: (context, value, v2) => mock(Foo(context, value, v2))),
+            key: key,
+            builder: (context, value, v2, child) =>
+                mock(Combined(context, child, value, v2)),
+            child: child,
+          ),
         ),
       );
 
-      verify(mock(Foo(key.currentContext, a, b)));
+      verify(mock(Combined(key.currentContext, child, a, b)));
     });
     testWidgets('crashed with no builder', (tester) async {
       expect(
@@ -113,17 +125,20 @@ void main() {
   group('consumer3', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
       final key = GlobalKey();
+      final child = Container();
 
       await tester.pumpWidget(
         provider.cloneWithChild(
           Consumer3<A, B, C>(
-              key: key,
-              builder: (context, value, v2, v3) =>
-                  mock(Foo(context, value, v2, v3))),
+            key: key,
+            builder: (context, value, v2, v3, child) =>
+                mock(Combined(context, child, value, v2, v3)),
+            child: child,
+          ),
         ),
       );
 
-      verify(mock(Foo(key.currentContext, a, b, c)));
+      verify(mock(Combined(key.currentContext, child, a, b, c)));
     });
     testWidgets('crashed with no builder', (tester) async {
       expect(
@@ -135,17 +150,20 @@ void main() {
   group('consumer4', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
       final key = GlobalKey();
+      final child = Container();
 
       await tester.pumpWidget(
         provider.cloneWithChild(
           Consumer4<A, B, C, D>(
-              key: key,
-              builder: (context, value, v2, v3, v4) =>
-                  mock(Foo(context, value, v2, v3, v4))),
+            key: key,
+            builder: (context, value, v2, v3, v4, child) =>
+                mock(Combined(context, child, value, v2, v3, v4)),
+            child: child,
+          ),
         ),
       );
 
-      verify(mock(Foo(key.currentContext, a, b, c, d)));
+      verify(mock(Combined(key.currentContext, child, a, b, c, d)));
     });
     testWidgets('crashed with no builder', (tester) async {
       expect(
@@ -157,17 +175,20 @@ void main() {
   group('consumer5', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
       final key = GlobalKey();
+      final child = Container();
 
       await tester.pumpWidget(
         provider.cloneWithChild(
           Consumer5<A, B, C, D, E>(
-              key: key,
-              builder: (context, value, v2, v3, v4, v5) =>
-                  mock(Foo(context, value, v2, v3, v4, v5))),
+            key: key,
+            builder: (context, value, v2, v3, v4, v5, child) =>
+                mock(Combined(context, child, value, v2, v3, v4, v5)),
+            child: child,
+          ),
         ),
       );
 
-      verify(mock(Foo(key.currentContext, a, b, c, d, e)));
+      verify(mock(Combined(key.currentContext, child, a, b, c, d, e)));
     });
     testWidgets('crashed with no builder', (tester) async {
       expect(
@@ -179,17 +200,20 @@ void main() {
   group('consumer6', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
       final key = GlobalKey();
+      final child = Container();
 
       await tester.pumpWidget(
         provider.cloneWithChild(
           Consumer6<A, B, C, D, E, F>(
-              key: key,
-              builder: (context, value, v2, v3, v4, v5, v6) =>
-                  mock(Foo(context, value, v2, v3, v4, v5, v6))),
+            key: key,
+            builder: (context, value, v2, v3, v4, v5, v6, child) =>
+                mock(Combined(context, child, value, v2, v3, v4, v5, v6)),
+            child: child,
+          ),
         ),
       );
 
-      verify(mock(Foo(key.currentContext, a, b, c, d, e, f)));
+      verify(mock(Combined(key.currentContext, child, a, b, c, d, e, f)));
     });
     testWidgets('crashed with no builder', (tester) async {
       expect(
