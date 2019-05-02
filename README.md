@@ -8,10 +8,10 @@ to make common use-cases straightforward.
 
 ### Exposing a value
 
-To expose a variable using `provider`, simply wrap any widget into one of the provider widgets from this packages
+To expose a variable using `provider`, wrap any widget into one of the provider widgets from this package
 and pass it your variable. Then, all descendants of the newly added provider widget can access this variable.
 
-A naive example would be to wrap the entire application into a `Provider` widget and pass it our variable:
+A simple example would be to wrap the entire application into a `Provider` widget and pass it our variable:
 
 ```dart
 Provider<String>.value(
@@ -22,11 +22,11 @@ Provider<String>.value(
 )
 ```
 
-Alternatively for complex objects, most provider expose a constructor that takes a function to create the value.
-The provider will cal that function only once, when the widget is inserted in the tree, and expose the result.
-This is perfect to expose a complex object that never change over time without writing a `StatefulWidget`.
+Alternatively, for complex objects, most providers expose a constructor that takes a function to create the value.
+The provider will call that function only once, when inserting the widget in the tree, and expose the result.
+This is perfect for exposing a complex object that never changes over time without writing a `StatefulWidget`.
 
-The following creates and expose a `MyComplexClass`. And in the event where `Provider` is removed from the widget tree,
+The following creates and expose a `MyComplexClass`. And in the event where we remove `Provider` from the widget tree,
 the instantiated `MyComplexClass` will be disposed.
 
 ```dart
@@ -39,13 +39,13 @@ Provider<MyComplexClass>(
 
 ### Reading a value
 
-The easiest way to read a value is using the a static method `Provider.of<T>(BuildContext context)`. This method will look
+The easiest way to read a value is by using the static method `Provider.of<T>(BuildContext context)`. This method will look
 up in widget tree starting from the widget associated to the `BuildContext` passed and it will return the nearest variable
 of type `T` found (or throw if nothing if found).
 
 TODO: link
 
-Combined with the first example of [exposing a value](), this widget will read the exposed `String` and render "Hello World".
+Combined with the first example of [exposing a value](), this widget will read the exposed `String` and render "Hello World."
 
 ```dart
 class Home extends StatelessWidget {
@@ -61,7 +61,7 @@ class Home extends StatelessWidget {
 
 Alternatively instead of using `Provider.of`, we can use the `Consumer` widget.
 
-This can be useful for performances optimisations or when it is difficult to obtain a `BuildContext` descendant of the provider.
+This can be useful for performances optimizations or when it is difficult to obtain a `BuildContext` descendant of the provider.
 
 ```dart
 Provider<String>.value(
@@ -95,7 +95,7 @@ var value2 = Provider.of<String>(context);
 
 ### MultiProvider
 
-In big applications where many values are injected, `Provider` can rapidly become pretty nested:
+When injecting many values in big applications, `Provider` can rapidly become pretty nested:
 
 ```dart
 Provider<Foo>(
