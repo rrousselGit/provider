@@ -6,7 +6,7 @@ import 'package:provider/src/provider.dart';
 ///
 /// [builder] must not be null and may be called multiple times (such as when provided value change).
 ///
-/// ## Performances optimizations:
+/// ## Performance optimizations:
 ///
 /// {@macro provider.consumer.child}
 /// {@endtemplate}
