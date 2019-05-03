@@ -43,9 +43,7 @@ The easiest way to read a value is by using the static method `Provider.of<T>(Bu
 up in widget tree starting from the widget associated to the `BuildContext` passed and it will return the nearest variable
 of type `T` found (or throw if nothing if found).
 
-TODO: link
-
-Combined with the first example of [exposing a value](), this widget will read the exposed `String` and render "Hello World."
+Combined with the first example of [exposing a value](#exposing-a-value), this widget will read the exposed `String` and render "Hello World."
 
 ```dart
 class Home extends StatelessWidget {
