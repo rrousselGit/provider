@@ -63,11 +63,11 @@ This can be useful for performances optimizations or when it is difficult to obt
 
 ```dart
 Provider<String>.value(
-  value: 'Hello World',
-  child: Consumer<String>(
-    builder: (context, value) => Text(value);
-  ),
-)
+    value: 'Hello World',
+    child: Consumer<String>(
+    builder: (context, value, child) => Text(value),
+    ),
+);
 ```
 
 ---
