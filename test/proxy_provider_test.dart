@@ -159,6 +159,41 @@ void main() {
       verifyNoMoreInteractions(combiner);
       verifyNoMoreInteractions(combinedConsumerMock);
     });
+    testWidgets('call dispose when unmounted with the latest result',
+        (tester) async {
+      final dispose = DisposerMock<Combined>();
+      final dispose2 = DisposerMock<Combined>();
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: a),
+            ProxyProvider<A, Combined>(builder: combiner, dispose: dispose)
+          ],
+          child: mockConsumer,
+        ),
+      );
+
+      final a2 = A();
+
+      // ProxyProvider creates a new Combined instance
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: a2),
+            ProxyProvider<A, Combined>(builder: combiner, dispose: dispose2)
+          ],
+          child: mockConsumer,
+        ),
+      );
+      final context = tester.element(findProxyProvider<A>());
+
+      await tester.pumpWidget(Container());
+
+      verifyZeroInteractions(dispose);
+      verify(
+          dispose2(context, Combined(context, Combined(context, null, a), a2)));
+    });
 
     testWidgets("don't rebuild descendants if value doesn't change",
         (tester) async {
@@ -243,6 +278,7 @@ void main() {
         key: const Key('42'),
         builder: (_, __, ___) {},
         updateShouldNotify: (_, __) {},
+        dispose: (_, __) {},
         child: Container(),
       );
       var child2 = Container();
@@ -252,6 +288,26 @@ void main() {
       expect(clone.key, provider.key);
       expect(clone.builder, provider.builder);
       expect(clone.updateShouldNotify, provider.updateShouldNotify);
+      expect(clone.dispose, provider.dispose);
+      expect(clone.providerBuilder, provider.providerBuilder);
+    });
+    test('works with MultiProvider #3', () {
+      final provider = ProxyProvider<A, B>.custom(
+        key: const Key('42'),
+        builder: (_, __, ___) {},
+        providerBuilder: (_, __, ___) {},
+        dispose: (_, __) {},
+        child: Container(),
+      );
+      var child2 = Container();
+      final clone = provider.cloneWithChild(child2);
+
+      expect(clone.child, child2);
+      expect(clone.key, provider.key);
+      expect(clone.builder, provider.builder);
+      expect(clone.updateShouldNotify, provider.updateShouldNotify);
+      expect(clone.dispose, provider.dispose);
+      expect(clone.providerBuilder, provider.providerBuilder);
     });
 
     // useful for libraries such as Mobx where events are synchronously dispatched
