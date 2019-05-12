@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -23,3 +24,15 @@ class BuilderMock extends Mock {
 class UpdateShouldNotifyMock<T> extends Mock {
   bool call(T old, T newValue);
 }
+
+class A with DiagnosticableTreeMixin {}
+
+class B with DiagnosticableTreeMixin {}
+
+class C with DiagnosticableTreeMixin {}
+
+class D with DiagnosticableTreeMixin {}
+
+class E with DiagnosticableTreeMixin {}
+
+class F with DiagnosticableTreeMixin {}
