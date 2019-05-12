@@ -13,6 +13,8 @@ class ErrorBuilderMock<T> extends Mock {
 
 class MockStreamController<T> extends Mock implements StreamController<T> {}
 
+class MockStream<T> extends Mock implements Stream<T> {}
+
 void main() {
   group('streamProvider', () {
     testWidgets('update when value change', (tester) async {
@@ -90,6 +92,27 @@ void main() {
 
       verify(shouldNotify(null, 1)).called(1);
       verifyNoMoreInteractions(shouldNotify);
+    });
+
+    testWidgets("don't listen again if stream instance doesn't change",
+        (tester) async {
+      final stream = MockStream<int>();
+      await tester.pumpWidget(StreamProvider.value(
+        stream: stream,
+        child: Container(),
+      ));
+      await tester.pumpWidget(StreamProvider.value(
+        stream: stream,
+        child: Container(),
+      ));
+
+      verify(
+        stream.listen(any,
+            onError: anyNamed('onError'),
+            onDone: anyNamed('onDone'),
+            cancelOnError: anyNamed('cancelOnError')),
+      ).called(1);
+      verifyNoMoreInteractions(stream);
     });
 
     testWidgets('throws if stream has error and catchError is missing',
