@@ -81,6 +81,23 @@ void main() {
 
       expect(key.currentWidget, isInstanceOf<ValueListenableProvider<int>>());
     });
+
+    testWidgets("don't listen again if stream instance doesn't change",
+        (tester) async {
+      final valueNotifier = ValueNotifierMock<int>();
+      await tester.pumpWidget(ValueListenableProvider.value(
+        valueListenable: valueNotifier,
+        child: Container(),
+      ));
+      await tester.pumpWidget(ValueListenableProvider.value(
+        valueListenable: valueNotifier,
+        child: Container(),
+      ));
+
+      verify(valueNotifier.addListener(any)).called(1);
+      verify(valueNotifier.value);
+      verifyNoMoreInteractions(valueNotifier);
+    });
     testWidgets('pass updateShouldNotify', (tester) async {
       final shouldNotify = UpdateShouldNotifyMock<int>();
       when(shouldNotify(0, 1)).thenReturn(true);

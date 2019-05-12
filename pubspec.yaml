@@ -1,6 +1,6 @@
 name: provider
 description: An helper to easily exposes a value using InheritedWidget without having to write one.
-version: 2.0.0+1
+version: 2.0.1
 homepage: https://github.com/rrousselGit/provider
 authors:
   - Remi Rousselet <darky12s@gmail.com>

@@ -75,12 +75,11 @@ class _ListenableProviderState<T extends Listenable>
   ///
   /// It is used to differentiate external rebuilds from rebuilds caused by the listenable emitting an event.
   /// This allows [InheritedWidget.updateShouldNotify] to return true only in the latter scenario.
-  int _buildCount;
+  int _buildCount = 0;
   UpdateShouldNotify<T> updateShouldNotify;
 
   void listener() {
     setState(() {
-      _buildCount ??= 0;
       _buildCount++;
     });
   }
@@ -95,8 +94,12 @@ class _ListenableProviderState<T extends Listenable>
   }
 
   UpdateShouldNotify<T> createUpdateShouldNotify() {
-    final capturedBuildCount = _buildCount;
-    return updateShouldNotify = (_, __) => _buildCount != capturedBuildCount;
+    var capturedBuildCount = _buildCount;
+    return updateShouldNotify = (_, __) {
+      final res = _buildCount != capturedBuildCount;
+      capturedBuildCount = _buildCount;
+      return res;
+    };
   }
 
   @override
@@ -128,8 +131,10 @@ class _ListenableProviderState<T extends Listenable>
 
   @override
   void changeValue(ListenableProvider<T> oldWidget, T oldValue, T newValue) {
-    if (oldValue != null) stopListening(oldValue);
-    if (newValue != null) startListening(newValue);
+    if (oldValue != newValue) {
+      if (oldValue != null) stopListening(oldValue);
+      if (newValue != null) startListening(newValue);
+    }
   }
 }
 

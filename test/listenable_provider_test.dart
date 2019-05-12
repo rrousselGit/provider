@@ -70,6 +70,21 @@ void main() {
         );
       });
     });
+    testWidgets("don't listen again if listenable instance doesn't change",
+        (tester) async {
+      final listenable = MockNotifier();
+      await tester.pumpWidget(ListenableProvider<ChangeNotifier>.value(
+        listenable: listenable,
+        child: Container(),
+      ));
+      await tester.pumpWidget(ListenableProvider<ChangeNotifier>.value(
+        listenable: listenable,
+        child: Container(),
+      ));
+
+      verify(listenable.addListener(any)).called(1);
+      verifyNoMoreInteractions(listenable);
+    });
     testWidgets('works with null (default)', (tester) async {
       final key = GlobalKey();
       await tester.pumpWidget(ListenableProvider<ChangeNotifier>.value(
@@ -302,6 +317,26 @@ void main() {
       ));
 
       verify(builder(any)).called(1);
+      expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
+
+      await tester.pumpWidget(ListenableProvider.value(
+        listenable: listenable,
+        child: child,
+      ));
+      verifyNoMoreInteractions(builder);
+      expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
+
+      listenable.notifyListeners();
+      await tester.pump();
+
+      verify(builder(any)).called(1);
+      expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
+
+      await tester.pumpWidget(ListenableProvider.value(
+        listenable: listenable,
+        child: child,
+      ));
+      verifyNoMoreInteractions(builder);
       expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
 
       await tester.pumpWidget(ListenableProvider.value(

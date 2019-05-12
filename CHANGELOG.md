@@ -1,3 +1,8 @@
+# 2.0.1
+
+- fix a bug where `ListenableProvider.value`/`ChangeNotifierProvider.value`/`StreamProvider.value`/`ValueListenableProvider.value` subscribed/unsubscribed to their respective object too often
+- fix a bug where `ListenableProvider.value`/`ChangeNotifierProvider.value` may rebuild too often or skip some.
+
 # 2.0.0
 
 - `Consumer` now takes an optional `child` argument for optimization purposes.
