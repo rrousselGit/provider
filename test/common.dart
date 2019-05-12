@@ -7,6 +7,8 @@ Element findElementOfWidget<T extends Widget>() {
   return find.byType(T).first.evaluate().first;
 }
 
+Type typeOf<T>() => T;
+
 class ValueBuilderMock<T> extends Mock {
   T call(BuildContext context);
 }
