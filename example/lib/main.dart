@@ -26,12 +26,6 @@ class Translations with ChangeNotifier {
   }
 
   @override
-  void notifyListeners() {
-    print('translations rebuilt ${_counter?.count}');
-    super.notifyListeners();
-  }
-
-  @override
   void dispose() {
     super.dispose();
     _counter?.removeListener(notifyListeners);

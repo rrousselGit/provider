@@ -61,11 +61,6 @@ Finder findProvider<T>() => find
 
 void main() {
   final a = A();
-  final b = B();
-  final c = C();
-  final d = D();
-  final e = E();
-  final f = F();
 
   final combinedConsumerMock = ConsumerBuilderMock();
   setUp(() => when(combinedConsumerMock(any)).thenReturn(Container()));

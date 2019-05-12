@@ -7,9 +7,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 
-import '../lib/main.dart';
+import 'package:example/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
@@ -24,11 +23,7 @@ void main() {
 
     // Tap the '+' icon and trigger a frame.
     await tester.tap(find.byIcon(Icons.add));
-    print('pump');
     await tester.pump();
-
-    final e = tester.element(find.byIcon(Icons.add));
-    print('new title ' + Provider.of<Translations>(e).title);
 
     // Verify that our counter has incremented.
     expect(find.text('0'), findsNothing);

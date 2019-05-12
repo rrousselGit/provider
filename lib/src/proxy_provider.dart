@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:provider/src/listenable_provider.dart';
 import 'package:provider/src/provider.dart';
 
 typedef R ProxyBuilder<A, R>(BuildContext context, A a, R previous);
