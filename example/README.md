@@ -1,4 +1,4 @@
-# proxy_provider_example
+# example
 
 A new Flutter project.
 
