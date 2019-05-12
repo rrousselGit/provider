@@ -14,7 +14,7 @@ typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
 /// and https://github.com/dart-lang/sdk/issues/11923.
 Type _typeOf<T>() => T;
 
-/// A base class for providers so tha [MultiProvider] can regroup them into a
+/// A base class for providers so that [MultiProvider] can regroup them into a
 /// linear list.
 abstract class SingleChildCloneableWidget implements Widget {
   /// Clones the current provider with a new [child].
@@ -57,11 +57,11 @@ class _Provider<T> extends InheritedWidget {
 /// As such, we're going from:
 ///
 /// ```dart
-/// Provider<Foo>(
+/// Provider<Foo>.value(
 ///   value: foo,
-///   child: Provider<Bar>(
+///   child: Provider<Bar>.value(
 ///     value: bar,
-///     child: Provider<Baz>(
+///     child: Provider<Baz>.value(
 ///       value: baz,
 ///       child: someWidget,
 ///     )
@@ -74,9 +74,9 @@ class _Provider<T> extends InheritedWidget {
 /// ```dart
 /// MultiProvider(
 ///   providers: [
-///     Provider<Foo>(value: foo),
-///     Provider<Bar>(value: bar),
-///     Provider<Baz>(value: baz),
+///     Provider<Foo>.value(value: foo),
+///     Provider<Bar>.value(value: bar),
+///     Provider<Baz>.value(value: baz),
 ///   ],
 ///   child: someWidget,
 /// )
