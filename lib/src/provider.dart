@@ -14,7 +14,7 @@ typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
 /// and https://github.com/dart-lang/sdk/issues/11923.
 Type _typeOf<T>() => T;
 
-/// A base class for providers so tha [MultiProvider] can regroup them into a
+/// A base class for providers so that [MultiProvider] can regroup them into a
 /// linear list.
 abstract class SingleChildCloneableWidget implements Widget {
   /// Clones the current provider with a new [child].
