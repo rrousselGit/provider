@@ -75,9 +75,9 @@ Provider<String>.value(
 Note that you can freely use multiple providers with different types together:
 
 ```dart
-Provider<int>(
+Provider<int>.value(
   value: 42,
-  child: Provider<String>(
+  child: Provider<String>.value(
     value: 'Hello World',
     child: // ...
   )
