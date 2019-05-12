@@ -27,7 +27,6 @@ void main() {
     print('pump');
     await tester.pump();
 
-
     final e = tester.element(find.byIcon(Icons.add));
     print('new title ' + Provider.of<Translations>(e).title);
 
