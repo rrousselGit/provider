@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider.value(
       value: 42,
-      child: Example(),
+      child: MaterialApp(home: Example()),
     );
   }
 }
@@ -18,6 +18,11 @@ class MyApp extends StatelessWidget {
 class Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Text(Provider.of<int>(context).toString());
+    return Scaffold(
+      appBar: AppBar(title: const Text('Provider example')),
+      body: Center(
+        child: Text(Provider.of<int>(context).toString()),
+      ),
+    );
   }
 }

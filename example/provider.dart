@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -26,7 +26,9 @@ class MyApp extends StatelessWidget {
     return Provider<Bloc>(
       builder: (_) => Bloc(),
       dispose: (_, value) => value.dispose(),
-      child: Example(),
+      child: MaterialApp(
+        home: Example(),
+      ),
     );
   }
 }
@@ -34,11 +36,16 @@ class MyApp extends StatelessWidget {
 class Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<int>(
-      stream: Provider.of<Bloc>(context).stream,
-      builder: (context, snapshot) {
-        return Text(snapshot.data?.toString() ?? 'Foo');
-      },
+    return Scaffold(
+      appBar: AppBar(title: const Text('BLoC example')),
+      body: Center(
+        child: StreamBuilder<int>(
+          stream: Provider.of<Bloc>(context).stream,
+          builder: (context, snapshot) {
+            return Text(snapshot.data?.toString() ?? 'Foo');
+          },
+        ),
+      ),
     );
   }
 }
