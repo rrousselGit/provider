@@ -1,3 +1,7 @@
+# 2.1.0
+
+- Added `FutureProvider`, which takes a future and updates dependents when the future completes.
+
 # 2.0.1
 
 - fix a bug where `ListenableProvider.value`/`ChangeNotifierProvider.value`/`StreamProvider.value`/`ValueListenableProvider.value` subscribed/unsubscribed to their respective object too often
