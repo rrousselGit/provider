@@ -18,3 +18,6 @@ dev_dependencies:
 dependency_overrides:
   provider:
     path: ../
+
+flutter:
+  uses-material-design: true

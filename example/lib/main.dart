@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,45 +14,56 @@ class Counter with ChangeNotifier {
   }
 }
 
-class Translations with ChangeNotifier {
-  String get title => 'Tapped ${_counter.count} times';
-
-  Counter _counter;
-  void registerCounter(Counter counter) {
-    if (_counter != counter) {
-      _counter?.removeListener(notifyListeners);
-      _counter = counter..addListener(notifyListeners);
-      notifyListeners();
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _counter?.removeListener(notifyListeners);
-  }
-}
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(builder: (_) => Counter()),
-        ProxyProvider<Counter, Translations>.custom(
-          builder: (context, counter, previous) {
-            final model = previous ?? Translations();
-            model.registerCounter(counter);
-            return model;
-          },
-          providerBuilder: (_, value, child) =>
-              ChangeNotifierProvider.value(notifier: value, child: child),
-          dispose: (context, value) => value.dispose(),
-        ),
       ],
-      child: const MaterialApp(home: MyHomePage()),
+      child: Consumer<Counter>(
+        builder: (context, counter, _) {
+          return MaterialApp(
+            supportedLocales: const [Locale('en')],
+            localizationsDelegates: [
+              DefaultMaterialLocalizations.delegate,
+              DefaultWidgetsLocalizations.delegate,
+              _ExampleLocalizationsDelegate(counter.count),
+            ],
+            home: const MyHomePage(),
+          );
+        },
+      ),
     );
   }
+}
+
+class ExampleLocalizations {
+  static ExampleLocalizations of(BuildContext context) =>
+      Localizations.of<ExampleLocalizations>(context, ExampleLocalizations);
+
+  const ExampleLocalizations(this._count);
+
+  final int _count;
+
+  String get title => 'Tapped $_count times';
+}
+
+class _ExampleLocalizationsDelegate
+    extends LocalizationsDelegate<ExampleLocalizations> {
+  const _ExampleLocalizationsDelegate(this.count);
+
+  final int count;
+
+  @override
+  bool isSupported(Locale locale) => locale.languageCode == 'en';
+
+  @override
+  Future<ExampleLocalizations> load(Locale locale) =>
+      SynchronousFuture(ExampleLocalizations(count));
+
+  @override
+  bool shouldReload(_ExampleLocalizationsDelegate old) => old.count != count;
 }
 
 class MyHomePage extends StatelessWidget {
@@ -107,6 +119,6 @@ class Title extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(Provider.of<Translations>(context).title);
+    return Text(ExampleLocalizations.of(context).title);
   }
 }
