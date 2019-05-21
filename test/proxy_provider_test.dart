@@ -14,6 +14,10 @@ class CombinerMock extends Mock {
   Combined call(BuildContext context, A a, Combined foo);
 }
 
+class ProviderBuilderMock extends Mock {
+  Widget call(BuildContext context, Combined value, Widget child);
+}
+
 class Combined extends DiagnosticableTree {
   final A a;
   final B b;
@@ -286,24 +290,6 @@ void main() {
       expect(clone.dispose, provider.dispose);
       expect(clone.providerBuilder, provider.providerBuilder);
     });
-    test('works with MultiProvider #3', () {
-      final provider = ProxyProvider<A, B>.custom(
-        key: const Key('42'),
-        builder: (_, __, ___) {},
-        providerBuilder: (_, __, ___) {},
-        dispose: (_, __) {},
-        child: Container(),
-      );
-      var child2 = Container();
-      final clone = provider.cloneWithChild(child2);
-
-      expect(clone.child, child2);
-      expect(clone.key, provider.key);
-      expect(clone.builder, provider.builder);
-      expect(clone.updateShouldNotify, provider.updateShouldNotify);
-      expect(clone.dispose, provider.dispose);
-      expect(clone.providerBuilder, provider.providerBuilder);
-    });
 
     // useful for libraries such as Mobx where events are synchronously dispatched
     testWidgets(
@@ -342,6 +328,114 @@ void main() {
         2,
         reason: 'builder must not be called asynchronously',
       );
+    });
+  });
+
+  group('ProxyProvider.custom', () {
+    test('works with MultiProvider', () {
+      final provider = ProxyProvider<A, B>.custom(
+        key: const Key('42'),
+        builder: (_, __, ___) {},
+        providerBuilder: (_, __, ___) {},
+        dispose: (_, __) {},
+        child: Container(),
+      );
+      var child2 = Container();
+      final clone = provider.cloneWithChild(child2);
+
+      expect(clone.child, child2);
+      expect(clone.key, provider.key);
+      expect(clone.builder, provider.builder);
+      expect(clone.updateShouldNotify, provider.updateShouldNotify);
+      expect(clone.dispose, provider.dispose);
+      expect(clone.providerBuilder, provider.providerBuilder);
+    });
+    test('throws if builder is null', () {
+      expect(
+        () => ProxyProvider<A, B>.custom(
+              builder: null,
+              providerBuilder: (_, __, ___) {},
+            ),
+        throwsAssertionError,
+      );
+    });
+    test('throws if providerBuilder is null', () {
+      expect(
+        () => ProxyProvider<A, B>.custom(
+              builder: (_, __, ___) {},
+              providerBuilder: null,
+            ),
+        throwsAssertionError,
+      );
+    });
+
+    testWidgets("don't create a Provider and instead calls providerBuilder",
+        (tester) async {
+      final key = GlobalKey();
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: a),
+            ProxyProvider<A, Combined>.custom(
+              builder: (c, a, p) => Combined(c, p, a),
+              providerBuilder: (_, __, ___) => Container(key: key),
+            )
+          ],
+        ),
+      );
+
+      expect(key.currentWidget, isNotNull);
+      expect(() => Provider.of<Combined>(key.currentContext),
+          throwsA(isInstanceOf<ProviderNotFoundError>()));
+    });
+    testWidgets('passes current value/context/child to providerBuilder',
+        (tester) async {
+      final providerBuilder = ProviderBuilderMock();
+      when(providerBuilder(any, any, any)).thenReturn(Container());
+
+      final child = Container();
+      final key = GlobalKey();
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: a),
+            ProxyProvider<A, Combined>.custom(
+              key: key,
+              builder: (c, a, p) => Combined(c, p, a),
+              providerBuilder: providerBuilder,
+            )
+          ],
+          child: child,
+        ),
+      );
+
+      verify(providerBuilder(
+        key.currentContext,
+        Combined(key.currentContext, null, a),
+        child,
+      )).called(1);
+      verifyNoMoreInteractions(providerBuilder);
+    });
+
+    test('pass down key', () {
+      final key = GlobalKey();
+      final provider = ProxyProvider<A, B>.custom(
+        key: key,
+        builder: (_, __, ___) {},
+        providerBuilder: (_, __, ___) {},
+      );
+
+      expect(provider.key, key);
+    });
+    test('pass down dispose', () {
+      final dispose = (BuildContext c, B value) {};
+      final provider = ProxyProvider<A, B>.custom(
+        dispose: dispose,
+        builder: (_, __, ___) {},
+        providerBuilder: (_, __, ___) {},
+      );
+
+      expect(provider.dispose, dispose);
     });
   });
 }
