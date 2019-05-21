@@ -92,6 +92,31 @@ void main() {
     Finder findProxyProvider<T>() => find
         .byWidgetPredicate((widget) => widget is ProxyProvider<T, Combined>);
 
+    testWidgets('initialBuilder creates initial value', (tester) async {
+      final initialBuilder = ValueBuilderMock<Combined>();
+      final key = GlobalKey();
+
+      when(initialBuilder(any)).thenReturn(Combined(null, null, null));
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: a),
+            ProxyProvider<A, Combined>(
+              key: key,
+              initialBuilder: initialBuilder,
+              builder: combiner,
+            )
+          ],
+          child: mockConsumer,
+        ),
+      );
+
+      final details = verify(initialBuilder(captureAny))..called(1);
+      expect(details.captured.first, equals(key.currentContext));
+
+      verify(combiner(key.currentContext, a, Combined(null, null, null)));
+    });
     testWidgets('consume another providers', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -253,7 +278,7 @@ void main() {
       final provider =
           tester.widget(findProvider<Object>()) as Provider<Object>;
 
-      expect(provider.updateShouldNotify, shouldNotify);
+      expect(provider.updateShouldNotify, equals(shouldNotify));
     });
     testWidgets('works with MultiProvider', (tester) async {
       final key = GlobalKey();
@@ -275,6 +300,7 @@ void main() {
     test('works with MultiProvider #2', () {
       final provider = ProxyProvider<A, B>(
         key: const Key('42'),
+        initialBuilder: (_) {},
         builder: (_, __, ___) {},
         updateShouldNotify: (_, __) {},
         dispose: (_, __) {},
@@ -283,12 +309,13 @@ void main() {
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.key, provider.key);
-      expect(clone.builder, provider.builder);
-      expect(clone.updateShouldNotify, provider.updateShouldNotify);
-      expect(clone.dispose, provider.dispose);
-      expect(clone.providerBuilder, provider.providerBuilder);
+      expect(clone.child, equals(child2));
+      expect(clone.key, equals(provider.key));
+      expect(clone.initialBuilder, equals(provider.initialBuilder));
+      expect(clone.builder, equals(provider.builder));
+      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
+      expect(clone.dispose, equals(provider.dispose));
+      expect(clone.providerBuilder, equals(provider.providerBuilder));
     });
 
     // useful for libraries such as Mobx where events are synchronously dispatched
@@ -335,6 +362,7 @@ void main() {
     test('works with MultiProvider', () {
       final provider = ProxyProvider<A, B>.custom(
         key: const Key('42'),
+        initialBuilder: (_) {},
         builder: (_, __, ___) {},
         providerBuilder: (_, __, ___) {},
         dispose: (_, __) {},
@@ -343,12 +371,13 @@ void main() {
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.key, provider.key);
-      expect(clone.builder, provider.builder);
-      expect(clone.updateShouldNotify, provider.updateShouldNotify);
-      expect(clone.dispose, provider.dispose);
-      expect(clone.providerBuilder, provider.providerBuilder);
+      expect(clone.child, equals(child2));
+      expect(clone.key, equals(provider.key));
+      expect(clone.initialBuilder, equals(provider.initialBuilder));
+      expect(clone.builder, equals(provider.builder));
+      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
+      expect(clone.dispose, equals(provider.dispose));
+      expect(clone.providerBuilder, equals(provider.providerBuilder));
     });
     test('throws if builder is null', () {
       expect(
@@ -435,7 +464,7 @@ void main() {
         providerBuilder: (_, __, ___) {},
       );
 
-      expect(provider.dispose, dispose);
+      expect(provider.dispose, equals(dispose));
     });
   });
 }

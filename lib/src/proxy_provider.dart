@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:provider/src/adaptive_builder_widget.dart';
 import 'package:provider/src/provider.dart';
 
 typedef ProviderBuilder<R> = Widget Function(
@@ -8,6 +9,7 @@ class ProxyProvider<T, R> extends ProxyProviderBase<R>
     implements SingleChildCloneableWidget {
   const ProxyProvider({
     Key key,
+    ValueBuilder<R> initialBuilder,
     @required this.builder,
     UpdateShouldNotify<R> updateShouldNotify,
     Disposer<R> dispose,
@@ -15,6 +17,7 @@ class ProxyProvider<T, R> extends ProxyProviderBase<R>
   })  : assert(builder != null),
         super(
           key: key,
+          initialBuilder: initialBuilder,
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
@@ -22,6 +25,7 @@ class ProxyProvider<T, R> extends ProxyProviderBase<R>
 
   const ProxyProvider.custom({
     Key key,
+    ValueBuilder<R> initialBuilder,
     @required this.builder,
     @required ValueWidgetBuilder<R> providerBuilder,
     Disposer<R> dispose,
@@ -30,6 +34,7 @@ class ProxyProvider<T, R> extends ProxyProviderBase<R>
         assert(providerBuilder != null),
         super.custom(
           key: key,
+          initialBuilder: initialBuilder,
           providerBuilder: providerBuilder,
           dispose: dispose,
           child: child,
@@ -42,6 +47,7 @@ class ProxyProvider<T, R> extends ProxyProviderBase<R>
     return providerBuilder != null
         ? ProxyProvider.custom(
             key: key,
+            initialBuilder: initialBuilder,
             builder: builder,
             providerBuilder: providerBuilder,
             dispose: dispose,
@@ -49,6 +55,7 @@ class ProxyProvider<T, R> extends ProxyProviderBase<R>
           )
         : ProxyProvider(
             key: key,
+            initialBuilder: initialBuilder,
             builder: builder,
             updateShouldNotify: updateShouldNotify,
             dispose: dispose,
@@ -64,6 +71,7 @@ class ProxyProvider<T, R> extends ProxyProviderBase<R>
 abstract class ProxyProviderBase<R> extends StatefulWidget {
   const ProxyProviderBase({
     Key key,
+    this.initialBuilder,
     this.updateShouldNotify,
     this.dispose,
     this.child,
@@ -72,12 +80,14 @@ abstract class ProxyProviderBase<R> extends StatefulWidget {
 
   const ProxyProviderBase.custom({
     Key key,
+    this.initialBuilder,
     @required this.providerBuilder,
     this.dispose,
     this.child,
   })  : updateShouldNotify = null,
         super(key: key);
 
+  final ValueBuilder<R> initialBuilder;
   final UpdateShouldNotify<R> updateShouldNotify;
   final Widget child;
   final Disposer<R> dispose;
@@ -92,6 +102,12 @@ abstract class ProxyProviderBase<R> extends StatefulWidget {
 class _ProxyProviderState<R> extends State<ProxyProviderBase<R>> {
   R value;
   bool _didChangeDependencies = true;
+
+  @override
+  void initState() {
+    super.initState();
+    value = widget.initialBuilder?.call(context);
+  }
 
   @override
   void didChangeDependencies() {
