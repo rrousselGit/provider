@@ -1,38 +1,41 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
 
-typedef R ProxyBuilder<A, R>(BuildContext context, A a, R previous);
+typedef ProviderBuilder<R> = Widget Function(
+    BuildContext context, R value, Widget child);
 
-class ProxyProvider<T, R> extends StatefulWidget
+class ProxyProvider<T, R> extends ProxyProviderBase<R>
     implements SingleChildCloneableWidget {
   const ProxyProvider({
     Key key,
     @required this.builder,
-    this.updateShouldNotify,
-    this.dispose,
-    this.child,
+    UpdateShouldNotify<R> updateShouldNotify,
+    Disposer<R> dispose,
+    Widget child,
   })  : assert(builder != null),
-        providerBuilder = null,
-        super(key: key);
+        super(
+          key: key,
+          updateShouldNotify: updateShouldNotify,
+          dispose: dispose,
+          child: child,
+        );
 
   const ProxyProvider.custom({
     Key key,
     @required this.builder,
-    @required this.providerBuilder,
-    this.dispose,
-    this.child,
+    @required ValueWidgetBuilder<R> providerBuilder,
+    Disposer<R> dispose,
+    Widget child,
   })  : assert(builder != null),
-        updateShouldNotify = null,
-        super(key: key);
+        assert(providerBuilder != null),
+        super.custom(
+          key: key,
+          providerBuilder: providerBuilder,
+          dispose: dispose,
+          child: child,
+        );
 
-  final ProxyBuilder<T, R> builder;
-  final UpdateShouldNotify<R> updateShouldNotify;
-  final Widget child;
-  final Disposer<R> dispose;
-  final ValueWidgetBuilder<R> providerBuilder;
-
-  @override
-  _ProxyProviderState<T, R> createState() => _ProxyProviderState();
+  final R Function(BuildContext context, T value, R previous) builder;
 
   @override
   ProxyProvider<T, R> cloneWithChild(Widget child) {
@@ -52,9 +55,41 @@ class ProxyProvider<T, R> extends StatefulWidget
             child: child,
           );
   }
+
+  @override
+  R didChangeDependencies(BuildContext context, R previous) =>
+      builder(context, Provider.of<T>(context), previous);
 }
 
-class _ProxyProviderState<T, R> extends State<ProxyProvider<T, R>> {
+abstract class ProxyProviderBase<R> extends StatefulWidget {
+  const ProxyProviderBase({
+    Key key,
+    this.updateShouldNotify,
+    this.dispose,
+    this.child,
+  })  : providerBuilder = null,
+        super(key: key);
+
+  const ProxyProviderBase.custom({
+    Key key,
+    @required this.providerBuilder,
+    this.dispose,
+    this.child,
+  })  : updateShouldNotify = null,
+        super(key: key);
+
+  final UpdateShouldNotify<R> updateShouldNotify;
+  final Widget child;
+  final Disposer<R> dispose;
+  final ValueWidgetBuilder<R> providerBuilder;
+
+  @override
+  _ProxyProviderState<R> createState() => _ProxyProviderState();
+
+  R didChangeDependencies(BuildContext context, R previous);
+}
+
+class _ProxyProviderState<R> extends State<ProxyProviderBase<R>> {
   R value;
   bool _didChangeDependencies = true;
 
@@ -70,7 +105,7 @@ class _ProxyProviderState<T, R> extends State<ProxyProvider<T, R>> {
   Widget build(BuildContext context) {
     if (_didChangeDependencies) {
       _didChangeDependencies = false;
-      value = widget.builder(context, Provider.of<T>(context), value);
+      value = widget.didChangeDependencies(context, value);
     }
 
     if (widget.providerBuilder != null) {
