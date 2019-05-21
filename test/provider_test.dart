@@ -17,10 +17,10 @@ void main() {
 
       final newChild = Container();
       final clone = provider.cloneWithChild(newChild);
-      expect(clone.child, newChild);
-      expect(clone.delegate, provider.delegate);
-      expect(clone.key, provider.key);
-      expect(provider.updateShouldNotify, clone.updateShouldNotify);
+      expect(clone.child, equals(newChild));
+      expect(clone.delegate, equals(provider.delegate));
+      expect(clone.key, equals(provider.key));
+      expect(provider.updateShouldNotify, equals(clone.updateShouldNotify));
     });
     testWidgets('simple usage', (tester) async {
       var buildCount = 0;
