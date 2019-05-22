@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' hide TypeMatcher;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/src/provider.dart';
 import 'package:test_api/test_api.dart' show TypeMatcher;
 
 void main() {

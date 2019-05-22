@@ -1,8 +1,4 @@
-import 'dart:async';
-
-import 'package:flutter/widgets.dart';
-import 'package:provider/src/delegate_widget.dart';
-import 'package:provider/src/provider.dart';
+part of 'provider.dart';
 
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 

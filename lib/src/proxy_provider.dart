@@ -1,6 +1,4 @@
-import 'package:flutter/widgets.dart';
-import 'package:provider/src/adaptive_builder_widget.dart';
-import 'package:provider/src/provider.dart';
+part of 'provider.dart';
 
 typedef ProviderBuilder<R> = Widget Function(
     BuildContext context, R value, Widget child);
