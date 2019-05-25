@@ -88,5 +88,5 @@ mixin AdaptiveBuilderWidgetStateMixin<T, B,
 
   void changeValue(W oldWidget, T oldValue, T newValue) {}
 
-  void disposeBuilt(W oldWidget, B built) {}
+  void disposeBuilt(W oldWidget, B built);
 }
