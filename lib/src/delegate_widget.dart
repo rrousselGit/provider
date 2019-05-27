@@ -47,68 +47,6 @@ abstract class StateDelegate {
   void dispose() {}
 }
 
-/// A [StateDelegate] that exposes a [value] of type [T].
-///
-/// See also:
-///  * [SingleValueDelegate], which extends [ValueAdaptiveDelegate] to store
-///  an immutable value.
-///  * [BuilderAdaptiveDelegate], which extends [ValueAdaptiveDelegate]
-/// to build [value] from a function and dispose it when the widget is unmounted.
-abstract class ValueAdaptiveDelegate<T> extends StateDelegate {
-  /// The member [value] should not be mutated directly.
-  T get value;
-}
-
-class SingleValueDelegate<T> extends ValueAdaptiveDelegate<T> {
-  SingleValueDelegate(this.value);
-
-  @override
-  final T value;
-}
-
-/// A [StateDelegate] that creates and dispose a value from functions.
-///
-/// See also:
-///  * [ValueAdaptiveDelegate], which [BuilderAdaptiveDelegate] implements.
-class BuilderAdaptiveDelegate<T> extends StateDelegate
-    implements ValueAdaptiveDelegate<T> {
-  /// Initializes [builder] and [dispose] for subclasses.
-  ///
-  /// The parameter [builder] must not be `null`.
-  BuilderAdaptiveDelegate(this.builder, {Disposer<T> dispose})
-      : assert(builder != null),
-        _dispose = dispose;
-
-  /// A callback used to create [value].
-  ///
-  /// Once [value] is initialized, [builder] will never be called again
-  /// and [value] will never change.
-  ///
-  /// See also:
-  ///  * [value], which [builder] creates.
-  final ValueBuilder<T> builder;
-  final Disposer<T> _dispose;
-
-  T _value;
-  @override
-  T get value => _value;
-
-  @override
-  void initDelegate() {
-    _value = builder(context);
-  }
-
-  @override
-  void didUpdateDelegate(BuilderAdaptiveDelegate<T> old) {
-    _value = old.value;
-  }
-
-  @override
-  void dispose() {
-    _dispose?.call(context, value);
-  }
-}
-
 /// A [StatefulWidget] that delegates its [State] implementation to an [StateDelegate].
 ///
 /// This is useful for widgets that must switch between different [State] implementation
@@ -182,6 +120,68 @@ class _DelegateWidgetState extends State<DelegateWidget> {
   void dispose() {
     widget.delegate.dispose();
     super.dispose();
+  }
+}
+
+/// A [StateDelegate] that exposes a [value] of type [T].
+///
+/// See also:
+///  * [SingleValueDelegate], which extends [ValueAdaptiveDelegate] to store
+///  an immutable value.
+///  * [BuilderAdaptiveDelegate], which extends [ValueAdaptiveDelegate]
+/// to build [value] from a function and dispose it when the widget is unmounted.
+abstract class ValueAdaptiveDelegate<T> extends StateDelegate {
+  /// The member [value] should not be mutated directly.
+  T get value;
+}
+
+class SingleValueDelegate<T> extends ValueAdaptiveDelegate<T> {
+  SingleValueDelegate(this.value);
+
+  @override
+  final T value;
+}
+
+/// A [StateDelegate] that creates and dispose a value from functions.
+///
+/// See also:
+///  * [ValueAdaptiveDelegate], which [BuilderAdaptiveDelegate] implements.
+class BuilderAdaptiveDelegate<T> extends StateDelegate
+    implements ValueAdaptiveDelegate<T> {
+  /// Initializes [builder] and [dispose] for subclasses.
+  ///
+  /// The parameter [builder] must not be `null`.
+  BuilderAdaptiveDelegate(this.builder, {Disposer<T> dispose})
+      : assert(builder != null),
+        _dispose = dispose;
+
+  /// A callback used to create [value].
+  ///
+  /// Once [value] is initialized, [builder] will never be called again
+  /// and [value] will never change.
+  ///
+  /// See also:
+  ///  * [value], which [builder] creates.
+  final ValueBuilder<T> builder;
+  final Disposer<T> _dispose;
+
+  T _value;
+  @override
+  T get value => _value;
+
+  @override
+  void initDelegate() {
+    _value = builder(context);
+  }
+
+  @override
+  void didUpdateDelegate(BuilderAdaptiveDelegate<T> old) {
+    _value = old.value;
+  }
+
+  @override
+  void dispose() {
+    _dispose?.call(context, value);
   }
 }
 
