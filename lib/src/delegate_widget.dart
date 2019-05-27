@@ -50,7 +50,7 @@ abstract class StateDelegate {
 /// A [StateDelegate] that exposes a [value] of type [T].
 ///
 /// See also:
-///  * [SingleValueAdaptiveDelegate], which extends [ValueAdaptiveDelegate] to store
+///  * [SingleValueDelegate], which extends [ValueAdaptiveDelegate] to store
 ///  an immutable value.
 ///  * [BuilderAdaptiveDelegate], which extends [ValueAdaptiveDelegate]
 /// to build [value] from a function and dispose it when the widget is unmounted.
@@ -59,8 +59,8 @@ abstract class ValueAdaptiveDelegate<T> extends StateDelegate {
   T get value;
 }
 
-class SingleNotifierDelegate<T> extends ValueAdaptiveDelegate<T> {
-  SingleNotifierDelegate(this.value);
+class SingleValueDelegate<T> extends ValueAdaptiveDelegate<T> {
+  SingleValueDelegate(this.value);
 
   @override
   final T value;

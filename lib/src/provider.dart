@@ -206,7 +206,7 @@ class Provider<T> extends ValueDelegateWidget<T>
     Widget child,
   }) : this._(
           key: key,
-          delegate: SingleNotifierDelegate<T>(value),
+          delegate: SingleValueDelegate<T>(value),
           updateShouldNotify: updateShouldNotify,
           child: child,
         );

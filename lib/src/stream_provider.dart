@@ -77,7 +77,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     Widget child,
   }) : this._(
           key: key,
-          delegate: SingleNotifierDelegate(stream),
+          delegate: SingleValueDelegate(stream),
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,

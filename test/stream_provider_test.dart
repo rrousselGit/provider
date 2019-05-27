@@ -157,7 +157,7 @@ void main() {
       final key = GlobalKey();
       await tester.pumpWidget(MultiProvider(
         providers: [
-          StreamProvider<int>.value(stream: Stream<int>.empty()),
+          StreamProvider<int>.value(stream: const Stream<int>.empty()),
         ],
         child: Container(key: key),
       ));

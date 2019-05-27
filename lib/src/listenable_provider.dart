@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/src/adaptive_builder_widget.dart' hide ValueBuilder;
 import 'package:provider/src/delegate_widget.dart';
 import 'package:provider/src/provider.dart';
 
@@ -81,7 +80,7 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
 }
 
 class _ValueListenableDelegate<T extends Listenable>
-    extends SingleNotifierDelegate<T> with _ListenableDelegateMixin<T> {
+    extends SingleValueDelegate<T> with _ListenableDelegateMixin<T> {
   _ValueListenableDelegate(T value) : super(value);
 
   @override
@@ -226,7 +225,7 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
     Widget child,
   }) : this._(
           key: key,
-          delegate: SingleNotifierDelegate(valueListenable),
+          delegate: SingleValueDelegate(valueListenable),
           updateShouldNotify: updateShouldNotify,
           child: child,
         );
