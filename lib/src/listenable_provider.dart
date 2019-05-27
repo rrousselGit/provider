@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/src/adaptive_builder_widget.dart';
+import 'package:provider/src/adaptive_builder_widget.dart' hide ValueBuilder;
+import 'package:provider/src/delegate_widget.dart';
 import 'package:provider/src/provider.dart';
 
 /// Listens to a [Listenable], expose it to its descendants
@@ -10,37 +11,48 @@ import 'package:provider/src/provider.dart';
 ///   * [ChangeNotifierProvider], a subclass of [ListenableProvider] specific to [ChangeNotifier].
 ///   * [ValueListenableProvider], which listens to a [ValueListenable] but exposes only [ValueListenable.value] instead of the whole object.
 ///   * [Listenable]
-class ListenableProvider<T extends Listenable>
-    extends AdaptiveBuilderWidget<T, T> implements SingleChildCloneableWidget {
+class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
+    implements SingleChildCloneableWidget {
   /// Creates a [Listenable] using [builder] and subscribes to it.
   ///
   /// [dispose] can optionally passed to free resources
   /// when [ListenableProvider] is removed from the tree.
   ///
   /// [builder] must not be `null`.
-  const ListenableProvider({
+  ListenableProvider({
     Key key,
     @required ValueBuilder<T> builder,
-    this.dispose,
-    this.child,
-  }) : super(key: key, builder: builder);
+    Disposer<T> dispose,
+    Widget child,
+  }) : this._(
+          key: key,
+          delegate: _BuilderListenableDelegate(builder, dispose: dispose),
+          child: child,
+        );
 
   /// Listens [listenable] and expose it to all of [ListenableProvider] descendants.
   ///
   /// Rebuilding [ListenableProvider] without
   /// changing the instance of [listenable] will not rebuild dependants.
-  const ListenableProvider.value({
+  ListenableProvider.value({
     Key key,
     @required T listenable,
-    this.child,
-  })  : dispose = null,
-        super.value(key: key, value: listenable);
+    Widget child,
+  }) : this._(
+          key: key,
+          delegate: _ValueListenableDelegate(listenable),
+          child: child,
+        );
 
-  /// Function used to dispose of an object created by [builder].
-  ///
-  /// [dispose] will be called whenever [ListenableProvider] is removed from the tree
-  /// or when switching from [ListenableProvider] to [ListenableProvider.value] constructor.
-  final Disposer<T> dispose;
+  ListenableProvider._({
+    Key key,
+    _ListenableDelegateMixin<T> delegate,
+    // TODO: updateShouldNotify for when the listenable instance change with `.value` constructor
+    this.child,
+  }) : super(
+          key: key,
+          delegate: delegate,
+        );
 
   /// The widget that is below the current [ListenableProvider] widget in the
   /// tree.
@@ -49,92 +61,92 @@ class ListenableProvider<T extends Listenable>
   final Widget child;
 
   @override
-  _ListenableProviderState<T> createState() => _ListenableProviderState<T>();
-
-  @override
   ListenableProvider<T> cloneWithChild(Widget child) {
-    return builder != null
-        ? ListenableProvider(
-            key: key,
-            builder: builder,
-            dispose: dispose,
-            child: child,
-          )
-        : ListenableProvider.value(
-            key: key,
-            listenable: value,
-            child: child,
-          );
-  }
-}
-
-class _ListenableProviderState<T extends Listenable>
-    extends State<ListenableProvider<T>>
-    with AdaptiveBuilderWidgetStateMixin<T, T, ListenableProvider<T>> {
-  /// The number of time [Listenable] called its listeners.
-  ///
-  /// It is used to differentiate external rebuilds from rebuilds caused by the listenable emitting an event.
-  /// This allows [InheritedWidget.updateShouldNotify] to return true only in the latter scenario.
-  int _buildCount = 0;
-  UpdateShouldNotify<T> updateShouldNotify;
-
-  void listener() {
-    setState(() {
-      _buildCount++;
-    });
-  }
-
-  void startListening(T listenable) {
-    updateShouldNotify = createUpdateShouldNotify();
-    listenable.addListener(listener);
-  }
-
-  void stopListening(T listenable) {
-    listenable?.removeListener(listener);
-  }
-
-  UpdateShouldNotify<T> createUpdateShouldNotify() {
-    var capturedBuildCount = _buildCount;
-    return updateShouldNotify = (_, __) {
-      final res = _buildCount != capturedBuildCount;
-      capturedBuildCount = _buildCount;
-      return res;
-    };
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Provider<T>.value(
-      value: value,
-      child: widget.child,
-      updateShouldNotify: updateShouldNotify,
+    return ListenableProvider._(
+      key: key,
+      delegate: delegate as _ListenableDelegateMixin<T>,
+      child: child,
     );
   }
 
   @override
-  T didBuild(T built) {
-    return built;
+  Widget build(BuildContext context) {
+    final delegate = this.delegate as _ListenableDelegateMixin<T>;
+    return InheritedProvider<T>(
+      value: delegate.value,
+      child: child,
+      updateShouldNotify: delegate.updateShouldNotify,
+    );
+  }
+}
+
+class _ValueListenableDelegate<T extends Listenable>
+    extends SingleNotifierDelegate<T> with _ListenableDelegateMixin<T> {
+  _ValueListenableDelegate(T value) : super(value);
+
+  @override
+  void didUpdateDelegate(_ValueListenableDelegate<T> oldDelegate) {
+    super.didUpdateDelegate(oldDelegate);
+    if (oldDelegate.value != value) {
+      _removeListener?.call();
+      if (value != null) startListening(value);
+    }
+  }
+}
+
+class _BuilderListenableDelegate<T extends Listenable>
+    extends BuilderAdaptiveDelegate<T> with _ListenableDelegateMixin<T> {
+  _BuilderListenableDelegate(ValueBuilder<T> builder, {Disposer<T> dispose})
+      : super(builder, dispose: dispose);
+}
+
+mixin _ListenableDelegateMixin<T extends Listenable>
+    on ValueAdaptiveDelegate<T> {
+  UpdateShouldNotify<T> updateShouldNotify;
+  VoidCallback _removeListener;
+
+  @override
+  void initDelegate() {
+    super.initDelegate();
+    if (value != null) startListening(value);
   }
 
   @override
-  void disposeBuilt(ListenableProvider<T> widget, T built) {
-    if (widget.dispose != null) {
-      widget.dispose(context, built);
-    }
+  void didUpdateDelegate(StateDelegate old) {
+    super.didUpdateDelegate(old);
+    final delegate = old as _ListenableDelegateMixin<T>;
+
+    _removeListener = delegate._removeListener;
+    updateShouldNotify = delegate.updateShouldNotify;
+  }
+
+  void startListening(T listenable) {
+    /// The number of time [Listenable] called its listeners.
+    ///
+    /// It is used to differentiate external rebuilds from rebuilds caused by the listenable emitting an event.
+    /// This allows [InheritedWidget.updateShouldNotify] to return true only in the latter scenario.
+    var buildCount = 0;
+    final listener = () => setState(() => buildCount++);
+
+    var capturedBuildCount = buildCount;
+    updateShouldNotify = (_, __) {
+      final res = buildCount != capturedBuildCount;
+      capturedBuildCount = buildCount;
+      return res;
+    };
+
+    listenable.addListener(listener);
+    _removeListener = () {
+      listenable.removeListener(listener);
+      _removeListener = null;
+      updateShouldNotify = null;
+    };
   }
 
   @override
   void dispose() {
-    stopListening(value);
+    _removeListener?.call();
     super.dispose();
-  }
-
-  @override
-  void changeValue(ListenableProvider<T> oldWidget, T oldValue, T newValue) {
-    if (oldValue != newValue) {
-      if (oldValue != null) stopListening(oldValue);
-      if (newValue != null) startListening(newValue);
-    }
   }
 }
 
@@ -153,40 +165,22 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
   /// when [ChangeNotifierProvider] is removed from the widget tree.
   ///
   /// [builder] must not be `null`.
-  const ChangeNotifierProvider({
+  ChangeNotifierProvider({
     Key key,
     @required ValueBuilder<T> builder,
     Widget child,
   }) : super(key: key, builder: builder, dispose: _disposer, child: child);
 
   /// Listens to [notifier] and expose it to all of [ChangeNotifierProvider] descendants.
-  const ChangeNotifierProvider.value({
+  ChangeNotifierProvider.value({
     Key key,
     @required T notifier,
     Widget child,
   }) : super.value(key: key, listenable: notifier, child: child);
-
-  // While the behavior doesn't change between ChangeNotifierProvider and ListenableProvider
-  // it is required to override `cloneWithChild` because the `runtimeType` is different, which Flutter use.
-  @override
-  ChangeNotifierProvider<T> cloneWithChild(Widget child) {
-    return builder != null
-        ? ChangeNotifierProvider(
-            key: key,
-            builder: builder,
-            child: child,
-          )
-        : ChangeNotifierProvider.value(
-            key: key,
-            notifier: value,
-            child: child,
-          );
-  }
 }
 
 /// Listens to a [ValueListenable] and expose its current value.
-class ValueListenableProvider<T>
-    extends AdaptiveBuilderWidget<ValueListenable<T>, ValueNotifier<T>>
+class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
     implements SingleChildCloneableWidget {
   /// Creates a [ValueNotifier] using [builder] and automatically dispose it
   /// when [ValueListenableProvider] is removed from the tree.
@@ -197,12 +191,20 @@ class ValueListenableProvider<T>
   /// See also:
   ///   * [ValueListenable]
   ///   * [ListenableProvider], similar to [ValueListenableProvider] but for any kind of [Listenable].
-  const ValueListenableProvider({
+  ValueListenableProvider({
     Key key,
     @required ValueBuilder<ValueNotifier<T>> builder,
-    this.updateShouldNotify,
-    this.child,
-  }) : super(key: key, builder: builder);
+    UpdateShouldNotify<T> updateShouldNotify,
+    Widget child,
+  }) : this._(
+          key: key,
+          delegate: BuilderAdaptiveDelegate<ValueNotifier<T>>(
+            builder,
+            dispose: _dispose,
+          ),
+          updateShouldNotify: updateShouldNotify,
+          child: child,
+        );
 
   /// Listens to [valueListenable] and exposes its current value.
   ///
@@ -217,12 +219,28 @@ class ValueListenableProvider<T>
   ///   child: Container(),
   /// );
   /// ```
-  const ValueListenableProvider.value({
+  ValueListenableProvider.value({
     Key key,
     @required ValueListenable<T> valueListenable,
+    UpdateShouldNotify<T> updateShouldNotify,
+    Widget child,
+  }) : this._(
+          key: key,
+          delegate: SingleNotifierDelegate(valueListenable),
+          updateShouldNotify: updateShouldNotify,
+          child: child,
+        );
+
+  ValueListenableProvider._({
+    Key key,
+    ValueAdaptiveDelegate<ValueListenable<T>> delegate,
     this.updateShouldNotify,
     this.child,
-  }) : super.value(key: key, value: valueListenable);
+  }) : super(key: key, delegate: delegate);
+
+  static void _dispose(BuildContext context, ValueNotifier notifier) {
+    notifier.dispose();
+  }
 
   /// The widget that is below the current [ValueListenableProvider] widget in the
   /// tree.
@@ -234,48 +252,27 @@ class ValueListenableProvider<T>
   final UpdateShouldNotify<T> updateShouldNotify;
 
   @override
-  _ValueListenableProviderState<T> createState() =>
-      _ValueListenableProviderState<T>();
-
-  @override
   ValueListenableProvider<T> cloneWithChild(Widget child) {
-    return builder != null
-        ? ValueListenableProvider(key: key, builder: builder, child: child)
-        : ValueListenableProvider.value(
-            key: key,
-            valueListenable: value,
-            child: child,
-          );
-  }
-}
-
-class _ValueListenableProviderState<T> extends State<ValueListenableProvider<T>>
-    with
-        AdaptiveBuilderWidgetStateMixin<ValueListenable<T>, ValueNotifier<T>,
-            ValueListenableProvider<T>> {
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<T>(
-      valueListenable: value,
-      builder: (_, value, child) {
-        return Provider<T>.value(
-          value: value,
-          child: widget.child,
-          updateShouldNotify: widget.updateShouldNotify,
-        );
-      },
-      child: widget.child,
+    return ValueListenableProvider._(
+      key: key,
+      delegate: delegate,
+      updateShouldNotify: updateShouldNotify,
+      child: child,
     );
   }
 
   @override
-  ValueListenable<T> didBuild(ValueNotifier<T> built) {
-    return built;
-  }
-
-  @override
-  void disposeBuilt(
-      ValueListenableProvider<T> oldWidget, ValueNotifier<T> built) {
-    built.dispose();
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<T>(
+      valueListenable: delegate.value,
+      builder: (_, value, child) {
+        return InheritedProvider<T>(
+          value: value,
+          updateShouldNotify: updateShouldNotify,
+          child: child,
+        );
+      },
+      child: child,
+    );
   }
 }

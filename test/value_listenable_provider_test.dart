@@ -141,10 +141,8 @@ void main() {
 
       expect(clone.child, child2);
       expect(clone.key, provider.key);
-      expect(clone.builder, provider.builder);
-      expect(clone.value, provider.value);
+      expect(clone.delegate, provider.delegate);
       expect(clone.updateShouldNotify, provider.updateShouldNotify);
-      expect(clone.builder, provider.builder);
     });
     test('works with MultiProvider #3', () {
       final provider = ValueListenableProvider<int>(
@@ -157,10 +155,8 @@ void main() {
 
       expect(clone.child, child2);
       expect(clone.key, provider.key);
-      expect(clone.builder, provider.builder);
-      expect(clone.value, provider.value);
+      expect(clone.delegate, provider.delegate);
       expect(clone.updateShouldNotify, provider.updateShouldNotify);
-      expect(clone.builder, provider.builder);
     });
   });
 }

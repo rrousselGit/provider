@@ -23,7 +23,7 @@ void main() {
     final newChild = Container();
     final clone = provider.cloneWithChild(newChild);
     expect(clone.child, newChild);
-    expect(clone.builder, provider.builder);
+    expect(clone.delegate, provider.delegate);
     expect(clone.key, provider.key);
     expect(provider.updateShouldNotify, clone.updateShouldNotify);
   });
