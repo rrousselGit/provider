@@ -109,7 +109,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
       stream: delegate.value,
       initialData: initialData,
       builder: (_, snapshot) {
-        return Provider<T>.value(
+        return InheritedProvider<T>(
           value: _getValue(snapshot, context, catchError),
           child: child,
           updateShouldNotify: updateShouldNotify,
@@ -164,40 +164,60 @@ class _StreamControllerBuilderDelegate<T>
 /// It is considered an error to pass a future that can emit errors without providing
 /// a [catchError] method.
 ///
-/// {@template provider.futureprovider.initialdata}
-/// [initialData] determines the value exposed until the [Future] completes.
-/// If omitted, defaults to `null`.
-/// {@endtemplate}
-///
 /// {@macro provider.updateshouldnotify}
 ///
 /// See also:
 ///   * [Future]
-class FutureProvider<T> extends AdaptiveBuilderWidget<Future<T>, Future<T>>
+class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
     implements SingleChildCloneableWidget {
   /// Creates a [Future] from [builder] and subscribes to it.
   ///
   /// [builder] must not be `null`.
-  const FutureProvider({
+  FutureProvider({
     Key key,
     @required ValueBuilder<Future<T>> builder,
-    this.initialData,
-    this.catchError,
-    this.updateShouldNotify,
-    this.child,
-  }) : super(key: key, builder: builder);
+    T initialData,
+    ErrorBuilder<T> catchError,
+    UpdateShouldNotify<T> updateShouldNotify,
+    Widget child,
+  }) : this._(
+          key: key,
+          initialData: initialData,
+          catchError: catchError,
+          updateShouldNotify: updateShouldNotify,
+          delegate: BuilderAdaptiveDelegate(builder),
+          child: child,
+        );
 
   /// Listens to [future] and expose it to all of [FutureProvider] descendants.
-  const FutureProvider.value({
+  FutureProvider.value({
     Key key,
     @required Future<T> future,
+    T initialData,
+    ErrorBuilder<T> catchError,
+    UpdateShouldNotify<T> updateShouldNotify,
+    Widget child,
+  }) : this._(
+          key: key,
+          initialData: initialData,
+          catchError: catchError,
+          updateShouldNotify: updateShouldNotify,
+          delegate: SingleValueDelegate(future),
+          child: child,
+        );
+
+  FutureProvider._({
+    Key key,
+    ValueAdaptiveDelegate<Future<T>> delegate,
     this.initialData,
     this.catchError,
     this.updateShouldNotify,
     this.child,
-  }) : super.value(key: key, value: future);
+  }) : super(key: key, delegate: delegate);
 
-  /// {@macro provider.futureprovider.initialdata}
+  /// [initialData] determines the value exposed until the [Future] completes.
+  ///
+  /// If omitted, defaults to `null`.
   final T initialData;
 
   /// The widget that is below the current [FutureProvider] widget in the tree.
@@ -218,60 +238,29 @@ class FutureProvider<T> extends AdaptiveBuilderWidget<Future<T>, Future<T>>
   final UpdateShouldNotify<T> updateShouldNotify;
 
   @override
-  _FutureProviderState<T> createState() => _FutureProviderState<T>();
-
-  @override
   FutureProvider<T> cloneWithChild(Widget child) {
-    return builder != null
-        ? FutureProvider(
-            key: key,
-            builder: builder,
-            updateShouldNotify: updateShouldNotify,
-            initialData: initialData,
-            catchError: catchError,
-            child: child,
-          )
-        : FutureProvider.value(
-            key: key,
-            future: value,
-            updateShouldNotify: updateShouldNotify,
-            initialData: initialData,
-            catchError: catchError,
-            child: child,
-          );
+    return FutureProvider._(
+      key: key,
+      delegate: delegate,
+      updateShouldNotify: updateShouldNotify,
+      initialData: initialData,
+      catchError: catchError,
+      child: child,
+    );
   }
-}
 
-class _FutureProviderState<T> extends State<FutureProvider<T>>
-    with
-        AdaptiveBuilderWidgetStateMixin<Future<T>, Future<T>,
-            FutureProvider<T>> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<T>(
-      future: value,
-      initialData: widget.initialData,
+      future: delegate.value,
+      initialData: initialData,
       builder: (_, snapshot) {
-        return Provider<T>.value(
-          value: getValue(snapshot, context),
-          updateShouldNotify: widget.updateShouldNotify,
-          child: widget.child,
+        return InheritedProvider<T>(
+          value: _getValue(snapshot, context, catchError),
+          updateShouldNotify: updateShouldNotify,
+          child: child,
         );
       },
     );
   }
-
-  T getValue(AsyncSnapshot<T> snapshot, BuildContext context) {
-    if (snapshot.hasError) {
-      if (widget.catchError != null) {
-        return widget.catchError(context, snapshot.error);
-      }
-      // ignore: only_throw_errors
-      throw snapshot.error;
-    }
-    return snapshot.data;
-  }
-
-  @override
-  Future<T> didBuild(Future<T> built) => built;
 }
