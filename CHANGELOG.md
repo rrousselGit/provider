@@ -1,3 +1,5 @@
+# 3.0.0
+
 # 2.0.1
 
 - fix a bug where `ListenableProvider.value`/`ChangeNotifierProvider.value`/`StreamProvider.value`/`ValueListenableProvider.value` subscribed/unsubscribed to their respective object too often
