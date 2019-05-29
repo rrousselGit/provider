@@ -295,7 +295,8 @@ class MockStateDelegate<T> extends StateDelegate {
   }
 }
 
-class BuilderDelegateWidget<T extends ValueAdaptiveDelegate<dynamic>> extends ValueDelegateWidget<dynamic> {
+class BuilderDelegateWidget<T extends ValueAdaptiveDelegate<dynamic>>
+    extends ValueDelegateWidget<dynamic> {
   BuilderDelegateWidget({Key key, this.builder, T delegate})
       : super(key: key, delegate: delegate);
 
