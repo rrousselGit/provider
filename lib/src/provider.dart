@@ -24,6 +24,9 @@ abstract class SingleChildCloneableWidget implements Widget {
 /// A generic implementation of an [InheritedWidget].
 ///
 /// Any descendant of this widget can obtain [value] using [Provider.of].
+///
+/// Do not use this class directly unless you are creating a custom "Provider".
+/// Instead use [Provider] class, which wraps [InheritedProvider].
 class InheritedProvider<T> extends InheritedWidget {
   /// Allow customizing [updateShouldNotify].
   const InheritedProvider({
