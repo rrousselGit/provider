@@ -31,19 +31,23 @@ abstract class StateDelegate {
   /// Notify the framework that the internal state of this object has changed.
   ///
   /// See the discussion on [State.setState] for more information.
+  @protected
   StateSetter get setState => _setState;
 
   /// Called on [State.initState] or after [DelegateWidget] is rebuilt
   /// with a [StateDelegate] of a different [runtimeType].
+  @protected
   void initDelegate() {}
 
   /// Called whenever [State.didUpdateWidget] is called
   ///
   /// It is guaranteed for [old] to have the same [runtimeType] as `this`.
+  @protected
   void didUpdateDelegate(covariant StateDelegate old) {}
 
   /// Called when [DelegateWidget] is unmounted or if it is rebuilt
   /// with a [StateDelegate] of a different [runtimeType].
+  @protected
   void dispose() {}
 }
 
@@ -99,6 +103,12 @@ class _DelegateWidgetState extends State<DelegateWidget> {
       .._setState = setState;
   }
 
+  void _unmountDelegate(StateDelegate delegate) {
+    delegate
+      .._context = null
+      .._setState = null;
+  }
+
   @override
   void didUpdateWidget(DelegateWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -110,6 +120,7 @@ class _DelegateWidgetState extends State<DelegateWidget> {
       } else {
         widget.delegate.didUpdateDelegate(oldWidget.delegate);
       }
+      _unmountDelegate(oldWidget.delegate);
     }
   }
 
@@ -119,6 +130,7 @@ class _DelegateWidgetState extends State<DelegateWidget> {
   @override
   void dispose() {
     widget.delegate.dispose();
+    _unmountDelegate(widget.delegate);
     super.dispose();
   }
 }
@@ -135,7 +147,9 @@ abstract class ValueAdaptiveDelegate<T> extends StateDelegate {
   T get value;
 }
 
+/// Stores an immutable value.
 class SingleValueDelegate<T> extends ValueAdaptiveDelegate<T> {
+  /// Initializes [value] for subclasses.
   SingleValueDelegate(this.value);
 
   @override
