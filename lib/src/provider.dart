@@ -187,6 +187,7 @@ class Provider<T> extends ValueDelegateWidget<T>
     return provider.value;
   }
 
+  /// Allows to specify parameters to [Provider].
   Provider({
     Key key,
     ValueBuilder<T> builder,
@@ -199,6 +200,7 @@ class Provider<T> extends ValueDelegateWidget<T>
           child: child,
         );
 
+  /// Allows to specify parameters to [Provider].
   Provider.value({
     Key key,
     T value,
