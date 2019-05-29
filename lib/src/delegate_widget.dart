@@ -87,6 +87,9 @@ abstract class DelegateWidget extends StatefulWidget {
   Widget build(BuildContext context);
 
   @override
+  StatefulElement createElement() => _DelegateElement(this);
+
+  @override
   _DelegateWidgetState createState() => _DelegateWidgetState();
 }
 
@@ -95,7 +98,19 @@ class _DelegateWidgetState extends State<DelegateWidget> {
   void initState() {
     super.initState();
     _mountDelegate();
+    _initDelegate();
+  }
+
+  void _initDelegate() {
+    assert(() {
+      (context as _DelegateElement)._debugIsInitDelegate = true;
+      return true;
+    }());
     widget.delegate.initDelegate();
+    assert(() {
+      (context as _DelegateElement)._debugIsInitDelegate = false;
+      return true;
+    }());
   }
 
   void _mountDelegate() {
@@ -117,7 +132,7 @@ class _DelegateWidgetState extends State<DelegateWidget> {
       _mountDelegate();
       if (widget.delegate.runtimeType != oldWidget.delegate.runtimeType) {
         oldWidget.delegate.dispose();
-        widget.delegate.initDelegate();
+        _initDelegate();
       } else {
         widget.delegate.didUpdateDelegate(oldWidget.delegate);
       }
@@ -133,6 +148,36 @@ class _DelegateWidgetState extends State<DelegateWidget> {
     widget.delegate.dispose();
     _unmountDelegate(widget.delegate);
     super.dispose();
+  }
+}
+
+class _DelegateElement extends StatefulElement {
+  _DelegateElement(DelegateWidget widget) : super(widget);
+
+  bool _debugIsInitDelegate = false;
+
+  @override
+  DelegateWidget get widget => super.widget as DelegateWidget;
+
+  @override
+  InheritedWidget inheritFromElement(Element ancestor, {Object aspect}) {
+    assert(() {
+      if (_debugIsInitDelegate) {
+        final targetType = ancestor.widget.runtimeType;
+        throw FlutterError(
+            'inheritFromWidgetOfExactType($targetType) or inheritFromElement() was called before ${widget.delegate.runtimeType}.initDelegate() completed.\n'
+            'When an inherited widget changes, for example if the value of Theme.of() changes, '
+            'its dependent widgets are rebuilt. If the dependent widget\'s reference to '
+            'the inherited widget is in a constructor or an initDelegate() method, '
+            'then the rebuilt dependent widget will not reflect the changes in the '
+            'inherited widget.\n'
+            'Typically references to inherited widgets should occur in widget build() methods. Alternatively, '
+            'initialization based on inherited widgets can be placed in the didChangeDependencies method, which '
+            'is called after initDelegate and whenever the dependencies change thereafter.');
+      }
+      return true;
+    }());
+    return super.inheritFromElement(ancestor, aspect: aspect);
   }
 }
 

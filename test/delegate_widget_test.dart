@@ -10,6 +10,42 @@ import 'common.dart';
 
 void main() {
   group('DelegateWidget', () {
+    testWidgets(
+        "can't call context.inheritFromWidgetOfExactType from first initDelegate",
+        (tester) async {
+      await tester.pumpWidget(Provider.value(
+        value: 42,
+        child: TestDelegateWidget(
+          delegate: InitDelegate(),
+          child: Container(),
+        ),
+      ));
+
+      expect(tester.takeException(), isFlutterError);
+    });
+    testWidgets(
+        "can't call context.inheritFromWidgetOfExactType from initDelegate after an update",
+        (tester) async {
+      await tester.pumpWidget(Provider.value(
+        value: 42,
+        child: TestDelegateWidget(
+          delegate: SingleValueDelegate(42),
+          child: Container(),
+        ),
+      ));
+
+      expect(tester.takeException(), isNull);
+
+      await tester.pumpWidget(Provider.value(
+        value: 42,
+        child: TestDelegateWidget(
+          delegate: InitDelegate(),
+          child: Container(),
+        ),
+      ));
+
+      expect(tester.takeException(), isFlutterError);
+    });
     testWidgets('mount initializes setState and context and calls initDelegate',
         (tester) async {
       final state = MockStateDelegate<int>();
@@ -259,6 +295,13 @@ void main() {
   });
 }
 
+class InitDelegate extends StateDelegate {
+  @override
+  void initDelegate() {
+    Provider.of<int>(context);
+  }
+}
+
 class InitDelegateMock extends Mock {
   void call(BuildContext context, StateSetter setState);
 }
@@ -307,7 +350,7 @@ class BuilderDelegateWidget<T extends ValueAdaptiveDelegate<dynamic>>
 }
 
 class TestDelegateWidget extends DelegateWidget {
-  TestDelegateWidget({Key key, this.child, MockStateDelegate delegate})
+  TestDelegateWidget({Key key, this.child, StateDelegate delegate})
       : super(key: key, delegate: delegate);
 
   final Widget child;
