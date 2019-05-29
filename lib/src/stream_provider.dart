@@ -45,28 +45,6 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
           child: child,
         );
 
-  /// Creates a [StreamController] from [builder] and subscribes to it.
-  ///
-  /// [StreamProvider] will automatically call [StreamController.close]
-  /// when the widget is removed from the tree.
-  ///
-  /// [builder] must not be `null`.
-  StreamProvider.stream({
-    Key key,
-    @required ValueBuilder<Stream<T>> builder,
-    T initialData,
-    ErrorBuilder<T> catchError,
-    UpdateShouldNotify<T> updateShouldNotify,
-    Widget child,
-  }) : this._(
-          key: key,
-          delegate: BuilderAdaptiveDelegate(builder),
-          initialData: initialData,
-          catchError: catchError,
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
-
   /// Listens to [stream] and expose it to all of [StreamProvider] descendants.
   StreamProvider.value({
     Key key,
