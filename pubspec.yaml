@@ -1,6 +1,6 @@
 name: provider
 description: A dependency injection system built with widgets for widgets. provider is mostly syntax sugar for InheritedWidget, to make common use-cases straightforward.
-version: 2.1.0
+version: 3.0.0-dev
 homepage: https://github.com/rrousselGit/provider
 authors:
   - Remi Rousselet <darky12s@gmail.com>

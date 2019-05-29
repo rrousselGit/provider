@@ -18,7 +18,7 @@ void main() {
       final newChild = Container();
       final clone = provider.cloneWithChild(newChild);
       expect(clone.child, newChild);
-      expect(clone.value, provider.value);
+      expect(clone.delegate, provider.delegate);
       expect(clone.key, provider.key);
       expect(provider.updateShouldNotify, clone.updateShouldNotify);
     });
