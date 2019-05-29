@@ -125,6 +125,7 @@ mixin _ListenableDelegateMixin<T extends Listenable>
     /// It is used to differentiate external rebuilds from rebuilds caused by the listenable emitting an event.
     /// This allows [InheritedWidget.updateShouldNotify] to return true only in the latter scenario.
     var buildCount = 0;
+    final setState = this.setState;
     final listener = () => setState(() => buildCount++);
 
     var capturedBuildCount = buildCount;
