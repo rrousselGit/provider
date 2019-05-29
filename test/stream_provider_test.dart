@@ -46,7 +46,7 @@ void main() {
       final key = GlobalKey();
 
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         child: Container(key: key),
       ));
 
@@ -72,12 +72,12 @@ void main() {
       final child = Builder(builder: builder);
 
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         child: child,
       ));
 
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         child: child,
       ));
 
@@ -90,7 +90,7 @@ void main() {
 
       await tester.pumpWidget(StreamProvider.value(
         key: key,
-        stream: controller.stream,
+        value: controller.stream,
         child: Container(),
       ));
 
@@ -103,7 +103,7 @@ void main() {
 
       final controller = StreamController<int>();
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         updateShouldNotify: shouldNotify,
         child: Container(),
       ));
@@ -122,11 +122,11 @@ void main() {
         (tester) async {
       final stream = MockStream<int>();
       await tester.pumpWidget(StreamProvider.value(
-        stream: stream,
+        value: stream,
         child: Container(),
       ));
       await tester.pumpWidget(StreamProvider.value(
-        stream: stream,
+        value: stream,
         child: Container(),
       ));
 
@@ -144,7 +144,7 @@ void main() {
       final controller = StreamController<int>();
 
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         child: Container(),
       ));
 
@@ -161,7 +161,7 @@ void main() {
       when(catchError(any, 42)).thenReturn(0);
 
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         catchError: catchError,
         child: Container(key: key),
       ));
@@ -181,7 +181,7 @@ void main() {
       final key = GlobalKey();
       await tester.pumpWidget(MultiProvider(
         providers: [
-          StreamProvider<int>.value(stream: const Stream<int>.empty()),
+          StreamProvider<int>.value(value: const Stream<int>.empty()),
         ],
         child: Container(key: key),
       ));
@@ -190,7 +190,7 @@ void main() {
     });
     test('works with MultiProvider #2', () {
       final provider = StreamProvider<int>.value(
-        stream: const Stream<int>.empty(),
+        value: const Stream<int>.empty(),
         initialData: 42,
         child: Container(),
         catchError: (_, __) => 42,
@@ -229,7 +229,7 @@ void main() {
     testWidgets('works with null', (tester) async {
       final key = GlobalKey();
       await tester.pumpWidget(StreamProvider<int>.value(
-        stream: null,
+        value: null,
         child: Container(key: key),
       ));
 
@@ -313,7 +313,7 @@ void main() {
         final key = GlobalKey();
         final controller = StreamController<int>();
         await tester.pumpWidget(StreamProvider<int>.value(
-          stream: controller.stream,
+          value: controller.stream,
           child: Container(),
         ));
 
@@ -351,7 +351,7 @@ void main() {
         ));
 
         await tester.pumpWidget(StreamProvider.value(
-          stream: Stream<int>.fromIterable([42]),
+          value: Stream<int>.fromIterable([42]),
           child: Container(key: key),
         ));
         await tester.pump();

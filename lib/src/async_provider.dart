@@ -67,17 +67,17 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
           child: child,
         );
 
-  /// Listens to [stream] and expose it to all of [StreamProvider] descendants.
+  /// Listens to [value] and expose it to all of [StreamProvider] descendants.
   StreamProvider.value({
     Key key,
-    @required Stream<T> stream,
+    @required Stream<T> value,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
   }) : this._(
           key: key,
-          delegate: SingleValueDelegate(stream),
+          delegate: SingleValueDelegate(value),
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
@@ -211,10 +211,10 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
           child: child,
         );
 
-  /// Listens to [future] and expose it to all of [FutureProvider] descendants.
+  /// Listens to [value] and expose it to all of [FutureProvider] descendants.
   FutureProvider.value({
     Key key,
-    @required Future<T> future,
+    @required Future<T> value,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
@@ -224,7 +224,7 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
-          delegate: SingleValueDelegate(future),
+          delegate: SingleValueDelegate(value),
           child: child,
         );
 

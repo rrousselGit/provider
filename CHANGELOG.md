@@ -1,9 +1,15 @@
 # 3.0.0
 
+## breaking (see the readme for migration steps):
+
 - The default constructor of `StreamProvider` has now builds a `Stream`
   instead of `StreamController`. The previous behavior has been moved to `StreamProvider.controller`.
+- All `XXProvider.value` constructors now use `value` as parameter name.
 - Added `FutureProvider`, which takes a future and updates dependents when the future completes.
 - Providers can no longer be instantiated using `const` constructors.
+
+## non-breaking:
+
 - Added `DelegateWidget` and a few related classes to help building custom providers.
 - Exposed the internal generic `InheritedWidget` to help building custom providers.
 

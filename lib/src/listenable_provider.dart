@@ -29,17 +29,17 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
           child: child,
         );
 
-  /// Listens [listenable] and expose it to all of [ListenableProvider] descendants.
+  /// Listens to [value] and expose it to all of [ListenableProvider] descendants.
   ///
   /// Rebuilding [ListenableProvider] without
-  /// changing the instance of [listenable] will not rebuild dependants.
+  /// changing the instance of [value] will not rebuild dependants.
   ListenableProvider.value({
     Key key,
-    @required T listenable,
+    @required T value,
     Widget child,
   }) : this._(
           key: key,
-          delegate: _ValueListenableDelegate(listenable),
+          delegate: _ValueListenableDelegate(value),
           child: child,
         );
 
@@ -171,12 +171,12 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
     Widget child,
   }) : super(key: key, builder: builder, dispose: _disposer, child: child);
 
-  /// Listens to [notifier] and expose it to all of [ChangeNotifierProvider] descendants.
+  /// Listens to [value] and expose it to all of [ChangeNotifierProvider] descendants.
   ChangeNotifierProvider.value({
     Key key,
-    @required T notifier,
+    @required T value,
     Widget child,
-  }) : super.value(key: key, listenable: notifier, child: child);
+  }) : super.value(key: key, value: value, child: child);
 }
 
 /// Listens to a [ValueListenable] and expose its current value.
@@ -206,10 +206,10 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
           child: child,
         );
 
-  /// Listens to [valueListenable] and exposes its current value.
+  /// Listens to [value] and exposes its current value.
   ///
-  /// Changing [valueListenable] will stop listening to the previous [valueListenable] and listen the new one.
-  /// Removing [ValueListenableProvider] from the tree will also stop listening to [valueListenable].
+  /// Changing [value] will stop listening to the previous [value] and listen the new one.
+  /// Removing [ValueListenableProvider] from the tree will also stop listening to [value].
   ///
   /// ```dart
   /// ValueListenable<int> foo;
@@ -221,12 +221,12 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
   /// ```
   ValueListenableProvider.value({
     Key key,
-    @required ValueListenable<T> valueListenable,
+    @required ValueListenable<T> value,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
   }) : this._(
           key: key,
-          delegate: SingleValueDelegate(valueListenable),
+          delegate: SingleValueDelegate(value),
           updateShouldNotify: updateShouldNotify,
           child: child,
         );
