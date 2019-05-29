@@ -174,9 +174,7 @@ void main() {
       expect(clone.updateShouldNotify, provider.updateShouldNotify);
       expect(clone.key, provider.key);
       expect(clone.initialData, provider.initialData);
-      expect(clone.builder, provider.builder);
-      expect(clone.value, provider.value);
-      expect(clone.builder, provider.builder);
+      expect(clone.delegate, provider.delegate);
       expect(clone.catchError, provider.catchError);
     });
     test('works with MultiProvider #3', () {
@@ -195,9 +193,7 @@ void main() {
       expect(clone.updateShouldNotify, provider.updateShouldNotify);
       expect(clone.key, provider.key);
       expect(clone.initialData, provider.initialData);
-      expect(clone.builder, provider.builder);
-      expect(clone.value, provider.value);
-      expect(clone.builder, provider.builder);
+      expect(clone.delegate, provider.delegate);
       expect(clone.catchError, provider.catchError);
     });
     testWidgets('works with null', (tester) async {
