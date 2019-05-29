@@ -1,5 +1,7 @@
 # 3.0.0
 
+- The default constructor of `StreamProvider` has now builds a `Stream`
+  instead of `StreamController`. The previous behavior has been moved to `StreamProvider.controller`.
 - Added `FutureProvider`, which takes a future and updates dependents when the future completes.
 - Providers can no longer be instantiated using `const` constructors.
 - Added `DelegateWidget` and a few related classes to help building custom providers.
@@ -7,24 +9,31 @@
 
 # 2.0.1
 
-- fix a bug where `ListenableProvider.value`/`ChangeNotifierProvider.value`/`StreamProvider.value`/`ValueListenableProvider.value` subscribed/unsubscribed to their respective object too often
-- fix a bug where `ListenableProvider.value`/`ChangeNotifierProvider.value` may rebuild too often or skip some.
+- fix a bug where `ListenableProvider.value`/`ChangeNotifierProvider.value`
+  /`StreamProvider.value`/`ValueListenableProvider.value` subscribed/unsubscribed
+  to their respective object too often
+- fix a bug where `ListenableProvider.value`/`ChangeNotifierProvider.value` may
+  rebuild too often or skip some.
 
 # 2.0.0
 
 - `Consumer` now takes an optional `child` argument for optimization purposes.
 - merged `Provider` and `StatefulProvider`
 - added a "builder" constructor to `ValueListenableProvider`
-- normalized providers constructors such that the default constructor is a "builder", and offer a `value` named constructor.
+- normalized providers constructors such that the default constructor is a "builder",
+  and offer a `value` named constructor.
 
 # 1.6.1
 
-- `Provider.of<T>` now crashes with a `ProviderNotFoundException` when no `Provider<T>` are found in the ancestors of the context used.
+- `Provider.of<T>` now crashes with a `ProviderNotFoundException` when no `Provider<T>`
+  are found in the ancestors of the context used.
 
 # 1.6.0
 
-- new: `ChangeNotifierProvider`, similar to scoped_model that exposes `ChangeNotifer` subclass and rebuilds dependents only when `notifyListeners` is called.
-- new: `ValueListenableProvider`, a provider that rebuilds whenever the value passed to a `ValueNotifier` change.
+- new: `ChangeNotifierProvider`, similar to scoped_model that exposes `ChangeNotifer` subclass and
+  rebuilds dependents only when `notifyListeners` is called.
+- new: `ValueListenableProvider`, a provider that rebuilds whenever the value passed
+  to a `ValueNotifier` change.
 
 # 1.5.0
 
