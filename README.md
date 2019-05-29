@@ -4,6 +4,25 @@
 A dependency injection system built with widgets for widgets. `provider` is mostly syntax sugar for `InheritedWidget`,
 to make common use-cases straightforward.
 
+## Migration from v2.0.0 to v3.0.0
+
+- Providers can no longer be instantiated with `const`.
+
+- `StreamProvider`'s default constructor now builds a `Stream` instead of `StreamController`. The previous behavior has been moved to the named constructor `StreamProvider.controller`.
+
+Before:
+
+```dart
+StreamProvider(builder: (_) => StreamController<int>()),
+),
+```
+
+After:
+
+```dart
+StreamProvider.controller(builder: (_) => StreamController<int>()),
+```
+
 ## Usage
 
 ### Exposing a value
