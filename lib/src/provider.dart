@@ -1,9 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/src/adaptive_builder_widget.dart';
-
-/// A function that disposes of [value].
-typedef Disposer<T> = void Function(BuildContext context, T value);
+import 'package:provider/src/delegate_widget.dart';
 
 /// A function that returns true when the update from [previous] to [current]
 /// should notify listeners, if any.
@@ -26,11 +23,13 @@ abstract class SingleChildCloneableWidget implements Widget {
 
 /// A generic implementation of an [InheritedWidget].
 ///
-/// It is possible to customize the behavior of
-/// [InheritedWidget.updateShouldNotify] by passing a callback with the desired
-/// behavior.
-class _Provider<T> extends InheritedWidget {
-  const _Provider({
+/// Any descendant of this widget can obtain [value] using [Provider.of].
+///
+/// Do not use this class directly unless you are creating a custom "Provider".
+/// Instead use [Provider] class, which wraps [InheritedProvider].
+class InheritedProvider<T> extends InheritedWidget {
+  /// Allow customizing [updateShouldNotify].
+  const InheritedProvider({
     Key key,
     @required this.value,
     UpdateShouldNotify<T> updateShouldNotify,
@@ -38,11 +37,15 @@ class _Provider<T> extends InheritedWidget {
   })  : _updateShouldNotify = updateShouldNotify,
         super(key: key, child: child);
 
+  /// The currently exposed value.
+  ///
+  /// Mutating [value] should be avoided. Instead rebuild the widget tree
+  /// and replace [InheritedProvider] with one that holds the new value.
   final T value;
   final UpdateShouldNotify<T> _updateShouldNotify;
 
   @override
-  bool updateShouldNotify(_Provider<T> oldWidget) {
+  bool updateShouldNotify(InheritedProvider<T> oldWidget) {
     if (_updateShouldNotify != null) {
       return _updateShouldNotify(oldWidget.value, value);
     }
@@ -165,7 +168,7 @@ class MultiProvider extends StatelessWidget
 ///   }
 /// }
 /// ```
-class Provider<T> extends AdaptiveBuilderWidget<T, T>
+class Provider<T> extends ValueDelegateWidget<T>
     implements SingleChildCloneableWidget {
   /// Obtains the nearest [Provider<T>] up its widget tree and returns its value.
   ///
@@ -174,11 +177,11 @@ class Provider<T> extends AdaptiveBuilderWidget<T, T>
   /// [StatefulWidget].
   static T of<T>(BuildContext context, {bool listen = true}) {
     // this is required to get generic Type
-    final type = _typeOf<_Provider<T>>();
+    final type = _typeOf<InheritedProvider<T>>();
     final provider = listen
-        ? context.inheritFromWidgetOfExactType(type) as _Provider<T>
+        ? context.inheritFromWidgetOfExactType(type) as InheritedProvider<T>
         : context.ancestorInheritedElementForWidgetOfExactType(type)?.widget
-            as _Provider<T>;
+            as InheritedProvider<T>;
 
     if (provider == null) {
       throw ProviderNotFoundError(T, context.widget.runtimeType);
@@ -187,81 +190,64 @@ class Provider<T> extends AdaptiveBuilderWidget<T, T>
     return provider.value;
   }
 
-  /// Allows to specify parameters to [Provider]
-  const Provider({
+  /// Allows to specify parameters to [Provider].
+  Provider({
     Key key,
-    @required ValueBuilder<T> builder,
-    this.dispose,
-    this.child,
-  })  : assert(builder != null),
-        updateShouldNotify = null,
-        super(key: key, builder: builder);
+    ValueBuilder<T> builder,
+    Disposer<T> dispose,
+    Widget child,
+  }) : this._(
+          key: key,
+          delegate: BuilderAdaptiveDelegate<T>(builder, dispose: dispose),
+          updateShouldNotify: null,
+          child: child,
+        );
 
-  /// Allows to specify parameters to [Provider]
-  const Provider.value({
+  /// Allows to specify parameters to [Provider].
+  Provider.value({
     Key key,
-    @required T value,
+    T value,
+    UpdateShouldNotify<T> updateShouldNotify,
+    Widget child,
+  }) : this._(
+          key: key,
+          delegate: SingleValueDelegate<T>(value),
+          updateShouldNotify: updateShouldNotify,
+          child: child,
+        );
+
+  Provider._({
+    Key key,
+    ValueAdaptiveDelegate<T> delegate,
     this.updateShouldNotify,
     this.child,
-  })  : dispose = null,
-        super.value(key: key, value: value);
+  }) : super(key: key, delegate: delegate);
+
+  /// User-provided custom logic for [InheritedWidget.updateShouldNotify].
+  final UpdateShouldNotify<T> updateShouldNotify;
+
+  @override
+  Provider<T> cloneWithChild(Widget child) {
+    return Provider._(
+      key: key,
+      delegate: delegate,
+      updateShouldNotify: updateShouldNotify,
+      child: child,
+    );
+  }
 
   /// The widget that is below the current [Provider] widget in the
   /// tree.
   /// {@macro flutter.widgets.child}
   final Widget child;
 
-  /// Optional function called when [Provider] is removed from the
-  /// widget tree. The provided value is passed to the function as the sole
-  /// parameter.
-  ///
-  /// This function is useful when the provided value has custom disposal
-  /// behavior. For example a sink which needs to be closed explicitly.
-  final Disposer<T> dispose;
-
-  /// User-provided custom logic for [InheritedWidget.updateShouldNotify].
-  final UpdateShouldNotify<T> updateShouldNotify;
-
-  @override
-  _ProviderState<T> createState() => _ProviderState<T>();
-
-  @override
-  Provider<T> cloneWithChild(Widget child) {
-    return builder != null
-        ? Provider<T>(
-            child: child,
-            builder: builder,
-            key: key,
-            dispose: dispose,
-          )
-        : Provider<T>.value(
-            key: key,
-            value: value,
-            updateShouldNotify: updateShouldNotify,
-            child: child,
-          );
-  }
-}
-
-class _ProviderState<T> extends State<Provider<T>>
-    with AdaptiveBuilderWidgetStateMixin<T, T, Provider<T>> {
   @override
   Widget build(BuildContext context) {
-    return _Provider<T>(
-      value: value,
-      updateShouldNotify: widget.updateShouldNotify,
-      child: widget.child,
+    return InheritedProvider(
+      value: delegate.value,
+      updateShouldNotify: updateShouldNotify,
+      child: child,
     );
-  }
-
-  @override
-  T didBuild(T built) => built;
-
-  @override
-  void disposeBuilt(Provider<T> widget, T built) {
-    if (widget.dispose != null) {
-      widget.dispose(context, built);
-    }
   }
 }
 

@@ -1,5 +1,9 @@
 # 3.0.0
 
+- Providers can no longer be instantiated using `const` constructors.
+- Added `DelegateWidget` and a few related classes to help building custom providers.
+- Exposed the internal generic `InheritedWidget` to help building custom providers.
+
 # 2.0.1
 
 - fix a bug where `ListenableProvider.value`/`ChangeNotifierProvider.value`/`StreamProvider.value`/`ValueListenableProvider.value` subscribed/unsubscribed to their respective object too often

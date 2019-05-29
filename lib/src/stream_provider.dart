@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:provider/src/adaptive_builder_widget.dart';
+import 'package:provider/src/delegate_widget.dart';
 import 'package:provider/src/provider.dart';
 
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
@@ -21,8 +21,7 @@ typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 /// See also:
 ///   * [Stream]
 ///   * [StreamController], to create a [Stream]
-class StreamProvider<T>
-    extends AdaptiveBuilderWidget<Stream<T>, StreamController<T>>
+class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     implements SingleChildCloneableWidget {
   /// Creates a [StreamController] from [builder] and subscribes to it.
   ///
@@ -30,24 +29,47 @@ class StreamProvider<T>
   /// when the widget is removed from the tree.
   ///
   /// [builder] must not be `null`.
-  const StreamProvider({
+  StreamProvider({
     Key key,
     @required ValueBuilder<StreamController<T>> builder,
-    this.initialData,
-    this.catchError,
-    this.updateShouldNotify,
-    this.child,
-  }) : super(key: key, builder: builder);
+    T initialData,
+    ErrorBuilder<T> catchError,
+    UpdateShouldNotify<T> updateShouldNotify,
+    Widget child,
+  }) : this._(
+          key: key,
+          delegate: _StreamControllerBuilderDelegate(builder),
+          initialData: initialData,
+          catchError: catchError,
+          updateShouldNotify: updateShouldNotify,
+          child: child,
+        );
 
   /// Listens to [stream] and expose it to all of [StreamProvider] descendants.
-  const StreamProvider.value({
+  StreamProvider.value({
     Key key,
     @required Stream<T> stream,
+    T initialData,
+    ErrorBuilder<T> catchError,
+    UpdateShouldNotify<T> updateShouldNotify,
+    Widget child,
+  }) : this._(
+          key: key,
+          delegate: SingleValueDelegate(stream),
+          initialData: initialData,
+          catchError: catchError,
+          updateShouldNotify: updateShouldNotify,
+          child: child,
+        );
+
+  StreamProvider._({
+    Key key,
+    @required ValueAdaptiveDelegate<Stream<T>> delegate,
     this.initialData,
     this.catchError,
     this.updateShouldNotify,
     this.child,
-  }) : super.value(key: key, value: stream);
+  }) : super(key: key, delegate: delegate);
 
   /// {@macro provider.streamprovider.initialdata}
   final T initialData;
@@ -70,67 +92,69 @@ class StreamProvider<T>
   final UpdateShouldNotify<T> updateShouldNotify;
 
   @override
-  _StreamProviderState<T> createState() => _StreamProviderState<T>();
-
-  @override
   StreamProvider<T> cloneWithChild(Widget child) {
-    return builder != null
-        ? StreamProvider(
-            key: key,
-            builder: builder,
-            child: child,
-            updateShouldNotify: updateShouldNotify,
-            initialData: initialData,
-            catchError: catchError,
-          )
-        : StreamProvider.value(
-            key: key,
-            stream: value,
-            child: child,
-            updateShouldNotify: updateShouldNotify,
-            initialData: initialData,
-            catchError: catchError,
-          );
+    return StreamProvider._(
+      key: key,
+      delegate: delegate,
+      child: child,
+      updateShouldNotify: updateShouldNotify,
+      initialData: initialData,
+      catchError: catchError,
+    );
   }
-}
 
-class _StreamProviderState<T> extends State<StreamProvider<T>>
-    with
-        AdaptiveBuilderWidgetStateMixin<Stream<T>, StreamController<T>,
-            StreamProvider<T>> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<T>(
-      stream: value,
-      initialData: widget.initialData,
+      stream: delegate.value,
+      initialData: initialData,
       builder: (_, snapshot) {
         return Provider<T>.value(
-          value: getValue(snapshot, context),
-          child: widget.child,
-          updateShouldNotify: widget.updateShouldNotify,
+          value: _getValue(snapshot, context, catchError),
+          child: child,
+          updateShouldNotify: updateShouldNotify,
         );
       },
     );
   }
+}
 
-  T getValue(AsyncSnapshot<T> snapshot, BuildContext context) {
-    if (snapshot.hasError) {
-      if (widget.catchError != null) {
-        return widget.catchError(context, snapshot.error);
-      }
-      // ignore: only_throw_errors
-      throw snapshot.error;
+T _getValue<T>(AsyncSnapshot<T> snapshot, BuildContext context,
+    ErrorBuilder<T> catchError) {
+  if (snapshot.hasError) {
+    if (catchError != null) {
+      return catchError(context, snapshot.error);
     }
-    return snapshot.data;
+    // ignore: only_throw_errors
+    throw snapshot.error;
+  }
+  return snapshot.data;
+}
+
+class _StreamControllerBuilderDelegate<T>
+    extends ValueAdaptiveDelegate<Stream<T>> {
+  _StreamControllerBuilderDelegate(this.builder) : assert(builder != null);
+
+  StreamController<T> controller;
+  ValueBuilder<StreamController<T>> builder;
+
+  @override
+  Stream<T> value;
+
+  @override
+  void initDelegate() {
+    controller = builder(context);
+    value = controller?.stream;
   }
 
   @override
-  void disposeBuilt(StreamProvider<T> oldWidget, StreamController<T> built) {
-    built?.close();
+  void didUpdateDelegate(_StreamControllerBuilderDelegate<T> old) {
+    value = old.value;
+    controller = old.controller;
   }
 
   @override
-  Stream<T> didBuild(StreamController<T> built) {
-    return built?.stream;
+  void dispose() {
+    controller?.close();
   }
 }
