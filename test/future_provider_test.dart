@@ -23,7 +23,7 @@ void main() {
       final key = GlobalKey();
 
       await tester.pumpWidget(FutureProvider.value(
-        future: completer.future,
+        value: completer.future,
         child: Container(key: key),
       ));
 
@@ -49,12 +49,12 @@ void main() {
       final child = Builder(builder: builder);
 
       await tester.pumpWidget(FutureProvider.value(
-        future: completer.future,
+        value: completer.future,
         child: child,
       ));
 
       await tester.pumpWidget(FutureProvider.value(
-        future: completer.future,
+        value: completer.future,
         child: child,
       ));
 
@@ -67,7 +67,7 @@ void main() {
 
       await tester.pumpWidget(FutureProvider.value(
         key: key,
-        future: completer.future,
+        value: completer.future,
         child: Container(),
       ));
 
@@ -80,7 +80,7 @@ void main() {
 
       final completer = Completer<int>();
       await tester.pumpWidget(FutureProvider.value(
-        future: completer.future,
+        value: completer.future,
         updateShouldNotify: shouldNotify,
         child: Container(),
       ));
@@ -99,11 +99,11 @@ void main() {
         (tester) async {
       final future = MockFuture<int>();
       await tester.pumpWidget(FutureProvider.value(
-        future: future,
+        value: future,
         child: Container(),
       ));
       await tester.pumpWidget(FutureProvider.value(
-        future: future,
+        value: future,
         child: Container(),
       ));
 
@@ -115,7 +115,7 @@ void main() {
       final completer = Completer<int>();
 
       await tester.pumpWidget(FutureProvider.value(
-        future: completer.future,
+        value: completer.future,
         child: Container(),
       ));
 
@@ -131,7 +131,7 @@ void main() {
       when(catchError(any, 42)).thenReturn(0);
 
       await tester.pumpWidget(FutureProvider.value(
-        future: completer.future,
+        value: completer.future,
         catchError: catchError,
         child: Container(key: key),
       ));
@@ -151,7 +151,7 @@ void main() {
       final key = GlobalKey();
       await tester.pumpWidget(MultiProvider(
         providers: [
-          FutureProvider<int>.value(future: Future<int>.value()),
+          FutureProvider<int>.value(value: Future<int>.value()),
         ],
         child: Container(key: key),
       ));
@@ -160,7 +160,7 @@ void main() {
     });
     test('works with MultiProvider #2', () {
       final provider = FutureProvider<int>.value(
-        future: Future<int>.value(),
+        value: Future<int>.value(),
         initialData: 42,
         child: Container(),
         catchError: (_, __) => 42,
@@ -199,7 +199,7 @@ void main() {
     testWidgets('works with null', (tester) async {
       final key = GlobalKey();
       await tester.pumpWidget(FutureProvider<int>.value(
-        future: null,
+        value: null,
         child: Container(key: key),
       ));
 
@@ -279,7 +279,7 @@ void main() {
         final key = GlobalKey();
         final completer = Completer<int>();
         await tester.pumpWidget(FutureProvider<int>.value(
-          future: completer.future,
+          value: completer.future,
           child: Container(),
         ));
 
@@ -303,7 +303,7 @@ void main() {
 
         final key = GlobalKey();
         await tester.pumpWidget(FutureProvider.value(
-          future: Future.value(1),
+          value: Future.value(1),
           child: Container(key: key),
         ));
         await tester.pump();

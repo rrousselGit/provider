@@ -15,7 +15,7 @@ void main() {
 
       await tester.pumpWidget(MultiProvider(
         providers: [
-          ListenableProvider.value(listenable: listenable),
+          ListenableProvider.value(value: listenable),
         ],
         child: Container(key: key),
       ));
@@ -25,7 +25,7 @@ void main() {
     test('works with MultiProvider #2', () {
       final provider = ListenableProvider.value(
         key: const Key('42'),
-        listenable: ChangeNotifier(),
+        value: ChangeNotifier(),
         child: Container(),
       );
       var child2 = Container();
@@ -57,7 +57,7 @@ void main() {
 
         await tester.pumpWidget(ListenableProvider.value(
           key: keyProvider,
-          listenable: listenable,
+          value: listenable,
           child: Container(),
         ));
         expect(
@@ -70,11 +70,11 @@ void main() {
         (tester) async {
       final listenable = MockNotifier();
       await tester.pumpWidget(ListenableProvider<ChangeNotifier>.value(
-        listenable: listenable,
+        value: listenable,
         child: Container(),
       ));
       await tester.pumpWidget(ListenableProvider<ChangeNotifier>.value(
-        listenable: listenable,
+        value: listenable,
         child: Container(),
       ));
 
@@ -84,7 +84,7 @@ void main() {
     testWidgets('works with null (default)', (tester) async {
       final key = GlobalKey();
       await tester.pumpWidget(ListenableProvider<ChangeNotifier>.value(
-        listenable: null,
+        value: null,
         child: Container(key: key),
       ));
 
@@ -202,7 +202,7 @@ void main() {
       var listenable2 = ChangeNotifier();
       final key = GlobalKey();
       await tester.pumpWidget(ListenableProvider<ChangeNotifier>.value(
-        listenable: listenable,
+        value: listenable,
         child: Container(),
       ));
       final listener = verify(listenable.addListener(captureAny)).captured.first
@@ -242,7 +242,7 @@ void main() {
           as VoidCallback;
       clearInteractions(listenable);
       await tester.pumpWidget(ListenableProvider.value(
-        listenable: listenable2,
+        value: listenable2,
         child: Container(key: key),
       ));
 
@@ -264,7 +264,7 @@ void main() {
       var listenable = ChangeNotifier();
       Widget build() {
         return ListenableProvider.value(
-          listenable: listenable,
+          value: listenable,
           child: Builder(builder: (context) {
             Provider.of<ChangeNotifier>(context);
             return builder(context);
@@ -308,7 +308,7 @@ void main() {
       );
 
       await tester.pumpWidget(ListenableProvider.value(
-        listenable: listenable,
+        value: listenable,
         child: child,
       ));
 
@@ -316,7 +316,7 @@ void main() {
       expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
 
       await tester.pumpWidget(ListenableProvider.value(
-        listenable: listenable,
+        value: listenable,
         child: child,
       ));
       verifyNoMoreInteractions(builder);
@@ -329,14 +329,14 @@ void main() {
       expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
 
       await tester.pumpWidget(ListenableProvider.value(
-        listenable: listenable,
+        value: listenable,
         child: child,
       ));
       verifyNoMoreInteractions(builder);
       expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
 
       await tester.pumpWidget(ListenableProvider.value(
-        listenable: listenable,
+        value: listenable,
         child: child,
       ));
       verifyNoMoreInteractions(builder);
@@ -357,7 +357,7 @@ void main() {
         },
       );
       var changeNotifierProvider = ListenableProvider.value(
-        listenable: listenable,
+        value: listenable,
         child: child,
       );
       await tester.pumpWidget(changeNotifierProvider);

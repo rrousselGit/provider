@@ -36,7 +36,6 @@ abstract class StateDelegate {
 
   /// Called on [State.initState] or after [DelegateWidget] is rebuilt
   /// with a [StateDelegate] of a different [runtimeType].
-  // TODO(rousselGit) prevent `initDelegate` from using inherited widgets in development.
   @protected
   void initDelegate() {}
 

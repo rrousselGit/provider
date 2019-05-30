@@ -7,6 +7,20 @@ to make common use-cases straightforward.
 ## Migration from v2.0.0 to v3.0.0
 
 - Providers can no longer be instantiated with `const`.
+- All `XXProvider.value` constructors now use `value` as parameter name.
+
+Before:
+
+```dart
+ChangeNotifierProvider.value(notifier: myNotifier),
+),
+```
+
+After:
+
+```dart
+ChangeNotifierProvider.value(value: myNotifier),
+```
 
 - `StreamProvider`'s default constructor now builds a `Stream` instead of `StreamController`. The previous behavior has been moved to the named constructor `StreamProvider.controller`.
 
