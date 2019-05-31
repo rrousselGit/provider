@@ -1,4 +1,6 @@
-part of 'provider.dart';
+import 'package:flutter/widgets.dart';
+
+import 'provider.dart';
 
 /// {@template provider.consumer}
 /// Obtain [Provider<T>] from its ancestors and pass its value to [builder].

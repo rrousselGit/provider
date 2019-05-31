@@ -1,4 +1,11 @@
-part of 'provider.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+
+import 'change_notifier_provider.dart' show ChangeNotifierProvider;
+import 'delegate_widget.dart';
+import 'provider.dart';
+import 'proxy_provider.dart';
+import 'value_listenable_provider.dart' show ValueListenableProvider;
 
 /// Listens to a [Listenable], expose it to its descendants
 /// and rebuilds dependents whenever the listener emits an event.
@@ -152,7 +159,7 @@ Widget _listenableProviderBuilder<R extends Listenable>(
   R value,
   Widget child,
 ) =>
-    ListenableProvider<R>.value(listenable: value, child: child);
+    ListenableProvider<R>.value(value: value, child: child);
 
 class ListenableProxyProvider<T, R extends Listenable>
     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {

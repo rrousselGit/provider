@@ -1,4 +1,9 @@
-part of 'provider.dart';
+import 'package:flutter/widgets.dart';
+
+import 'delegate_widget.dart';
+import 'listenable_provider.dart';
+import 'provider.dart';
+import 'proxy_provider.dart';
 
 /// Listens to a [ChangeNotifier], expose it to its descendants
 /// and rebuilds dependents whenever the [ChangeNotifier.notifyListeners] is called.

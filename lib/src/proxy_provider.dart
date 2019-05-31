@@ -1,4 +1,7 @@
-part of 'provider.dart';
+import 'package:flutter/widgets.dart';
+
+import 'delegate_widget.dart';
+import 'provider.dart';
 
 abstract class ProxyProviderBase<R> extends StatefulWidget {
   const ProxyProviderBase({

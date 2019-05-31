@@ -1,18 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/delegate_widget.dart';
-
-part 'async_provider.dart';
-part 'change_notifier_provider.dart';
-part 'consumer.dart';
-part 'listenable_provider.dart';
-part 'proxy_provider.dart';
-part 'value_listenable_provider.dart';
-
-/// A function that disposes of [value].
-typedef Disposer<T> = void Function(BuildContext context, T value);
 
 /// A function that returns true when the update from [previous] to [current]
 /// should notify listeners, if any.

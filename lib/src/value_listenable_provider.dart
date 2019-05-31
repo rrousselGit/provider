@@ -1,4 +1,9 @@
-part of 'provider.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+
+import 'delegate_widget.dart';
+import 'listenable_provider.dart' show ListenableProvider;
+import 'provider.dart';
 
 /// Listens to a [ValueListenable] and expose its current value.
 class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
