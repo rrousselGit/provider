@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 import 'change_notifier_provider.dart' show ChangeNotifierProvider;
 import 'delegate_widget.dart';
 import 'provider.dart';
+import 'proxy_provider.dart';
 import 'value_listenable_provider.dart' show ValueListenableProvider;
 
 /// Listens to a [Listenable], expose it to its descendants
@@ -153,247 +155,126 @@ mixin _ListenableDelegateMixin<T extends Listenable>
   }
 }
 
-// Widget _listenableProviderBuilder<R extends Listenable>(
-//   BuildContext context,
-//   R value,
-//   Widget child,
-// ) =>
-//     ListenableProvider<R>.value(value: value, child: child);
+class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
+        R extends Listenable> extends ProxyProviderBase<R>
+    implements SingleChildCloneableWidget {
+  _NumericProxyProvider({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required this.builder,
+    Disposer<R> dispose,
+    this.child,
+  })  : assert(builder != null),
+        super(
+          key: key,
+          initialBuilder: initialBuilder,
+          dispose: dispose,
+        );
 
-// class ListenableProxyProvider<T, R extends Listenable>
-//     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
-//   ListenableProxyProvider({
-//     Key key,
-//     ValueBuilder<R> initialBuilder,
-//     @required this.builder,
-//     Disposer<R> dispose,
-//     Widget child,
-//   })  : assert(builder != null),
-//         super.custom(
-//           key: key,
-//           initialBuilder: initialBuilder,
-//           providerBuilder: _listenableProviderBuilder,
-//           dispose: dispose,
-//           child: child,
-//         );
+  /// The widget that is below the current [Provider] widget in the
+  /// tree.
+  ///
+  /// {@macro flutter.widgets.child}
+  final Widget child;
 
-//   final ProxyProviderBuilder<T, R> builder;
+  /// {@macro provider.proxyprovider.build}
+  final F builder;
 
-//   @override
-//   ListenableProxyProvider<T, R> cloneWithChild(Widget child) {
-//     return ListenableProxyProvider(
-//       key: key,
-//       initialBuilder: initialBuilder,
-//       builder: builder,
-//       child: child,
-//     );
-//   }
+  @override
+  _NumericProxyProvider<F, T, T2, T3, T4, T5, T6, R> cloneWithChild(
+      Widget child) {
+    return _NumericProxyProvider(
+      key: key,
+      initialBuilder: initialBuilder,
+      builder: builder,
+      dispose: dispose,
+      child: child,
+    );
+  }
 
-//   @override
-//   R didChangeDependencies(BuildContext context, R previous) => builder(
-//         context,
-//         Provider.of<T>(context),
-//         previous,
-//       );
-// }
+  @override
+  Widget build(BuildContext context, R value) {
+    return ListenableProvider<R>.value(
+      value: value,
+      child: child,
+    );
+  }
 
-// class ListenableProxyProvider2<T, T2, R extends Listenable>
-//     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
-//   ListenableProxyProvider2({
-//     Key key,
-//     ValueBuilder<R> initialBuilder,
-//     @required this.builder,
-//     Disposer<R> dispose,
-//     Widget child,
-//   })  : assert(builder != null),
-//         super.custom(
-//           key: key,
-//           initialBuilder: initialBuilder,
-//           providerBuilder: _listenableProviderBuilder,
-//           dispose: dispose,
-//           child: child,
-//         );
+  @override
+  R didChangeDependencies(BuildContext context, R previous) {
+    final arguments = <dynamic>[
+      context,
+      Provider.of<T>(context),
+    ];
 
-//   final ProxyProviderBuilder2<T, T2, R> builder;
+    if (T2 != Void) arguments.add(Provider.of<T2>(context));
+    if (T3 != Void) arguments.add(Provider.of<T3>(context));
+    if (T4 != Void) arguments.add(Provider.of<T4>(context));
+    if (T5 != Void) arguments.add(Provider.of<T5>(context));
+    if (T6 != Void) arguments.add(Provider.of<T6>(context));
 
-//   @override
-//   ListenableProxyProvider2<T, T2, R> cloneWithChild(Widget child) {
-//     return ListenableProxyProvider2(
-//       key: key,
-//       initialBuilder: initialBuilder,
-//       builder: builder,
-//       child: child,
-//     );
-//   }
+    arguments.add(previous);
+    return Function.apply(builder, arguments) as R;
+  }
+}
 
-//   @override
-//   R didChangeDependencies(BuildContext context, R previous) => builder(
-//         context,
-//         Provider.of<T>(context),
-//         Provider.of<T2>(context),
-//         previous,
-//       );
-// }
+mixin _Noop {}
 
-// class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
-//     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
-//   ListenableProxyProvider3({
-//     Key key,
-//     ValueBuilder<R> initialBuilder,
-//     @required this.builder,
-//     Disposer<R> dispose,
-//     Widget child,
-//   })  : assert(builder != null),
-//         super.custom(
-//           key: key,
-//           initialBuilder: initialBuilder,
-//           providerBuilder: _listenableProviderBuilder,
-//           dispose: dispose,
-//           child: child,
-//         );
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider<T, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder<T, R>, T, Void, Void, Void, Void, Void, R> with _Noop;
 
-//   final ProxyProviderBuilder3<T, T2, T3, R> builder;
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider2<T, T2, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder2<T, T2, R>,
+    T,
+    T2,
+    Void,
+    Void,
+    Void,
+    Void,
+    R> with _Noop;
 
-//   @override
-//   ListenableProxyProvider3<T, T2, T3, R> cloneWithChild(Widget child) {
-//     return ListenableProxyProvider3(
-//       key: key,
-//       initialBuilder: initialBuilder,
-//       builder: builder,
-//       child: child,
-//     );
-//   }
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider3<T, T2, T3, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder3<T, T2, T3, R>,
+    T,
+    T2,
+    T3,
+    Void,
+    Void,
+    Void,
+    R> with _Noop;
 
-//   @override
-//   R didChangeDependencies(BuildContext context, R previous) => builder(
-//         context,
-//         Provider.of<T>(context),
-//         Provider.of<T2>(context),
-//         Provider.of<T3>(context),
-//         previous,
-//       );
-// }
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder4<T, T2, T3, T4, R>,
+    T,
+    T2,
+    T3,
+    T4,
+    Void,
+    Void,
+    R> with _Noop;
 
-// class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
-//     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
-//   ListenableProxyProvider4({
-//     Key key,
-//     ValueBuilder<R> initialBuilder,
-//     @required this.builder,
-//     Disposer<R> dispose,
-//     Widget child,
-//   })  : assert(builder != null),
-//         super.custom(
-//           key: key,
-//           initialBuilder: initialBuilder,
-//           providerBuilder: _listenableProviderBuilder,
-//           dispose: dispose,
-//           child: child,
-//         );
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder5<T, T2, T3, T4, T5, R>,
+    T,
+    T2,
+    T3,
+    T4,
+    T5,
+    Void,
+    R> with _Noop;
 
-//   final ProxyProviderBuilder4<T, T2, T3, T4, R> builder;
-
-//   @override
-//   ListenableProxyProvider4<T, T2, T3, T4, R> cloneWithChild(Widget child) {
-//     return ListenableProxyProvider4(
-//       key: key,
-//       initialBuilder: initialBuilder,
-//       builder: builder,
-//       child: child,
-//     );
-//   }
-
-//   @override
-//   R didChangeDependencies(BuildContext context, R previous) => builder(
-//         context,
-//         Provider.of<T>(context),
-//         Provider.of<T2>(context),
-//         Provider.of<T3>(context),
-//         Provider.of<T4>(context),
-//         previous,
-//       );
-// }
-
-// class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
-//     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
-//   ListenableProxyProvider5({
-//     Key key,
-//     ValueBuilder<R> initialBuilder,
-//     @required this.builder,
-//     Disposer<R> dispose,
-//     Widget child,
-//   })  : assert(builder != null),
-//         super.custom(
-//           key: key,
-//           initialBuilder: initialBuilder,
-//           providerBuilder: _listenableProviderBuilder,
-//           dispose: dispose,
-//           child: child,
-//         );
-
-//   final ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder;
-
-//   @override
-//   ListenableProxyProvider5<T, T2, T3, T4, T5, R> cloneWithChild(Widget child) {
-//     return ListenableProxyProvider5(
-//       key: key,
-//       initialBuilder: initialBuilder,
-//       builder: builder,
-//       child: child,
-//     );
-//   }
-
-//   @override
-//   R didChangeDependencies(BuildContext context, R previous) => builder(
-//         context,
-//         Provider.of<T>(context),
-//         Provider.of<T2>(context),
-//         Provider.of<T3>(context),
-//         Provider.of<T4>(context),
-//         Provider.of<T5>(context),
-//         previous,
-//       );
-// }
-
-// class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
-//     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
-//   ListenableProxyProvider6({
-//     Key key,
-//     ValueBuilder<R> initialBuilder,
-//     @required this.builder,
-//     Disposer<R> dispose,
-//     Widget child,
-//   })  : assert(builder != null),
-//         super.custom(
-//           key: key,
-//           initialBuilder: initialBuilder,
-//           providerBuilder: _listenableProviderBuilder,
-//           dispose: dispose,
-//           child: child,
-//         );
-
-//   final ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder;
-
-//   @override
-//   ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R> cloneWithChild(
-//       Widget child) {
-//     return ListenableProxyProvider6(
-//       key: key,
-//       initialBuilder: initialBuilder,
-//       builder: builder,
-//       child: child,
-//     );
-//   }
-
-//   @override
-//   R didChangeDependencies(BuildContext context, R previous) => builder(
-//         context,
-//         Provider.of<T>(context),
-//         Provider.of<T2>(context),
-//         Provider.of<T3>(context),
-//         Provider.of<T4>(context),
-//         Provider.of<T5>(context),
-//         Provider.of<T6>(context),
-//         previous,
-//       );
-// }
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R>,
+    T,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    R> with _Noop;

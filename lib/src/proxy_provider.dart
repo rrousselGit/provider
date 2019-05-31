@@ -118,7 +118,6 @@ class _ProxyProviderState<R> extends State<ProxyProviderBase<R>> {
   }
 }
 
-@visibleForTesting
 // ignore: public_member_api_docs
 abstract class Void {}
 
@@ -127,7 +126,6 @@ abstract class Void {}
 class NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6, R>
     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
   // ignore: public_member_api_docs
-  /// Hey
   NumericProxyProvider({
     Key key,
     ValueBuilder<R> initialBuilder,
@@ -148,6 +146,8 @@ class NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6, R>
   /// {@macro flutter.widgets.child}
   final Widget child;
 
+
+  /// {@template provider.proxyprovider.build}
   /// Builds the value passed to [InheritedProvider] by combining [InheritedWidget].
   ///
   /// [builder] will be called once when the widget is mounted,
@@ -155,6 +155,7 @@ class NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6, R>
   /// depends on updates.
   ///
   /// It is safe to perform side-effects in this method.
+  /// {@endtemplate}
   final F builder;
 
   /// The [UpdateShouldNotify] passed to [InheritedProvider].

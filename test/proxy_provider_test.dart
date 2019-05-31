@@ -8,60 +8,6 @@ import 'package:provider/src/proxy_provider.dart'
 
 import 'common.dart';
 
-class ConsumerBuilderMock extends Mock {
-  Widget call(Combined foo);
-}
-
-class CombinerMock extends Mock {
-  Combined call(BuildContext context, A a, Combined foo);
-}
-
-class ProviderBuilderMock extends Mock {
-  Widget call(BuildContext context, Combined value, Widget child);
-}
-
-class Combined extends DiagnosticableTree {
-  final A a;
-  final B b;
-  final C c;
-  final D d;
-  final E e;
-  final F f;
-  final Combined previous;
-  final BuildContext context;
-
-  Combined(this.context, this.previous, this.a,
-      [this.b, this.c, this.d, this.e, this.f]);
-
-  @override
-  // ignore: hash_and_equals
-  bool operator ==(Object other) =>
-      other is Combined &&
-      other.context == context &&
-      other.previous == previous &&
-      other.a == a &&
-      other.b == b &&
-      other.c == c &&
-      other.e == e &&
-      other.f == f;
-
-  // fancy toString for debug purposes.
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.properties.addAll([
-      DiagnosticsProperty('a', a, defaultValue: null),
-      DiagnosticsProperty('b', b, defaultValue: null),
-      DiagnosticsProperty('c', c, defaultValue: null),
-      DiagnosticsProperty('d', d, defaultValue: null),
-      DiagnosticsProperty('e', e, defaultValue: null),
-      DiagnosticsProperty('f', f, defaultValue: null),
-      DiagnosticsProperty('previous', previous, defaultValue: null),
-      DiagnosticsProperty('context', context, defaultValue: null),
-    ]);
-  }
-}
-
 Finder findProvider<T>() => find.byWidgetPredicate(
     // comparing `runtimeType` instead of using `is` because `is` accepts subclasses but InheritedWidgets don't.
     (widget) => widget.runtimeType == typeOf<InheritedProvider<T>>());
