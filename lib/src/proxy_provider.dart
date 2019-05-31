@@ -1,44 +1,87 @@
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 import 'delegate_widget.dart';
 import 'provider.dart';
 
+/// A base class for custom "Proxy provider".
+///
+/// See [ProxyProvider] for a concrete implementation.
 abstract class ProxyProviderBase<R> extends StatefulWidget {
-  const ProxyProviderBase({
+  /// Initializes [key], [initialBuilder] and [dispose] for subclasses.
+  ProxyProviderBase({
     Key key,
     this.initialBuilder,
-    this.updateShouldNotify,
     this.dispose,
-    this.child,
-  })  : providerBuilder = null,
-        super(key: key);
+  }) : super(key: key);
 
-  const ProxyProviderBase.custom({
-    Key key,
-    this.initialBuilder,
-    @required this.providerBuilder,
-    this.dispose,
-    this.child,
-  })  : assert(providerBuilder != null),
-        updateShouldNotify = null,
-        super(key: key);
-
+  /// Builds the initial value passed as `previous` to [didChangeDependencies].
+  ///
+  /// If omitted, [didChangeDependencies] will be called with `null` instead.
   final ValueBuilder<R> initialBuilder;
-  final UpdateShouldNotify<R> updateShouldNotify;
-  final Widget child;
+
+  /// Optionally allows to clean-up resources when the widget is removed from
+  /// the tree.
   final Disposer<R> dispose;
-  final ValueWidgetBuilder<R> providerBuilder;
 
   @override
-  ProxyProviderState<R> createState() => ProxyProviderState();
+  _ProxyProviderState<R> createState() => _ProxyProviderState();
 
+  /// Builds the value passed to [build] by combining [InheritedWidget].
+  ///
+  /// [didChangeDependencies] will be called once when the widget is mounted,
+  /// and once whenever any of the [InheritedWidget] which [ProxyProviderBase]
+  /// depends on updates.
+  ///
+  /// It is safe to perform side-effects in this method.
   R didChangeDependencies(BuildContext context, R previous);
+
+  /// An equivalent of [StatelessWidget.build].
+  ///
+  /// `value` is the latest result of [didChangeDependencies].
+  ///
+  /// [build] should avoid depending on [InheritedWidget]. Instead these
+  /// [InheritedWidget] should be used inside [didChangeDependencies].
+  Widget build(BuildContext context, R value);
 }
 
 typedef ProviderBuilder<R> = Widget Function(
     BuildContext context, R value, Widget child);
 
-class ProxyProviderState<R> extends State<ProxyProviderBase<R>> {
+typedef ProxyProviderBuilder<T, R> = R Function(
+    BuildContext context, T value, R previous);
+
+typedef ProxyProviderBuilder2<T, T2, R> = R Function(
+    BuildContext context, T value, T2 value2, R previous);
+
+typedef ProxyProviderBuilder3<T, T2, T3, R> = R Function(
+    BuildContext context, T value, T2 value2, T3 value3, R previous);
+
+typedef ProxyProviderBuilder4<T, T2, T3, T4, R> = R Function(
+    BuildContext context, T value, T2 value2, T3 value3, T4 value4, R previous);
+
+typedef ProxyProviderBuilder5<T, T2, T3, T4, T5, R> = R Function(
+  BuildContext context,
+  T value,
+  T2 value2,
+  T3 value3,
+  T4 value4,
+  T5 value5,
+  R previous,
+);
+
+typedef ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> = R Function(
+  BuildContext context,
+  T value,
+  T2 value2,
+  T3 value3,
+  T4 value4,
+  T5 value5,
+  T6 value6,
+  R previous,
+);
+
+class _ProxyProviderState<R> extends State<ProxyProviderBase<R>> {
   R _value;
   bool _didChangeDependencies = true;
 
@@ -63,15 +106,7 @@ class ProxyProviderState<R> extends State<ProxyProviderBase<R>> {
       _value = widget.didChangeDependencies(context, _value);
     }
 
-    if (widget.providerBuilder != null) {
-      return widget.providerBuilder(context, _value, widget.child);
-    }
-
-    return Provider<R>.value(
-      value: _value,
-      child: widget.child,
-      updateShouldNotify: widget.updateShouldNotify,
-    );
+    return widget.build(context, _value);
   }
 
   @override
@@ -83,448 +118,166 @@ class ProxyProviderState<R> extends State<ProxyProviderBase<R>> {
   }
 }
 
-typedef ProxyProviderBuilder<T, R> = R Function(
-    BuildContext context, T value, R previous);
+@visibleForTesting
+// ignore: public_member_api_docs
+class Void {
+  Void._();
+}
 
-class ProxyProvider<T, R> extends ProxyProviderBase<R>
-    implements SingleChildCloneableWidget {
-  const ProxyProvider({
+@visibleForTesting
+// ignore: public_member_api_docs
+class NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6, R>
+    extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
+  // ignore: public_member_api_docs
+  /// Hey
+  NumericProxyProvider({
     Key key,
     ValueBuilder<R> initialBuilder,
     @required this.builder,
-    UpdateShouldNotify<R> updateShouldNotify,
+    this.updateShouldNotify,
     Disposer<R> dispose,
-    Widget child,
+    this.child,
   })  : assert(builder != null),
         super(
           key: key,
           initialBuilder: initialBuilder,
-          updateShouldNotify: updateShouldNotify,
           dispose: dispose,
-          child: child,
         );
 
-  const ProxyProvider.custom({
-    Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
-    @required ValueWidgetBuilder<R> providerBuilder,
-    Disposer<R> dispose,
-    Widget child,
-  })  : assert(builder != null),
-        super.custom(
-          key: key,
-          initialBuilder: initialBuilder,
-          providerBuilder: providerBuilder,
-          dispose: dispose,
-          child: child,
-        );
+  /// The widget that is below the current [Provider] widget in the
+  /// tree.
+  ///
+  /// {@macro flutter.widgets.child}
+  final Widget child;
 
-  final ProxyProviderBuilder<T, R> builder;
+  /// Builds the value passed to [InheritedProvider] by combining [InheritedWidget].
+  ///
+  /// [builder] will be called once when the widget is mounted,
+  /// and once whenever any of the [InheritedWidget] which [ProxyProvider]
+  /// depends on updates.
+  ///
+  /// It is safe to perform side-effects in this method.
+  final F builder;
+
+  /// The [UpdateShouldNotify] passed to [InheritedProvider].
+  final UpdateShouldNotify<R> updateShouldNotify;
 
   @override
-  ProxyProvider<T, R> cloneWithChild(Widget child) {
-    return providerBuilder != null
-        ? ProxyProvider.custom(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            providerBuilder: providerBuilder,
-            dispose: dispose,
-            child: child,
-          )
-        : ProxyProvider(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            updateShouldNotify: updateShouldNotify,
-            dispose: dispose,
-            child: child,
-          );
+  NumericProxyProvider<F, T, T2, T3, T4, T5, T6, R> cloneWithChild(
+      Widget child) {
+    return NumericProxyProvider(
+      key: key,
+      initialBuilder: initialBuilder,
+      builder: builder,
+      updateShouldNotify: updateShouldNotify,
+      dispose: dispose,
+      child: child,
+    );
   }
 
   @override
-  R didChangeDependencies(BuildContext context, R previous) =>
-      builder(context, Provider.of<T>(context), previous);
-}
-
-typedef ProxyProviderBuilder2<T, T2, R> = R Function(
-  BuildContext context,
-  T value,
-  T2 value2,
-  R previous,
-);
-
-class ProxyProvider2<T, T2, R> extends ProxyProviderBase<R>
-    implements SingleChildCloneableWidget {
-  const ProxyProvider2({
-    Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
-    Widget child,
-  })  : assert(builder != null),
-        super(
-          key: key,
-          initialBuilder: initialBuilder,
-          updateShouldNotify: updateShouldNotify,
-          dispose: dispose,
-          child: child,
-        );
-
-  const ProxyProvider2.custom({
-    Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
-    @required ValueWidgetBuilder<R> providerBuilder,
-    Disposer<R> dispose,
-    Widget child,
-  })  : assert(builder != null),
-        super.custom(
-          key: key,
-          initialBuilder: initialBuilder,
-          providerBuilder: providerBuilder,
-          dispose: dispose,
-          child: child,
-        );
-
-  final ProxyProviderBuilder2<T, T2, R> builder;
-
-  @override
-  ProxyProvider2<T, T2, R> cloneWithChild(Widget child) {
-    return providerBuilder != null
-        ? ProxyProvider2.custom(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            providerBuilder: providerBuilder,
-            dispose: dispose,
-            child: child,
-          )
-        : ProxyProvider2(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            updateShouldNotify: updateShouldNotify,
-            dispose: dispose,
-            child: child,
-          );
+  Widget build(BuildContext context, R value) {
+    return InheritedProvider<R>(
+      value: value,
+      updateShouldNotify: updateShouldNotify,
+      child: child,
+    );
   }
 
   @override
-  R didChangeDependencies(BuildContext context, R previous) => builder(
-      context, Provider.of<T>(context), Provider.of<T2>(context), previous);
-}
+  R didChangeDependencies(BuildContext context, R previous) {
+    final arguments = <dynamic>[
+      context,
+      Provider.of<T>(context),
+    ];
 
-typedef ProxyProviderBuilder3<T, T2, T3, R> = R Function(
-  BuildContext context,
-  T value,
-  T2 value2,
-  T3 value3,
-  R previous,
-);
+    if (T2 != Void) arguments.add(Provider.of<T2>(context));
+    if (T3 != Void) arguments.add(Provider.of<T3>(context));
+    if (T4 != Void) arguments.add(Provider.of<T4>(context));
+    if (T5 != Void) arguments.add(Provider.of<T5>(context));
+    if (T6 != Void) arguments.add(Provider.of<T6>(context));
 
-class ProxyProvider3<T, T2, T3, R> extends ProxyProviderBase<R>
-    implements SingleChildCloneableWidget {
-  const ProxyProvider3({
-    Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
-    Widget child,
-  })  : assert(builder != null),
-        super(
-          key: key,
-          initialBuilder: initialBuilder,
-          updateShouldNotify: updateShouldNotify,
-          dispose: dispose,
-          child: child,
-        );
-
-  const ProxyProvider3.custom({
-    Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
-    @required ValueWidgetBuilder<R> providerBuilder,
-    Disposer<R> dispose,
-    Widget child,
-  })  : assert(builder != null),
-        super.custom(
-          key: key,
-          initialBuilder: initialBuilder,
-          providerBuilder: providerBuilder,
-          dispose: dispose,
-          child: child,
-        );
-
-  final ProxyProviderBuilder3<T, T2, T3, R> builder;
-
-  @override
-  ProxyProvider3<T, T2, T3, R> cloneWithChild(Widget child) {
-    return providerBuilder != null
-        ? ProxyProvider3.custom(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            providerBuilder: providerBuilder,
-            dispose: dispose,
-            child: child,
-          )
-        : ProxyProvider3(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            updateShouldNotify: updateShouldNotify,
-            dispose: dispose,
-            child: child,
-          );
+    arguments.add(previous);
+    return Function.apply(builder, arguments) as R;
   }
-
-  @override
-  R didChangeDependencies(BuildContext context, R previous) => builder(
-        context,
-        Provider.of<T>(context),
-        Provider.of<T2>(context),
-        Provider.of<T3>(context),
-        previous,
-      );
 }
 
-typedef ProxyProviderBuilder4<T, T2, T3, T4, R> = R Function(
-  BuildContext context,
-  T value,
-  T2 value2,
-  T3 value3,
-  T4 value4,
-  R previous,
-);
+mixin _Noop {}
 
-class ProxyProvider4<T, T2, T3, T4, R> extends ProxyProviderBase<R>
-    implements SingleChildCloneableWidget {
-  const ProxyProvider4({
-    Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
-    Widget child,
-  })  : assert(builder != null),
-        super(
-          key: key,
-          initialBuilder: initialBuilder,
-          updateShouldNotify: updateShouldNotify,
-          dispose: dispose,
-          child: child,
-        );
+// TODO(rousselGit) update dartdoc when https://github.com/dart-lang/dartdoc/issues/1977 is closed
+/// {@template provider.proxyprovider}
+/// A provider that builds a value based on other providers.
+///
+/// The exposed value is built through [ProxyProvider.builder], and then passed
+/// to [InheritedProvider].
+///
+/// As opposed to the `builder` parameter of [Provider], [ProxyProvider.builder]
+/// may be called more than once. It will be called once when the widget is
+/// mounted, then once whenever any of the [InheritedWidget] which [ProxyProvider]
+/// depends emits an update.
+///
+/// [ProxyProvider] comes in different variants such as [ProxyProvider2].
+/// This only changes the [ProxyProvider.builder] function, such that it takes
+/// a different number of arguments.
+/// The `2` in [ProxyProvider2] means that [ProxyProvider.builder] builds its
+/// value from **2** other providers.
+///
+/// All variations of [ProxyProvider.builder] will receive the [BuildContext]
+/// as first parameter, and the previously built value as last parameter.
+///
+/// This previously built value will be `null` by default, unless
+/// [ProxyProvider.initialBuilder] is specified – in which case, it will be the
+/// value returned by [ProxyProvider.initialBuilder].
+///
+/// [ProxyProvider.builder] must not be `null`.
+///
+/// See also:
+///  * [Provider], which matches the behavior of [ProxyProvider] without
+/// dependending on other providers.
+/// {@endtemplate}
+class ProxyProvider<T, R> = NumericProxyProvider<ProxyProviderBuilder<T, R>, T,
+    Void, Void, Void, Void, Void, R> with _Noop;
 
-  const ProxyProvider4.custom({
-    Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
-    @required ValueWidgetBuilder<R> providerBuilder,
-    Disposer<R> dispose,
-    Widget child,
-  })  : assert(builder != null),
-        super.custom(
-          key: key,
-          initialBuilder: initialBuilder,
-          providerBuilder: providerBuilder,
-          dispose: dispose,
-          child: child,
-        );
+/// {@macro provider.proxyprovider}
+class ProxyProvider2<T, T2, R> = NumericProxyProvider<
+    ProxyProviderBuilder2<T, T2, R>,
+    T,
+    T2,
+    Void,
+    Void,
+    Void,
+    Void,
+    R> with _Noop;
 
-  final ProxyProviderBuilder4<T, T2, T3, T4, R> builder;
+/// {@macro provider.proxyprovider}
+class ProxyProvider3<T, T2, T3, R> = NumericProxyProvider<
+    ProxyProviderBuilder3<T, T2, T3, R>,
+    T,
+    T2,
+    T3,
+    Void,
+    Void,
+    Void,
+    R> with _Noop;
 
-  @override
-  ProxyProvider4<T, T2, T3, T4, R> cloneWithChild(Widget child) {
-    return providerBuilder != null
-        ? ProxyProvider4.custom(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            providerBuilder: providerBuilder,
-            dispose: dispose,
-            child: child,
-          )
-        : ProxyProvider4(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            updateShouldNotify: updateShouldNotify,
-            dispose: dispose,
-            child: child,
-          );
-  }
+/// {@macro provider.proxyprovider}
+class ProxyProvider4<T, T2, T3, T4, R> = NumericProxyProvider<
+    ProxyProviderBuilder4<T, T2, T3, T4, R>,
+    T,
+    T2,
+    T3,
+    T4,
+    Void,
+    Void,
+    R> with _Noop;
 
-  @override
-  R didChangeDependencies(BuildContext context, R previous) => builder(
-        context,
-        Provider.of<T>(context),
-        Provider.of<T2>(context),
-        Provider.of<T3>(context),
-        Provider.of<T4>(context),
-        previous,
-      );
-}
-
-typedef ProxyProviderBuilder5<T, T2, T3, T4, T5, R> = R Function(
-  BuildContext context,
-  T value,
-  T2 value2,
-  T3 value3,
-  T4 value4,
-  T5 value5,
-  R previous,
-);
-
-class ProxyProvider5<T, T2, T3, T4, T5, R> extends ProxyProviderBase<R>
-    implements SingleChildCloneableWidget {
-  const ProxyProvider5({
-    Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
-    Widget child,
-  })  : assert(builder != null),
-        super(
-          key: key,
-          initialBuilder: initialBuilder,
-          updateShouldNotify: updateShouldNotify,
-          dispose: dispose,
-          child: child,
-        );
-
-  const ProxyProvider5.custom({
-    Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
-    @required ValueWidgetBuilder<R> providerBuilder,
-    Disposer<R> dispose,
-    Widget child,
-  })  : assert(builder != null),
-        super.custom(
-          key: key,
-          initialBuilder: initialBuilder,
-          providerBuilder: providerBuilder,
-          dispose: dispose,
-          child: child,
-        );
-
-  final ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder;
-
-  @override
-  ProxyProvider5<T, T2, T3, T4, T5, R> cloneWithChild(Widget child) {
-    return providerBuilder != null
-        ? ProxyProvider5.custom(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            providerBuilder: providerBuilder,
-            dispose: dispose,
-            child: child,
-          )
-        : ProxyProvider5(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            updateShouldNotify: updateShouldNotify,
-            dispose: dispose,
-            child: child,
-          );
-  }
-
-  @override
-  R didChangeDependencies(BuildContext context, R previous) => builder(
-        context,
-        Provider.of<T>(context),
-        Provider.of<T2>(context),
-        Provider.of<T3>(context),
-        Provider.of<T4>(context),
-        Provider.of<T5>(context),
-        previous,
-      );
-}
-
-typedef ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> = R Function(
-  BuildContext context,
-  T value,
-  T2 value2,
-  T3 value3,
-  T4 value4,
-  T5 value5,
-  T6 value6,
-  R previous,
-);
-
-class ProxyProvider6<T, T2, T3, T4, T5, T6, R> extends ProxyProviderBase<R>
-    implements SingleChildCloneableWidget {
-  const ProxyProvider6({
-    Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
-    Widget child,
-  })  : assert(builder != null),
-        super(
-          key: key,
-          initialBuilder: initialBuilder,
-          updateShouldNotify: updateShouldNotify,
-          dispose: dispose,
-          child: child,
-        );
-
-  const ProxyProvider6.custom({
-    Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
-    @required ValueWidgetBuilder<R> providerBuilder,
-    Disposer<R> dispose,
-    Widget child,
-  })  : assert(builder != null),
-        super.custom(
-          key: key,
-          initialBuilder: initialBuilder,
-          providerBuilder: providerBuilder,
-          dispose: dispose,
-          child: child,
-        );
-
-  final ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder;
-
-  @override
-  ProxyProvider6<T, T2, T3, T4, T5, T6, R> cloneWithChild(Widget child) {
-    return providerBuilder != null
-        ? ProxyProvider6.custom(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            providerBuilder: providerBuilder,
-            dispose: dispose,
-            child: child,
-          )
-        : ProxyProvider6(
-            key: key,
-            initialBuilder: initialBuilder,
-            builder: builder,
-            updateShouldNotify: updateShouldNotify,
-            dispose: dispose,
-            child: child,
-          );
-  }
-
-  @override
-  R didChangeDependencies(BuildContext context, R previous) => builder(
-        context,
-        Provider.of<T>(context),
-        Provider.of<T2>(context),
-        Provider.of<T3>(context),
-        Provider.of<T4>(context),
-        Provider.of<T5>(context),
-        Provider.of<T6>(context),
-        previous,
-      );
-}
+/// {@macro provider.proxyprovider}
+class ProxyProvider5<T, T2, T3, T4, T5, R> = NumericProxyProvider<
+    ProxyProviderBuilder5<T, T2, T3, T4, T5, R>,
+    T,
+    T2,
+    T3,
+    T4,
+    T5,
+    Void,
+    R> with _Noop;
