@@ -273,19 +273,20 @@ void main() {
         buildCount++;
 
         return Text(
-          '$buildCount ${Provider.of<double>(context)}',
+          '$buildCount ${Provider.of<String>(context)}',
           textDirection: TextDirection.ltr,
         );
       });
 
-      final shouldNotify = UpdateShouldNotifyMock<double>();
-      when(shouldNotify(42, 42)).thenReturn(false);
+      final shouldNotify = UpdateShouldNotifyMock<String>();
+      when(shouldNotify('Hello', 'Hello')).thenReturn(false);
 
       await tester.pumpWidget(MultiProvider(
         providers: [
-          Provider<int>.value(value: 42, updateShouldNotify: (_, __) => true),
-          ProxyProvider<int, double>(
-            builder: (_, value, __) => value.toDouble(),
+          Provider<String>.value(
+              value: 'Hello', updateShouldNotify: (_, __) => true),
+          ProxyProvider<String, String>(
+            builder: (_, value, __) => value,
             updateShouldNotify: shouldNotify,
           ),
         ],
@@ -294,20 +295,21 @@ void main() {
 
       await tester.pumpWidget(MultiProvider(
         providers: [
-          Provider<int>.value(value: 42, updateShouldNotify: (_, __) => true),
-          ProxyProvider<int, double>(
-            builder: (_, value, __) => value.toDouble(),
+          Provider<String>.value(
+              value: 'Hello', updateShouldNotify: (_, __) => true),
+          ProxyProvider<String, String>(
+            builder: (_, value, __) => value,
             updateShouldNotify: shouldNotify,
           ),
         ],
         child: child,
       ));
 
-      verify(shouldNotify(42, 42)).called(1);
+      verify(shouldNotify('Hello', 'Hello')).called(1);
       verifyNoMoreInteractions(shouldNotify);
 
-      expect(find.text('2 42'), findsNothing);
-      expect(find.text('1 42'), findsOneWidget);
+      expect(find.text('2 Hello'), findsNothing);
+      expect(find.text('1 Hello'), findsOneWidget);
     });
     testWidgets('works with MultiProvider', (tester) async {
       final key = GlobalKey();
