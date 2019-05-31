@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
 import 'delegate_widget.dart';
 import 'listenable_provider.dart';
@@ -10,7 +9,7 @@ import 'proxy_provider.dart';
 /// and rebuilds dependents whenever the [ChangeNotifier.notifyListeners] is called.
 ///
 /// See also:
-///   * [ListenableProvider], similar to [ChangeNotifier] but works with any [Listenable].
+///   * [ListenableProvider], similar to [ChangeNotifierProvider] but works with any [Listenable].
 ///   * [ChangeNotifier]
 class ChangeNotifierProvider<T extends ChangeNotifier>
     extends ListenableProvider<T> implements SingleChildCloneableWidget {
@@ -35,8 +34,6 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
   }) : super.value(key: key, value: value, child: child);
 }
 
-void _dispose(BuildContext context, ChangeNotifier notifier) =>
-    notifier.dispose();
 
 class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
         R extends ChangeNotifier> extends ProxyProviderBase<R>
@@ -50,7 +47,7 @@ class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
         super(
           key: key,
           initialBuilder: initialBuilder,
-          dispose: _dispose,
+          dispose: ChangeNotifierProvider._disposer,
         );
 
   /// The widget that is below the current [Provider] widget in the
@@ -59,7 +56,7 @@ class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
   /// {@macro flutter.widgets.child}
   final Widget child;
 
-  /// {@macro provider.proxyprovider.build}
+  /// {@macro provider.proxyprovider.builder}
   final F builder;
 
   @override

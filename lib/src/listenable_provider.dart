@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
 import 'change_notifier_provider.dart' show ChangeNotifierProvider;
 import 'delegate_widget.dart';
@@ -177,7 +176,7 @@ class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
   /// {@macro flutter.widgets.child}
   final Widget child;
 
-  /// {@macro provider.proxyprovider.build}
+  /// {@macro provider.proxyprovider.builder}
   final F builder;
 
   @override
