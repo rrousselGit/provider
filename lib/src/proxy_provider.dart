@@ -120,9 +120,7 @@ class _ProxyProviderState<R> extends State<ProxyProviderBase<R>> {
 
 @visibleForTesting
 // ignore: public_member_api_docs
-class Void {
-  Void._();
-}
+abstract class Void {}
 
 @visibleForTesting
 // ignore: public_member_api_docs
@@ -280,4 +278,15 @@ class ProxyProvider5<T, T2, T3, T4, T5, R> = NumericProxyProvider<
     T4,
     T5,
     Void,
+    R> with _Noop;
+
+/// {@macro provider.proxyprovider}
+class ProxyProvider6<T, T2, T3, T4, T5, T6, R> = NumericProxyProvider<
+    ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R>,
+    T,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
     R> with _Noop;
