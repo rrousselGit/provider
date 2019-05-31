@@ -146,7 +146,6 @@ class NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6, R>
   /// {@macro flutter.widgets.child}
   final Widget child;
 
-
   /// {@template provider.proxyprovider.build}
   /// Builds the value passed to [InheritedProvider] by combining [InheritedWidget].
   ///
