@@ -34,7 +34,6 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
   }) : super.value(key: key, value: value, child: child);
 }
 
-
 class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
         R extends ChangeNotifier> extends ProxyProviderBase<R>
     implements SingleChildCloneableWidget {
