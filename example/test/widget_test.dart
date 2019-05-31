@@ -32,5 +32,4 @@ void main() {
     expect(find.text('Tapped 0 times'), findsNothing);
     expect(find.text('Tapped 1 times'), findsOneWidget);
   });
-  
 }
