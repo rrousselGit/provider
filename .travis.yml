@@ -7,7 +7,7 @@ env:
 sudo: false
 before_script:
   - cd ..
-  - git clone https://github.com/flutter/flutter.git -b $1
+  - git clone https://github.com/flutter/flutter.git -b $FLUTTER_CHANNEL
   - echo export PATH=$PATH:$PWD/flutter/bin:$PWD/flutter/bin/cache/dart-sdk/bin
   - cd -
   - flutter doctor
