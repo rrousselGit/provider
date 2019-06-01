@@ -17,10 +17,9 @@ script:
   - flutter format --set-exit-if-changed lib example test
   - flutter analyze --no-current-package lib test/ example/
   - flutter test --no-pub --coverage
-  - ls
-  - pwd
+  - set +e
   - cd example/
-  - ls
+  - set -e
   - flutter test --no-pub --coverage
 
   # export coverage
