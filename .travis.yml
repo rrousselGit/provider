@@ -6,10 +6,11 @@ env:
   - FLUTTER_CHANNEL="master"
 sudo: false
 before_script:
-  - sh scripts/flutter_install.sh $FLUTTER_CHANNEL
+  # we use backquotes to have the shell execute the printed commands
+  - `./scripts/flutter_install.sh $FLUTTER_CHANNEL`
 script:
-  - sh scripts/flutter_test.sh packages/provider
-  - sh scripts/flutter_test.sh packages/provider/example
+  - ./scripts/flutter_test.sh packages/provider
+  - ./scripts/flutter_test.sh packages/provider/example
 
   # export coverage
   - if [ $FLUTTER_CHANNEL = "stable" ]
@@ -18,7 +19,7 @@ script:
 matrix:
   fast_finish: true
   allow_failures:
-  - env: FLUTTER_CHANNEL="master"
+    - env: FLUTTER_CHANNEL="master"
 cache:
   directories:
     - $HOME/.pub-cache
