@@ -2,6 +2,8 @@
 
 ## breaking (see the readme for migration steps):
 
+- `Provider` now throws if used with a `Listenable`/`Stream`. This can be disabled by setting
+  `Provider.debugCheckInvalidValueType` to `null`.
 - The default constructor of `StreamProvider` has now builds a `Stream`
   instead of `StreamController`. The previous behavior has been moved to `StreamProvider.controller`.
 - All `XXProvider.value` constructors now use `value` as parameter name.

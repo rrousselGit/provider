@@ -7,13 +7,26 @@ to make common use-cases straightforward.
 ## Migration from v2.0.0 to v3.0.0
 
 - Providers can no longer be instantiated with `const`.
+- `Provider` now throws if used with a `Listenable`/`Stream`.
+  Consider using `ListenableProvider`/`StreamProvider` instead. Alternatively,
+  this exception can be disabled by setting `Provider.debugCheckInvalidValueType`
+  to `null` like so:
+
+```dart
+void main() {
+  Provider.debugCheckInvalidValueType = null;
+
+  runApp(MyApp());
+}
+```
+
+
 - All `XXProvider.value` constructors now use `value` as parameter name.
 
 Before:
 
 ```dart
 ChangeNotifierProvider.value(notifier: myNotifier),
-),
 ```
 
 After:
@@ -28,7 +41,6 @@ Before:
 
 ```dart
 StreamProvider(builder: (_) => StreamController<int>()),
-),
 ```
 
 After:
