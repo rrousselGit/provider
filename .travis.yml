@@ -19,7 +19,7 @@ script:
   - flutter test --no-pub --coverage
   - ls
   - pwd
-  - cd example
+  - cd example/
   - ls
   - flutter test --no-pub --coverage
 
