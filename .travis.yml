@@ -16,8 +16,8 @@ script:
   - ./scripts/flutter_test.sh packages/provider/example
 
   # export coverage
-  - if [ $FLUTTER_CHANNEL = "stable" ]
-    then bash <(curl -s https://codecov.io/bash)
+  - if [ $FLUTTER_CHANNEL = "stable" ]; then
+      bash <(curl -s https://codecov.io/bash);
     fi
 matrix:
   fast_finish: true
