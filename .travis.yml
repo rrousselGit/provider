@@ -7,7 +7,7 @@ env:
 sudo: false
 before_script:
   # we use backquotes to have the shell execute the printed commands
-  - echo `./scripts/flutter_install.sh $FLUTTER_CHANNEL`
+  - $(./scripts/flutter_install.sh $FLUTTER_CHANNEL)
   - flutter doctor
 script:
   - ./scripts/flutter_test.sh packages/provider
