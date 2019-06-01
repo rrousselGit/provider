@@ -4,8 +4,49 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:test_api/test_api.dart' show TypeMatcher;
 
+import 'common.dart';
+
 void main() {
   group('Provider', () {
+    testWidgets('throws if the provided value is a Listenable/Stream',
+        (tester) async {
+      await tester.pumpWidget(
+        Provider.value(
+          value: MyListenable(),
+          child: Container(),
+        ),
+      );
+
+      expect(tester.takeException(), isFlutterError);
+
+      await tester.pumpWidget(
+        Provider.value(
+          value: MyStream(),
+          child: Container(),
+        ),
+      );
+
+      expect(tester.takeException(), isFlutterError);
+    });
+    testWidgets('debugCheckInvalidValueType can be disabled', (tester) async {
+      final previous = Provider.debugCheckInvalidValueType;
+      Provider.debugCheckInvalidValueType = null;
+      addTearDown(() => Provider.debugCheckInvalidValueType = previous);
+
+      await tester.pumpWidget(
+        Provider.value(
+          value: MyListenable(),
+          child: Container(),
+        ),
+      );
+
+      await tester.pumpWidget(
+        Provider.value(
+          value: MyStream(),
+          child: Container(),
+        ),
+      );
+    });
     test('cloneWithChild works', () {
       final provider = Provider.value(
         value: 42,

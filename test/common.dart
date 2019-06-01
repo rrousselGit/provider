@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -90,5 +92,15 @@ class Combined extends DiagnosticableTree {
       DiagnosticsProperty('previous', previous, defaultValue: null),
       DiagnosticsProperty('context', context, defaultValue: null),
     ]);
+  }
+}
+
+class MyListenable extends ChangeNotifier {}
+
+class MyStream extends Stream<void> {
+  @override
+  StreamSubscription<void> listen(void Function(void event) onData,
+      {Function onError, void Function() onDone, bool cancelOnError}) {
+    return null;
   }
 }

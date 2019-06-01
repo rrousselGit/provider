@@ -48,6 +48,66 @@ void main() {
               Void, Void, Void, Combined>,
         );
 
+    testWidgets('throws if the provided value is a Listenable/Stream',
+        (tester) async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: a),
+            ProxyProvider<A, MyListenable>(
+              builder: (_, __, ___) => MyListenable(),
+            )
+          ],
+          child: Container(),
+        ),
+      );
+
+      expect(tester.takeException(), isFlutterError);
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: a),
+            ProxyProvider<A, MyStream>(
+              builder: (_, __, ___) => MyStream(),
+            )
+          ],
+          child: Container(),
+        ),
+      );
+
+      expect(tester.takeException(), isFlutterError);
+    });
+    testWidgets('debugCheckInvalidValueType can be disabled', (tester) async {
+      final previous = Provider.debugCheckInvalidValueType;
+      Provider.debugCheckInvalidValueType = null;
+      addTearDown(() => Provider.debugCheckInvalidValueType = previous);
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: a),
+            ProxyProvider<A, MyListenable>(
+              builder: (_, __, ___) => MyListenable(),
+            )
+          ],
+          child: Container(),
+        ),
+      );
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: a),
+            ProxyProvider<A, MyStream>(
+              builder: (_, __, ___) => MyStream(),
+            )
+          ],
+          child: Container(),
+        ),
+      );
+    });
+
     testWidgets('initialBuilder creates initial value', (tester) async {
       final initialBuilder = ValueBuilderMock<Combined>();
       final key = GlobalKey();

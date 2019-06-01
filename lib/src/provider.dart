@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/delegate_widget.dart';
@@ -170,26 +172,6 @@ class MultiProvider extends StatelessWidget
 /// ```
 class Provider<T> extends ValueDelegateWidget<T>
     implements SingleChildCloneableWidget {
-  /// Obtains the nearest [Provider<T>] up its widget tree and returns its value.
-  ///
-  /// If [listen] is `true` (default), later value changes will trigger a new
-  /// [State.build] to widgets, and [State.didChangeDependencies] for
-  /// [StatefulWidget].
-  static T of<T>(BuildContext context, {bool listen = true}) {
-    // this is required to get generic Type
-    final type = _typeOf<InheritedProvider<T>>();
-    final provider = listen
-        ? context.inheritFromWidgetOfExactType(type) as InheritedProvider<T>
-        : context.ancestorInheritedElementForWidgetOfExactType(type)?.widget
-            as InheritedProvider<T>;
-
-    if (provider == null) {
-      throw ProviderNotFoundError(T, context.widget.runtimeType);
-    }
-
-    return provider.value;
-  }
-
   /// Allows to specify parameters to [Provider].
   Provider({
     Key key,
@@ -223,6 +205,74 @@ class Provider<T> extends ValueDelegateWidget<T>
     this.child,
   }) : super(key: key, delegate: delegate);
 
+  /// Obtains the nearest [Provider<T>] up its widget tree and returns its value.
+  ///
+  /// If [listen] is `true` (default), later value changes will trigger a new
+  /// [State.build] to widgets, and [State.didChangeDependencies] for
+  /// [StatefulWidget].
+  static T of<T>(BuildContext context, {bool listen = true}) {
+    // this is required to get generic Type
+    final type = _typeOf<InheritedProvider<T>>();
+    final provider = listen
+        ? context.inheritFromWidgetOfExactType(type) as InheritedProvider<T>
+        : context.ancestorInheritedElementForWidgetOfExactType(type)?.widget
+            as InheritedProvider<T>;
+
+    if (provider == null) {
+      throw ProviderNotFoundError(T, context.widget.runtimeType);
+    }
+
+    return provider.value;
+  }
+
+  /// A sanity check to prevent misuse of [Provider] when a variant should be used.
+  ///
+  /// By default, [debugCheckInvalidValueType] will throw if `value` is a [Listenable]
+  /// or a [Stream].
+  /// In release mode, [debugCheckInvalidValueType] does nothing.
+  ///
+  /// This check can be disabled altogether by setting [debugCheckInvalidValueType]
+  /// to `null` like so:
+  ///
+  /// ```dart
+  /// void main() {
+  ///   Provider.debugCheckInvalidValueType = null;
+  ///   runApp(MyApp());
+  /// }
+  /// ```
+  static void Function<T>(T value) debugCheckInvalidValueType = <T>(T value) {
+    assert(() {
+      if (value is Listenable || value is Stream) {
+        throw FlutterError('''
+Tried to use Provider with a subtype of Listenable/Stream ($T).
+
+This is likely a mistake, as Provider will not automatically update dependents
+when $T is updated. Instead, consider changing Provider for more specific
+implementation that handles the update mecanism, such as:
+
+- ListenableProvider
+- ChangeNotifierProvider
+- ValueListenableProvider
+- StreamProvider
+
+Alternatively, if you are making your own provider, consider using InheritedProvider.
+
+If you think that this is not an error, you can disable this check by setting
+Provider.debugCheckInvalidValueType to `null` in your main file:
+
+```
+void main() {
+  Provider.debugCheckInvalidValueType = null;
+
+  runApp(MyApp());
+}
+```
+''');
+      }
+      return true;
+    }());
+  };
+
   /// User-provided custom logic for [InheritedWidget.updateShouldNotify].
   final UpdateShouldNotify<T> updateShouldNotify;
 
@@ -244,6 +294,10 @@ class Provider<T> extends ValueDelegateWidget<T>
 
   @override
   Widget build(BuildContext context) {
+    assert(() {
+      Provider.debugCheckInvalidValueType?.call<T>(delegate.value);
+      return true;
+    }());
     return InheritedProvider(
       value: delegate.value,
       updateShouldNotify: updateShouldNotify,

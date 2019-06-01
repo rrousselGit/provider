@@ -175,6 +175,10 @@ class NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6, R>
 
   @override
   Widget build(BuildContext context, R value) {
+    assert(() {
+      Provider.debugCheckInvalidValueType?.call(value);
+      return true;
+    }());
     return InheritedProvider<R>(
       value: value,
       updateShouldNotify: updateShouldNotify,
