@@ -1,29 +1,29 @@
 language: bash
 os:
   - osx
+env:
+  - FLUTTER_CHANNEL="stable"
+  - FLUTTER_CHANNEL="master"
 sudo: false
 before_script:
   - cd ..
-  - git clone https://github.com/flutter/flutter.git -b stable
-  - export PATH=$PATH:$PWD/flutter/bin
-  - export PATH=$PATH:$PWD/flutter/bin/cache/dart-sdk/bin
+  - git clone https://github.com/flutter/flutter.git -b $FLUTTER_CHANNEL
+  - export PATH=$PATH:$PWD/flutter/bin:$PWD/flutter/bin/cache/dart-sdk/bin
+  - cd -
   - flutter doctor
-  - cd provider
 script:
-  # abort on error
-  - set -e
-
-  - flutter packages get
-  - flutter format --set-exit-if-changed lib example test
-  - flutter analyze --no-current-package lib test/ example/
-  - flutter test --no-pub --coverage
-  - set +e # disable abort on error for the `cd`, otherwise the CI unexpectedly stops
-  - cd example/
-  - set -e
-  - flutter test --no-pub --coverage
+  - set -e # abort CI if an error happens
+  - ./scripts/flutter_test.sh packages/provider
+  - ./scripts/flutter_test.sh packages/provider/example
 
   # export coverage
-  - bash <(curl -s https://codecov.io/bash)
+  - if [ $FLUTTER_CHANNEL = "stable" ]; then
+      bash <(curl -s https://codecov.io/bash);
+    fi
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: FLUTTER_CHANNEL="master"
 cache:
   directories:
     - $HOME/.pub-cache
