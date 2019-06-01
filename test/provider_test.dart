@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' hide TypeMatcher;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/src/provider.dart';
 import 'package:test_api/test_api.dart' show TypeMatcher;
 
 void main() {
@@ -17,10 +16,10 @@ void main() {
 
       final newChild = Container();
       final clone = provider.cloneWithChild(newChild);
-      expect(clone.child, newChild);
-      expect(clone.delegate, provider.delegate);
-      expect(clone.key, provider.key);
-      expect(provider.updateShouldNotify, clone.updateShouldNotify);
+      expect(clone.child, equals(newChild));
+      expect(clone.delegate, equals(provider.delegate));
+      expect(clone.key, equals(provider.key));
+      expect(provider.updateShouldNotify, equals(clone.updateShouldNotify));
     });
     testWidgets('simple usage', (tester) async {
       var buildCount = 0;

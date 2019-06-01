@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
+import 'common.dart';
+
 class ConsumerBuilderMock extends Mock {
   Widget call(Combined foo);
 }
@@ -32,18 +34,6 @@ class Combined {
       other.e == e &&
       other.f == f;
 }
-
-class A {}
-
-class B {}
-
-class C {}
-
-class D {}
-
-class E {}
-
-class F {}
 
 void main() {
   final a = A();

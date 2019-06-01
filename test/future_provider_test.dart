@@ -170,12 +170,12 @@ void main() {
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.updateShouldNotify, provider.updateShouldNotify);
-      expect(clone.key, provider.key);
-      expect(clone.initialData, provider.initialData);
-      expect(clone.delegate, provider.delegate);
-      expect(clone.catchError, provider.catchError);
+      expect(clone.child, equals(child2));
+      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
+      expect(clone.key, equals(provider.key));
+      expect(clone.initialData, equals(provider.initialData));
+      expect(clone.delegate, equals(provider.delegate));
+      expect(clone.catchError, equals(provider.catchError));
     });
     test('works with MultiProvider #3', () {
       final provider = FutureProvider<int>(
@@ -189,12 +189,12 @@ void main() {
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.updateShouldNotify, provider.updateShouldNotify);
-      expect(clone.key, provider.key);
-      expect(clone.initialData, provider.initialData);
-      expect(clone.delegate, provider.delegate);
-      expect(clone.catchError, provider.catchError);
+      expect(clone.child, equals(child2));
+      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
+      expect(clone.key, equals(provider.key));
+      expect(clone.initialData, equals(provider.initialData));
+      expect(clone.delegate, equals(provider.delegate));
+      expect(clone.catchError, equals(provider.catchError));
     });
     testWidgets('works with null', (tester) async {
       final key = GlobalKey();

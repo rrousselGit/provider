@@ -137,10 +137,10 @@ void main() {
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.key, provider.key);
-      expect(clone.delegate, provider.delegate);
-      expect(clone.updateShouldNotify, provider.updateShouldNotify);
+      expect(clone.child, equals(child2));
+      expect(clone.key, equals(provider.key));
+      expect(clone.delegate, equals(provider.delegate));
+      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
     });
     test('works with MultiProvider #3', () {
       final provider = ValueListenableProvider<int>(
@@ -151,10 +151,10 @@ void main() {
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.key, provider.key);
-      expect(clone.delegate, provider.delegate);
-      expect(clone.updateShouldNotify, provider.updateShouldNotify);
+      expect(clone.child, equals(child2));
+      expect(clone.key, equals(provider.key));
+      expect(clone.delegate, equals(provider.delegate));
+      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
     });
   });
 }

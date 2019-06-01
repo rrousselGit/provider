@@ -1,7 +1,11 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/src/delegate_widget.dart';
-import 'package:provider/src/provider.dart';
+import 'package:flutter/widgets.dart';
+
+import 'change_notifier_provider.dart' show ChangeNotifierProvider;
+import 'delegate_widget.dart';
+import 'provider.dart';
+import 'proxy_provider.dart';
+import 'value_listenable_provider.dart' show ValueListenableProvider;
 
 /// Listens to a [Listenable], expose it to its descendants
 /// and rebuilds dependents whenever the listener emits an event.
@@ -150,129 +154,126 @@ mixin _ListenableDelegateMixin<T extends Listenable>
   }
 }
 
-/// Listens to a [ChangeNotifier], expose it to its descendants
-/// and rebuilds dependents whenever the [ChangeNotifier.notifyListeners] is called.
-///
-/// See also:
-///   * [ListenableProvider], similar to [ChangeNotifier] but works with any [Listenable].
-///   * [ChangeNotifier]
-class ChangeNotifierProvider<T extends ChangeNotifier>
-    extends ListenableProvider<T> implements SingleChildCloneableWidget {
-  static void _disposer(BuildContext context, ChangeNotifier notifier) =>
-      notifier?.dispose();
-
-  /// Create a [ChangeNotifier] using the [builder] function and automatically dispose it
-  /// when [ChangeNotifierProvider] is removed from the widget tree.
-  ///
-  /// [builder] must not be `null`.
-  ChangeNotifierProvider({
-    Key key,
-    @required ValueBuilder<T> builder,
-    Widget child,
-  }) : super(key: key, builder: builder, dispose: _disposer, child: child);
-
-  /// Listens to [value] and expose it to all of [ChangeNotifierProvider] descendants.
-  ChangeNotifierProvider.value({
-    Key key,
-    @required T value,
-    Widget child,
-  }) : super.value(key: key, value: value, child: child);
-}
-
-/// Listens to a [ValueListenable] and expose its current value.
-class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
+class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
+        R extends Listenable> extends ProxyProviderBase<R>
     implements SingleChildCloneableWidget {
-  /// Creates a [ValueNotifier] using [builder] and automatically dispose it
-  /// when [ValueListenableProvider] is removed from the tree.
-  ///
-  /// [builder] must not be `null`.
-  ///
-  /// {@macro provider.updateshouldnotify}
-  /// See also:
-  ///   * [ValueListenable]
-  ///   * [ListenableProvider], similar to [ValueListenableProvider] but for any kind of [Listenable].
-  ValueListenableProvider({
+  _NumericProxyProvider({
     Key key,
-    @required ValueBuilder<ValueNotifier<T>> builder,
-    UpdateShouldNotify<T> updateShouldNotify,
-    Widget child,
-  }) : this._(
-          key: key,
-          delegate: BuilderAdaptiveDelegate<ValueNotifier<T>>(
-            builder,
-            dispose: _dispose,
-          ),
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
-
-  /// Listens to [value] and exposes its current value.
-  ///
-  /// Changing [value] will stop listening to the previous [value] and listen the new one.
-  /// Removing [ValueListenableProvider] from the tree will also stop listening to [value].
-  ///
-  /// ```dart
-  /// ValueListenable<int> foo;
-  ///
-  /// ValueListenableProvider<int>.value(
-  ///   valueListenable: foo,
-  ///   child: Container(),
-  /// );
-  /// ```
-  ValueListenableProvider.value({
-    Key key,
-    @required ValueListenable<T> value,
-    UpdateShouldNotify<T> updateShouldNotify,
-    Widget child,
-  }) : this._(
-          key: key,
-          delegate: SingleValueDelegate(value),
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
-
-  ValueListenableProvider._({
-    Key key,
-    ValueAdaptiveDelegate<ValueListenable<T>> delegate,
-    this.updateShouldNotify,
+    ValueBuilder<R> initialBuilder,
+    @required this.builder,
+    Disposer<R> dispose,
     this.child,
-  }) : super(key: key, delegate: delegate);
+  })  : assert(builder != null),
+        super(
+          key: key,
+          initialBuilder: initialBuilder,
+          dispose: dispose,
+        );
 
-  static void _dispose(BuildContext context, ValueNotifier notifier) {
-    notifier.dispose();
-  }
-
-  /// The widget that is below the current [ValueListenableProvider] widget in the
+  /// The widget that is below the current [Provider] widget in the
   /// tree.
   ///
   /// {@macro flutter.widgets.child}
   final Widget child;
 
-  /// {@macro provider.updateshouldnotify}
-  final UpdateShouldNotify<T> updateShouldNotify;
+  /// {@macro provider.proxyprovider.builder}
+  final F builder;
 
   @override
-  ValueListenableProvider<T> cloneWithChild(Widget child) {
-    return ValueListenableProvider._(
+  _NumericProxyProvider<F, T, T2, T3, T4, T5, T6, R> cloneWithChild(
+      Widget child) {
+    return _NumericProxyProvider(
       key: key,
-      delegate: delegate,
-      updateShouldNotify: updateShouldNotify,
+      initialBuilder: initialBuilder,
+      builder: builder,
+      dispose: dispose,
       child: child,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<T>(
-      valueListenable: delegate.value,
-      builder: (_, value, child) {
-        return InheritedProvider<T>(
-          value: value,
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
-      },
+  Widget build(BuildContext context, R value) {
+    return ListenableProvider<R>.value(
+      value: value,
       child: child,
     );
+  }
+
+  @override
+  R didChangeDependencies(BuildContext context, R previous) {
+    final arguments = <dynamic>[
+      context,
+      Provider.of<T>(context),
+    ];
+
+    if (T2 != Void) arguments.add(Provider.of<T2>(context));
+    if (T3 != Void) arguments.add(Provider.of<T3>(context));
+    if (T4 != Void) arguments.add(Provider.of<T4>(context));
+    if (T5 != Void) arguments.add(Provider.of<T5>(context));
+    if (T6 != Void) arguments.add(Provider.of<T6>(context));
+
+    arguments.add(previous);
+    return Function.apply(builder, arguments) as R;
   }
 }
+
+mixin _Noop {}
+
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider<T, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder<T, R>, T, Void, Void, Void, Void, Void, R> with _Noop;
+
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider2<T, T2, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder2<T, T2, R>,
+    T,
+    T2,
+    Void,
+    Void,
+    Void,
+    Void,
+    R> with _Noop;
+
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider3<T, T2, T3, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder3<T, T2, T3, R>,
+    T,
+    T2,
+    T3,
+    Void,
+    Void,
+    Void,
+    R> with _Noop;
+
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder4<T, T2, T3, T4, R>,
+    T,
+    T2,
+    T3,
+    T4,
+    Void,
+    Void,
+    R> with _Noop;
+
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder5<T, T2, T3, T4, T5, R>,
+    T,
+    T2,
+    T3,
+    T4,
+    T5,
+    Void,
+    R> with _Noop;
+
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable> = _NumericProxyProvider<
+    ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R>,
+    T,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    R> with _Noop;

@@ -12,10 +12,16 @@ before_script:
 script:
   # abort on error
   - set -e
+
   - flutter packages get
   - flutter format --set-exit-if-changed lib example test
   - flutter analyze --no-current-package lib test/ example/
   - flutter test --no-pub --coverage
+  - set +e # disable abort on error for the `cd`, otherwise the CI unexpectedly stops
+  - cd example/
+  - set -e
+  - flutter test --no-pub --coverage
+
   # export coverage
   - bash <(curl -s https://codecov.io/bash)
 cache:

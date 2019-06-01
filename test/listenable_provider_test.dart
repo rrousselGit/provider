@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/src/provider.dart';
 import 'package:flutter/foundation.dart';
 
 import 'common.dart';
@@ -31,9 +30,9 @@ void main() {
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.key, provider.key);
-      expect(clone.delegate, provider.delegate);
+      expect(clone.child, equals(child2));
+      expect(clone.key, equals(provider.key));
+      expect(clone.delegate, equals(provider.delegate));
     });
     test('works with MultiProvider #3', () {
       final provider = ListenableProvider<ChangeNotifier>(
@@ -45,9 +44,9 @@ void main() {
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.key, provider.key);
-      expect(clone.delegate, provider.delegate);
+      expect(clone.child, equals(child2));
+      expect(clone.key, equals(provider.key));
+      expect(clone.delegate, equals(provider.delegate));
     });
 
     group('value constructor', () {

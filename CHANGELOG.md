@@ -10,6 +10,9 @@
 
 ## non-breaking:
 
+- Added `ProxyProvider`, `ListenableProxyProvider`, and `ChangeNotifierProxyProvider`.
+  These providers allows building values that depends on other providers,
+  without loosing reactivity or manually handling the state.
 - Added `DelegateWidget` and a few related classes to help building custom providers.
 - Exposed the internal generic `InheritedWidget` to help building custom providers.
 
