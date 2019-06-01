@@ -17,7 +17,7 @@ script:
   - flutter format --set-exit-if-changed lib example test
   - flutter analyze --no-current-package lib test/ example/
   - flutter test --no-pub --coverage
-  - set +e
+  - set +e # disable abort on error for the `cd`, otherwise the CI unexpectedly stops
   - cd example/
   - set -e
   - flutter test --no-pub --coverage
