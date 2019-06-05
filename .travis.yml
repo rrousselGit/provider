@@ -15,6 +15,7 @@ script:
   - set -e # abort CI if an error happens
   - ./scripts/flutter_test.sh packages/provider
   - ./scripts/flutter_test.sh packages/provider/example
+  - ./scripts/flutter_test.sh packages/mobx_provider
 
   # export coverage
   - if [ $FLUTTER_CHANNEL = "stable" ]; then
