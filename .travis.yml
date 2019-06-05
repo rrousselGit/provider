@@ -18,12 +18,10 @@ script:
 
   # export coverage
   - if [ $FLUTTER_CHANNEL = "stable" ]; then
-      bash <(curl -s https://codecov.io/bash);
+    bash <(curl -s https://codecov.io/bash);
     fi
 matrix:
   fast_finish: true
-  allow_failures:
-    - env: FLUTTER_CHANNEL="master"
 cache:
   directories:
     - $HOME/.pub-cache

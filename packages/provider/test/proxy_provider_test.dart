@@ -44,8 +44,8 @@ void main() {
     tearDown(() => clearInteractions(combiner));
 
     Finder findProxyProvider<T>() => find.byWidgetPredicate(
-          (widget) => widget is NumericProxyProvider<Function, T, Void, Void,
-              Void, Void, Void, Combined>,
+          (widget) => widget is NumericProxyProvider<T, Void, Void, Void, Void,
+              Void, Combined>,
         );
 
     testWidgets('throws if the provided value is a Listenable/Stream',
@@ -342,9 +342,9 @@ void main() {
     test('works with MultiProvider #2', () {
       final provider = ProxyProvider<A, B>(
         key: const Key('42'),
-        initialBuilder: (_) {},
-        builder: (_, __, ___) {},
-        updateShouldNotify: (_, __) {},
+        initialBuilder: (_) => null,
+        builder: (_, __, ___) => null,
+        updateShouldNotify: (_, __) => null,
         dispose: (_, __) {},
         child: Container(),
       );
@@ -402,8 +402,8 @@ void main() {
 
   group('ProxyProvider variants', () {
     Finder findProxyProvider<A, B, C, D, E, F>() => find.byWidgetPredicate(
-          (widget) => widget
-              is NumericProxyProvider<Function, A, B, C, D, E, F, Combined>,
+          (widget) =>
+              widget is NumericProxyProvider<A, B, C, D, E, F, Combined>,
         );
     testWidgets('ProxyProvider2', (tester) async {
       await tester.pumpWidget(

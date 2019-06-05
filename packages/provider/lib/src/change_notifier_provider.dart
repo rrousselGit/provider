@@ -34,9 +34,8 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
   }) : super.value(key: key, value: value, child: child);
 }
 
-class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
-        R extends ChangeNotifier> extends ProxyProviderBase<R>
-    implements SingleChildCloneableWidget {
+class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends ChangeNotifier>
+    extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
   _NumericProxyProvider({
     Key key,
     ValueBuilder<R> initialBuilder,
@@ -56,11 +55,10 @@ class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
   final Widget child;
 
   /// {@macro provider.proxyprovider.builder}
-  final F builder;
+  final Function builder;
 
   @override
-  _NumericProxyProvider<F, T, T2, T3, T4, T5, T6, R> cloneWithChild(
-      Widget child) {
+  _NumericProxyProvider<T, T2, T3, T4, T5, T6, R> cloneWithChild(Widget child) {
     return _NumericProxyProvider(
       key: key,
       initialBuilder: initialBuilder,
@@ -95,63 +93,130 @@ class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
   }
 }
 
-mixin _Noop {}
+/// {@macro provider.proxyprovider}
+class ChangeNotifierProxyProvider<T, R extends ChangeNotifier>
+    extends _NumericProxyProvider<T, Void, Void, Void, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ChangeNotifierProxyProvider({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder<T, R> builder,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder<T, R> get builder =>
+      super.builder as ProxyProviderBuilder<T, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ChangeNotifierProxyProvider<T, R extends ChangeNotifier> = _NumericProxyProvider<
-    ProxyProviderBuilder<T, R>, T, Void, Void, Void, Void, Void, R> with _Noop;
+class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier>
+    extends _NumericProxyProvider<T, T2, Void, Void, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ChangeNotifierProxyProvider2({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder2<T, T2, R> builder,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder2<T, T2, R> get builder =>
+      super.builder as ProxyProviderBuilder2<T, T2, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier> = _NumericProxyProvider<
-    ProxyProviderBuilder2<T, T2, R>,
-    T,
-    T2,
-    Void,
-    Void,
-    Void,
-    Void,
-    R> with _Noop;
+class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier>
+    extends _NumericProxyProvider<T, T2, T3, Void, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ChangeNotifierProxyProvider3({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder3<T, T2, T3, R> builder,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder3<T, T2, T3, R> get builder =>
+      super.builder as ProxyProviderBuilder3<T, T2, T3, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier> = _NumericProxyProvider<
-    ProxyProviderBuilder3<T, T2, T3, R>,
-    T,
-    T2,
-    T3,
-    Void,
-    Void,
-    Void,
-    R> with _Noop;
+class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
+    extends _NumericProxyProvider<T, T2, T3, T4, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ChangeNotifierProxyProvider4({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder4<T, T2, T3, T4, R> get builder =>
+      super.builder as ProxyProviderBuilder4<T, T2, T3, T4, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier> = _NumericProxyProvider<
-    ProxyProviderBuilder4<T, T2, T3, T4, R>,
-    T,
-    T2,
-    T3,
-    T4,
-    Void,
-    Void,
-    R> with _Noop;
+
+class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
+    extends _NumericProxyProvider<T, T2, T3, T4, T5, Void, R> {
+  /// Initializes [key] for subclasses.
+  ChangeNotifierProxyProvider5({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder5<T, T2, T3, T4, T5, R> get builder =>
+      super.builder as ProxyProviderBuilder5<T, T2, T3, T4, T5, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier> = _NumericProxyProvider<
-    ProxyProviderBuilder5<T, T2, T3, T4, T5, R>,
-    T,
-    T2,
-    T3,
-    T4,
-    T5,
-    Void,
-    R> with _Noop;
+class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6,
+        R extends ChangeNotifier>
+    extends _NumericProxyProvider<T, T2, T3, T4, T5, T6, R> {
+  /// Initializes [key] for subclasses.
+  ChangeNotifierProxyProvider6({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          child: child,
+        );
 
-/// {@macro provider.proxyprovider}
-class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6, R extends ChangeNotifier> = _NumericProxyProvider<
-    ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R>,
-    T,
-    T2,
-    T3,
-    T4,
-    T5,
-    T6,
-    R> with _Noop;
+  @override
+  ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> get builder =>
+      super.builder as ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R>;
+}

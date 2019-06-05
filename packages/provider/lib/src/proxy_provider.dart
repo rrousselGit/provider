@@ -123,7 +123,7 @@ abstract class Void {}
 
 @visibleForTesting
 // ignore: public_member_api_docs
-class NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6, R>
+class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
   // ignore: public_member_api_docs
   NumericProxyProvider({
@@ -155,14 +155,13 @@ class NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6, R>
   ///
   /// It is safe to perform side-effects in this method.
   /// {@endtemplate}
-  final F builder;
+  final Function builder;
 
   /// The [UpdateShouldNotify] passed to [InheritedProvider].
   final UpdateShouldNotify<R> updateShouldNotify;
 
   @override
-  NumericProxyProvider<F, T, T2, T3, T4, T5, T6, R> cloneWithChild(
-      Widget child) {
+  NumericProxyProvider<T, T2, T3, T4, T5, T6, R> cloneWithChild(Widget child) {
     return NumericProxyProvider(
       key: key,
       initialBuilder: initialBuilder,
@@ -204,8 +203,6 @@ class NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6, R>
   }
 }
 
-mixin _Noop {}
-
 // TODO(rousselGit) update dartdoc when https://github.com/dart-lang/dartdoc/issues/1977 is closed
 /// {@template provider.proxyprovider}
 /// A provider that builds a value based on other providers.
@@ -237,60 +234,151 @@ mixin _Noop {}
 ///  * [Provider], which matches the behavior of [ProxyProvider] without
 /// dependending on other providers.
 /// {@endtemplate}
-class ProxyProvider<T, R> = NumericProxyProvider<ProxyProviderBuilder<T, R>, T,
-    Void, Void, Void, Void, Void, R> with _Noop;
+class ProxyProvider<T, R>
+    extends NumericProxyProvider<T, Void, Void, Void, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ProxyProvider({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder<T, R> builder,
+    UpdateShouldNotify<R> updateShouldNotify,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          updateShouldNotify: updateShouldNotify,
+          dispose: dispose,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder<T, R> get builder =>
+      super.builder as ProxyProviderBuilder<T, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ProxyProvider2<T, T2, R> = NumericProxyProvider<
-    ProxyProviderBuilder2<T, T2, R>,
-    T,
-    T2,
-    Void,
-    Void,
-    Void,
-    Void,
-    R> with _Noop;
+class ProxyProvider2<T, T2, R>
+    extends NumericProxyProvider<T, T2, Void, Void, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ProxyProvider2({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder2<T, T2, R> builder,
+    UpdateShouldNotify<R> updateShouldNotify,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          updateShouldNotify: updateShouldNotify,
+          dispose: dispose,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder2<T, T2, R> get builder =>
+      super.builder as ProxyProviderBuilder2<T, T2, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ProxyProvider3<T, T2, T3, R> = NumericProxyProvider<
-    ProxyProviderBuilder3<T, T2, T3, R>,
-    T,
-    T2,
-    T3,
-    Void,
-    Void,
-    Void,
-    R> with _Noop;
+class ProxyProvider3<T, T2, T3, R>
+    extends NumericProxyProvider<T, T2, T3, Void, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ProxyProvider3({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder3<T, T2, T3, R> builder,
+    UpdateShouldNotify<R> updateShouldNotify,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          updateShouldNotify: updateShouldNotify,
+          dispose: dispose,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder3<T, T2, T3, R> get builder =>
+      super.builder as ProxyProviderBuilder3<T, T2, T3, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ProxyProvider4<T, T2, T3, T4, R> = NumericProxyProvider<
-    ProxyProviderBuilder4<T, T2, T3, T4, R>,
-    T,
-    T2,
-    T3,
-    T4,
-    Void,
-    Void,
-    R> with _Noop;
+class ProxyProvider4<T, T2, T3, T4, R>
+    extends NumericProxyProvider<T, T2, T3, T4, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ProxyProvider4({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
+    UpdateShouldNotify<R> updateShouldNotify,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          updateShouldNotify: updateShouldNotify,
+          dispose: dispose,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder4<T, T2, T3, T4, R> get builder =>
+      super.builder as ProxyProviderBuilder4<T, T2, T3, T4, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ProxyProvider5<T, T2, T3, T4, T5, R> = NumericProxyProvider<
-    ProxyProviderBuilder5<T, T2, T3, T4, T5, R>,
-    T,
-    T2,
-    T3,
-    T4,
-    T5,
-    Void,
-    R> with _Noop;
+class ProxyProvider5<T, T2, T3, T4, T5, R>
+    extends NumericProxyProvider<T, T2, T3, T4, T5, Void, R> {
+  /// Initializes [key] for subclasses.
+  ProxyProvider5({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
+    UpdateShouldNotify<R> updateShouldNotify,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          updateShouldNotify: updateShouldNotify,
+          dispose: dispose,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder5<T, T2, T3, T4, T5, R> get builder =>
+      super.builder as ProxyProviderBuilder5<T, T2, T3, T4, T5, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ProxyProvider6<T, T2, T3, T4, T5, T6, R> = NumericProxyProvider<
-    ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R>,
-    T,
-    T2,
-    T3,
-    T4,
-    T5,
-    T6,
-    R> with _Noop;
+class ProxyProvider6<T, T2, T3, T4, T5, T6, R>
+    extends NumericProxyProvider<T, T2, T3, T4, T5, T6, R> {
+  /// Initializes [key] for subclasses.
+  ProxyProvider6({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
+    UpdateShouldNotify<R> updateShouldNotify,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          updateShouldNotify: updateShouldNotify,
+          dispose: dispose,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> get builder =>
+      super.builder as ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R>;
+}

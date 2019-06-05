@@ -154,9 +154,8 @@ mixin _ListenableDelegateMixin<T extends Listenable>
   }
 }
 
-class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
-        R extends Listenable> extends ProxyProviderBase<R>
-    implements SingleChildCloneableWidget {
+class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
+    extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
   _NumericProxyProvider({
     Key key,
     ValueBuilder<R> initialBuilder,
@@ -177,11 +176,10 @@ class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
   final Widget child;
 
   /// {@macro provider.proxyprovider.builder}
-  final F builder;
+  final Function builder;
 
   @override
-  _NumericProxyProvider<F, T, T2, T3, T4, T5, T6, R> cloneWithChild(
-      Widget child) {
+  _NumericProxyProvider<T, T2, T3, T4, T5, T6, R> cloneWithChild(Widget child) {
     return _NumericProxyProvider(
       key: key,
       initialBuilder: initialBuilder,
@@ -217,63 +215,140 @@ class _NumericProxyProvider<F extends Function, T, T2, T3, T4, T5, T6,
   }
 }
 
-mixin _Noop {}
+/// {@macro provider.proxyprovider}
+class ListenableProxyProvider<T, R extends Listenable>
+    extends _NumericProxyProvider<T, Void, Void, Void, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ListenableProxyProvider({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder<T, R> builder,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          dispose: dispose,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder<T, R> get builder =>
+      super.builder as ProxyProviderBuilder<T, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ListenableProxyProvider<T, R extends Listenable> = _NumericProxyProvider<
-    ProxyProviderBuilder<T, R>, T, Void, Void, Void, Void, Void, R> with _Noop;
+class ListenableProxyProvider2<T, T2, R extends Listenable>
+    extends _NumericProxyProvider<T, T2, Void, Void, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ListenableProxyProvider2({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder2<T, T2, R> builder,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          dispose: dispose,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder2<T, T2, R> get builder =>
+      super.builder as ProxyProviderBuilder2<T, T2, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ListenableProxyProvider2<T, T2, R extends Listenable> = _NumericProxyProvider<
-    ProxyProviderBuilder2<T, T2, R>,
-    T,
-    T2,
-    Void,
-    Void,
-    Void,
-    Void,
-    R> with _Noop;
+class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
+    extends _NumericProxyProvider<T, T2, T3, Void, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ListenableProxyProvider3({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder3<T, T2, T3, R> builder,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          dispose: dispose,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder3<T, T2, T3, R> get builder =>
+      super.builder as ProxyProviderBuilder3<T, T2, T3, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ListenableProxyProvider3<T, T2, T3, R extends Listenable> = _NumericProxyProvider<
-    ProxyProviderBuilder3<T, T2, T3, R>,
-    T,
-    T2,
-    T3,
-    Void,
-    Void,
-    Void,
-    R> with _Noop;
+class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
+    extends _NumericProxyProvider<T, T2, T3, T4, Void, Void, R> {
+  /// Initializes [key] for subclasses.
+  ListenableProxyProvider4({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          dispose: dispose,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder4<T, T2, T3, T4, R> get builder =>
+      super.builder as ProxyProviderBuilder4<T, T2, T3, T4, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable> = _NumericProxyProvider<
-    ProxyProviderBuilder4<T, T2, T3, T4, R>,
-    T,
-    T2,
-    T3,
-    T4,
-    Void,
-    Void,
-    R> with _Noop;
+class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
+    extends _NumericProxyProvider<T, T2, T3, T4, T5, Void, R> {
+  /// Initializes [key] for subclasses.
+  ListenableProxyProvider5({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          dispose: dispose,
+          child: child,
+        );
+
+  @override
+  ProxyProviderBuilder5<T, T2, T3, T4, T5, R> get builder =>
+      super.builder as ProxyProviderBuilder5<T, T2, T3, T4, T5, R>;
+}
 
 /// {@macro provider.proxyprovider}
-class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable> = _NumericProxyProvider<
-    ProxyProviderBuilder5<T, T2, T3, T4, T5, R>,
-    T,
-    T2,
-    T3,
-    T4,
-    T5,
-    Void,
-    R> with _Noop;
+class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
+    extends _NumericProxyProvider<T, T2, T3, T4, T5, T6, R> {
+  /// Initializes [key] for subclasses.
+  ListenableProxyProvider6({
+    Key key,
+    ValueBuilder<R> initialBuilder,
+    @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
+    Disposer<R> dispose,
+    Widget child,
+  }) : super(
+          key: key,
+          initialBuilder: initialBuilder,
+          builder: builder,
+          dispose: dispose,
+          child: child,
+        );
 
-/// {@macro provider.proxyprovider}
-class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable> = _NumericProxyProvider<
-    ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R>,
-    T,
-    T2,
-    T3,
-    T4,
-    T5,
-    T6,
-    R> with _Noop;
+  @override
+  ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> get builder =>
+      super.builder as ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R>;
+}
