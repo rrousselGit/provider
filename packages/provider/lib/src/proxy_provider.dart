@@ -4,10 +4,113 @@ import 'package:provider/provider.dart';
 import 'delegate_widget.dart';
 import 'provider.dart';
 
+typedef ProviderBuilder<R> = Widget Function(
+    BuildContext context, R value, Widget child);
+
+typedef ProxyProviderBuilder<T, R> = R Function(
+    BuildContext context, T value, R previous);
+
+typedef ProxyProviderBuilder2<T, T2, R> = R Function(
+    BuildContext context, T value, T2 value2, R previous);
+
+typedef ProxyProviderBuilder3<T, T2, T3, R> = R Function(
+    BuildContext context, T value, T2 value2, T3 value3, R previous);
+
+typedef ProxyProviderBuilder4<T, T2, T3, T4, R> = R Function(
+    BuildContext context, T value, T2 value2, T3 value3, T4 value4, R previous);
+
+typedef ProxyProviderBuilder5<T, T2, T3, T4, T5, R> = R Function(
+  BuildContext context,
+  T value,
+  T2 value2,
+  T3 value3,
+  T4 value4,
+  T5 value5,
+  R previous,
+);
+
+typedef ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> = R Function(
+  BuildContext context,
+  T value,
+  T2 value2,
+  T3 value3,
+  T4 value4,
+  T5 value5,
+  T6 value6,
+  R previous,
+);
+
+/// A [StatefulWidget] that uses [ProxyProviderState] as [State].
+abstract class ProxyProviderWidget extends StatefulWidget {
+  /// Initializes [key] for subclasses.
+  const ProxyProviderWidget({Key key}) : super(key: key);
+
+  @override
+  ProxyProviderState<ProxyProviderWidget> createState();
+
+  @override
+  ProxyProviderElement createElement() => ProxyProviderElement(this);
+}
+
+/// A [State] with an added life-cycle: [didUpdateDependencies].
+///
+/// Widgets such as [ProxyProvider] are expected to build their
+/// value from within [didUpdateDependencies] instead of [didChangeDependencies].
+abstract class ProxyProviderState<T extends ProxyProviderWidget>
+    extends State<T> {
+  @protected
+  @mustCallSuper
+
+  /// To not confuse with [didChangeDependencies].
+  ///
+  /// As opposed to [didChangeDependencies], [didUpdateDependencies] is
+  /// guaranteed to be followed by a call to [build], and will be called only
+  /// once after _all_ dependencies have changed.
+  ///
+  /// This guarantees that everything is up to date when [didUpdateDependencies]
+  /// is called, and that the widget will not be unmounted before updates are
+  /// applied. It is therefore safe to make network http calls or mutations
+  /// inside this life-cycle.
+  void didUpdateDependencies() {}
+}
+
+/// An [Element] that uses a [ProxyProviderWidget] as its configuration.
+class ProxyProviderElement extends StatefulElement {
+  /// Creates an element that uses the given widget as its configuration.
+  ProxyProviderElement(ProxyProviderWidget widget) : super(widget);
+
+  @override
+  ProxyProviderWidget get widget => super.widget as ProxyProviderWidget;
+
+  @override
+  ProxyProviderState<ProxyProviderWidget> get state =>
+      super.state as ProxyProviderState<ProxyProviderWidget>;
+
+  bool _didChangeDependencies = true;
+
+  @override
+  void didChangeDependencies() {
+    _didChangeDependencies = true;
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build() {
+    if (_didChangeDependencies) {
+      _didChangeDependencies = false;
+      state.didUpdateDependencies();
+    }
+    return super.build();
+  }
+}
+
+// ignore: public_member_api_docs
+abstract class Void {}
+
 /// A base class for custom "Proxy provider".
 ///
 /// See [ProxyProvider] for a concrete implementation.
-abstract class ProxyProviderBase<R> extends StatefulWidget {
+abstract class ProxyProviderBase<R> extends ProxyProviderWidget {
   /// Initializes [key], [initialBuilder] and [dispose] for subclasses.
   ProxyProviderBase({
     Key key,
@@ -45,45 +148,8 @@ abstract class ProxyProviderBase<R> extends StatefulWidget {
   Widget build(BuildContext context, R value);
 }
 
-typedef ProviderBuilder<R> = Widget Function(
-    BuildContext context, R value, Widget child);
-
-typedef ProxyProviderBuilder<T, R> = R Function(
-    BuildContext context, T value, R previous);
-
-typedef ProxyProviderBuilder2<T, T2, R> = R Function(
-    BuildContext context, T value, T2 value2, R previous);
-
-typedef ProxyProviderBuilder3<T, T2, T3, R> = R Function(
-    BuildContext context, T value, T2 value2, T3 value3, R previous);
-
-typedef ProxyProviderBuilder4<T, T2, T3, T4, R> = R Function(
-    BuildContext context, T value, T2 value2, T3 value3, T4 value4, R previous);
-
-typedef ProxyProviderBuilder5<T, T2, T3, T4, T5, R> = R Function(
-  BuildContext context,
-  T value,
-  T2 value2,
-  T3 value3,
-  T4 value4,
-  T5 value5,
-  R previous,
-);
-
-typedef ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> = R Function(
-  BuildContext context,
-  T value,
-  T2 value2,
-  T3 value3,
-  T4 value4,
-  T5 value5,
-  T6 value6,
-  R previous,
-);
-
-class _ProxyProviderState<R> extends State<ProxyProviderBase<R>> {
+class _ProxyProviderState<R> extends ProxyProviderState<ProxyProviderBase<R>> {
   R _value;
-  bool _didChangeDependencies = true;
 
   @override
   void initState() {
@@ -92,22 +158,13 @@ class _ProxyProviderState<R> extends State<ProxyProviderBase<R>> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // didChangeDependencies is called before didUpdateWidget and is called
-    // once per updated inherited widget. So we can't use it to call widget.builder
-    _didChangeDependencies = true;
+  void didUpdateDependencies() {
+    super.didUpdateDependencies();
+    _value = widget.didChangeDependencies(context, _value);
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (_didChangeDependencies) {
-      _didChangeDependencies = false;
-      _value = widget.didChangeDependencies(context, _value);
-    }
-
-    return widget.build(context, _value);
-  }
+  Widget build(BuildContext context) => widget.build(context, _value);
 
   @override
   void dispose() {
@@ -117,9 +174,6 @@ class _ProxyProviderState<R> extends State<ProxyProviderBase<R>> {
     super.dispose();
   }
 }
-
-// ignore: public_member_api_docs
-abstract class Void {}
 
 @visibleForTesting
 // ignore: public_member_api_docs
