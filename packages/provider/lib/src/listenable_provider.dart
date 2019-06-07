@@ -11,6 +11,7 @@ import 'value_listenable_provider.dart' show ValueListenableProvider;
 /// and rebuilds dependents whenever the listener emits an event.
 ///
 /// See also:
+///
 ///   * [ChangeNotifierProvider], a subclass of [ListenableProvider] specific to [ChangeNotifier].
 ///   * [ValueListenableProvider], which listens to a [ValueListenable] but exposes only [ValueListenable.value] instead of the whole object.
 ///   * [Listenable]
@@ -49,7 +50,7 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
 
   ListenableProvider._({
     Key key,
-    _ListenableDelegateMixin<T> delegate,
+    @required _ListenableDelegateMixin<T> delegate,
     // TODO: updateShouldNotify for when the listenable instance change with `.value` constructor
     this.child,
   }) : super(
@@ -77,8 +78,8 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
     final delegate = this.delegate as _ListenableDelegateMixin<T>;
     return InheritedProvider<T>(
       value: delegate.value,
-      child: child,
       updateShouldNotify: delegate.updateShouldNotify,
+      child: child,
     );
   }
 }
@@ -98,13 +99,13 @@ class _ValueListenableDelegate<T extends Listenable>
 }
 
 class _BuilderListenableDelegate<T extends Listenable>
-    extends BuilderAdaptiveDelegate<T> with _ListenableDelegateMixin<T> {
+    extends BuilderStateDelegate<T> with _ListenableDelegateMixin<T> {
   _BuilderListenableDelegate(ValueBuilder<T> builder, {Disposer<T> dispose})
       : super(builder, dispose: dispose);
 }
 
 mixin _ListenableDelegateMixin<T extends Listenable>
-    on ValueAdaptiveDelegate<T> {
+    on ValueStateDelegate<T> {
   UpdateShouldNotify<T> updateShouldNotify;
   VoidCallback _removeListener;
 

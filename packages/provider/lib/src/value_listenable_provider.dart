@@ -14,7 +14,9 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
   /// [builder] must not be `null`.
   ///
   /// {@macro provider.updateshouldnotify}
+  ///
   /// See also:
+  ///
   ///   * [ValueListenable]
   ///   * [ListenableProvider], similar to [ValueListenableProvider] but for any kind of [Listenable].
   ValueListenableProvider({
@@ -24,7 +26,7 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
     Widget child,
   }) : this._(
           key: key,
-          delegate: BuilderAdaptiveDelegate<ValueNotifier<T>>(
+          delegate: BuilderStateDelegate<ValueNotifier<T>>(
             builder,
             dispose: _dispose,
           ),
@@ -59,7 +61,7 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
 
   ValueListenableProvider._({
     Key key,
-    ValueAdaptiveDelegate<ValueListenable<T>> delegate,
+    @required ValueStateDelegate<ValueListenable<T>> delegate,
     this.updateShouldNotify,
     this.child,
   }) : super(key: key, delegate: delegate);

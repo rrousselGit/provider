@@ -4,20 +4,23 @@ import 'package:provider/src/provider.dart' show Provider;
 /// A function that creates an object of type [T].
 ///
 /// See also:
-///  * [BuilderAdaptiveDelegate]
+///
+///  * [BuilderStateDelegate]
 typedef ValueBuilder<T> = T Function(BuildContext context);
 
-/// A function that disposes of [value].
+/// A function that disposes an object of type [T].
 ///
 /// See also:
-///  * [BuilderAdaptiveDelegate]
+///
+///  * [BuilderStateDelegate]
 typedef Disposer<T> = void Function(BuildContext context, T value);
 
 /// The state of a [DelegateWidget].
 ///
 /// See also:
-///  * [ValueAdaptiveDelegate]
-///  * [BuilderAdaptiveDelegate]
+///
+///  * [ValueStateDelegate]
+///  * [BuilderStateDelegate]
 abstract class StateDelegate {
   BuildContext _context;
 
@@ -37,21 +40,24 @@ abstract class StateDelegate {
   /// Called on [State.initState] or after [DelegateWidget] is rebuilt
   /// with a [StateDelegate] of a different [runtimeType].
   @protected
+  @mustCallSuper
   void initDelegate() {}
 
   /// Called whenever [State.didUpdateWidget] is called
   ///
   /// It is guaranteed for [old] to have the same [runtimeType] as `this`.
   @protected
+  @mustCallSuper
   void didUpdateDelegate(covariant StateDelegate old) {}
 
   /// Called when [DelegateWidget] is unmounted or if it is rebuilt
   /// with a [StateDelegate] of a different [runtimeType].
   @protected
+  @mustCallSuper
   void dispose() {}
 }
 
-/// A [StatefulWidget] that delegates its [State] implementation to an [StateDelegate].
+/// A [StatefulWidget] that delegates its [State] implementation to a [StateDelegate].
 ///
 /// This is useful for widgets that must switch between different [State] implementation
 /// under the same [runtimeType].
@@ -61,6 +67,7 @@ abstract class StateDelegate {
 /// their state.
 ///
 /// See also:
+///
 ///  * [StateDelegate], the equivalent of [State] but for [DelegateWidget].
 ///  * [Provider], a concrete implementation of [DelegateWidget].
 abstract class DelegateWidget extends StatefulWidget {
@@ -76,6 +83,7 @@ abstract class DelegateWidget extends StatefulWidget {
   /// The current state of [DelegateWidget].
   ///
   /// It should not be `null`.
+  @protected
   final StateDelegate delegate;
 
   /// Describes the part of the user interface represented by this widget.
@@ -83,6 +91,7 @@ abstract class DelegateWidget extends StatefulWidget {
   /// It is fine for [build] to depend on the content of [delegate].
   ///
   /// This method is strictly equivalent to [State.build].
+  @protected
   Widget build(BuildContext context);
 
   @override
@@ -163,6 +172,7 @@ class _DelegateElement extends StatefulElement {
     assert(() {
       if (_debugIsInitDelegate) {
         final targetType = ancestor.widget.runtimeType;
+        // error copied from StatefulElement
         throw FlutterError(
             'inheritFromWidgetOfExactType($targetType) or inheritFromElement() was called before ${widget.delegate.runtimeType}.initDelegate() completed.\n'
             'When an inherited widget changes, for example if the value of Theme.of() changes, '
@@ -180,20 +190,21 @@ class _DelegateElement extends StatefulElement {
   }
 }
 
-/// A [StateDelegate] that exposes a [value] of type [T].
+/// A base class for [StateDelegate] that exposes a [value] of type [T].
 ///
 /// See also:
-///  * [SingleValueDelegate], which extends [ValueAdaptiveDelegate] to store
+///
+///  * [SingleValueDelegate], which extends [ValueStateDelegate] to store
 ///  an immutable value.
-///  * [BuilderAdaptiveDelegate], which extends [ValueAdaptiveDelegate]
+///  * [BuilderStateDelegate], which extends [ValueStateDelegate]
 /// to build [value] from a function and dispose it when the widget is unmounted.
-abstract class ValueAdaptiveDelegate<T> extends StateDelegate {
+abstract class ValueStateDelegate<T> extends StateDelegate {
   /// The member [value] should not be mutated directly.
   T get value;
 }
 
 /// Stores an immutable value.
-class SingleValueDelegate<T> extends ValueAdaptiveDelegate<T> {
+class SingleValueDelegate<T> extends ValueStateDelegate<T> {
   /// Initializes [value] for subclasses.
   SingleValueDelegate(this.value);
 
@@ -204,24 +215,23 @@ class SingleValueDelegate<T> extends ValueAdaptiveDelegate<T> {
 /// A [StateDelegate] that creates and dispose a value from functions.
 ///
 /// See also:
-///  * [ValueAdaptiveDelegate], which [BuilderAdaptiveDelegate] implements.
-class BuilderAdaptiveDelegate<T> extends StateDelegate
-    implements ValueAdaptiveDelegate<T> {
-  /// Initializes [builder] and [dispose] for subclasses.
-  ///
-  /// The parameter [builder] must not be `null`.
-  BuilderAdaptiveDelegate(this.builder, {Disposer<T> dispose})
-      : assert(builder != null),
+///
+///  * [ValueStateDelegate], which [BuilderStateDelegate] implements.
+class BuilderStateDelegate<T> extends ValueStateDelegate<T> {
+  /// The parameter `builder` must not be `null`.
+  BuilderStateDelegate(this._builder, {Disposer<T> dispose})
+      : assert(_builder != null),
         _dispose = dispose;
 
   /// A callback used to create [value].
   ///
-  /// Once [value] is initialized, [builder] will never be called again
+  /// Once [value] is initialized, [_builder] will never be called again
   /// and [value] will never change.
   ///
   /// See also:
-  ///  * [value], which [builder] creates.
-  final ValueBuilder<T> builder;
+  ///
+  ///  * [value], which [_builder] creates.
+  final ValueBuilder<T> _builder;
   final Disposer<T> _dispose;
 
   T _value;
@@ -230,35 +240,40 @@ class BuilderAdaptiveDelegate<T> extends StateDelegate
 
   @override
   void initDelegate() {
-    _value = builder(context);
+    super.initDelegate();
+    _value = _builder(context);
   }
 
   @override
-  void didUpdateDelegate(BuilderAdaptiveDelegate<T> old) {
+  void didUpdateDelegate(BuilderStateDelegate<T> old) {
+    super.didUpdateDelegate(old);
     _value = old.value;
   }
 
   @override
   void dispose() {
     _dispose?.call(context, value);
+    super.dispose();
   }
 }
 
-/// A [DelegateWidget] that accepts only [ValueAdaptiveDelegate] as [delegate].
+/// A [DelegateWidget] that accepts only [ValueStateDelegate] as [delegate].
 ///
 /// See also:
+///
 ///  * [DelegateWidget]
-///  * [ValueAdaptiveDelegate]
+///  * [ValueStateDelegate]
 abstract class ValueDelegateWidget<T> extends DelegateWidget {
   /// Initializes [key] for subclasses.
   ///
   /// The argument [delegate] must not be `null`.
   ValueDelegateWidget({
     Key key,
-    ValueAdaptiveDelegate<T> delegate,
+    @required ValueStateDelegate<T> delegate,
   }) : super(key: key, delegate: delegate);
 
   @override
-  ValueAdaptiveDelegate<T> get delegate =>
-      super.delegate as ValueAdaptiveDelegate<T>;
+  @protected
+  ValueStateDelegate<T> get delegate =>
+      super.delegate as ValueStateDelegate<T>;
 }

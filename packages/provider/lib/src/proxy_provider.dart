@@ -58,9 +58,6 @@ abstract class ProxyProviderWidget extends StatefulWidget {
 /// value from within [didUpdateDependencies] instead of [didChangeDependencies].
 abstract class ProxyProviderState<T extends ProxyProviderWidget>
     extends State<T> {
-  @protected
-  @mustCallSuper
-
   /// To not confuse with [didChangeDependencies].
   ///
   /// As opposed to [didChangeDependencies], [didUpdateDependencies] is
@@ -71,6 +68,8 @@ abstract class ProxyProviderState<T extends ProxyProviderWidget>
   /// is called, and that the widget will not be unmounted before updates are
   /// applied. It is therefore safe to make network http calls or mutations
   /// inside this life-cycle.
+  @protected
+  @mustCallSuper
   void didUpdateDependencies() {}
 }
 
@@ -257,34 +256,34 @@ class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
   }
 }
 
-// TODO(rousselGit) update dartdoc when https://github.com/dart-lang/dartdoc/issues/1977 is closed
 /// {@template provider.proxyprovider}
 /// A provider that builds a value based on other providers.
 ///
-/// The exposed value is built through [ProxyProvider.builder], and then passed
+/// The exposed value is built through [builder], and then passed
 /// to [InheritedProvider].
 ///
-/// As opposed to the `builder` parameter of [Provider], [ProxyProvider.builder]
+/// As opposed to the `builder` parameter of [Provider], [builder]
 /// may be called more than once. It will be called once when the widget is
 /// mounted, then once whenever any of the [InheritedWidget] which [ProxyProvider]
 /// depends emits an update.
 ///
 /// [ProxyProvider] comes in different variants such as [ProxyProvider2].
-/// This only changes the [ProxyProvider.builder] function, such that it takes
+/// This only changes the [builder] function, such that it takes
 /// a different number of arguments.
-/// The `2` in [ProxyProvider2] means that [ProxyProvider.builder] builds its
+/// The `2` in [ProxyProvider2] means that [builder] builds its
 /// value from **2** other providers.
 ///
-/// All variations of [ProxyProvider.builder] will receive the [BuildContext]
+/// All variations of [builder] will receive the [BuildContext]
 /// as first parameter, and the previously built value as last parameter.
 ///
 /// This previously built value will be `null` by default, unless
-/// [ProxyProvider.initialBuilder] is specified – in which case, it will be the
-/// value returned by [ProxyProvider.initialBuilder].
+/// [initialBuilder] is specified – in which case, it will be the
+/// value returned by [initialBuilder].
 ///
-/// [ProxyProvider.builder] must not be `null`.
+/// [builder] must not be `null`.
 ///
 /// See also:
+///
 ///  * [Provider], which matches the behavior of [ProxyProvider] without
 /// dependending on other providers.
 /// {@endtemplate}

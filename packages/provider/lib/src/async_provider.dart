@@ -5,6 +5,14 @@ import 'package:flutter/widgets.dart';
 import 'delegate_widget.dart';
 import 'provider.dart';
 
+/// A callback used to build a valid value from an error.
+///
+/// See also:
+///
+///   * [StreamProvider.catchError] which uses [ErrorBuilder] to handle errors
+///     emitted by a [Stream].
+///   * [FutureProvider.catchError] which uses [ErrorBuilder] to handle
+///     [Future.catch].
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 
 /// Listens to a [Stream<T>] and exposes [T] to its descendants.
@@ -20,16 +28,14 @@ typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 /// {@macro provider.updateshouldnotify}
 ///
 /// See also:
-///   * [Stream]
+///
+///   * [Stream], which is listened by [StreamProvider].
 ///   * [StreamController], to create a [Stream]
 class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     implements SingleChildCloneableWidget {
-  /// Creates a [StreamController] from [builder] and subscribes to it.
+  /// Creates a [Stream] from [builder] and subscribes to it.
   ///
-  /// [StreamProvider] will automatically call [StreamController.close]
-  /// when the widget is removed from the tree.
-  ///
-  /// [builder] must not be `null`.
+  /// The parameter [builder] must not be `null`.
   StreamProvider({
     Key key,
     @required ValueBuilder<Stream<T>> builder,
@@ -39,19 +45,19 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     Widget child,
   }) : this._(
           key: key,
-          delegate: BuilderAdaptiveDelegate<Stream<T>>(builder),
+          delegate: BuilderStateDelegate<Stream<T>>(builder),
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
           child: child,
         );
 
-  /// Creates a [StreamController] from [builder] and subscribes to it.
+  /// Creates a [StreamController] from [builder] and subscribes to its stream.
   ///
   /// [StreamProvider] will automatically call [StreamController.close]
   /// when the widget is removed from the tree.
   ///
-  /// [builder] must not be `null`.
+  /// The parameter [builder] must not be `null`.
   StreamProvider.controller({
     Key key,
     @required ValueBuilder<StreamController<T>> builder,
@@ -87,7 +93,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
 
   StreamProvider._({
     Key key,
-    @required ValueAdaptiveDelegate<Stream<T>> delegate,
+    @required ValueStateDelegate<Stream<T>> delegate,
     this.initialData,
     this.catchError,
     this.updateShouldNotify,
@@ -102,7 +108,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
   /// {@macro flutter.widgets.child}
   final Widget child;
 
-  /// Optional function used whenever the [Stream] emits an error.
+  /// An optional function used whenever the [Stream] emits an error.
   ///
   /// [catchError] will be called with the emitted error and
   /// is expected to return a fallback value without throwing.
@@ -119,10 +125,10 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     return StreamProvider._(
       key: key,
       delegate: delegate,
-      child: child,
       updateShouldNotify: updateShouldNotify,
       initialData: initialData,
       catchError: catchError,
+      child: child,
     );
   }
 
@@ -133,7 +139,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
       initialData: initialData,
       builder: (_, snapshot) {
         return InheritedProvider<T>(
-          value: _getValue(snapshot, context, catchError),
+          value: _snapshotToValue(snapshot, context, catchError, this),
           child: child,
           updateShouldNotify: updateShouldNotify,
         );
@@ -142,43 +148,53 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
   }
 }
 
-T _getValue<T>(AsyncSnapshot<T> snapshot, BuildContext context,
-    ErrorBuilder<T> catchError) {
+T _snapshotToValue<T>(AsyncSnapshot<T> snapshot, BuildContext context,
+    ErrorBuilder<T> catchError, ValueDelegateWidget owner) {
   if (snapshot.hasError) {
     if (catchError != null) {
       return catchError(context, snapshot.error);
     }
-    // ignore: only_throw_errors
-    throw snapshot.error;
+    throw FlutterError('''
+An exception was throw by ${
+        // ignore: invalid_use_of_protected_member
+        owner.delegate.value?.runtimeType} listened by
+$owner, but no `catchError` was provided.
+
+Exception:
+${snapshot.error}
+''');
   }
   return snapshot.data;
 }
 
 class _StreamControllerBuilderDelegate<T>
-    extends ValueAdaptiveDelegate<Stream<T>> {
-  _StreamControllerBuilderDelegate(this.builder) : assert(builder != null);
+    extends ValueStateDelegate<Stream<T>> {
+  _StreamControllerBuilderDelegate(this._builder) : assert(_builder != null);
 
-  StreamController<T> controller;
-  ValueBuilder<StreamController<T>> builder;
+  StreamController<T> _controller;
+  ValueBuilder<StreamController<T>> _builder;
 
   @override
   Stream<T> value;
 
   @override
   void initDelegate() {
-    controller = builder(context);
-    value = controller?.stream;
+    super.initDelegate();
+    _controller = _builder(context);
+    value = _controller?.stream;
   }
 
   @override
   void didUpdateDelegate(_StreamControllerBuilderDelegate<T> old) {
+    super.didUpdateDelegate(old);
     value = old.value;
-    controller = old.controller;
+    _controller = old._controller;
   }
 
   @override
   void dispose() {
-    controller?.close();
+    _controller?.close();
+    super.dispose();
   }
 }
 
@@ -190,7 +206,8 @@ class _StreamControllerBuilderDelegate<T>
 /// {@macro provider.updateshouldnotify}
 ///
 /// See also:
-///   * [Future]
+///
+///   * [Future], which is listened by [FutureProvider].
 class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
     implements SingleChildCloneableWidget {
   /// Creates a [Future] from [builder] and subscribes to it.
@@ -208,7 +225,7 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
-          delegate: BuilderAdaptiveDelegate(builder),
+          delegate: BuilderStateDelegate(builder),
           child: child,
         );
 
@@ -231,7 +248,7 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
 
   FutureProvider._({
     Key key,
-    ValueAdaptiveDelegate<Future<T>> delegate,
+    @required ValueStateDelegate<Future<T>> delegate,
     this.initialData,
     this.catchError,
     this.updateShouldNotify,
@@ -279,7 +296,7 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
       initialData: initialData,
       builder: (_, snapshot) {
         return InheritedProvider<T>(
-          value: _getValue(snapshot, context, catchError),
+          value: _snapshotToValue(snapshot, context, catchError, this),
           updateShouldNotify: updateShouldNotify,
           child: child,
         );

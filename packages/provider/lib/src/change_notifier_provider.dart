@@ -9,8 +9,9 @@ import 'proxy_provider.dart';
 /// and rebuilds dependents whenever the [ChangeNotifier.notifyListeners] is called.
 ///
 /// See also:
+///
+///   * [ChangeNotifier], which is listened by [ChangeNotifierProvider].
 ///   * [ListenableProvider], similar to [ChangeNotifierProvider] but works with any [Listenable].
-///   * [ChangeNotifier]
 class ChangeNotifierProvider<T extends ChangeNotifier>
     extends ListenableProvider<T> implements SingleChildCloneableWidget {
   static void _disposer(BuildContext context, ChangeNotifier notifier) =>

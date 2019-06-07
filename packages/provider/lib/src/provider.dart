@@ -6,6 +6,10 @@ import 'package:provider/src/delegate_widget.dart';
 
 /// A function that returns true when the update from [previous] to [current]
 /// should notify listeners, if any.
+///
+/// See also:
+///
+///   * [InheritedWidget.updateShouldNotify]
 typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
 
 /// Returns the type [T].
@@ -25,7 +29,7 @@ abstract class SingleChildCloneableWidget implements Widget {
 
 /// A generic implementation of an [InheritedWidget].
 ///
-/// Any descendant of this widget can obtain [value] using [Provider.of].
+/// Any descendant of this widget can obtain `value` using [Provider.of].
 ///
 /// Do not use this class directly unless you are creating a custom "Provider".
 /// Instead use [Provider] class, which wraps [InheritedProvider].
@@ -33,25 +37,26 @@ class InheritedProvider<T> extends InheritedWidget {
   /// Allow customizing [updateShouldNotify].
   const InheritedProvider({
     Key key,
-    @required this.value,
+    @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
-  })  : _updateShouldNotify = updateShouldNotify,
+  })  : _value = value,
+        _updateShouldNotify = updateShouldNotify,
         super(key: key, child: child);
 
   /// The currently exposed value.
   ///
-  /// Mutating [value] should be avoided. Instead rebuild the widget tree
+  /// Mutating `value` should be avoided. Instead rebuild the widget tree
   /// and replace [InheritedProvider] with one that holds the new value.
-  final T value;
+  final T _value;
   final UpdateShouldNotify<T> _updateShouldNotify;
 
   @override
   bool updateShouldNotify(InheritedProvider<T> oldWidget) {
     if (_updateShouldNotify != null) {
-      return _updateShouldNotify(oldWidget.value, value);
+      return _updateShouldNotify(oldWidget._value, _value);
     }
-    return oldWidget.value != value;
+    return oldWidget._value != _value;
   }
 }
 
@@ -175,12 +180,12 @@ class Provider<T> extends ValueDelegateWidget<T>
   /// Allows to specify parameters to [Provider].
   Provider({
     Key key,
-    ValueBuilder<T> builder,
+    @required ValueBuilder<T> builder,
     Disposer<T> dispose,
     Widget child,
   }) : this._(
           key: key,
-          delegate: BuilderAdaptiveDelegate<T>(builder, dispose: dispose),
+          delegate: BuilderStateDelegate<T>(builder, dispose: dispose),
           updateShouldNotify: null,
           child: child,
         );
@@ -188,7 +193,7 @@ class Provider<T> extends ValueDelegateWidget<T>
   /// Allows to specify parameters to [Provider].
   Provider.value({
     Key key,
-    T value,
+    @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
   }) : this._(
@@ -200,7 +205,7 @@ class Provider<T> extends ValueDelegateWidget<T>
 
   Provider._({
     Key key,
-    ValueAdaptiveDelegate<T> delegate,
+    @required ValueStateDelegate<T> delegate,
     this.updateShouldNotify,
     this.child,
   }) : super(key: key, delegate: delegate);
@@ -222,7 +227,7 @@ class Provider<T> extends ValueDelegateWidget<T>
       throw ProviderNotFoundError(T, context.widget.runtimeType);
     }
 
-    return provider.value;
+    return provider._value;
   }
 
   /// A sanity check to prevent misuse of [Provider] when a variant should be used.
@@ -298,7 +303,7 @@ void main() {
       Provider.debugCheckInvalidValueType?.call<T>(delegate.value);
       return true;
     }());
-    return InheritedProvider(
+    return InheritedProvider<T>(
       value: delegate.value,
       updateShouldNotify: updateShouldNotify,
       child: child,

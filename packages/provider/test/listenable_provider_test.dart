@@ -32,6 +32,7 @@ void main() {
 
       expect(clone.child, equals(child2));
       expect(clone.key, equals(provider.key));
+      // ignore: invalid_use_of_protected_member
       expect(clone.delegate, equals(provider.delegate));
     });
     test('works with MultiProvider #3', () {
@@ -46,6 +47,7 @@ void main() {
 
       expect(clone.child, equals(child2));
       expect(clone.key, equals(provider.key));
+      // ignore: invalid_use_of_protected_member
       expect(clone.delegate, equals(provider.delegate));
     });
 
