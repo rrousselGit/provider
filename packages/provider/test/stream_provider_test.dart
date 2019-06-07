@@ -17,12 +17,36 @@ class MockStream<T> extends Mock implements Stream<T> {}
 
 void main() {
   group('streamProvider', () {
-    testWidgets('update when value change', (tester) async {
+    testWidgets('update when value change (default) ', (tester) async {
+      final controller = StreamController<int>();
+      final providerKey = GlobalKey();
+      final childKey = GlobalKey();
+      BuildContext context;
+
+      await tester.pumpWidget(StreamProvider(
+        key: providerKey,
+        builder: (c) {
+          context = c;
+          return controller.stream;
+        },
+        child: Container(key: childKey),
+      ));
+
+      expect(context, equals(providerKey.currentContext));
+      expect(Provider.of<int>(childKey.currentContext), null);
+
+      controller.add(0);
+      // adding to stream is asynchronous so we have to delay the pump
+      await Future.microtask(tester.pump);
+
+      expect(Provider.of<int>(childKey.currentContext), 0);
+    });
+    testWidgets('update when value change (.value)', (tester) async {
       final controller = StreamController<int>();
       final key = GlobalKey();
 
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         child: Container(key: key),
       ));
 
@@ -48,12 +72,12 @@ void main() {
       final child = Builder(builder: builder);
 
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         child: child,
       ));
 
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         child: child,
       ));
 
@@ -66,7 +90,7 @@ void main() {
 
       await tester.pumpWidget(StreamProvider.value(
         key: key,
-        stream: controller.stream,
+        value: controller.stream,
         child: Container(),
       ));
 
@@ -79,7 +103,7 @@ void main() {
 
       final controller = StreamController<int>();
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         updateShouldNotify: shouldNotify,
         child: Container(),
       ));
@@ -98,11 +122,11 @@ void main() {
         (tester) async {
       final stream = MockStream<int>();
       await tester.pumpWidget(StreamProvider.value(
-        stream: stream,
+        value: stream,
         child: Container(),
       ));
       await tester.pumpWidget(StreamProvider.value(
-        stream: stream,
+        value: stream,
         child: Container(),
       ));
 
@@ -120,14 +144,22 @@ void main() {
       final controller = StreamController<int>();
 
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         child: Container(),
       ));
 
       controller.addError(42);
 
       await Future.microtask(tester.pump);
-      expect(tester.takeException(), 42);
+      final exception = tester.takeException() as Object;
+      expect(exception, isFlutterError);
+      expect(exception.toString(), equals('''
+An exception was throw by _ControllerStream<int> listened by
+StreamProvider<int>, but no `catchError` was provided.
+
+Exception:
+42
+'''));
     });
     testWidgets('calls catchError if present and stream has error',
         (tester) async {
@@ -137,7 +169,7 @@ void main() {
       when(catchError(any, 42)).thenReturn(0);
 
       await tester.pumpWidget(StreamProvider.value(
-        stream: controller.stream,
+        value: controller.stream,
         catchError: catchError,
         child: Container(key: key),
       ));
@@ -157,7 +189,7 @@ void main() {
       final key = GlobalKey();
       await tester.pumpWidget(MultiProvider(
         providers: [
-          const StreamProvider<int>.value(stream: Stream<int>.empty()),
+          StreamProvider<int>.value(value: const Stream<int>.empty()),
         ],
         child: Container(key: key),
       ));
@@ -166,7 +198,7 @@ void main() {
     });
     test('works with MultiProvider #2', () {
       final provider = StreamProvider<int>.value(
-        stream: const Stream<int>.empty(),
+        value: const Stream<int>.empty(),
         initialData: 42,
         child: Container(),
         catchError: (_, __) => 42,
@@ -176,17 +208,16 @@ void main() {
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.updateShouldNotify, provider.updateShouldNotify);
-      expect(clone.key, provider.key);
-      expect(clone.initialData, provider.initialData);
-      expect(clone.builder, provider.builder);
-      expect(clone.value, provider.value);
-      expect(clone.builder, provider.builder);
-      expect(clone.catchError, provider.catchError);
+      expect(clone.child, equals(child2));
+      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
+      expect(clone.key, equals(provider.key));
+      expect(clone.initialData, equals(provider.initialData));
+      // ignore: invalid_use_of_protected_member
+      expect(clone.delegate, equals(provider.delegate));
+      expect(clone.catchError, equals(provider.catchError));
     });
     test('works with MultiProvider #3', () {
-      final provider = StreamProvider<int>(
+      final provider = StreamProvider<int>.controller(
         builder: (_) => StreamController<int>(),
         initialData: 42,
         child: Container(),
@@ -197,19 +228,18 @@ void main() {
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.updateShouldNotify, provider.updateShouldNotify);
-      expect(clone.key, provider.key);
-      expect(clone.initialData, provider.initialData);
-      expect(clone.builder, provider.builder);
-      expect(clone.value, provider.value);
-      expect(clone.builder, provider.builder);
-      expect(clone.catchError, provider.catchError);
+      expect(clone.child, equals(child2));
+      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
+      expect(clone.key, equals(provider.key));
+      expect(clone.initialData, equals(provider.initialData));
+      // ignore: invalid_use_of_protected_member
+      expect(clone.delegate, equals(provider.delegate));
+      expect(clone.catchError, equals(provider.catchError));
     });
     testWidgets('works with null', (tester) async {
       final key = GlobalKey();
       await tester.pumpWidget(StreamProvider<int>.value(
-        stream: null,
+        value: null,
         child: Container(key: key),
       ));
 
@@ -219,14 +249,14 @@ void main() {
     group('stateful constructor', () {
       test('crashes if builder is null', () {
         expect(
-          () => StreamProvider<int>(builder: null),
+          () => StreamProvider<int>.controller(builder: null),
           throwsAssertionError,
         );
       });
 
       testWidgets('works with null', (tester) async {
         final key = GlobalKey();
-        await tester.pumpWidget(StreamProvider<int>(
+        await tester.pumpWidget(StreamProvider<int>.controller(
           builder: (_) => null,
           child: Container(key: key),
         ));
@@ -244,7 +274,7 @@ void main() {
         final builder = ValueBuilderMock<StreamController<int>>();
         when(builder(any)).thenReturn(controller);
 
-        await tester.pumpWidget(StreamProvider<int>(
+        await tester.pumpWidget(StreamProvider<int>.controller(
           builder: builder,
           child: Container(),
         ));
@@ -255,7 +285,7 @@ void main() {
         clearInteractions(controller);
 
         // extra build to see if builder isn't called again
-        await tester.pumpWidget(StreamProvider<int>(
+        await tester.pumpWidget(StreamProvider<int>.controller(
           builder: builder,
           child: Container(),
         ));
@@ -271,7 +301,7 @@ void main() {
         when(shouldNotify(null, 1)).thenReturn(true);
 
         var controller = StreamController<int>();
-        await tester.pumpWidget(StreamProvider<int>(
+        await tester.pumpWidget(StreamProvider<int>.controller(
           builder: (_) => controller,
           updateShouldNotify: shouldNotify,
           child: Container(),
@@ -293,7 +323,7 @@ void main() {
         final key = GlobalKey();
         final controller = StreamController<int>();
         await tester.pumpWidget(StreamProvider<int>.value(
-          stream: controller.stream,
+          value: controller.stream,
           child: Container(),
         ));
 
@@ -303,7 +333,7 @@ void main() {
 
         realController2.add(42);
 
-        await tester.pumpWidget(StreamProvider<int>(
+        await tester.pumpWidget(StreamProvider<int>.controller(
           builder: (_) => controller2,
           child: Container(key: key),
         ));
@@ -325,13 +355,13 @@ void main() {
 
         final key = GlobalKey();
 
-        await tester.pumpWidget(StreamProvider<int>(
+        await tester.pumpWidget(StreamProvider<int>.controller(
           builder: (_) => controller,
           child: Container(),
         ));
 
         await tester.pumpWidget(StreamProvider.value(
-          stream: Stream<int>.fromIterable([42]),
+          value: Stream<int>.fromIterable([42]),
           child: Container(key: key),
         ));
         await tester.pump();

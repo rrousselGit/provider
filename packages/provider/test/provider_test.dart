@@ -2,11 +2,51 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' hide TypeMatcher;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/src/provider.dart';
 import 'package:test_api/test_api.dart' show TypeMatcher;
+
+import 'common.dart';
 
 void main() {
   group('Provider', () {
+    testWidgets('throws if the provided value is a Listenable/Stream',
+        (tester) async {
+      await tester.pumpWidget(
+        Provider.value(
+          value: MyListenable(),
+          child: Container(),
+        ),
+      );
+
+      expect(tester.takeException(), isFlutterError);
+
+      await tester.pumpWidget(
+        Provider.value(
+          value: MyStream(),
+          child: Container(),
+        ),
+      );
+
+      expect(tester.takeException(), isFlutterError);
+    });
+    testWidgets('debugCheckInvalidValueType can be disabled', (tester) async {
+      final previous = Provider.debugCheckInvalidValueType;
+      Provider.debugCheckInvalidValueType = null;
+      addTearDown(() => Provider.debugCheckInvalidValueType = previous);
+
+      await tester.pumpWidget(
+        Provider.value(
+          value: MyListenable(),
+          child: Container(),
+        ),
+      );
+
+      await tester.pumpWidget(
+        Provider.value(
+          value: MyStream(),
+          child: Container(),
+        ),
+      );
+    });
     test('cloneWithChild works', () {
       final provider = Provider.value(
         value: 42,
@@ -17,10 +57,11 @@ void main() {
 
       final newChild = Container();
       final clone = provider.cloneWithChild(newChild);
-      expect(clone.child, newChild);
-      expect(clone.value, provider.value);
-      expect(clone.key, provider.key);
-      expect(provider.updateShouldNotify, clone.updateShouldNotify);
+      expect(clone.child, equals(newChild));
+      // ignore: invalid_use_of_protected_member
+      expect(clone.delegate, equals(provider.delegate));
+      expect(clone.key, equals(provider.key));
+      expect(provider.updateShouldNotify, equals(clone.updateShouldNotify));
     });
     testWidgets('simple usage', (tester) async {
       var buildCount = 0;

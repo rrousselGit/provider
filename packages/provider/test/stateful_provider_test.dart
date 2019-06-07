@@ -22,10 +22,11 @@ void main() {
 
     final newChild = Container();
     final clone = provider.cloneWithChild(newChild);
-    expect(clone.child, newChild);
-    expect(clone.builder, provider.builder);
-    expect(clone.key, provider.key);
-    expect(provider.updateShouldNotify, clone.updateShouldNotify);
+    expect(clone.child, equals(newChild));
+      // ignore: invalid_use_of_protected_member
+    expect(clone.delegate, equals(provider.delegate));
+    expect(clone.key, equals(provider.key));
+    expect(provider.updateShouldNotify, equals(clone.updateShouldNotify));
   });
   test('asserts', () {
     expect(

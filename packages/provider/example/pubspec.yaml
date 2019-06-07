@@ -1,15 +1,15 @@
 name: example
 version: 1.0.0
-homepage: https://github.com/rrousselGit/provider
+homepage: https://github.com/rrousselGit/provider	
 author: Remi Rousselet <darky12s@gmail.com>
 
 environment:
-  sdk: ">=2.0.0 <3.0.0"
+  sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  provider: 1.1.1
+  provider:
 
 dev_dependencies:
   flutter_test:
@@ -18,3 +18,6 @@ dev_dependencies:
 dependency_overrides:
   provider:
     path: ../
+
+flutter:
+  uses-material-design: true

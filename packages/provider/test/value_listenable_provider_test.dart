@@ -37,7 +37,7 @@ void main() {
               textDirection: TextDirection.ltr));
 
       await tester.pumpWidget(ValueListenableProvider.value(
-        valueListenable: listenable,
+        value: listenable,
         child: child,
       ));
 
@@ -59,13 +59,13 @@ void main() {
       final child = Builder(builder: builder);
 
       await tester.pumpWidget(ValueListenableProvider.value(
-        valueListenable: listenable,
+        value: listenable,
         child: child,
       ));
       verify(builder(any)).called(1);
 
       await tester.pumpWidget(ValueListenableProvider.value(
-        valueListenable: listenable,
+        value: listenable,
         child: child,
       ));
       verifyNoMoreInteractions(builder);
@@ -75,7 +75,7 @@ void main() {
       final key = GlobalKey();
       await tester.pumpWidget(ValueListenableProvider.value(
         key: key,
-        valueListenable: ValueNotifier(42),
+        value: ValueNotifier(42),
         child: Container(),
       ));
 
@@ -86,11 +86,11 @@ void main() {
         (tester) async {
       final valueNotifier = ValueNotifierMock<int>();
       await tester.pumpWidget(ValueListenableProvider.value(
-        valueListenable: valueNotifier,
+        value: valueNotifier,
         child: Container(),
       ));
       await tester.pumpWidget(ValueListenableProvider.value(
-        valueListenable: valueNotifier,
+        value: valueNotifier,
         child: Container(),
       ));
 
@@ -104,7 +104,7 @@ void main() {
 
       var notifier = ValueNotifier(0);
       await tester.pumpWidget(ValueListenableProvider.value(
-        valueListenable: notifier,
+        value: notifier,
         updateShouldNotify: shouldNotify,
         child: Container(),
       ));
@@ -121,9 +121,7 @@ void main() {
     testWidgets('works with MultiProvider', (tester) async {
       final key = GlobalKey();
       await tester.pumpWidget(MultiProvider(
-        providers: [
-          ValueListenableProvider.value(valueListenable: ValueNotifier(42))
-        ],
+        providers: [ValueListenableProvider.value(value: ValueNotifier(42))],
         child: Container(key: key),
       ));
 
@@ -133,18 +131,17 @@ void main() {
     test('works with MultiProvider #2', () {
       final provider = ValueListenableProvider.value(
         key: const Key('42'),
-        valueListenable: ValueNotifier<int>(42),
+        value: ValueNotifier<int>(42),
         child: Container(),
       );
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.key, provider.key);
-      expect(clone.builder, provider.builder);
-      expect(clone.value, provider.value);
-      expect(clone.updateShouldNotify, provider.updateShouldNotify);
-      expect(clone.builder, provider.builder);
+      expect(clone.child, equals(child2));
+      expect(clone.key, equals(provider.key));
+      // ignore: invalid_use_of_protected_member
+      expect(clone.delegate, equals(provider.delegate));
+      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
     });
     test('works with MultiProvider #3', () {
       final provider = ValueListenableProvider<int>(
@@ -155,12 +152,11 @@ void main() {
       var child2 = Container();
       final clone = provider.cloneWithChild(child2);
 
-      expect(clone.child, child2);
-      expect(clone.key, provider.key);
-      expect(clone.builder, provider.builder);
-      expect(clone.value, provider.value);
-      expect(clone.updateShouldNotify, provider.updateShouldNotify);
-      expect(clone.builder, provider.builder);
+      expect(clone.child, equals(child2));
+      expect(clone.key, equals(provider.key));
+      // ignore: invalid_use_of_protected_member
+      expect(clone.delegate, equals(provider.delegate));
+      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
     });
   });
 }
