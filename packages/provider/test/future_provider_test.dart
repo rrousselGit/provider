@@ -122,7 +122,15 @@ void main() {
       completer.completeError(42);
 
       await Future.microtask(tester.pump);
-      expect(tester.takeException(), 42);
+      final exception = tester.takeException() as Object;
+      expect(exception, isFlutterError);
+      expect(exception.toString(), equals('''
+An exception was throw by Future<int> listened by
+FutureProvider<int>, but no `catchError` was provided.
+
+Exception:
+42
+'''));
     });
     testWidgets('calls catchError if future emits error', (tester) async {
       final completer = Completer<int>();
@@ -174,6 +182,7 @@ void main() {
       expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
       expect(clone.key, equals(provider.key));
       expect(clone.initialData, equals(provider.initialData));
+      // ignore: invalid_use_of_protected_member
       expect(clone.delegate, equals(provider.delegate));
       expect(clone.catchError, equals(provider.catchError));
     });
@@ -193,6 +202,7 @@ void main() {
       expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
       expect(clone.key, equals(provider.key));
       expect(clone.initialData, equals(provider.initialData));
+      // ignore: invalid_use_of_protected_member
       expect(clone.delegate, equals(provider.delegate));
       expect(clone.catchError, equals(provider.catchError));
     });

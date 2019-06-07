@@ -180,10 +180,10 @@ void main() {
   });
 
   group('SingleValueDelegate', () {
-    test('implements ValueAdaptiveDelegate', () {
+    test('implements ValueStateDelegate', () {
       expect(
         SingleValueDelegate(0),
-        isInstanceOf<ValueAdaptiveDelegate<int>>(),
+        isInstanceOf<ValueStateDelegate<int>>(),
       );
     });
 
@@ -220,16 +220,16 @@ void main() {
     });
   });
 
-  group('BuilderAdaptiveDelegate', () {
-    test('implements ValueAdaptiveDelegate', () {
+  group('BuilderStateDelegate', () {
+    test('implements ValueStateDelegate', () {
       expect(
-        BuilderAdaptiveDelegate((_) => 42),
-        isInstanceOf<ValueAdaptiveDelegate<int>>(),
+        BuilderStateDelegate((_) => 42),
+        isInstanceOf<ValueStateDelegate<int>>(),
       );
     });
     test('throws if builder is missing', () {
       expect(
-        () => BuilderAdaptiveDelegate<dynamic>(null),
+        () => BuilderStateDelegate<dynamic>(null),
         throwsAssertionError,
       );
     });
@@ -240,9 +240,9 @@ void main() {
       final key = GlobalKey();
 
       await tester
-          .pumpWidget(BuilderDelegateWidget<BuilderAdaptiveDelegate<int>>(
+          .pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
         key: key,
-        delegate: BuilderAdaptiveDelegate((_) => 42),
+        delegate: BuilderStateDelegate((_) => 42),
         builder: (c, d) {
           value = d.value;
           context = c;
@@ -254,9 +254,9 @@ void main() {
       expect(value, equals(42));
 
       await tester
-          .pumpWidget(BuilderDelegateWidget<BuilderAdaptiveDelegate<int>>(
+          .pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
         key: key,
-        delegate: BuilderAdaptiveDelegate((_) => 0),
+        delegate: BuilderStateDelegate((_) => 0),
         builder: (c, d) {
           value = d.value;
           context = c;
@@ -271,13 +271,13 @@ void main() {
     testWidgets('initialize value and never recreate it', (tester) async {
       final disposeMock = DisposerMock<int>();
       final key = GlobalKey();
-      final delegate2 = BuilderAdaptiveDelegate(
+      final delegate2 = BuilderStateDelegate(
         (_) => 42,
         dispose: disposeMock,
       );
 
       await tester
-          .pumpWidget(BuilderDelegateWidget<BuilderAdaptiveDelegate<int>>(
+          .pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
         key: key,
         delegate: delegate2,
         builder: (_, __) => Container(),
@@ -298,6 +298,7 @@ void main() {
 class InitDelegate extends StateDelegate {
   @override
   void initDelegate() {
+    super.initDelegate();
     Provider.of<int>(context);
   }
 }
@@ -338,7 +339,7 @@ class MockStateDelegate<T> extends StateDelegate {
   }
 }
 
-class BuilderDelegateWidget<T extends ValueAdaptiveDelegate<dynamic>>
+class BuilderDelegateWidget<T extends ValueStateDelegate<dynamic>>
     extends ValueDelegateWidget<dynamic> {
   BuilderDelegateWidget({Key key, this.builder, T delegate})
       : super(key: key, delegate: delegate);

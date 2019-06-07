@@ -139,6 +139,7 @@ void main() {
 
       expect(clone.child, equals(child2));
       expect(clone.key, equals(provider.key));
+      // ignore: invalid_use_of_protected_member
       expect(clone.delegate, equals(provider.delegate));
       expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
     });
@@ -153,6 +154,7 @@ void main() {
 
       expect(clone.child, equals(child2));
       expect(clone.key, equals(provider.key));
+      // ignore: invalid_use_of_protected_member
       expect(clone.delegate, equals(provider.delegate));
       expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
     });
