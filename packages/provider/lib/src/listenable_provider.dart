@@ -50,7 +50,7 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
 
   ListenableProvider._({
     Key key,
-    _ListenableDelegateMixin<T> delegate,
+    @required _ListenableDelegateMixin<T> delegate,
     // TODO: updateShouldNotify for when the listenable instance change with `.value` constructor
     this.child,
   }) : super(

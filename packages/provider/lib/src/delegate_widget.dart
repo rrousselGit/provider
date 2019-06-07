@@ -218,9 +218,7 @@ class SingleValueDelegate<T> extends ValueStateDelegate<T> {
 ///
 ///  * [ValueStateDelegate], which [BuilderStateDelegate] implements.
 class BuilderStateDelegate<T> extends ValueStateDelegate<T> {
-  /// Initializes [_builder] and [dispose] for subclasses.
-  ///
-  /// The parameter [_builder] must not be `null`.
+  /// The parameter `builder` must not be `null`.
   BuilderStateDelegate(this._builder, {Disposer<T> dispose})
       : assert(_builder != null),
         _dispose = dispose;
@@ -271,7 +269,7 @@ abstract class ValueDelegateWidget<T> extends DelegateWidget {
   /// The argument [delegate] must not be `null`.
   ValueDelegateWidget({
     Key key,
-    ValueStateDelegate<T> delegate,
+    @required ValueStateDelegate<T> delegate,
   }) : super(key: key, delegate: delegate);
 
   @override

@@ -46,7 +46,7 @@ class InheritedProvider<T> extends InheritedWidget {
 
   /// The currently exposed value.
   ///
-  /// Mutating [_value] should be avoided. Instead rebuild the widget tree
+  /// Mutating `value` should be avoided. Instead rebuild the widget tree
   /// and replace [InheritedProvider] with one that holds the new value.
   final T _value;
   final UpdateShouldNotify<T> _updateShouldNotify;

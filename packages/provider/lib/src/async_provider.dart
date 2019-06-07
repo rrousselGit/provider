@@ -248,7 +248,7 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
 
   FutureProvider._({
     Key key,
-    ValueStateDelegate<Future<T>> delegate,
+    @required ValueStateDelegate<Future<T>> delegate,
     this.initialData,
     this.catchError,
     this.updateShouldNotify,
