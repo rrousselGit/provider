@@ -38,9 +38,11 @@ class InheritedProvider<T> extends InheritedWidget {
   const InheritedProvider({
     Key key,
     @required T value,
+    ValueBuilder<T> startListening,
     UpdateShouldNotify<T> updateShouldNotify,
-    Widget child,
-  })  : _value = value,
+    @required Widget child,
+  })  : _startListening = startListening,
+        _value = value,
         _updateShouldNotify = updateShouldNotify,
         super(key: key, child: child);
 
@@ -49,14 +51,60 @@ class InheritedProvider<T> extends InheritedWidget {
   /// Mutating `value` should be avoided. Instead rebuild the widget tree
   /// and replace [InheritedProvider] with one that holds the new value.
   final T _value;
+
+  final ValueBuilder<T> _startListening;
+
   final UpdateShouldNotify<T> _updateShouldNotify;
 
   @override
+  @protected
   bool updateShouldNotify(InheritedProvider<T> oldWidget) {
-    if (_updateShouldNotify != null) {
-      return _updateShouldNotify(oldWidget._value, _value);
+    throw UnsupportedError('updateShouldNotify is handled internally');
+  }
+
+  @override
+  _InheritedProviderElement<T> createElement() =>
+      _InheritedProviderElement(this);
+}
+
+class _InheritedProviderElement<T> extends InheritedElement {
+  _InheritedProviderElement(InheritedProvider<T> widget) : super(widget);
+
+  @override
+  InheritedProvider<T> get widget => super.widget as InheritedProvider<T>;
+
+  bool _didStartListening = false;
+  T _value;
+
+  @override
+  void updateDependencies(Element dependent, Object aspect) {
+    if (!_didStartListening) {
+      _didStartListening = true;
+      if (widget._startListening != null) {
+        _value = widget._startListening(this);
+      }
     }
-    return oldWidget._value != _value;
+    super.updateDependencies(dependent, aspect);
+  }
+
+  @override
+  void mount(Element parent, dynamic newSlot) {
+    _value = widget._value;
+    super.mount(parent, newSlot);
+  }
+
+  @override
+  void updated(InheritedProvider<T> oldWidget) {
+    final previous = _value;
+    _value = widget._value;
+
+    bool shouldUpdate;
+    if (widget._updateShouldNotify != null) {
+      shouldUpdate = widget._updateShouldNotify(previous, _value);
+    } else {
+      shouldUpdate = _value != previous;
+    }
+    if (shouldUpdate) notifyClients(oldWidget);
   }
 }
 
@@ -203,6 +251,17 @@ class Provider<T> extends ValueDelegateWidget<T>
           child: child,
         );
 
+  Provider.lazy({
+    Key key,
+    @required ValueBuilder<T> builder,
+    Disposer<T> dispose,
+    Widget child,
+  }) : this._(
+          key: key,
+          delegate: LazyBuilderStateDelegate(builder, dispose: dispose),
+          child: child,
+        );
+
   Provider._({
     Key key,
     @required ValueStateDelegate<T> delegate,
@@ -218,16 +277,18 @@ class Provider<T> extends ValueDelegateWidget<T>
   static T of<T>(BuildContext context, {bool listen = true}) {
     // this is required to get generic Type
     final type = _typeOf<InheritedProvider<T>>();
-    final provider = listen
-        ? context.inheritFromWidgetOfExactType(type) as InheritedProvider<T>
-        : context.ancestorInheritedElementForWidgetOfExactType(type)?.widget
-            as InheritedProvider<T>;
+    final element = context.ancestorInheritedElementForWidgetOfExactType(type)
+        as _InheritedProviderElement<T>;
 
-    if (provider == null) {
+    if (element == null) {
       throw ProviderNotFoundError(T, context.widget.runtimeType);
     }
 
-    return provider._value;
+    if (listen) {
+      context.inheritFromElement(element);
+    }
+
+    return element._value;
   }
 
   /// A sanity check to prevent misuse of [Provider] when a variant should be used.
@@ -303,6 +364,18 @@ void main() {
       Provider.debugCheckInvalidValueType?.call<T>(delegate.value);
       return true;
     }());
+    if (delegate is LazyBuilderStateDelegate<T>) {
+      final delegate = this.delegate as LazyBuilderStateDelegate<T>;
+      return InheritedProvider<T>(
+        value: delegate.value,
+        updateShouldNotify: updateShouldNotify,
+        startListening: (_) {
+          delegate.startListening();
+          return delegate.value;
+        },
+        child: child,
+      );
+    }
     return InheritedProvider<T>(
       value: delegate.value,
       updateShouldNotify: updateShouldNotify,

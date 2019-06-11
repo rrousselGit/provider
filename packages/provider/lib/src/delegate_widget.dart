@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:provider/src/provider.dart' show Provider;
+import 'package:provider/src/provider.dart' show Provider, InheritedProvider;
 
 /// A function that creates an object of type [T].
 ///
@@ -274,6 +274,53 @@ abstract class ValueDelegateWidget<T> extends DelegateWidget {
 
   @override
   @protected
-  ValueStateDelegate<T> get delegate =>
-      super.delegate as ValueStateDelegate<T>;
+  ValueStateDelegate<T> get delegate => super.delegate as ValueStateDelegate<T>;
+}
+
+class LazyBuilderStateDelegate<T> extends ValueStateDelegate<T> {
+  /// The parameter `builder` must not be `null`.
+  LazyBuilderStateDelegate(this._builder, {Disposer<T> dispose})
+      : assert(_builder != null),
+        _dispose = dispose;
+
+  final ValueBuilder<T> _builder;
+
+  final Disposer<T> _dispose;
+
+  T _value;
+  @override
+  T get value => _value;
+
+  bool _didBuild = false;
+
+  /// Initializes [value].
+  ///
+  /// It is usually used as the parameter `startListening` of [InheritedProvider].
+  void startListening() {
+    assert(() {
+      (context as _DelegateElement)._debugIsInitDelegate = true;
+      return true;
+    }());
+    _didBuild = true;
+    _value = _builder(context);
+    assert(() {
+      (context as _DelegateElement)._debugIsInitDelegate = false;
+      return true;
+    }());
+  }
+
+  @override
+  void didUpdateDelegate(LazyBuilderStateDelegate<T> old) {
+    super.didUpdateDelegate(old);
+    _value = old.value;
+    _didBuild = old._didBuild;
+  }
+
+  @override
+  void dispose() {
+    if (_didBuild) {
+      _dispose?.call(context, value);
+    }
+    super.dispose();
+  }
 }
