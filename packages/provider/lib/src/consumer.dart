@@ -68,7 +68,7 @@ class Consumer2<A, B> extends StatelessWidget {
   final Widget child;
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(BuildContext context, A value, B value2, Widget chi)
+  final Widget Function(BuildContext context, A value, B value2, Widget child)
       builder;
 
   @override
