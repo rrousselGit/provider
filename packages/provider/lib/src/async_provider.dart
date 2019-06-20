@@ -139,16 +139,17 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
       stream: delegate.value,
       initialData: initialData,
       builder: (_, snapshot) {
-        if (snapshot.connectionState == ConnectionState.none) {
-          return Center(child: const Text('No Data'));
-        } else if (snapshot.connectionState == ConnectionState.done) {
-          return InheritedProvider<T>(
-            value: _snapshotToValue(snapshot, context, catchError, this),
-            child: child,
-            updateShouldNotify: updateShouldNotify,
-          );
-        } else if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: const CircularProgressIndicator());
+        if (snapshot.hasError) return Text('Error: ${snapshot.error}');
+
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Scaffold(body: Center(child: const Text('Loading...')));
+          default:
+            return InheritedProvider<T>(
+              value: _snapshotToValue(snapshot, context, catchError, this),
+              child: child,
+              updateShouldNotify: updateShouldNotify,
+            );
         }
       },
     );
