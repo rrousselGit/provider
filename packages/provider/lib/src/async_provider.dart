@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'delegate_widget.dart';
@@ -138,11 +139,17 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
       stream: delegate.value,
       initialData: initialData,
       builder: (_, snapshot) {
-        return InheritedProvider<T>(
-          value: _snapshotToValue(snapshot, context, catchError, this),
-          child: child,
-          updateShouldNotify: updateShouldNotify,
-        );
+        if (snapshot.connectionState == ConnectionState.none) {
+          return Center(child: const Text('No Data'));
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          return InheritedProvider<T>(
+            value: _snapshotToValue(snapshot, context, catchError, this),
+            child: child,
+            updateShouldNotify: updateShouldNotify,
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: const CircularProgressIndicator());
+        }
       },
     );
   }
