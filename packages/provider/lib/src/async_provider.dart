@@ -143,7 +143,13 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
 
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return Scaffold(body: Center(child: const Text('Loading...')));
+            return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                home: Scaffold(body: Center(child: const Text('Loading...'))));
+          case ConnectionState.none:
+            return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                home: Scaffold(body: Center(child: const Text('NO DATA'))));
           default:
             return InheritedProvider<T>(
               value: _snapshotToValue(snapshot, context, catchError, this),
