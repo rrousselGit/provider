@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
 import 'delegate_widget.dart';
 import 'provider.dart';
 
@@ -43,6 +41,8 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
+    Widget loading,
+    Widget noneWidget,
     Widget child,
   }) : this._(
           key: key,
@@ -50,6 +50,8 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
+          loading: loading,
+          noneWidget: noneWidget,
           child: child,
         );
 
@@ -65,6 +67,8 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
+    Widget loading,
+    Widget noneWidget,
     Widget child,
   }) : this._(
           key: key,
@@ -72,6 +76,8 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
+          loading: loading,
+          noneWidget: noneWidget,
           child: child,
         );
 
@@ -82,7 +88,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
-    Widget loadWidget,
+    Widget loading,
     Widget noneWidget,
     Widget child,
   }) : this._(
@@ -91,7 +97,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
-          loadWidget: loadWidget,
+          loading: loading,
           noneWidget: noneWidget,
           child: child,
         );
@@ -102,7 +108,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     this.initialData,
     this.catchError,
     this.updateShouldNotify,
-    this.loadWidget,
+    this.loading,
     this.noneWidget,
     this.child,
   }) : super(key: key, delegate: delegate);
@@ -115,8 +121,12 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
   /// {@macro flutter.widgets.child}
   final Widget child;
 
-  final Widget loadWidget;
+  ///Widget to be displayed while "snapshot.connectionState" is "ConnectionState.waiting".
+  ///Both [loading] and [noneWidget] should be [MaterialApp] widget with [Scaffold] for a home
+  ///to have perfect conditions to create a custom loading widgets
+  final Widget loading;
 
+  ///Widget to be displayed when "snapshot.connectionState" is "ConnectionState.none".
   final Widget noneWidget;
 
   /// An optional function used whenever the [Stream] emits an error.
@@ -139,6 +149,8 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
       updateShouldNotify: updateShouldNotify,
       initialData: initialData,
       catchError: catchError,
+      loading: loading,
+      noneWidget: noneWidget,
       child: child,
     );
   }
@@ -149,17 +161,36 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
       stream: delegate.value,
       initialData: initialData,
       builder: (_, snapshot) {
-        if (snapshot.hasError) return Text('Error: ${snapshot.error}');
-
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                home: Scaffold(body: Center(child: const Text('Loading...'))));
+            return loading ??
+                MaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    home: Scaffold(
+                        body: Center(
+                      child: const CircularProgressIndicator(),
+                    )));
           case ConnectionState.none:
-            return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                home: Scaffold(body: noneWidget ?? Container()));
+            return noneWidget ??
+                MaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    home: Scaffold(
+                        body: Center(
+                      child: Row(
+                        children: <Widget>[
+                          const Text(
+                            'NO DATA ',
+                            style: TextStyle(fontSize: 30),
+                          ),
+                          const RotatedBox(
+                              quarterTurns: 20,
+                              child: Icon(
+                                Icons.priority_high,
+                                size: 50,
+                              ))
+                        ],
+                      ),
+                    )));
           default:
             return InheritedProvider<T>(
               value: _snapshotToValue(snapshot, context, catchError, this),
@@ -243,6 +274,8 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
+    Widget loading,
+    Widget noneWidget,
     Widget child,
   }) : this._(
           key: key,
@@ -250,6 +283,8 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
           delegate: BuilderStateDelegate(builder),
+          loading: loading,
+          noneWidget: noneWidget,
           child: child,
         );
 
@@ -260,6 +295,8 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
+    Widget loading,
+    Widget noneWidget,
     Widget child,
   }) : this._(
           key: key,
@@ -267,6 +304,8 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
           delegate: SingleValueDelegate(value),
+          loading: loading,
+          noneWidget: noneWidget,
           child: child,
         );
 
@@ -276,6 +315,8 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
     this.initialData,
     this.catchError,
     this.updateShouldNotify,
+    this.loading,
+    this.noneWidget,
     this.child,
   }) : super(key: key, delegate: delegate);
 
@@ -288,6 +329,14 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
   ///
   /// {@macro flutter.widgets.child}
   final Widget child;
+
+  ///Widget to be displayed while "snapshot.connectionState" is "ConnectionState.waiting".
+  ///Both [loading] and [noneWidget] should be [MaterialApp] widget with [Scaffold] for a home
+  ///to have perfect conditions to create a custom loading widgets
+  final Widget loading;
+
+  ///Widget to be displayed when "snapshot.connectionState" is "ConnectionState.none".
+  final Widget noneWidget;
 
   /// Optional function used if the [Future] emits an error.
   ///
@@ -309,6 +358,8 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
       updateShouldNotify: updateShouldNotify,
       initialData: initialData,
       catchError: catchError,
+      loading: loading,
+      noneWidget: noneWidget,
       child: child,
     );
   }
@@ -319,11 +370,44 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
       future: delegate.value,
       initialData: initialData,
       builder: (_, snapshot) {
-        return InheritedProvider<T>(
-          value: _snapshotToValue(snapshot, context, catchError, this),
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return loading ??
+                MaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    home: Scaffold(
+                        body: Center(
+                      child: const CircularProgressIndicator(),
+                    )));
+          case ConnectionState.none:
+            return noneWidget ??
+                MaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    home: Scaffold(
+                        body: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Text(
+                            'NO DATA ',
+                            style: TextStyle(fontSize: 30),
+                          ),
+                          const RotatedBox(
+                              quarterTurns: 20,
+                              child: Icon(
+                                Icons.priority_high,
+                                size: 50,
+                              ))
+                        ],
+                      ),
+                    )));
+          default:
+            return InheritedProvider<T>(
+              value: _snapshotToValue(snapshot, context, catchError, this),
+              child: child,
+              updateShouldNotify: updateShouldNotify,
+            );
+        }
       },
     );
   }
