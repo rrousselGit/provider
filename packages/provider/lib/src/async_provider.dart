@@ -82,6 +82,8 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
+    Widget loadWidget,
+    Widget noneWidget,
     Widget child,
   }) : this._(
           key: key,
@@ -89,6 +91,8 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
+          loadWidget: loadWidget,
+          noneWidget: noneWidget,
           child: child,
         );
 
@@ -98,6 +102,8 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     this.initialData,
     this.catchError,
     this.updateShouldNotify,
+    this.loadWidget,
+    this.noneWidget,
     this.child,
   }) : super(key: key, delegate: delegate);
 
@@ -108,6 +114,10 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
   ///
   /// {@macro flutter.widgets.child}
   final Widget child;
+
+  final Widget loadWidget;
+
+  final Widget noneWidget;
 
   /// An optional function used whenever the [Stream] emits an error.
   ///
@@ -149,7 +159,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
           case ConnectionState.none:
             return MaterialApp(
                 debugShowCheckedModeBanner: false,
-                home: Scaffold(body: Center(child: const Text('NO DATA'))));
+                home: Scaffold(body: noneWidget ?? Container()));
           default:
             return InheritedProvider<T>(
               value: _snapshotToValue(snapshot, context, catchError, this),
