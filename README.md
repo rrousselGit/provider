@@ -1,8 +1,16 @@
 [![Build Status](https://travis-ci.org/rrousselGit/provider.svg?branch=master)](https://travis-ci.org/rrousselGit/provider)
 [![pub package](https://img.shields.io/pub/v/provider.svg)](https://pub.dartlang.org/packages/provider) [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider) [![Gitter](https://badges.gitter.im/flutter_provider/community.svg)](https://gitter.im/flutter_provider/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-A dependency injection system built with widgets for widgets. `provider` is mostly syntax sugar for `InheritedWidget`,
-to make common use-cases straightforward.
+A mixture between dependency injection (DI) and state management, built with widgets for widgets.
+
+It purposefully use widgets for DI/state management instead of dart-only classes like `Stream`.
+The reason is, widgets are very simple yet robust and scalable.
+
+By using widgets for state management, `provider` can guarantee:
+
+- maintainability, through a forced uni-directional data-flow
+- testability/composability, since it is always possible mock/override a value
+- robustness, as it is harder to forget to handle the update scenario of a model/widget
 
 ## Migration from v2.0.0 to v3.0.0
 
@@ -19,7 +27,6 @@ void main() {
   runApp(MyApp());
 }
 ```
-
 
 - All `XXProvider.value` constructors now use `value` as parameter name.
 
@@ -167,6 +174,50 @@ MultiProvider(
 ```
 
 The behavior of both examples is strictly the same. `MultiProvider` only changes the appearance of the code.
+
+### ProxyProvider
+
+Since the 3.0.0, there is a new kind of provider: `ProxyProvider`.
+
+`ProxyProvider` is a provider that combines multiple values from other providers into a new object, and send the result to `Provider`.
+
+That new object will then be updated whenever one of the providers it depends on
+updates.
+
+The following example use `ProxyProvider` to build translations based on a counter
+coming from another provider.
+
+```dart
+Widget build(BuildContext context) {
+  return MultiProvider(
+    providers: [
+      ChangeNotifierProvider(builder: (_) => Counter()),
+      ProxyProvider<Counter, Translations>(
+        builder: (_, counter, __) => Translations(counter.value),
+      ),
+    ],
+    child: Foo(),
+  );
+}
+
+class Translations {
+  const Translations(this._value);
+
+  final int _value;
+
+  String get title => 'You clicked $_value times';
+}
+```
+
+It comes under multiple variations, such:
+
+- `ProxyProvider` vs `ProxyProvider2` vs `ProxyProvider3`, ...
+
+  That digit after the class name is the number of other providers that `ProxyProvider` depends on.
+
+- `ProxyProvider` vs `ChangeNotifierProxyProvider` vs `ListenableProxyProvider`, ...
+
+  They all works similarly, but instead of sending the result into a `Provider`, a `ChangeNotifierProxyProvider` will its value to a `ChangeNotifierProvider`.
 
 ### Existing providers
 
