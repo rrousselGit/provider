@@ -104,8 +104,7 @@ class _BuilderListenableDelegate<T extends Listenable>
       : super(builder, dispose: dispose);
 }
 
-mixin _ListenableDelegateMixin<T extends Listenable>
-    on ValueStateDelegate<T> {
+mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
   UpdateShouldNotify<T> updateShouldNotify;
   VoidCallback _removeListener;
 
