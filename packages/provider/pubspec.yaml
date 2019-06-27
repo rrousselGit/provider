@@ -12,6 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  equatable:
 
 dev_dependencies:
   pedantic: ^1.4.0
