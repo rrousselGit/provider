@@ -239,8 +239,7 @@ void main() {
       BuildContext context;
       final key = GlobalKey();
 
-      await tester
-          .pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
+      await tester.pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
         key: key,
         delegate: BuilderStateDelegate((_) => 42),
         builder: (c, d) {
@@ -253,8 +252,7 @@ void main() {
       expect(context, equals(key.currentContext));
       expect(value, equals(42));
 
-      await tester
-          .pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
+      await tester.pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
         key: key,
         delegate: BuilderStateDelegate((_) => 0),
         builder: (c, d) {
@@ -276,8 +274,7 @@ void main() {
         dispose: disposeMock,
       );
 
-      await tester
-          .pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
+      await tester.pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
         key: key,
         delegate: delegate2,
         builder: (_, __) => Container(),

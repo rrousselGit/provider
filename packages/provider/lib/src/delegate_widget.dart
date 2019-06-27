@@ -274,6 +274,5 @@ abstract class ValueDelegateWidget<T> extends DelegateWidget {
 
   @override
   @protected
-  ValueStateDelegate<T> get delegate =>
-      super.delegate as ValueStateDelegate<T>;
+  ValueStateDelegate<T> get delegate => super.delegate as ValueStateDelegate<T>;
 }

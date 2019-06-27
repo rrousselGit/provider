@@ -217,7 +217,7 @@ It comes under multiple variations, such:
 
 - `ProxyProvider` vs `ChangeNotifierProxyProvider` vs `ListenableProxyProvider`, ...
 
-  They all works similarly, but instead of sending the result into a `Provider`, a `ChangeNotifierProxyProvider` will its value to a `ChangeNotifierProvider`.
+  They all works similarly, but instead of sending the result into a `Provider`, a `ChangeNotifierProxyProvider` will send its value to a `ChangeNotifierProvider`.
 
 ### Existing providers
 
