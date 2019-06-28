@@ -7,11 +7,29 @@ import 'provider.dart';
 ///
 /// [builder] must not be null and may be called multiple times (such as when provided value change).
 ///
+/// #### Note:
+///
+/// The widget [Consumer] can also be used inside [MultiProvider]. To do so,
+/// it must returns the `child` passed to [builder] in the wiget tree it creates.
+///
+/// ```dart
+/// MultiProvider(
+///   providers: [
+///     Provider(builder: (_) => Foo()),
+///     Consumer<Foo>(
+///       builder: (context, foo, child) =>
+///         Provider.value(value: foo.bar, child: child),
+///     )
+///   ],
+/// );
+/// ```
+///
 /// ## Performance optimizations:
 ///
 /// {@macro provider.consumer.child}
 /// {@endtemplate}
-class Consumer<T> extends StatelessWidget {
+class Consumer<T> extends StatelessWidget
+    implements SingleChildCloneableWidget {
   /// {@template provider.consumer.constructor}
   /// Consumes a [Provider<T>]
   /// {@endtemplate}
@@ -50,10 +68,20 @@ class Consumer<T> extends StatelessWidget {
       child,
     );
   }
+
+  @override
+  Consumer<T> cloneWithChild(Widget child) {
+    return Consumer(
+      key: key,
+      builder: builder,
+      child: child,
+    );
+  }
 }
 
 /// {@macro provider.consumer}
-class Consumer2<A, B> extends StatelessWidget {
+class Consumer2<A, B> extends StatelessWidget
+    implements SingleChildCloneableWidget {
   /// {@macro provider.consumer.constructor}
   Consumer2({
     Key key,
@@ -80,10 +108,20 @@ class Consumer2<A, B> extends StatelessWidget {
       child,
     );
   }
+
+  @override
+  Consumer2<A, B> cloneWithChild(Widget child) {
+    return Consumer2(
+      key: key,
+      builder: builder,
+      child: child,
+    );
+  }
 }
 
 /// {@macro provider.consumer}
-class Consumer3<A, B, C> extends StatelessWidget {
+class Consumer3<A, B, C> extends StatelessWidget
+    implements SingleChildCloneableWidget {
   /// {@macro provider.consumer.constructor}
   Consumer3({
     Key key,
@@ -111,10 +149,20 @@ class Consumer3<A, B, C> extends StatelessWidget {
       child,
     );
   }
+
+  @override
+  Consumer3<A, B, C> cloneWithChild(Widget child) {
+    return Consumer3(
+      key: key,
+      builder: builder,
+      child: child,
+    );
+  }
 }
 
 /// {@macro provider.consumer}
-class Consumer4<A, B, C, D> extends StatelessWidget {
+class Consumer4<A, B, C, D> extends StatelessWidget
+    implements SingleChildCloneableWidget {
   /// {@macro provider.consumer.constructor}
   Consumer4({
     Key key,
@@ -142,10 +190,20 @@ class Consumer4<A, B, C, D> extends StatelessWidget {
       child,
     );
   }
+
+  @override
+  Consumer4<A, B, C, D> cloneWithChild(Widget child) {
+    return Consumer4(
+      key: key,
+      builder: builder,
+      child: child,
+    );
+  }
 }
 
 /// {@macro provider.consumer}
-class Consumer5<A, B, C, D, E> extends StatelessWidget {
+class Consumer5<A, B, C, D, E> extends StatelessWidget
+    implements SingleChildCloneableWidget {
   /// {@macro provider.consumer.constructor}
   Consumer5({
     Key key,
@@ -175,10 +233,20 @@ class Consumer5<A, B, C, D, E> extends StatelessWidget {
       child,
     );
   }
+
+  @override
+  Consumer5<A, B, C, D, E> cloneWithChild(Widget child) {
+    return Consumer5(
+      key: key,
+      builder: builder,
+      child: child,
+    );
+  }
 }
 
 /// {@macro provider.consumer}
-class Consumer6<A, B, C, D, E, F> extends StatelessWidget {
+class Consumer6<A, B, C, D, E, F> extends StatelessWidget
+    implements SingleChildCloneableWidget {
   /// {@macro provider.consumer.constructor}
   Consumer6({
     Key key,
@@ -207,6 +275,15 @@ class Consumer6<A, B, C, D, E, F> extends StatelessWidget {
       Provider.of<E>(context),
       Provider.of<F>(context),
       child,
+    );
+  }
+
+  @override
+  Consumer6<A, B, C, D, E, F> cloneWithChild(Widget child) {
+    return Consumer6(
+      key: key,
+      builder: builder,
+      child: child,
     );
   }
 }
