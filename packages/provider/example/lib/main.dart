@@ -21,21 +21,24 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(builder: (_) => Counter()),
+        Consumer<Counter>(
+          builder: (context, counter, child) => AnimatedProvider<int>.value(
+                value: counter.count,
+                interpolate: (from, to, _) => IntTween(begin: from, end: to),
+                child: child,
+              ),
+        ),
       ],
       child: Consumer<Counter>(
         builder: (context, counter, _) {
-          return AnimatedProvider<int>.value(
-            value: counter.count,
-            interpolate: (from, to, _) => IntTween(begin: from, end: to),
-            child: MaterialApp(
-              supportedLocales: const [Locale('en')],
-              localizationsDelegates: [
-                DefaultMaterialLocalizations.delegate,
-                DefaultWidgetsLocalizations.delegate,
-                _ExampleLocalizationsDelegate(counter.count),
-              ],
-              home: const MyHomePage(),
-            ),
+          return MaterialApp(
+            supportedLocales: const [Locale('en')],
+            localizationsDelegates: [
+              DefaultMaterialLocalizations.delegate,
+              DefaultWidgetsLocalizations.delegate,
+              _ExampleLocalizationsDelegate(counter.count),
+            ],
+            home: const MyHomePage(),
           );
         },
       ),
