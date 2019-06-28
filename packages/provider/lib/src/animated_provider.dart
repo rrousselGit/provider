@@ -10,28 +10,21 @@ class AnimatedProvider<T> extends ValueDelegateWidget<Animation<T>> {
     Key key,
     @required T value,
     @required InterpolationBuilder<T> interpolate,
-    Disposer<Tween<T>> dispose,
+    UpdateShouldNotify<T> updateShouldNotify,
+    Duration duration,
+    Curve curve,
     Widget child,
   }) : this._(
           key: key,
-          delegate:
-              _AnimatedProviderBuilderStateDelegate<T>(value, interpolate),
+          delegate: _AnimatedProviderBuilderStateDelegate<T>(
+            value,
+            interpolate,
+            duration: duration,
+            curve: curve,
+          ),
           updateShouldNotify: null,
           child: child,
         );
-
-  // /// Allows to specify parameters to [AnimatedProvider].
-  // AnimatedProvider.value({
-  //   Key key,
-  //   @required T value,
-  //   UpdateShouldNotify<T> updateShouldNotify,
-  //   Widget child,
-  // }) : this._(
-  //         key: key,
-  //         delegate: SingleValueDelegate<T>(value),
-  //         updateShouldNotify: updateShouldNotify,
-  //         child: child,
-  //       );
 
   AnimatedProvider._({
     Key key,
@@ -68,7 +61,12 @@ typedef InterpolationBuilder<T> = Tween<T> Function(
 
 class _AnimatedProviderBuilderStateDelegate<T>
     extends ValueStateDelegate<Animation<T>> {
-  _AnimatedProviderBuilderStateDelegate(this._currentValue, this.builder);
+  _AnimatedProviderBuilderStateDelegate(
+    this._currentValue,
+    this.builder, {
+    this.duration,
+    this.curve,
+  });
 
   T _currentValue;
   Duration duration;
@@ -98,14 +96,18 @@ class _AnimatedProviderBuilderStateDelegate<T>
     _animationController = old._animationController;
     _tickerProvider = old._tickerProvider;
     _tween = old._tween;
+    value = old.value;
 
     if (duration != old.duration) {
       _animationController.duration = duration;
     }
     if (_currentValue != old._currentValue) {
       _tween = builder(value.value, _currentValue, _tween);
-      value =
-          _animationController.drive(CurveTween(curve: curve)).drive(_tween);
+      value = (curve != null
+              ? _animationController.drive(CurveTween(curve: curve))
+              : _animationController)
+          .drive(_tween);
+      _animationController.forward(from: 0);
     }
   }
 
@@ -131,8 +133,7 @@ class _TickerProvider implements TickerProvider {
           'objects and those objects might use it more than one time in total, then instead of '
           'mixing in a SingleTickerProviderStateMixin, use a regular TickerProviderStateMixin.');
     }());
-    _ticker =
-        Ticker(onTick, debugLabel: kDebugMode ? 'created by $this' : null);
+    _ticker = Ticker(onTick);
     // We assume that this is called from initState, build, or some sort of
     // event handler, and that thus TickerMode.of(context) would return true. We
     // can't actually check that here because if we're in initState then we're

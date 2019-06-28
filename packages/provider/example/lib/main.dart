@@ -10,7 +10,7 @@ class Counter with ChangeNotifier {
   int get count => _count;
 
   void increment() {
-    _count++;
+    _count += 100;
     notifyListeners();
   }
 }
@@ -24,19 +24,21 @@ class MyApp extends StatelessWidget {
         Consumer<Counter>(
           builder: (context, counter, child) => AnimatedProvider<int>.value(
                 value: counter.count,
+                duration: Duration(seconds: 2),
                 interpolate: (from, to, _) => IntTween(begin: from, end: to),
                 child: child,
               ),
         ),
+        ProxyProvider<int, double>(builder: (_, count, __) => count / 100)
       ],
-      child: Consumer<Counter>(
-        builder: (context, counter, _) {
+      child: Consumer<int>(
+        builder: (context, value, _) {
           return MaterialApp(
             supportedLocales: const [Locale('en')],
             localizationsDelegates: [
               DefaultMaterialLocalizations.delegate,
               DefaultWidgetsLocalizations.delegate,
-              _ExampleLocalizationsDelegate(counter.count),
+              _ExampleLocalizationsDelegate(value),
             ],
             home: const MyHomePage(),
           );
@@ -109,7 +111,8 @@ class CounterLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counter = Provider.of<Counter>(context);
+    final count = Provider.of<int>(context);
+    final half = Provider.of<double>(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -117,10 +120,8 @@ class CounterLabel extends StatelessWidget {
         const Text(
           'You have pushed the button this many times:',
         ),
-        Text(
-          '${counter.count}',
-          style: Theme.of(context).textTheme.display1,
-        ),
+        Text('$count', style: Theme.of(context).textTheme.display1),
+        Text('$half', style: Theme.of(context).textTheme.display1),
       ],
     );
   }
