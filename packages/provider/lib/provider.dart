@@ -1,5 +1,6 @@
 library provider;
 
+export 'src/animated_provider.dart';
 export 'src/async_provider.dart';
 export 'src/change_notifier_provider.dart';
 export 'src/consumer.dart';

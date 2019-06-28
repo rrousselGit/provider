@@ -24,14 +24,18 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<Counter>(
         builder: (context, counter, _) {
-          return MaterialApp(
-            supportedLocales: const [Locale('en')],
-            localizationsDelegates: [
-              DefaultMaterialLocalizations.delegate,
-              DefaultWidgetsLocalizations.delegate,
-              _ExampleLocalizationsDelegate(counter.count),
-            ],
-            home: const MyHomePage(),
+          return AnimatedProvider<int>.value(
+            value: counter.count,
+            interpolate: (from, to, _) => IntTween(begin: from, end: to),
+            child: MaterialApp(
+              supportedLocales: const [Locale('en')],
+              localizationsDelegates: [
+                DefaultMaterialLocalizations.delegate,
+                DefaultWidgetsLocalizations.delegate,
+                _ExampleLocalizationsDelegate(counter.count),
+              ],
+              home: const MyHomePage(),
+            ),
           );
         },
       ),
