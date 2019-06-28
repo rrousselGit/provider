@@ -122,6 +122,21 @@ Provider<String>.value(
 );
 ```
 
+The widget `Consumer` can also be used inside `MultiProvider`. To do so,
+it must returns the `child` passed to `builder` in the wiget tree it creates.
+
+```dart
+MultiProvider(
+  providers: [
+    Provider(builder: (_) => Foo()),
+    Consumer<Foo>(
+      builder: (context, foo, child) =>
+        Provider.value(value: foo.bar, child: child),
+    )
+  ],
+);
+```
+
 ---
 
 Note that you can freely use multiple providers with different types together:

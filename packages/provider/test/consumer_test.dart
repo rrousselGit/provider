@@ -85,6 +85,22 @@ void main() {
         throwsAssertionError,
       );
     });
+    testWidgets('can be used inside MultiProvider', (tester) async {
+      final key = GlobalKey();
+
+      await tester.pumpWidget(MultiProvider(
+        providers: List.from(provider.providers)
+          ..add(Consumer<A>(
+            key: key,
+            builder: (_, a, child) => Container(child: child),
+          )),
+        child: const Text('foo', textDirection: TextDirection.ltr),
+      ));
+
+      expect(find.text('foo'), findsOneWidget);
+      expect(find.byType(Container), findsOneWidget);
+      expect(key.currentContext, isNotNull);
+    });
   });
 
   group('consumer2', () {
@@ -111,6 +127,23 @@ void main() {
         throwsAssertionError,
       );
     });
+
+    testWidgets('can be used inside MultiProvider', (tester) async {
+      final key = GlobalKey();
+
+      await tester.pumpWidget(MultiProvider(
+        providers: List.from(provider.providers)
+          ..add(Consumer2<A, B>(
+            key: key,
+            builder: (_, a, b, child) => Container(child: child),
+          )),
+        child: const Text('foo', textDirection: TextDirection.ltr),
+      ));
+
+      expect(find.text('foo'), findsOneWidget);
+      expect(find.byType(Container), findsOneWidget);
+      expect(key.currentContext, isNotNull);
+    });
   });
   group('consumer3', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
@@ -135,6 +168,23 @@ void main() {
         () => Consumer3<A, B, C>(builder: null),
         throwsAssertionError,
       );
+    });
+
+    testWidgets('can be used inside MultiProvider', (tester) async {
+      final key = GlobalKey();
+
+      await tester.pumpWidget(MultiProvider(
+        providers: List.from(provider.providers)
+          ..add(Consumer3<A, B, C>(
+            key: key,
+            builder: (_, a, b, c, child) => Container(child: child),
+          )),
+        child: const Text('foo', textDirection: TextDirection.ltr),
+      ));
+
+      expect(find.text('foo'), findsOneWidget);
+      expect(find.byType(Container), findsOneWidget);
+      expect(key.currentContext, isNotNull);
     });
   });
   group('consumer4', () {
@@ -161,6 +211,23 @@ void main() {
         throwsAssertionError,
       );
     });
+
+    testWidgets('can be used inside MultiProvider', (tester) async {
+      final key = GlobalKey();
+
+      await tester.pumpWidget(MultiProvider(
+        providers: List.from(provider.providers)
+          ..add(Consumer4<A, B, C, D>(
+            key: key,
+            builder: (_, a, b, c, d, child) => Container(child: child),
+          )),
+        child: const Text('foo', textDirection: TextDirection.ltr),
+      ));
+
+      expect(find.text('foo'), findsOneWidget);
+      expect(find.byType(Container), findsOneWidget);
+      expect(key.currentContext, isNotNull);
+    });
   });
   group('consumer5', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
@@ -186,6 +253,23 @@ void main() {
         throwsAssertionError,
       );
     });
+
+    testWidgets('can be used inside MultiProvider', (tester) async {
+      final key = GlobalKey();
+
+      await tester.pumpWidget(MultiProvider(
+        providers: List.from(provider.providers)
+          ..add(Consumer5<A, B, C, D, E>(
+            key: key,
+            builder: (_, a, b, c, d, e, child) => Container(child: child),
+          )),
+        child: const Text('foo', textDirection: TextDirection.ltr),
+      ));
+
+      expect(find.text('foo'), findsOneWidget);
+      expect(find.byType(Container), findsOneWidget);
+      expect(key.currentContext, isNotNull);
+    });
   });
   group('consumer6', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
@@ -210,6 +294,23 @@ void main() {
         () => Consumer6<A, B, C, D, E, F>(builder: null),
         throwsAssertionError,
       );
+    });
+
+    testWidgets('can be used inside MultiProvider', (tester) async {
+      final key = GlobalKey();
+
+      await tester.pumpWidget(MultiProvider(
+        providers: List.from(provider.providers)
+          ..add(Consumer6<A, B, C, D, E, F>(
+            key: key,
+            builder: (_, a, b, c, d, e, f, child) => Container(child: child),
+          )),
+        child: const Text('foo', textDirection: TextDirection.ltr),
+      ));
+
+      expect(find.text('foo'), findsOneWidget);
+      expect(find.byType(Container), findsOneWidget);
+      expect(key.currentContext, isNotNull);
     });
   });
 }
