@@ -10,7 +10,7 @@ import 'provider.dart';
 /// #### Note:
 ///
 /// The widget [Consumer] can also be used inside [MultiProvider]. To do so,
-/// it must returns the `child` passed to [builder] in the wiget tree it creates.
+/// it must return the `child` passed to [builder] in the wiget tree it creates.
 ///
 /// ```dart
 /// MultiProvider(
