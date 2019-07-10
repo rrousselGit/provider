@@ -116,8 +116,8 @@ void main() {
         expect(
           // ignore: prefer_const_constructors
           () => ListenableProvider(
-                builder: null,
-              ),
+            builder: null,
+          ),
           throwsAssertionError,
         );
       });

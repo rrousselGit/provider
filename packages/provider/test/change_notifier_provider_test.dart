@@ -99,8 +99,8 @@ void main() {
         expect(
           // ignore: prefer_const_constructors
           () => ChangeNotifierProvider(
-                builder: null,
-              ),
+            builder: null,
+          ),
           throwsAssertionError,
         );
       });
