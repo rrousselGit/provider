@@ -3,13 +3,13 @@
 
 A mixture between dependency injection (DI) and state management, built with widgets for widgets.
 
-It purposefully use widgets for DI/state management instead of dart-only classes like `Stream`.
+It purposefully uses widgets for DI/state management instead of dart-only classes like `Stream`.
 The reason is, widgets are very simple yet robust and scalable.
 
 By using widgets for state management, `provider` can guarantee:
 
 - maintainability, through a forced uni-directional data-flow
-- testability/composability, since it is always possible mock/override a value
+- testability/composability, since it is always possible to mock/override a value
 - robustness, as it is harder to forget to handle the update scenario of a model/widget
 
 ## Migration from v2.0.0 to v3.0.0
@@ -42,7 +42,7 @@ After:
 ChangeNotifierProvider.value(value: myNotifier),
 ```
 
-- `StreamProvider`'s default constructor now builds a `Stream` instead of `StreamController`. The previous behavior has been moved to the named constructor `StreamProvider.controller`.
+- `StreamProvider`'s default constructor now builds a `Stream` instead of a `StreamController`. The previous behavior has been moved to the named constructor `StreamProvider.controller`.
 
 Before:
 
@@ -92,8 +92,8 @@ Provider<MyComplexClass>(
 ### Reading a value
 
 The easiest way to read a value is by using the static method `Provider.of<T>(BuildContext context)`. This method will look
-up in widget tree starting from the widget associated with the `BuildContext` passed and it will return the nearest variable
-of type `T` found (or throw if nothing if found).
+up in the widget tree starting from the widget associated with the `BuildContext` passed and it will return the nearest variable
+of type `T` found (or throw if nothing is found).
 
 Combined with the first example of [exposing a value](#exposing-a-value), this widget will read the exposed `String` and render "Hello World."
 
@@ -123,7 +123,7 @@ Provider<String>.value(
 ```
 
 The widget `Consumer` can also be used inside `MultiProvider`. To do so,
-it must returns the `child` passed to `builder` in the wiget tree it creates.
+it must return the `child` passed to `builder` in the widget tree it creates.
 
 ```dart
 MultiProvider(
@@ -194,12 +194,12 @@ The behavior of both examples is strictly the same. `MultiProvider` only changes
 
 Since the 3.0.0, there is a new kind of provider: `ProxyProvider`.
 
-`ProxyProvider` is a provider that combines multiple values from other providers into a new object, and send the result to `Provider`.
+`ProxyProvider` is a provider that combines multiple values from other providers into a new object, and sends the result to `Provider`.
 
 That new object will then be updated whenever one of the providers it depends on
 updates.
 
-The following example use `ProxyProvider` to build translations based on a counter
+The following example uses `ProxyProvider` to build translations based on a counter
 coming from another provider.
 
 ```dart
@@ -224,7 +224,7 @@ class Translations {
 }
 ```
 
-It comes under multiple variations, such:
+It comes under multiple variations, such as:
 
 - `ProxyProvider` vs `ProxyProvider2` vs `ProxyProvider3`, ...
 
@@ -232,7 +232,7 @@ It comes under multiple variations, such:
 
 - `ProxyProvider` vs `ChangeNotifierProxyProvider` vs `ListenableProxyProvider`, ...
 
-  They all works similarly, but instead of sending the result into a `Provider`, a `ChangeNotifierProxyProvider` will send its value to a `ChangeNotifierProvider`.
+  They all work similarly, but instead of sending the result into a `Provider`, a `ChangeNotifierProxyProvider` will send its value to a `ChangeNotifierProvider`.
 
 ### Existing providers
 
