@@ -174,17 +174,20 @@ class _DelegateElement extends StatefulElement {
       if (_debugIsInitDelegate) {
         final targetType = ancestor.widget.runtimeType;
         // error copied from StatefulElement
-        throw FlutterError(
-            // ignore_for_file: lines_longer_than_80_chars
-            'inheritFromWidgetOfExactType($targetType) or inheritFromElement() was called before ${widget.delegate.runtimeType}.initDelegate() completed.\n'
-            'When an inherited widget changes, for example if the value of Theme.of() changes, '
-            'its dependent widgets are rebuilt. If the dependent widget\'s reference to '
-            'the inherited widget is in a constructor or an initDelegate() method, '
-            'then the rebuilt dependent widget will not reflect the changes in the '
-            'inherited widget.\n'
-            'Typically references to inherited widgets should occur in widget build() methods. Alternatively, '
-            'initialization based on inherited widgets can be placed in the didChangeDependencies method, which '
-            'is called after initDelegate and whenever the dependencies change thereafter.');
+        throw FlutterError('''
+inheritFromWidgetOfExactType($targetType) or inheritFromElement() was called
+before ${widget.delegate.runtimeType}.initDelegate() completed.
+
+When an inherited widget changes, for example if the value of Theme.of()
+changes, its dependent widgets are rebuilt. If the dependent widget's reference
+to the inherited widget is in a constructor or an initDelegate() method, then
+the rebuilt dependent widget will not reflect the changes in the inherited
+widget.
+
+Typically references to inherited widgets should occur in widget build()
+methods. Alternatively, initialization based on inherited widgets can be placed
+in the didChangeDependencies method, which is called after initDelegate and
+whenever the dependencies change thereafter.''');
       }
       return true;
     }());
