@@ -37,7 +37,7 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
   /// Listens to [value] and expose it to all of [ListenableProvider] descendants.
   ///
   /// Rebuilding [ListenableProvider] without
-  /// changing the instance of [value] will not rebuild dependants.
+  /// changing the instance of [value] will not rebuild dependents.
   ListenableProvider.value({
     Key key,
     @required T value,

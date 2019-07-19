@@ -63,7 +63,7 @@ abstract class StateDelegate {
 /// under the same [runtimeType].
 ///
 /// A typical use-case is a non-leaf widget with constructors that behaves differently, as it is necessary for
-/// all of its constructors to share the same [runtimeType] or else its descendants would loose
+/// all of its constructors to share the same [runtimeType] or else its descendants would lose
 /// their state.
 ///
 /// See also:
