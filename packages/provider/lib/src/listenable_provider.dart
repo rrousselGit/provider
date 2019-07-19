@@ -7,13 +7,15 @@ import 'provider.dart';
 import 'proxy_provider.dart';
 import 'value_listenable_provider.dart' show ValueListenableProvider;
 
-/// Listens to a [Listenable], expose it to its descendants
-/// and rebuilds dependents whenever the listener emits an event.
+/// Listens to a [Listenable], expose it to its descendants and rebuilds
+/// dependents whenever the listener emits an event.
 ///
 /// See also:
 ///
-///   * [ChangeNotifierProvider], a subclass of [ListenableProvider] specific to [ChangeNotifier].
-///   * [ValueListenableProvider], which listens to a [ValueListenable] but exposes only [ValueListenable.value] instead of the whole object.
+///   * [ChangeNotifierProvider], a subclass of [ListenableProvider] specific to
+///     [ChangeNotifier].
+///   * [ValueListenableProvider], which listens to a [ValueListenable] but
+///     exposes only [ValueListenable.value] instead of the whole object.
 ///   * [Listenable]
 class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
     implements SingleChildCloneableWidget {
@@ -34,10 +36,11 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
           child: child,
         );
 
-  /// Listens to [value] and expose it to all of [ListenableProvider] descendants.
+  /// Listens to [value] and expose it to all of [ListenableProvider]
+  /// descendants.
   ///
-  /// Rebuilding [ListenableProvider] without
-  /// changing the instance of [value] will not rebuild dependents.
+  /// Rebuilding [ListenableProvider] without changing the instance of [value]
+  /// will not rebuild dependents.
   ListenableProvider.value({
     Key key,
     @required T value,
@@ -51,6 +54,7 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
   ListenableProvider._({
     Key key,
     @required _ListenableDelegateMixin<T> delegate,
+    // ignore: lines_longer_than_80_chars
     // TODO: updateShouldNotify for when the listenable instance change with `.value` constructor
     this.child,
   }) : super(
@@ -126,8 +130,10 @@ mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
   void startListening(T listenable) {
     /// The number of time [Listenable] called its listeners.
     ///
-    /// It is used to differentiate external rebuilds from rebuilds caused by the listenable emitting an event.
-    /// This allows [InheritedWidget.updateShouldNotify] to return true only in the latter scenario.
+    /// It is used to differentiate external rebuilds from rebuilds caused by
+    /// the listenable emitting an event.  This allows
+    /// [InheritedWidget.updateShouldNotify] to return true only in the latter
+    /// scenario.
     var buildCount = 0;
     final setState = this.setState;
     final listener = () => setState(() => buildCount++);

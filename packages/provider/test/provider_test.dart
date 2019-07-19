@@ -68,8 +68,9 @@ void main() {
       int value;
       double second;
 
-      // We voluntarily reuse the builder instance so that later call to pumpWidget
-      // don't call builder again unless subscribed to an inheritedWidget
+      // We voluntarily reuse the builder instance so that later call to
+      // pumpWidget don't call builder again unless subscribed to an
+      // inheritedWidget
       final builder = Builder(
         builder: (context) {
           buildCount++;

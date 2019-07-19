@@ -9,7 +9,8 @@ import 'package:provider/src/proxy_provider.dart'
 import 'common.dart';
 
 Finder findProvider<T>() => find.byWidgetPredicate(
-    // comparing `runtimeType` instead of using `is` because `is` accepts subclasses but InheritedWidgets don't.
+    // comparing `runtimeType` instead of using `is` because `is` accepts
+    // subclasses but InheritedWidgets don't.
     (widget) => widget.runtimeType == typeOf<InheritedProvider<T>>());
 
 void main() {
@@ -360,7 +361,8 @@ void main() {
       // expect(clone.providerBuilder, equals(provider.providerBuilder));
     });
 
-    // useful for libraries such as Mobx where events are synchronously dispatched
+    // useful for libraries such as Mobx where events are synchronously
+    // dispatched
     testWidgets(
         'builder callback can trigger descendants setState synchronously',
         (tester) async {

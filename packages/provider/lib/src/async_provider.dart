@@ -17,8 +17,8 @@ typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 
 /// Listens to a [Stream<T>] and exposes [T] to its descendants.
 ///
-/// It is considered an error to pass a stream that can emit errors without providing
-/// a [catchError] method.
+/// It is considered an error to pass a stream that can emit errors without
+/// providing a [catchError] method.
 ///
 /// {@template provider.streamprovider.initialdata}
 /// [initialData] determines the value exposed until the [Stream] emits a value.
@@ -54,8 +54,8 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
 
   /// Creates a [StreamController] from [builder] and subscribes to its stream.
   ///
-  /// [StreamProvider] will automatically call [StreamController.close]
-  /// when the widget is removed from the tree.
+  /// [StreamProvider] will automatically call [StreamController.close] when the
+  /// widget is removed from the tree.
   ///
   /// The parameter [builder] must not be `null`.
   StreamProvider.controller({
@@ -110,11 +110,11 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
 
   /// An optional function used whenever the [Stream] emits an error.
   ///
-  /// [catchError] will be called with the emitted error and
-  /// is expected to return a fallback value without throwing.
+  /// [catchError] will be called with the emitted error and is expected to
+  /// return a fallback value without throwing.
   ///
-  /// The returned value will then be exposed to the descendants of [StreamProvider]
-  /// like any valid value.
+  /// The returned value will then be exposed to the descendants of
+  /// [StreamProvider] like any valid value.
   final ErrorBuilder<T> catchError;
 
   /// {@macro provider.updateshouldnotify}
@@ -200,8 +200,8 @@ class _StreamControllerBuilderDelegate<T>
 
 /// Listens to a [Future<T>] and exposes [T] to its descendants.
 ///
-/// It is considered an error to pass a future that can emit errors without providing
-/// a [catchError] method.
+/// It is considered an error to pass a future that can emit errors without
+/// providing a [catchError] method.
 ///
 /// {@macro provider.updateshouldnotify}
 ///
@@ -267,11 +267,11 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
 
   /// Optional function used if the [Future] emits an error.
   ///
-  /// [catchError] will be called with the emitted error and
-  /// is expected to return a fallback value without throwing.
+  /// [catchError] will be called with the emitted error and is expected to
+  /// return a fallback value without throwing.
   ///
-  /// The returned value will then be exposed to the descendants of [FutureProvider]
-  /// like any valid value.
+  /// The returned value will then be exposed to the descendants of
+  /// [FutureProvider] like any valid value.
   final ErrorBuilder<T> catchError;
 
   /// {@macro provider.updateshouldnotify}

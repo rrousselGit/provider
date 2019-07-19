@@ -7,8 +7,8 @@ import 'package:provider/provider.dart';
 
 import 'common.dart';
 
-// tests forked from stream_provider_test.dart
-// by replacing Stream with Future and StreamController with Completer
+// tests forked from stream_provider_test.dart by replacing Stream with Future
+// and StreamController with Completer
 
 class ErrorBuilderMock<T> extends Mock {
   T call(BuildContext context, Object error);
@@ -284,6 +284,7 @@ Exception:
       });
 
       testWidgets(
+          // ignore: lines_longer_than_80_chars
           'Changing from default to stateful constructor calls stateful builder',
           (tester) async {
         final key = GlobalKey();

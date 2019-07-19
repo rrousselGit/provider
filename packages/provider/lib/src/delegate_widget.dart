@@ -37,8 +37,8 @@ abstract class StateDelegate {
   @protected
   StateSetter get setState => _setState;
 
-  /// Called on [State.initState] or after [DelegateWidget] is rebuilt
-  /// with a [StateDelegate] of a different [runtimeType].
+  /// Called on [State.initState] or after [DelegateWidget] is rebuilt with a
+  /// [StateDelegate] of a different [runtimeType].
   @protected
   @mustCallSuper
   void initDelegate() {}
@@ -50,21 +50,22 @@ abstract class StateDelegate {
   @mustCallSuper
   void didUpdateDelegate(covariant StateDelegate old) {}
 
-  /// Called when [DelegateWidget] is unmounted or if it is rebuilt
-  /// with a [StateDelegate] of a different [runtimeType].
+  /// Called when [DelegateWidget] is unmounted or if it is rebuilt with a
+  /// [StateDelegate] of a different [runtimeType].
   @protected
   @mustCallSuper
   void dispose() {}
 }
 
-/// A [StatefulWidget] that delegates its [State] implementation to a [StateDelegate].
+/// A [StatefulWidget] that delegates its [State] implementation to a
+/// [StateDelegate].
 ///
-/// This is useful for widgets that must switch between different [State] implementation
-/// under the same [runtimeType].
+/// This is useful for widgets that must switch between different [State]
+/// implementation under the same [runtimeType].
 ///
-/// A typical use-case is a non-leaf widget with constructors that behaves differently, as it is necessary for
-/// all of its constructors to share the same [runtimeType] or else its descendants would lose
-/// their state.
+/// A typical use-case is a non-leaf widget with constructors that behaves
+/// differently, as it is necessary for all of its constructors to share the
+/// same [runtimeType] or else its descendants would lose their state.
 ///
 /// See also:
 ///
@@ -174,6 +175,7 @@ class _DelegateElement extends StatefulElement {
         final targetType = ancestor.widget.runtimeType;
         // error copied from StatefulElement
         throw FlutterError(
+            // ignore_for_file: lines_longer_than_80_chars
             'inheritFromWidgetOfExactType($targetType) or inheritFromElement() was called before ${widget.delegate.runtimeType}.initDelegate() completed.\n'
             'When an inherited widget changes, for example if the value of Theme.of() changes, '
             'its dependent widgets are rebuilt. If the dependent widget\'s reference to '
@@ -195,9 +197,9 @@ class _DelegateElement extends StatefulElement {
 /// See also:
 ///
 ///  * [SingleValueDelegate], which extends [ValueStateDelegate] to store
-///  an immutable value.
-///  * [BuilderStateDelegate], which extends [ValueStateDelegate]
-/// to build [value] from a function and dispose it when the widget is unmounted.
+///    an immutable value.
+///  * [BuilderStateDelegate], which extends [ValueStateDelegate] to build
+///    [value] from a function and dispose it when the widget is unmounted.
 abstract class ValueStateDelegate<T> extends StateDelegate {
   /// The member [value] should not be mutated directly.
   T get value;
