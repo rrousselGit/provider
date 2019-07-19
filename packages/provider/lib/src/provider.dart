@@ -155,8 +155,10 @@ class MultiProvider extends StatelessWidget
 /// [Provider] is removed from the tree.
 ///
 /// {@template provider.updateshouldnotify}
-/// [updateShouldNotify] can optionally be passed to avoid unnecessarily rebuilding dependents when nothing changed.
-/// Defaults to `(previous, next) => previous != next`. See [InheritedWidget.updateShouldNotify] for more information.
+/// [updateShouldNotify] can optionally be passed to avoid unnecessarily
+/// rebuilding dependents when nothing changed. Defaults to
+/// `(previous, next) => previous != next`. See
+/// [InheritedWidget.updateShouldNotify] for more information.
 /// {@endtemplate}
 ///
 /// ```dart
@@ -210,7 +212,8 @@ class Provider<T> extends ValueDelegateWidget<T>
     this.child,
   }) : super(key: key, delegate: delegate);
 
-  /// Obtains the nearest [Provider<T>] up its widget tree and returns its value.
+  /// Obtains the nearest [Provider<T>] up its widget tree and returns its
+  /// value.
   ///
   /// If [listen] is `true` (default), later value changes will trigger a new
   /// [State.build] to widgets, and [State.didChangeDependencies] for
@@ -230,14 +233,15 @@ class Provider<T> extends ValueDelegateWidget<T>
     return provider._value;
   }
 
-  /// A sanity check to prevent misuse of [Provider] when a variant should be used.
+  /// A sanity check to prevent misuse of [Provider] when a variant should be
+  /// used.
   ///
-  /// By default, [debugCheckInvalidValueType] will throw if `value` is a [Listenable]
-  /// or a [Stream].
-  /// In release mode, [debugCheckInvalidValueType] does nothing.
+  /// By default, [debugCheckInvalidValueType] will throw if `value` is a
+  /// [Listenable] or a [Stream].  In release mode, [debugCheckInvalidValueType]
+  /// does nothing.
   ///
-  /// This check can be disabled altogether by setting [debugCheckInvalidValueType]
-  /// to `null` like so:
+  /// This check can be disabled altogether by setting
+  /// [debugCheckInvalidValueType] to `null` like so:
   ///
   /// ```dart
   /// void main() {

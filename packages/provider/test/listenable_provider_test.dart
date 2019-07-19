@@ -224,6 +224,7 @@ void main() {
       verifyNoMoreInteractions(listenable);
     });
     testWidgets(
+        // ignore: lines_longer_than_80_chars
         'Changing from stateful to default constructor dispose correctly stateful listenable',
         (tester) async {
       final ChangeNotifier listenable = MockNotifier();

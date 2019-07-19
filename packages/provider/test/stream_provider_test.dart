@@ -318,6 +318,7 @@ Exception:
       });
 
       testWidgets(
+          // ignore: lines_longer_than_80_chars
           'Changing from default to stateful constructor calls stateful builder',
           (tester) async {
         final key = GlobalKey();
@@ -347,6 +348,7 @@ Exception:
         verify(controller2.close()).called(1);
       });
       testWidgets(
+          // ignore: lines_longer_than_80_chars
           'Changing from stateful to default constructor dispose correctly stateful stream',
           (tester) async {
         final realController = StreamController<int>();

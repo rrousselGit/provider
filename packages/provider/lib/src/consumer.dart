@@ -5,12 +5,13 @@ import 'provider.dart';
 /// {@template provider.consumer}
 /// Obtain [Provider<T>] from its ancestors and pass its value to [builder].
 ///
-/// [builder] must not be null and may be called multiple times (such as when provided value change).
+/// [builder] must not be null and may be called multiple times (such as when
+/// provided value change).
 ///
 /// #### Note:
 ///
-/// The widget [Consumer] can also be used inside [MultiProvider]. To do so,
-/// it must returns the `child` passed to [builder] in the widget tree it creates.
+/// The widget [Consumer] can also be used inside [MultiProvider]. To do so, it
+/// must returns the `child` passed to [builder] in the widget tree it creates.
 ///
 /// ```dart
 /// MultiProvider(
@@ -40,16 +41,21 @@ class Consumer<T> extends StatelessWidget
   })  : assert(builder != null),
         super(key: key);
 
-  // fork of the documentation from https://docs.flutter.io/flutter/widgets/AnimatedBuilder/child.html
+  // fork of the documentation from
+  // https://docs.flutter.io/flutter/widgets/AnimatedBuilder/child.html
   /// The child widget to pass to [builder].
   /// {@template provider.consumer.child}
   ///
-  /// If a builder callback's return value contains a subtree that does not depend on the provided value,
-  /// it's more efficient to build that subtree once instead of rebuilding it on every change of the provided value.
+  /// If a builder callback's return value contains a subtree that does not
+  /// depend on the provided value, it's more efficient to build that subtree
+  /// once instead of rebuilding it on every change of the provided value.
   ///
-  /// If the pre-built subtree is passed as the child parameter, [Consumer] will pass it back to the builder function so that it can be incorporated into the build.
+  /// If the pre-built subtree is passed as the child parameter, [Consumer] will
+  /// pass it back to the builder function so that it can be incorporated into
+  /// the build.
   ///
-  /// Using this pre-built child is entirely optional, but can improve performance significantly in some cases and is therefore a good practice.
+  /// Using this pre-built child is entirely optional, but can improve
+  /// performance significantly in some cases and is therefore a good practice.
   /// {@endtemplate}
   final Widget child;
 
