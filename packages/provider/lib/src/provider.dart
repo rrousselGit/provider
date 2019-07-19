@@ -61,8 +61,8 @@ class InheritedProvider<T> extends InheritedWidget {
 }
 
 /// A provider that merges multiple providers into a single linear widget tree.
-/// It is used to improve readability and reduce boilderplate code of having to
-/// nest mutliple layers of providers.
+/// It is used to improve readability and reduce boilerplate code of having to
+/// nest multiple layers of providers.
 ///
 /// As such, we're going from:
 ///
@@ -155,8 +155,8 @@ class MultiProvider extends StatelessWidget
 /// [Provider] is removed from the tree.
 ///
 /// {@template provider.updateshouldnotify}
-/// [updateShouldNotify] can optionally be passed to avoid unnecessaryly rebuilding dependants when nothing changed.
-/// Defaults to `(previous, next) => previous != next`. See [InheritedWidget.updateShouldNotify] for more informations.
+/// [updateShouldNotify] can optionally be passed to avoid unnecessarily rebuilding dependents when nothing changed.
+/// Defaults to `(previous, next) => previous != next`. See [InheritedWidget.updateShouldNotify] for more information.
 /// {@endtemplate}
 ///
 /// ```dart
@@ -253,7 +253,7 @@ Tried to use Provider with a subtype of Listenable/Stream ($T).
 
 This is likely a mistake, as Provider will not automatically update dependents
 when $T is updated. Instead, consider changing Provider for more specific
-implementation that handles the update mecanism, such as:
+implementation that handles the update mechanism, such as:
 
 - ListenableProvider
 - ChangeNotifierProvider
