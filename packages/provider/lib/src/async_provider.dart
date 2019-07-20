@@ -136,7 +136,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
   Widget build(BuildContext context) {
     return StreamBuilder<T>(
       stream: delegate.value,
-      initialData: initialData,
+      initialData: initialData, // ignore: deprecated_member_use
       builder: (_, snapshot) {
         return InheritedProvider<T>(
           value: _snapshotToValue(snapshot, context, catchError, this),
@@ -164,7 +164,7 @@ Exception:
 ${snapshot.error}
 ''');
   }
-  return snapshot.data;
+  return snapshot.hasData ? snapshot.data : null;
 }
 
 class _StreamControllerBuilderDelegate<T>
@@ -172,7 +172,7 @@ class _StreamControllerBuilderDelegate<T>
   _StreamControllerBuilderDelegate(this._builder) : assert(_builder != null);
 
   StreamController<T> _controller;
-  ValueBuilder<StreamController<T>> _builder;
+  final ValueBuilder<StreamController<T>> _builder;
 
   @override
   Stream<T> value;
@@ -293,7 +293,7 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
   Widget build(BuildContext context) {
     return FutureBuilder<T>(
       future: delegate.value,
-      initialData: initialData,
+      initialData: initialData, // ignore: deprecated_member_use
       builder: (_, snapshot) {
         return InheritedProvider<T>(
           value: _snapshotToValue(snapshot, context, catchError, this),

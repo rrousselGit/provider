@@ -1,3 +1,7 @@
+# 3.1.1
+
+- Updates for https://github.com/flutter/flutter/issues/34545
+
 # 3.1.0
 
 - `Consumer` can now be used inside `MultiProvider`
