@@ -1,3 +1,7 @@
+# 3.1.1
+
+- Put upper bound on Flutter SDK to prepare for breaking change
+
 # 3.1.0
 
 - `Consumer` can now be used inside `MultiProvider`

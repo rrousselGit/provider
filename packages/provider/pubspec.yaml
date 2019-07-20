@@ -1,6 +1,6 @@
 name: provider
 description: A mixture between dependency injection and state management, built with widgets for widgets.
-version: 3.1.0
+version: 3.1.1
 homepage: https://github.com/rrousselGit/provider
 authors:
   - Remi Rousselet <darky12s@gmail.com>
@@ -8,6 +8,7 @@ authors:
 
 environment:
   sdk: ">=2.0.0 <3.0.0"
+  flutter: ">=1.0.0 <1.8.3"
 
 dependencies:
   flutter:
