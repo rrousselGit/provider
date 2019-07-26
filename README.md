@@ -12,6 +12,8 @@ By using widgets for state management, `provider` can guarantee:
 - testability/composability, since it is always possible to mock/override a value
 - robustness, as it is harder to forget to handle the update scenario of a model/widget
 
+To read more about `provider`, see the [documentation](https://pub.dev/documentation/provider/latest/).
+
 ## Migration from v2.0.0 to v3.0.0
 
 - Providers can no longer be instantiated with `const`.
@@ -237,6 +239,8 @@ It comes under multiple variations, such as:
 ### Existing providers
 
 `provider` exposes a few different kinds of "provider" for different types of objects.
+
+The complete list of all the objects availables is [here](https://pub.dev/documentation/provider/latest/provider/provider-library.html)
 
 | name                                                                                                                          | description                                                                                                                                                            |
 | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
