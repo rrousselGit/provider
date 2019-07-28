@@ -21,7 +21,7 @@ void main() {
   final e = E();
   final f = F();
 
-  final combinedConsumerMock = ConsumerBuilderMock();
+  final combinedConsumerMock = MockCombinedBuilder();
   setUp(() => when(combinedConsumerMock(any)).thenReturn(Container()));
   tearDown(() {
     clearInteractions(combinedConsumerMock);

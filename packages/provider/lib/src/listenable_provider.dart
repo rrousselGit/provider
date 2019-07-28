@@ -51,16 +51,24 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
           child: child,
         );
 
+  ListenableProvider._valueDispose({
+    Key key,
+    @required T value,
+    Disposer<T> disposer,
+    Widget child,
+  }) : this._(
+          key: key,
+          delegate: _ValueListenableDelegate(value, disposer),
+          child: child,
+        );
+
   ListenableProvider._({
     Key key,
     @required _ListenableDelegateMixin<T> delegate,
     // ignore: lines_longer_than_80_chars
     // TODO: updateShouldNotify for when the listenable instance change with `.value` constructor
     this.child,
-  }) : super(
-          key: key,
-          delegate: delegate,
-        );
+  }) : super(key: key, delegate: delegate);
 
   /// The widget that is below the current [ListenableProvider] widget in the
   /// tree.
@@ -90,14 +98,17 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
 
 class _ValueListenableDelegate<T extends Listenable>
     extends SingleValueDelegate<T> with _ListenableDelegateMixin<T> {
-  _ValueListenableDelegate(T value) : super(value);
+  _ValueListenableDelegate(T value, [this.disposer]) : super(value);
+
+  final Disposer<T> disposer;
 
   @override
   void didUpdateDelegate(_ValueListenableDelegate<T> oldDelegate) {
     super.didUpdateDelegate(oldDelegate);
     if (oldDelegate.value != value) {
       _removeListener?.call();
-      if (value != null) startListening(value);
+      oldDelegate.disposer?.call(context, oldDelegate.value);
+      if (value != null) startListening(value, rebuild: true);
     }
   }
 }
@@ -127,7 +138,7 @@ mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
     updateShouldNotify = delegate.updateShouldNotify;
   }
 
-  void startListening(T listenable) {
+  void startListening(T listenable, {bool rebuild = false}) {
     /// The number of time [Listenable] called its listeners.
     ///
     /// It is used to differentiate external rebuilds from rebuilds caused by
@@ -139,6 +150,9 @@ mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
     final listener = () => setState(() => buildCount++);
 
     var capturedBuildCount = buildCount;
+    // purposefully desynchronize buildCount and capturedBuildCount
+    // after an update to ensure that the first updateShouldNotify returns true
+    if (rebuild) capturedBuildCount--;
     updateShouldNotify = (_, __) {
       final res = buildCount != capturedBuildCount;
       capturedBuildCount = buildCount;
@@ -164,7 +178,7 @@ class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
   _NumericProxyProvider({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required this.builder,
     Disposer<R> dispose,
     this.child,
@@ -197,8 +211,9 @@ class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
 
   @override
   Widget build(BuildContext context, R value) {
-    return ListenableProvider<R>.value(
+    return ListenableProvider<R>._valueDispose(
       value: value,
+      disposer: dispose,
       child: child,
     );
   }
@@ -227,7 +242,7 @@ class ListenableProxyProvider<T, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder<T, R> builder,
     Disposer<R> dispose,
     Widget child,
@@ -250,7 +265,7 @@ class ListenableProxyProvider2<T, T2, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider2({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder2<T, T2, R> builder,
     Disposer<R> dispose,
     Widget child,
@@ -273,7 +288,7 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider3({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder3<T, T2, T3, R> builder,
     Disposer<R> dispose,
     Widget child,
@@ -296,7 +311,7 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider4({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
     Disposer<R> dispose,
     Widget child,
@@ -319,7 +334,7 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider5({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
     Disposer<R> dispose,
     Widget child,
@@ -342,7 +357,7 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider6({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
     Disposer<R> dispose,
     Widget child,

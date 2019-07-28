@@ -16,7 +16,7 @@ void main() {
   final e = E();
   final f = F();
 
-  final combinedConsumerMock = ConsumerBuilderMock();
+  final combinedConsumerMock = MockCombinedBuilder();
   setUp(() => when(combinedConsumerMock(any)).thenReturn(Container()));
   tearDown(() {
     clearInteractions(combinedConsumerMock);
@@ -29,8 +29,10 @@ void main() {
   group('ChangeNotifierProxyProvider', () {
     test('throws if builder is missing', () {
       expect(
-        () =>
-            ChangeNotifierProxyProvider<A, _ListenableCombined>(builder: null),
+        () => ChangeNotifierProxyProvider<A, _ListenableCombined>(
+          initialBuilder: null,
+          builder: null,
+        ),
         throwsAssertionError,
       );
     });

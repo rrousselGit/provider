@@ -83,6 +83,37 @@ void main() {
 
       expect(Provider.of<ChangeNotifier>(key.currentContext), null);
     });
+    testWidgets(
+      'changing the Listenable instance rebuilds dependents',
+      (tester) async {
+        final mockBuilder = MockConsumerBuilder<MockNotifier>();
+        when(mockBuilder(any, any, any)).thenReturn(Container());
+        final child = Consumer<MockNotifier>(builder: mockBuilder);
+
+        final previousListenable = MockNotifier();
+        await tester.pumpWidget(ChangeNotifierProvider.value(
+          value: previousListenable,
+          child: child,
+        ));
+
+        clearInteractions(mockBuilder);
+        clearInteractions(previousListenable);
+
+        final listenable = MockNotifier();
+        await tester.pumpWidget(ChangeNotifierProvider.value(
+          value: listenable,
+          child: child,
+        ));
+
+        verify(previousListenable.removeListener(any)).called(1);
+        verify(listenable.addListener(any)).called(1);
+        verifyNoMoreInteractions(previousListenable);
+        verifyNoMoreInteractions(listenable);
+
+        final context = tester.element(find.byWidget(child));
+        verify(mockBuilder(context, listenable, null));
+      },
+    );
     group('stateful constructor', () {
       testWidgets('called with context', (tester) async {
         final builder = ValueBuilderMock<ChangeNotifier>();

@@ -16,7 +16,7 @@ void main() {
   final e = E();
   final f = F();
 
-  final combinedConsumerMock = ConsumerBuilderMock();
+  final combinedConsumerMock = MockCombinedBuilder();
   setUp(() => when(combinedConsumerMock(any)).thenReturn(Container()));
   tearDown(() {
     clearInteractions(combinedConsumerMock);
@@ -29,7 +29,10 @@ void main() {
   group('ListenableProxyProvider', () {
     test('throws if builder is missing', () {
       expect(
-        () => ListenableProxyProvider<A, _ListenableCombined>(builder: null),
+        () => ListenableProxyProvider<A, _ListenableCombined>(
+          initialBuilder: null,
+          builder: null,
+        ),
         throwsAssertionError,
       );
     });
@@ -64,6 +67,61 @@ void main() {
       expect(find.text('1'), findsOneWidget);
       expect(find.text('0'), findsNothing);
     });
+    testWidgets(
+      'builder returning a new Listenable disposes the previously created value'
+      ' and update dependents',
+      (tester) async {
+        final builder = MockConsumerBuilder<MockNotifier>();
+        when(builder(any, any, any)).thenReturn(Container());
+        final child = Consumer<MockNotifier>(builder: builder);
+
+        final dispose = DisposerMock<MockNotifier>();
+        final notifier = MockNotifier();
+
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              Provider.value(value: 0),
+              ListenableProxyProvider<int, MockNotifier>(
+                initialBuilder: null,
+                builder: (_, count, value) => notifier,
+                dispose: dispose,
+              )
+            ],
+            child: child,
+          ),
+        );
+
+        clearInteractions(builder);
+
+        final dispose2 = DisposerMock<MockNotifier>();
+        final notifier2 = MockNotifier();
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              Provider.value(value: 1),
+              ListenableProxyProvider<int, MockNotifier>(
+                initialBuilder: null,
+                builder: (_, count, value) => notifier2,
+                dispose: dispose2,
+              )
+            ],
+            child: child,
+          ),
+        );
+
+        verify(builder(argThat(isNotNull), notifier2, null)).called(1);
+        verifyNoMoreInteractions(builder);
+        verify(dispose(argThat(isNotNull), notifier)).called(1);
+        verifyNoMoreInteractions(dispose);
+
+        await tester.pumpWidget(Container());
+
+        verify(dispose2(argThat(isNotNull), notifier2)).called(1);
+        verifyNoMoreInteractions(dispose);
+        verifyNoMoreInteractions(dispose2);
+      },
+    );
     testWidgets('disposes of created value', (tester) async {
       final dispose = DisposerMock<ValueNotifier<int>>();
       final notifier = ValueNotifier(0);

@@ -66,6 +66,37 @@ void main() {
           isNotNull,
         );
       });
+      testWidgets(
+        'changing the Listenable instance rebuilds dependents',
+        (tester) async {
+          final mockBuilder = MockConsumerBuilder<MockNotifier>();
+          when(mockBuilder(any, any, any)).thenReturn(Container());
+          final child = Consumer<MockNotifier>(builder: mockBuilder);
+
+          final previousListenable = MockNotifier();
+          await tester.pumpWidget(ListenableProvider.value(
+            value: previousListenable,
+            child: child,
+          ));
+
+          clearInteractions(mockBuilder);
+          clearInteractions(previousListenable);
+
+          final listenable = MockNotifier();
+          await tester.pumpWidget(ListenableProvider.value(
+            value: listenable,
+            child: child,
+          ));
+
+          verify(previousListenable.removeListener(any)).called(1);
+          verify(listenable.addListener(any)).called(1);
+          verifyNoMoreInteractions(previousListenable);
+          verifyNoMoreInteractions(listenable);
+
+          final context = tester.element(find.byWidget(child));
+          verify(mockBuilder(context, listenable, null));
+        },
+      );
     });
     testWidgets("don't listen again if listenable instance doesn't change",
         (tester) async {
@@ -114,10 +145,7 @@ void main() {
       });
       test('throws if builder is null', () {
         expect(
-          // ignore: prefer_const_constructors
-          () => ListenableProvider(
-            builder: null,
-          ),
+          () => ListenableProvider(builder: null),
           throwsAssertionError,
         );
       });
