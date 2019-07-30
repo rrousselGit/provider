@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_use_of_protected_member
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -86,6 +87,7 @@ void main() {
     });
     testWidgets('disposes of created value', (tester) async {
       final notifier = MockNotifier();
+      when(notifier.hasListeners).thenReturn(false);
       final key = GlobalKey();
 
       await tester.pumpWidget(

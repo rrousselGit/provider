@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_use_of_protected_member
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -21,6 +22,19 @@ void main() {
 
       expect(Provider.of<ChangeNotifier>(key.currentContext), notifier);
     });
+    testWidgets(
+      'asserts that the created notifier has no listener',
+      (tester) async {
+        final notifier = ValueNotifier(0)..addListener(() {});
+
+        await tester.pumpWidget(ChangeNotifierProvider(
+          builder: (_) => notifier,
+          child: Container(),
+        ));
+
+        expect(tester.takeException(), isAssertionError);
+      },
+    );
     test('works with MultiProvider #2', () {
       final provider = ChangeNotifierProvider.value(
         key: const Key('42'),
@@ -32,7 +46,6 @@ void main() {
 
       expect(clone.child, equals(child2));
       expect(clone.key, equals(provider.key));
-      // ignore: invalid_use_of_protected_member
       expect(clone.delegate, equals(provider.delegate));
     });
     test('works with MultiProvider #3', () {
@@ -46,7 +59,6 @@ void main() {
 
       expect(clone.child, equals(child2));
       expect(clone.key, equals(provider.key));
-      // ignore: invalid_use_of_protected_member
       expect(clone.delegate, equals(provider.delegate));
     });
     group('default constructor', () {
@@ -151,6 +163,7 @@ void main() {
     });
     testWidgets('stateful builder called once', (tester) async {
       final notifier = MockNotifier();
+      when(notifier.hasListeners).thenReturn(false);
       final builder = ValueBuilderMock<ChangeNotifier>();
       when(builder(any)).thenReturn(notifier);
 
@@ -175,6 +188,7 @@ void main() {
     });
     testWidgets('dispose called on unmount', (tester) async {
       final notifier = MockNotifier();
+      when(notifier.hasListeners).thenReturn(false);
       final builder = ValueBuilderMock<ChangeNotifier>();
       when(builder(any)).thenReturn(notifier);
 
@@ -237,6 +251,7 @@ void main() {
         'Changing from stateful to default constructor dispose correctly stateful notifier',
         (tester) async {
       final ChangeNotifier notifier = MockNotifier();
+      when(notifier.hasListeners).thenReturn(false);
       var notifier2 = ChangeNotifier();
       final key = GlobalKey();
 
@@ -290,23 +305,19 @@ void main() {
 
       verify(builder(any)).called(1);
 
-      // ignore: invalid_use_of_protected_member
       expect(notifier.hasListeners, true);
 
       var previousNotifier = notifier;
       notifier = ChangeNotifier();
       await tester.pumpWidget(build());
 
-      // ignore: invalid_use_of_protected_member
       expect(notifier.hasListeners, true);
-      // ignore: invalid_use_of_protected_member
       expect(previousNotifier.hasListeners, false);
 
       verify(builder(any)).called(1);
 
       await tester.pumpWidget(Container());
 
-      // ignore: invalid_use_of_protected_member
       expect(notifier.hasListeners, false);
     });
     testWidgets("rebuilding with the same provider don't rebuilds descendants",
@@ -357,7 +368,6 @@ void main() {
       await tester.pumpWidget(changeNotifierProvider);
 
       clearInteractions(builder);
-      // ignore: invalid_use_of_protected_member
       notifier.notifyListeners();
       await Future<void>.value();
       await tester.pump();

@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_use_of_protected_member
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -36,7 +37,57 @@ void main() {
         throwsAssertionError,
       );
     });
+    testWidgets(
+      'asserts that the created notifier has no listener',
+      (tester) async {
+        final notifier = ValueNotifier(0)..addListener(() {});
 
+        await tester.pumpWidget(MultiProvider(
+          providers: [
+            Provider.value(value: 0),
+            ListenableProxyProvider<int, ValueNotifier<int>>(
+              initialBuilder: null,
+              builder: (_, __, ___) => notifier,
+              dispose: (_, __) {},
+            )
+          ],
+          child: Container(),
+        ));
+
+        expect(tester.takeException(), isAssertionError);
+      },
+    );
+    testWidgets(
+      'asserts that the created notifier has no listener after rebuild',
+      (tester) async {
+        await tester.pumpWidget(MultiProvider(
+          providers: [
+            Provider.value(value: 0),
+            ListenableProxyProvider<int, ValueNotifier<int>>(
+              initialBuilder: null,
+              builder: (_, __, ___) => ValueNotifier(0),
+              dispose: (_, __) {},
+            )
+          ],
+          child: Container(),
+        ));
+
+        final notifier = ValueNotifier(0)..addListener(() {});
+        await tester.pumpWidget(MultiProvider(
+          providers: [
+            Provider.value(value: 1),
+            ListenableProxyProvider<int, ValueNotifier<int>>(
+              initialBuilder: null,
+              builder: (_, __, ___) => notifier,
+              dispose: (_, __) {},
+            )
+          ],
+          child: Container(),
+        ));
+
+        expect(tester.takeException(), isAssertionError);
+      },
+    );
     testWidgets('rebuilds dependendents when listeners are called',
         (tester) async {
       final notifier = ValueNotifier(0);
@@ -77,7 +128,7 @@ void main() {
 
         final dispose = DisposerMock<MockNotifier>();
         final notifier = MockNotifier();
-
+        when(notifier.hasListeners).thenReturn(false);
         await tester.pumpWidget(
           MultiProvider(
             providers: [
@@ -96,6 +147,7 @@ void main() {
 
         final dispose2 = DisposerMock<MockNotifier>();
         final notifier2 = MockNotifier();
+        when(notifier2.hasListeners).thenReturn(false);
         await tester.pumpWidget(
           MultiProvider(
             providers: [

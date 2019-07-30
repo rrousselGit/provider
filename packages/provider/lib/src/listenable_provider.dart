@@ -111,17 +111,58 @@ class _ValueListenableDelegate<T extends Listenable>
       if (value != null) startListening(value, rebuild: true);
     }
   }
+
+  @override
+  void startListening(T listenable, {bool rebuild = false}) {
+    assert(disposer == null || debugCheckIsNewlyCreatedListenable(listenable));
+    super.startListening(listenable, rebuild: rebuild);
+  }
 }
 
 class _BuilderListenableDelegate<T extends Listenable>
     extends BuilderStateDelegate<T> with _ListenableDelegateMixin<T> {
   _BuilderListenableDelegate(ValueBuilder<T> builder, {Disposer<T> dispose})
       : super(builder, dispose: dispose);
+
+  @override
+  void startListening(T listenable, {bool rebuild = false}) {
+    assert(debugCheckIsNewlyCreatedListenable(listenable));
+    super.startListening(listenable, rebuild: rebuild);
+  }
 }
 
 mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
   UpdateShouldNotify<T> updateShouldNotify;
   VoidCallback _removeListener;
+
+  bool debugCheckIsNewlyCreatedListenable(Listenable listenable) {
+    if (listenable is ChangeNotifier) {
+      // ignore: invalid_use_of_protected_member
+      assert(!listenable.hasListeners, '''
+The default constructor of ListenableProvider/ChangeNotifierProvider
+must create a new, unused Listenable.
+
+If you want to reuse an existing Listenable constructor the second constructor:
+
+- DO use ChangeNotifierProvider.value to provider an existing ChangeNotifier:
+
+MyChangeNotifier variable;
+ChangeNotifierProvider.value(
+  value: variable,
+  child: ...
+)
+
+- DON'T reuse an existing ChangeNotifier using the default constructor.
+
+MyChangeNotifier variable;
+ChangeNotifierProvider(
+  builder: (_) => variable,
+  child: ...
+)
+''');
+    }
+    return true;
+  }
 
   @override
   void initDelegate() {
