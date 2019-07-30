@@ -18,7 +18,8 @@ import 'proxy_provider.dart';
 /// leaks and potentially undesired side-effects.
 ///
 /// See [this stackoverflow answer](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)
-/// which explains in further details why this is undesired.
+/// which explains in further details why using the `.value` constructor to
+/// create values is undesired.
 ///
 /// - DO create a new [ChangeNotifier] inside `builder`.
 /// ```dart
@@ -50,17 +51,18 @@ import 'proxy_provider.dart';
 /// )
 /// ```
 ///
-/// If you updating variable comes from a provider, consider
+/// If your updating variable comes from a provider, consider using
 /// [ChangeNotifierProxyProvider].
-///
-/// If these parameters are from local variables, consider making a
-/// [StatefulWidget] and managing your [ChangeNotifier] manually.
+/// Otherwise, consider making a [StatefulWidget] and managing your
+/// [ChangeNotifier] manually.
 ///
 /// ## Reusing an existing instance of [ChangeNotifier]:
 ///
 /// If you already have an instance of [ChangeNotifier] and want to expose it,
-/// you should use [ChangeNotifierProvider.value] over the default constructor.
-/// Using
+/// you should use [ChangeNotifierProvider.value] instead of the default
+/// constructor.
+///
+/// Failing to do so may dispose the [ChangeNotifier] when it is still in use.
 ///
 /// - DO use [ChangeNotifierProvider.value] to provider an existing
 ///   [ChangeNotifier].
@@ -95,10 +97,10 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
   static void _disposer(BuildContext context, ChangeNotifier notifier) =>
       notifier?.dispose();
 
-  /// Create a [ChangeNotifier] using the `builder` and automatically
+  /// Creates a [ChangeNotifier] using `builder` and automatically
   /// dispose it when [ChangeNotifierProvider] is removed from the widget tree.
   ///
-  /// [builder] must not be `null`.
+  /// `builder` must not be `null`.
   ChangeNotifierProvider({
     Key key,
     @required ValueBuilder<T> builder,
