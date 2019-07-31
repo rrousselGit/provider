@@ -115,7 +115,84 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
   }) : super.value(key: key, value: value, child: child);
 }
 
-/// {@macro provider.proxyprovider}
+/// {@template provider.changenotifierproxyprovider}
+/// A [ChangeNotifierProvider] that build and synchronize a [ChangeNotifier]
+/// from values obtained in other providers.
+///
+/// To understand better this variation of [ChangeNotifierProvider], we can
+/// look into the following code using the original provider:
+///
+/// ```dart
+/// ChangeNotifierProvider(
+///   builder: (context) {
+///     return MyChangeNotifier(
+///       foo: Provider.of<Foo>(context, listen: false),
+///     );
+///   },
+///   child: ...
+/// )
+/// ```
+///
+/// In example, we built a `MyChangeNotifier` from a value coming from another
+/// provider: `Foo`.
+///
+/// This works as long as `Foo` never changes. But if it somehow updates, then
+/// our [ChangeNotifier] will never update accordingly.
+///
+/// To solve this issue, we could instead use this class, like so:
+///
+/// ```dart
+/// ChangeNotifierProxyProvider<Foo, MyChangeNotifier>(
+///   initialBuilder: (_) => MyChangeNotifier(),
+///   builder: (_, foo, myNotifier) => myNotifier
+///     ..foo = foo,
+///   child: ...
+/// );
+/// ```
+///
+/// In that situation, if `Foo` were to update, then `MyChangeNotifier` will
+/// be able to update accordingly.
+///
+/// Notice how `MyChangeNotifier` doesn't receive `Foo` in its constructor
+/// anymore. It is now passed through a custom setter instead.
+///
+/// A typical implementation of such `MyChangeNotifier` would be:
+///
+/// ```dart
+/// class MyChangeNotifier with ChangeNotifier {
+///   Foo _foo;
+///   set foo(Foo value) {
+///     if (_foo != value) {
+///       _foo = value;
+///       // do some extra work, that may call `notifyListeners()`
+///     }
+///   }
+/// }
+/// ```
+///
+/// - DON'T create the [ChangeNotifier] inside `builder` directly.
+///
+///   This will cause your state to be lost when one of the value used updates.
+///   It will also cause uncesserary overhead because it will dispose the
+///   previous notifier, then subscribes to the new one.
+///
+///  Instead use properties with custom setters like shown previously, or
+///   methods.
+///
+/// ```dart
+/// ChangeNotifierProxyProvider<Foo, MyChangeNotifier>(
+///   // may cause the state to be destroyed unvoluntarily
+///   builder: (_, foo, myNotifier) => MyChangeNotifier(foo: foo),
+///   child: ...
+/// );
+/// ```
+///
+/// - PREFER using [ProxyProvider] when possible.
+///
+///   If the created object is only a combination of other objects, without
+///   http calls or similar side-effects, then it is likely that an immutable
+///   object built using [ProxyProvider] will work.
+/// {@endtemplate}
 class ChangeNotifierProxyProvider<T, R extends ChangeNotifier>
     extends ListenableProxyProvider<T, R> {
   /// Initializes [key] for subclasses.
@@ -133,7 +210,7 @@ class ChangeNotifierProxyProvider<T, R extends ChangeNotifier>
         );
 }
 
-/// {@macro provider.proxyprovider}
+/// {@macro provider.changenotifierproxyprovider}
 class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier>
     extends ListenableProxyProvider2<T, T2, R> {
   /// Initializes [key] for subclasses.
@@ -151,7 +228,7 @@ class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier>
         );
 }
 
-/// {@macro provider.proxyprovider}
+/// {@macro provider.changenotifierproxyprovider}
 class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier>
     extends ListenableProxyProvider3<T, T2, T3, R> {
   /// Initializes [key] for subclasses.
@@ -169,7 +246,7 @@ class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier>
         );
 }
 
-/// {@macro provider.proxyprovider}
+/// {@macro provider.changenotifierproxyprovider}
 class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
     extends ListenableProxyProvider4<T, T2, T3, T4, R> {
   /// Initializes [key] for subclasses.
@@ -187,7 +264,7 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
         );
 }
 
-/// {@macro provider.proxyprovider}
+/// {@macro provider.changenotifierproxyprovider}
 
 class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
     extends ListenableProxyProvider5<T, T2, T3, T4, T5, R> {
@@ -206,7 +283,7 @@ class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
         );
 }
 
-/// {@macro provider.proxyprovider}
+/// {@macro provider.changenotifierproxyprovider}
 class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6,
         R extends ChangeNotifier>
     extends ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R> {
