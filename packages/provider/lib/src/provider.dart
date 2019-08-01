@@ -265,7 +265,7 @@ class Provider<T> extends ValueDelegateWidget<T>
     Widget child,
   }) : this._(
           key: key,
-          delegate: BuilderStateDelegate<T>(builder, dispose: dispose),
+          delegate: LazyBuilderStateDelegate(builder, dispose: dispose),
           updateShouldNotify: null,
           child: child,
         );
@@ -280,17 +280,6 @@ class Provider<T> extends ValueDelegateWidget<T>
           key: key,
           delegate: SingleValueDelegate<T>(value),
           updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
-
-  Provider.lazy({
-    Key key,
-    @required ValueBuilder<T> builder,
-    Disposer<T> dispose,
-    Widget child,
-  }) : this._(
-          key: key,
-          delegate: LazyBuilderStateDelegate(builder, dispose: dispose),
           child: child,
         );
 

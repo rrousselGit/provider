@@ -41,11 +41,15 @@ void main() {
     final builder = ValueBuilder();
     await tester.pumpWidget(Provider<int>(
       builder: builder,
-      child: Container(),
+      child: Consumer<int>(
+        builder: (_, __, ___) => Container(),
+      ),
     ));
     await tester.pumpWidget(Provider<int>(
       builder: builder,
-      child: Container(),
+      child: Consumer<int>(
+        builder: (_, __, ___) => Container(),
+      ),
     ));
     await tester.pumpWidget(Container());
 
@@ -54,21 +58,19 @@ void main() {
 
   testWidgets('dispose', (tester) async {
     final dispose = Dispose();
-    const key = ValueKey(42);
 
     await tester.pumpWidget(
       Provider<int>(
-        key: key,
         builder: (_) => 42,
         dispose: dispose,
-        child: Container(),
+        child: Consumer<int>(
+          builder: (_, __, ___) => Container(),
+        ),
       ),
     );
 
-    final context = tester.element(find.byKey(key));
-
     verifyZeroInteractions(dispose);
     await tester.pumpWidget(Container());
-    verify(dispose(context, 42)).called(1);
+    verify(dispose(argThat(isNotNull), 42)).called(1);
   });
 }

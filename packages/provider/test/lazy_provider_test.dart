@@ -10,7 +10,7 @@ void main() {
     testWidgets('pass down arguments', (tester) async {
       final key = GlobalKey();
 
-      await tester.pumpWidget(Provider<int>.lazy(
+      await tester.pumpWidget(Provider<int>(
         key: key,
         builder: (_) => 42,
         child: const Text('foo', textDirection: TextDirection.ltr),
@@ -27,7 +27,7 @@ void main() {
       final providerKey = GlobalKey();
       final childKey = GlobalKey();
 
-      await tester.pumpWidget(Provider<int>.lazy(
+      await tester.pumpWidget(Provider<int>(
         key: providerKey,
         builder: builder,
         child: Container(key: childKey),
@@ -45,7 +45,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(Provider<double>.value(
         value: 42,
-        child: Provider<int>.lazy(
+        child: Provider<int>(
           builder: (context) => Provider.of<double>(context).toInt(),
           child: Builder(builder: (context) {
             Provider.of<int>(context);
@@ -64,14 +64,14 @@ void main() {
       final providerKey = GlobalKey();
       final childKey = GlobalKey();
 
-      await tester.pumpWidget(Provider<int>.lazy(
+      await tester.pumpWidget(Provider<int>(
         key: providerKey,
         builder: builder,
         child: Container(key: childKey),
       ));
       Provider.of<int>(childKey.currentContext);
 
-      await tester.pumpWidget(Provider<int>.lazy(
+      await tester.pumpWidget(Provider<int>(
         key: providerKey,
         builder: builder,
         child: Container(key: childKey),
@@ -87,7 +87,7 @@ void main() {
       final providerKey = GlobalKey();
       final dispose = DisposerMock<int>();
 
-      await tester.pumpWidget(Provider<int>.lazy(
+      await tester.pumpWidget(Provider<int>(
         key: providerKey,
         builder: (_) => 42,
         dispose: dispose,
@@ -108,7 +108,7 @@ void main() {
 
     test('thows if builder is missing', () {
       expect(
-        () => Provider<int>.lazy(builder: null),
+        () => Provider<int>(builder: null),
         throwsAssertionError,
       );
     });
@@ -119,7 +119,7 @@ void main() {
       final providerKey = GlobalKey();
       final dispose = DisposerMock<int>();
 
-      await tester.pumpWidget(Provider<int>.lazy(
+      await tester.pumpWidget(Provider<int>(
         key: providerKey,
         builder: (_) => 42,
         dispose: dispose,

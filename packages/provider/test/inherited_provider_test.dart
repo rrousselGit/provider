@@ -10,10 +10,10 @@ void main() {
     testWidgets('updateShouldNotify throws', (tester) async {
       expect(
         () => InheritedProvider<int>(
-              value: 42,
-              child: Container(),
-            // ignore: invalid_use_of_protected_member
-            ).updateShouldNotify(null),
+          value: 42,
+          child: Container(),
+          // ignore: invalid_use_of_protected_member
+        ).updateShouldNotify(null),
         throwsUnsupportedError,
       );
     });
