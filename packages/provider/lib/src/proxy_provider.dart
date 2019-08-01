@@ -282,6 +282,38 @@ class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
 ///
 /// [builder] must not be `null`.
 ///
+/// ## Note:
+///
+/// While [ProxyProvider] has built-in support with [Provider.of], it works
+/// with *any* [InheritedWidget].
+///
+/// As such, `ProxyProvider2<Foo, Bar, Baz>` is just syntax sugar for:
+///
+/// ```dart
+/// ProxyProvider<Foo, Baz>(
+///   builder: (context, foo, baz) {
+///     final bar = Provider.of<Bar>(context);
+///   },
+///   child: ...,
+/// )
+/// ```
+///
+/// And it will also work with other `.of` patterns, including [Scrollable.of],
+/// [MediaQuery.of], and many more:
+///
+/// ```dart
+/// ProxyProvider<Foo, Baz>(
+///   builder: (context, foo, _) {
+///     final mediaQuery = MediaQuery.of(context);
+///     return Baz(mediaQuery.size);
+///   },
+///   child: ...,
+/// )
+/// ```
+///
+/// This previous example will correctly rebuild `Baz` when the `MediaQuery`
+/// updates.
+///
 /// See also:
 ///
 ///  * [Provider], which matches the behavior of [ProxyProvider] without
