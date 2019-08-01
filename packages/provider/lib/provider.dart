@@ -8,4 +8,5 @@ export 'src/listenable_provider.dart';
 export 'src/provider.dart';
 export 'src/proxy_provider.dart'
     hide NumericProxyProvider, Void, ProxyProviderBase;
+export 'src/selector.dart';
 export 'src/value_listenable_provider.dart';
