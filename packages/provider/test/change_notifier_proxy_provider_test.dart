@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_use_of_protected_member
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -16,7 +17,7 @@ void main() {
   final e = E();
   final f = F();
 
-  final combinedConsumerMock = ConsumerBuilderMock();
+  final combinedConsumerMock = MockCombinedBuilder();
   setUp(() => when(combinedConsumerMock(any)).thenReturn(Container()));
   tearDown(() {
     clearInteractions(combinedConsumerMock);
@@ -29,8 +30,10 @@ void main() {
   group('ChangeNotifierProxyProvider', () {
     test('throws if builder is missing', () {
       expect(
-        () =>
-            ChangeNotifierProxyProvider<A, _ListenableCombined>(builder: null),
+        () => ChangeNotifierProxyProvider<A, _ListenableCombined>(
+          initialBuilder: null,
+          builder: null,
+        ),
         throwsAssertionError,
       );
     });
@@ -84,6 +87,7 @@ void main() {
     });
     testWidgets('disposes of created value', (tester) async {
       final notifier = MockNotifier();
+      when(notifier.hasListeners).thenReturn(false);
       final key = GlobalKey();
 
       await tester.pumpWidget(

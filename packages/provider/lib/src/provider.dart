@@ -177,9 +177,39 @@ class MultiProvider extends StatelessWidget
 ///   }
 /// }
 /// ```
+///
+/// ## Testing
+///
+/// When testing widgets that consumes providers, it is necessary to
+/// add the proper providers in the widget tree above the tested widget.
+///
+/// A typical test may like like this:
+///
+/// ```dart
+/// final foo = MockFoo();
+///
+/// await tester.pumpWidget(
+///   Provider<Foo>.value(
+///     value: foo,
+///     child: TestedWidget(),
+///   ),
+/// );
+/// ```
+///
+/// Note this example purposefully specified the object type, instead of having
+/// it infered.
+/// Since we used a mocked class (typically using `mockito`), then we have to
+/// downcast the mock to the type of the mocked class.
+/// Otherwise, the type inference will resolve to `Provider<MockFoo>` instead of
+/// `Provider<Foo>`, which will cause `Provider.of<Foo>` to fail.
 class Provider<T> extends ValueDelegateWidget<T>
     implements SingleChildCloneableWidget {
-  /// Allows to specify parameters to [Provider].
+  /// Creates a value, store it, and expose it to its descendants.
+  ///
+  /// The value can be optionally disposed using [dispose] callback. This
+  /// callbackwhich will be called when [Provider] is unmounted from the
+  /// widget tree, or if [Provider] is rebuilt to use [Provider.value] instead.
+  ///
   Provider({
     Key key,
     @required ValueBuilder<T> builder,

@@ -1,22 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'change_notifier_provider.dart' show ChangeNotifierProvider;
+import 'change_notifier_provider.dart'
+    show ChangeNotifierProvider, ChangeNotifierProxyProvider;
 import 'delegate_widget.dart';
 import 'provider.dart';
 import 'proxy_provider.dart';
-import 'value_listenable_provider.dart' show ValueListenableProvider;
 
 /// Listens to a [Listenable], expose it to its descendants and rebuilds
 /// dependents whenever the listener emits an event.
 ///
-/// See also:
+/// For usage informations, see [ChangeNotifierProvider], a subclass of
+/// [ListenableProvider] made for [ChangeNotifier].
 ///
-///   * [ChangeNotifierProvider], a subclass of [ListenableProvider] specific to
-///     [ChangeNotifier].
-///   * [ValueListenableProvider], which listens to a [ValueListenable] but
-///     exposes only [ValueListenable.value] instead of the whole object.
-///   * [Listenable]
+/// You will generaly want to use [ChangeNotifierProvider] instead.
+/// But [ListenableProvider] is available in case you want to implement
+/// [Listenable] yourself, or use [Animation].
 class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
     implements SingleChildCloneableWidget {
   /// Creates a [Listenable] using [builder] and subscribes to it.
@@ -36,11 +35,7 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
           child: child,
         );
 
-  /// Listens to [value] and expose it to all of [ListenableProvider]
-  /// descendants.
-  ///
-  /// Rebuilding [ListenableProvider] without changing the instance of [value]
-  /// will not rebuild dependents.
+  /// Provides an existing [Listenable].
   ListenableProvider.value({
     Key key,
     @required T value,
@@ -51,16 +46,24 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
           child: child,
         );
 
+  ListenableProvider._valueDispose({
+    Key key,
+    @required T value,
+    Disposer<T> disposer,
+    Widget child,
+  }) : this._(
+          key: key,
+          delegate: _ValueListenableDelegate(value, disposer),
+          child: child,
+        );
+
   ListenableProvider._({
     Key key,
     @required _ListenableDelegateMixin<T> delegate,
     // ignore: lines_longer_than_80_chars
     // TODO: updateShouldNotify for when the listenable instance change with `.value` constructor
     this.child,
-  }) : super(
-          key: key,
-          delegate: delegate,
-        );
+  }) : super(key: key, delegate: delegate);
 
   /// The widget that is below the current [ListenableProvider] widget in the
   /// tree.
@@ -90,15 +93,24 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
 
 class _ValueListenableDelegate<T extends Listenable>
     extends SingleValueDelegate<T> with _ListenableDelegateMixin<T> {
-  _ValueListenableDelegate(T value) : super(value);
+  _ValueListenableDelegate(T value, [this.disposer]) : super(value);
+
+  final Disposer<T> disposer;
 
   @override
   void didUpdateDelegate(_ValueListenableDelegate<T> oldDelegate) {
     super.didUpdateDelegate(oldDelegate);
     if (oldDelegate.value != value) {
       _removeListener?.call();
-      if (value != null) startListening(value);
+      oldDelegate.disposer?.call(context, oldDelegate.value);
+      if (value != null) startListening(value, rebuild: true);
     }
+  }
+
+  @override
+  void startListening(T listenable, {bool rebuild = false}) {
+    assert(disposer == null || debugCheckIsNewlyCreatedListenable(listenable));
+    super.startListening(listenable, rebuild: rebuild);
   }
 }
 
@@ -106,11 +118,46 @@ class _BuilderListenableDelegate<T extends Listenable>
     extends BuilderStateDelegate<T> with _ListenableDelegateMixin<T> {
   _BuilderListenableDelegate(ValueBuilder<T> builder, {Disposer<T> dispose})
       : super(builder, dispose: dispose);
+
+  @override
+  void startListening(T listenable, {bool rebuild = false}) {
+    assert(debugCheckIsNewlyCreatedListenable(listenable));
+    super.startListening(listenable, rebuild: rebuild);
+  }
 }
 
 mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
   UpdateShouldNotify<T> updateShouldNotify;
   VoidCallback _removeListener;
+
+  bool debugCheckIsNewlyCreatedListenable(Listenable listenable) {
+    if (listenable is ChangeNotifier) {
+      // ignore: invalid_use_of_protected_member
+      assert(!listenable.hasListeners, '''
+The default constructor of ListenableProvider/ChangeNotifierProvider
+must create a new, unused Listenable.
+
+If you want to reuse an existing Listenable constructor the second constructor:
+
+- DO use ChangeNotifierProvider.value to provider an existing ChangeNotifier:
+
+MyChangeNotifier variable;
+ChangeNotifierProvider.value(
+  value: variable,
+  child: ...
+)
+
+- DON'T reuse an existing ChangeNotifier using the default constructor.
+
+MyChangeNotifier variable;
+ChangeNotifierProvider(
+  builder: (_) => variable,
+  child: ...
+)
+''');
+    }
+    return true;
+  }
 
   @override
   void initDelegate() {
@@ -127,7 +174,7 @@ mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
     updateShouldNotify = delegate.updateShouldNotify;
   }
 
-  void startListening(T listenable) {
+  void startListening(T listenable, {bool rebuild = false}) {
     /// The number of time [Listenable] called its listeners.
     ///
     /// It is used to differentiate external rebuilds from rebuilds caused by
@@ -139,6 +186,9 @@ mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
     final listener = () => setState(() => buildCount++);
 
     var capturedBuildCount = buildCount;
+    // purposefully desynchronize buildCount and capturedBuildCount
+    // after an update to ensure that the first updateShouldNotify returns true
+    if (rebuild) capturedBuildCount--;
     updateShouldNotify = (_, __) {
       final res = buildCount != capturedBuildCount;
       capturedBuildCount = buildCount;
@@ -164,7 +214,7 @@ class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
   _NumericProxyProvider({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required this.builder,
     Disposer<R> dispose,
     this.child,
@@ -197,8 +247,9 @@ class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
 
   @override
   Widget build(BuildContext context, R value) {
-    return ListenableProvider<R>.value(
+    return ListenableProvider<R>._valueDispose(
       value: value,
+      disposer: dispose,
       child: child,
     );
   }
@@ -221,13 +272,26 @@ class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
   }
 }
 
-/// {@macro provider.proxyprovider}
+/// {@template provider.listenableproxyprovider}
+/// A variation of [ListenableProvider] that builds its value from
+/// values obtained in other providers.
+///
+/// See the discussion on [ChangeNotifierProxyProvider] for a complete
+/// explanation on how to use it.
+///
+/// [ChangeNotifierProxyProvider] extends [ListenableProxyProvider] to make it
+/// work with [ChangeNotifier], but the behavior stays the same.
+/// Most of the time you'll want to use [ChangeNotifierProxyProvider] instead.
+/// But [ListenableProxyProvider] is exposed in case one wants to use a
+/// [Listenable] implementation other than [ChangeNotifier], such as
+/// [Animation].
+/// {@endtemplate}
 class ListenableProxyProvider<T, R extends Listenable>
     extends _NumericProxyProvider<T, Void, Void, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder<T, R> builder,
     Disposer<R> dispose,
     Widget child,
@@ -244,13 +308,13 @@ class ListenableProxyProvider<T, R extends Listenable>
       super.builder as ProxyProviderBuilder<T, R>;
 }
 
-/// {@macro provider.proxyprovider}
+/// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider2<T, T2, R extends Listenable>
     extends _NumericProxyProvider<T, T2, Void, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider2({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder2<T, T2, R> builder,
     Disposer<R> dispose,
     Widget child,
@@ -267,13 +331,13 @@ class ListenableProxyProvider2<T, T2, R extends Listenable>
       super.builder as ProxyProviderBuilder2<T, T2, R>;
 }
 
-/// {@macro provider.proxyprovider}
+/// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
     extends _NumericProxyProvider<T, T2, T3, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider3({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder3<T, T2, T3, R> builder,
     Disposer<R> dispose,
     Widget child,
@@ -290,13 +354,13 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
       super.builder as ProxyProviderBuilder3<T, T2, T3, R>;
 }
 
-/// {@macro provider.proxyprovider}
+/// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
     extends _NumericProxyProvider<T, T2, T3, T4, Void, Void, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider4({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
     Disposer<R> dispose,
     Widget child,
@@ -313,13 +377,13 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
       super.builder as ProxyProviderBuilder4<T, T2, T3, T4, R>;
 }
 
-/// {@macro provider.proxyprovider}
+/// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
     extends _NumericProxyProvider<T, T2, T3, T4, T5, Void, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider5({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
     Disposer<R> dispose,
     Widget child,
@@ -336,13 +400,13 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
       super.builder as ProxyProviderBuilder5<T, T2, T3, T4, T5, R>;
 }
 
-/// {@macro provider.proxyprovider}
+/// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
     extends _NumericProxyProvider<T, T2, T3, T4, T5, T6, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider6({
     Key key,
-    ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
     Disposer<R> dispose,
     Widget child,
