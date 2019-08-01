@@ -177,14 +177,14 @@ class MultiProvider extends StatelessWidget
 ///   }
 /// }
 /// ```
-/// 
+///
 /// ## Testing
-/// 
+///
 /// When testing widgets that consumes providers, it is necessary to
 /// add the proper providers in the widget tree above the tested widget.
-/// 
+///
 /// A typical test may like like this:
-/// 
+///
 /// ```dart
 /// final foo = MockFoo();
 ///
@@ -195,7 +195,7 @@ class MultiProvider extends StatelessWidget
 ///   ),
 /// );
 /// ```
-/// 
+///
 /// Note this example purposefully specified the object type, instead of having
 /// it infered.
 /// Since we used a mocked class (typically using `mockito`), then we have to
