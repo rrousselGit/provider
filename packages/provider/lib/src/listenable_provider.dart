@@ -83,8 +83,22 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
   @override
   Widget build(BuildContext context) {
     final delegate = this.delegate as _ListenableDelegateMixin<T>;
+    T Function(BuildContext) startListening;
+    if (delegate is LazyBuilderStateDelegate<T>) {
+      final delegate = this.delegate as LazyBuilderStateDelegate<T>;
+      return InheritedProvider<T>(
+        value: delegate.value,
+        updateShouldNotify: updateShouldNotify,
+        startListening: (_) {
+          delegate.startListening();
+          return delegate.value;
+        },
+        child: child,
+      );
+    }
     return InheritedProvider<T>(
       value: delegate.value,
+      startListening: startListening,
       updateShouldNotify: delegate.updateShouldNotify,
       child: child,
     );
@@ -103,26 +117,26 @@ class _ValueListenableDelegate<T extends Listenable>
     if (oldDelegate.value != value) {
       _removeListener?.call();
       oldDelegate.disposer?.call(context, oldDelegate.value);
-      if (value != null) startListening(value, rebuild: true);
+      if (value != null) startListeningListenable(value, rebuild: true);
     }
   }
 
   @override
-  void startListening(T listenable, {bool rebuild = false}) {
+  void startListeningListenable(T listenable, {bool rebuild = false}) {
     assert(disposer == null || debugCheckIsNewlyCreatedListenable(listenable));
-    super.startListening(listenable, rebuild: rebuild);
+    super.startListeningListenable(listenable, rebuild: rebuild);
   }
 }
 
 class _BuilderListenableDelegate<T extends Listenable>
-    extends BuilderStateDelegate<T> with _ListenableDelegateMixin<T> {
+    extends LazyBuilderStateDelegate<T> with _ListenableDelegateMixin<T> {
   _BuilderListenableDelegate(ValueBuilder<T> builder, {Disposer<T> dispose})
       : super(builder, dispose: dispose);
 
   @override
-  void startListening(T listenable, {bool rebuild = false}) {
+  void startListeningListenable(T listenable, {bool rebuild = false}) {
     assert(debugCheckIsNewlyCreatedListenable(listenable));
-    super.startListening(listenable, rebuild: rebuild);
+    super.startListeningListenable(listenable, rebuild: rebuild);
   }
 }
 
@@ -162,7 +176,7 @@ ChangeNotifierProvider(
   @override
   void initDelegate() {
     super.initDelegate();
-    if (value != null) startListening(value);
+    if (value != null) startListeningListenable(value);
   }
 
   @override
@@ -174,7 +188,7 @@ ChangeNotifierProvider(
     updateShouldNotify = delegate.updateShouldNotify;
   }
 
-  void startListening(T listenable, {bool rebuild = false}) {
+  void startListeningListenable(T listenable, {bool rebuild = false}) {
     /// The number of time [Listenable] called its listeners.
     ///
     /// It is used to differentiate external rebuilds from rebuilds caused by

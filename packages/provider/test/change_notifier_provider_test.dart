@@ -9,6 +9,31 @@ import 'common.dart';
 
 void main() {
   group('ChangeNotifierProvider', () {
+    testWidgets('Builder is lazily called', (tester) async {
+      final notifier = MockNotifier();
+      final builder = ValueBuilderMock<ChangeNotifier>();
+      when(builder(any)).thenReturn(notifier);
+
+      await tester.pumpWidget(ChangeNotifierProvider(
+        builder: builder,
+        child: Container(),
+      ));
+
+      verifyZeroInteractions(builder);
+
+      final context = tester.element(find.byType(Container));
+
+      expect(
+        Provider.of<ChangeNotifier>(context),
+        equals(notifier),
+      );
+
+      verify(builder(argThat(isNotNull))).called(1);
+
+      Provider.of<ChangeNotifier>(context);
+
+      verifyNoMoreInteractions(builder);
+    });
     testWidgets('works with MultiProvider', (tester) async {
       final key = GlobalKey();
       var notifier = ChangeNotifier();

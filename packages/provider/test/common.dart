@@ -19,7 +19,11 @@ class DisposerMock<T> extends Mock {
   void call(BuildContext context, T value);
 }
 
-class MockNotifier extends Mock implements ChangeNotifier {}
+class MockNotifier extends Mock implements ChangeNotifier {
+  MockNotifier() {
+    when(hasListeners).thenReturn(false);
+  }
+}
 
 class BuilderMock extends Mock {
   Widget call(BuildContext context);
