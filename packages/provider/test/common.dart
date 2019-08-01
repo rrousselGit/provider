@@ -25,6 +25,10 @@ class BuilderMock extends Mock {
   Widget call(BuildContext context);
 }
 
+class MockConsumerBuilder<T> extends Mock {
+  Widget call(BuildContext context, T value, Widget child);
+}
+
 class UpdateShouldNotifyMock<T> extends Mock {
   bool call(T old, T newValue);
 }
@@ -41,7 +45,7 @@ class E with DiagnosticableTreeMixin {}
 
 class F with DiagnosticableTreeMixin {}
 
-class ConsumerBuilderMock extends Mock {
+class MockCombinedBuilder extends Mock {
   Widget call(Combined foo);
 }
 

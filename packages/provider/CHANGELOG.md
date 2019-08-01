@@ -1,3 +1,21 @@
+# 3.1.0
+
+- improved the overall documentation
+- fixed a bug where `ChangeNotifierProvider.value` didn't update dependents
+  when the `ChangeNotifier` instance changed.
+- `Consumer` can now be used inside `MultiProvider`
+  ```dart
+  MultiProvider(
+    providers: [
+      Provider(builder: (_) => Foo()),
+      Consumer<Foo>(
+        builder: (context, foo, child) =>
+          Provider.value(value: foo.bar, child: child),
+      )
+    ],
+  );
+  ```
+
 # 3.0.0
 
 ## breaking (see the readme for migration steps):

@@ -54,8 +54,8 @@ abstract class ProxyProviderWidget extends StatefulWidget {
 
 /// A [State] with an added life-cycle: [didUpdateDependencies].
 ///
-/// Widgets such as [ProxyProvider] are expected to build their
-/// value from within [didUpdateDependencies] instead of [didChangeDependencies].
+/// Widgets such as [ProxyProvider] are expected to build their value from
+/// within [didUpdateDependencies] instead of [didChangeDependencies].
 abstract class ProxyProviderState<T extends ProxyProviderWidget>
     extends State<T> {
   /// To not confuse with [didChangeDependencies].
@@ -200,11 +200,12 @@ class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
   final Widget child;
 
   /// {@template provider.proxyprovider.builder}
-  /// Builds the value passed to [InheritedProvider] by combining [InheritedWidget].
+  /// Builds the value passed to [InheritedProvider] by combining
+  /// [InheritedWidget].
   ///
-  /// [builder] will be called once when the widget is mounted,
-  /// and once whenever any of the [InheritedWidget] which [ProxyProvider]
-  /// depends on updates.
+  /// [builder] will be called once when the widget is mounted, and once
+  /// whenever any of the [InheritedWidget] which [ProxyProvider] depends on
+  /// updates.
   ///
   /// It is safe to perform side-effects in this method.
   /// {@endtemplate}
@@ -259,28 +260,59 @@ class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
 /// {@template provider.proxyprovider}
 /// A provider that builds a value based on other providers.
 ///
-/// The exposed value is built through [builder], and then passed
-/// to [InheritedProvider].
+/// The exposed value is built through [builder], and then passed to
+/// [InheritedProvider].
 ///
-/// As opposed to the `builder` parameter of [Provider], [builder]
-/// may be called more than once. It will be called once when the widget is
-/// mounted, then once whenever any of the [InheritedWidget] which [ProxyProvider]
-/// depends emits an update.
+/// As opposed to the `builder` parameter of [Provider], [builder] may be called
+/// more than once. It will be called once when the widget is mounted, then once
+/// whenever any of the [InheritedWidget] which [ProxyProvider] depends emits an
+/// update.
 ///
-/// [ProxyProvider] comes in different variants such as [ProxyProvider2].
-/// This only changes the [builder] function, such that it takes
-/// a different number of arguments.
-/// The `2` in [ProxyProvider2] means that [builder] builds its
+/// [ProxyProvider] comes in different variants such as [ProxyProvider2].  This
+/// only changes the [builder] function, such that it takes a different number
+/// of arguments.  The `2` in [ProxyProvider2] means that [builder] builds its
 /// value from **2** other providers.
 ///
-/// All variations of [builder] will receive the [BuildContext]
-/// as first parameter, and the previously built value as last parameter.
+/// All variations of [builder] will receive the [BuildContext] as first
+/// parameter, and the previously built value as last parameter.
 ///
 /// This previously built value will be `null` by default, unless
-/// [initialBuilder] is specified – in which case, it will be the
-/// value returned by [initialBuilder].
+/// [initialBuilder] is specified – in which case, it will be the value returned
+/// by [initialBuilder].
 ///
 /// [builder] must not be `null`.
+///
+/// ## Note:
+///
+/// While [ProxyProvider] has built-in support with [Provider.of], it works
+/// with *any* [InheritedWidget].
+///
+/// As such, `ProxyProvider2<Foo, Bar, Baz>` is just syntax sugar for:
+///
+/// ```dart
+/// ProxyProvider<Foo, Baz>(
+///   builder: (context, foo, baz) {
+///     final bar = Provider.of<Bar>(context);
+///   },
+///   child: ...,
+/// )
+/// ```
+///
+/// And it will also work with other `.of` patterns, including [Scrollable.of],
+/// [MediaQuery.of], and many more:
+///
+/// ```dart
+/// ProxyProvider<Foo, Baz>(
+///   builder: (context, foo, _) {
+///     final mediaQuery = MediaQuery.of(context);
+///     return Baz(mediaQuery.size);
+///   },
+///   child: ...,
+/// )
+/// ```
+///
+/// This previous example will correctly rebuild `Baz` when the `MediaQuery`
+/// updates.
 ///
 /// See also:
 ///

@@ -11,6 +11,7 @@ import 'common.dart';
 void main() {
   group('DelegateWidget', () {
     testWidgets(
+        // ignore: lines_longer_than_80_chars
         "can't call context.inheritFromWidgetOfExactType from first initDelegate",
         (tester) async {
       await tester.pumpWidget(Provider.value(
@@ -24,6 +25,7 @@ void main() {
       expect(tester.takeException(), isFlutterError);
     });
     testWidgets(
+        // ignore: lines_longer_than_80_chars
         "can't call context.inheritFromWidgetOfExactType from initDelegate after an update",
         (tester) async {
       await tester.pumpWidget(Provider.value(
@@ -108,6 +110,7 @@ void main() {
       verifyZeroInteractions(state2.disposeMock);
     });
     testWidgets(
+        // ignore: lines_longer_than_80_chars
         'rebuilding with delegate of a different type disposes the previous and init the new one',
         (tester) async {
       final state = MockStateDelegate<int>();
@@ -239,8 +242,7 @@ void main() {
       BuildContext context;
       final key = GlobalKey();
 
-      await tester
-          .pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
+      await tester.pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
         key: key,
         delegate: BuilderStateDelegate((_) => 42),
         builder: (c, d) {
@@ -253,8 +255,7 @@ void main() {
       expect(context, equals(key.currentContext));
       expect(value, equals(42));
 
-      await tester
-          .pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
+      await tester.pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
         key: key,
         delegate: BuilderStateDelegate((_) => 0),
         builder: (c, d) {
@@ -276,8 +277,7 @@ void main() {
         dispose: disposeMock,
       );
 
-      await tester
-          .pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
+      await tester.pumpWidget(BuilderDelegateWidget<BuilderStateDelegate<int>>(
         key: key,
         delegate: delegate2,
         builder: (_, __) => Container(),

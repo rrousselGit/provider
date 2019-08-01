@@ -18,7 +18,8 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
   /// See also:
   ///
   ///   * [ValueListenable]
-  ///   * [ListenableProvider], similar to [ValueListenableProvider] but for any kind of [Listenable].
+  ///   * [ListenableProvider], similar to [ValueListenableProvider] but for any
+  /// kind of [Listenable].
   ValueListenableProvider({
     Key key,
     @required ValueBuilder<ValueNotifier<T>> builder,
@@ -36,8 +37,9 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
 
   /// Listens to [value] and exposes its current value.
   ///
-  /// Changing [value] will stop listening to the previous [value] and listen the new one.
-  /// Removing [ValueListenableProvider] from the tree will also stop listening to [value].
+  /// Changing [value] will stop listening to the previous [value] and listen
+  /// the new one.  Removing [ValueListenableProvider] from the tree will also
+  /// stop listening to [value].
   ///
   /// ```dart
   /// ValueListenable<int> foo;
@@ -70,8 +72,8 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
     notifier.dispose();
   }
 
-  /// The widget that is below the current [ValueListenableProvider] widget in the
-  /// tree.
+  /// The widget that is below the current [ValueListenableProvider] widget in
+  /// the tree.
   ///
   /// {@macro flutter.widgets.child}
   final Widget child;

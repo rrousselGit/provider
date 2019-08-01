@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_use_of_protected_member
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -21,6 +22,19 @@ void main() {
 
       expect(Provider.of<ChangeNotifier>(key.currentContext), listenable);
     });
+    testWidgets(
+      'asserts that the created notifier has no listener',
+      (tester) async {
+        final notifier = ValueNotifier(0)..addListener(() {});
+
+        await tester.pumpWidget(ListenableProvider(
+          builder: (_) => notifier,
+          child: Container(),
+        ));
+
+        expect(tester.takeException(), isAssertionError);
+      },
+    );
     test('works with MultiProvider #2', () {
       final provider = ListenableProvider.value(
         key: const Key('42'),
@@ -32,7 +46,6 @@ void main() {
 
       expect(clone.child, equals(child2));
       expect(clone.key, equals(provider.key));
-      // ignore: invalid_use_of_protected_member
       expect(clone.delegate, equals(provider.delegate));
     });
     test('works with MultiProvider #3', () {
@@ -47,7 +60,6 @@ void main() {
 
       expect(clone.child, equals(child2));
       expect(clone.key, equals(provider.key));
-      // ignore: invalid_use_of_protected_member
       expect(clone.delegate, equals(provider.delegate));
     });
 
@@ -66,6 +78,37 @@ void main() {
           isNotNull,
         );
       });
+      testWidgets(
+        'changing the Listenable instance rebuilds dependents',
+        (tester) async {
+          final mockBuilder = MockConsumerBuilder<MockNotifier>();
+          when(mockBuilder(any, any, any)).thenReturn(Container());
+          final child = Consumer<MockNotifier>(builder: mockBuilder);
+
+          final previousListenable = MockNotifier();
+          await tester.pumpWidget(ListenableProvider.value(
+            value: previousListenable,
+            child: child,
+          ));
+
+          clearInteractions(mockBuilder);
+          clearInteractions(previousListenable);
+
+          final listenable = MockNotifier();
+          await tester.pumpWidget(ListenableProvider.value(
+            value: listenable,
+            child: child,
+          ));
+
+          verify(previousListenable.removeListener(any)).called(1);
+          verify(listenable.addListener(any)).called(1);
+          verifyNoMoreInteractions(previousListenable);
+          verifyNoMoreInteractions(listenable);
+
+          final context = tester.element(find.byWidget(child));
+          verify(mockBuilder(context, listenable, null));
+        },
+      );
     });
     testWidgets("don't listen again if listenable instance doesn't change",
         (tester) async {
@@ -114,10 +157,7 @@ void main() {
       });
       test('throws if builder is null', () {
         expect(
-          // ignore: prefer_const_constructors
-          () => ListenableProvider(
-                builder: null,
-              ),
+          () => ListenableProvider(builder: null),
           throwsAssertionError,
         );
       });
@@ -137,6 +177,7 @@ void main() {
     });
     testWidgets('stateful builder called once', (tester) async {
       final listenable = MockNotifier();
+      when(listenable.hasListeners).thenReturn(false);
       final builder = ValueBuilderMock<Listenable>();
       when(builder(any)).thenReturn(listenable);
 
@@ -161,6 +202,7 @@ void main() {
     });
     testWidgets('dispose called on unmount', (tester) async {
       final listenable = MockNotifier();
+      when(listenable.hasListeners).thenReturn(false);
       final builder = ValueBuilderMock<Listenable>();
       final disposer = DisposerMock<Listenable>();
       when(builder(any)).thenReturn(listenable);
@@ -201,6 +243,7 @@ void main() {
         (tester) async {
       final listenable = MockNotifier();
       var listenable2 = ChangeNotifier();
+      // when(listenable2.hasListeners).thenReturn(true);
       final key = GlobalKey();
       await tester.pumpWidget(ListenableProvider<ChangeNotifier>.value(
         value: listenable,
@@ -224,9 +267,11 @@ void main() {
       verifyNoMoreInteractions(listenable);
     });
     testWidgets(
+        // ignore: lines_longer_than_80_chars
         'Changing from stateful to default constructor dispose correctly stateful listenable',
         (tester) async {
       final ChangeNotifier listenable = MockNotifier();
+      when(listenable.hasListeners).thenReturn(false);
       final disposer = DisposerMock<Listenable>();
       var listenable2 = ChangeNotifier();
       final key = GlobalKey();
@@ -277,23 +322,19 @@ void main() {
 
       verify(builder(any)).called(1);
 
-      // ignore: invalid_use_of_protected_member
       expect(listenable.hasListeners, true);
 
       var previousNotifier = listenable;
       listenable = ChangeNotifier();
       await tester.pumpWidget(build());
 
-      // ignore: invalid_use_of_protected_member
       expect(listenable.hasListeners, true);
-      // ignore: invalid_use_of_protected_member
       expect(previousNotifier.hasListeners, false);
 
       verify(builder(any)).called(1);
 
       await tester.pumpWidget(Container());
 
-      // ignore: invalid_use_of_protected_member
       expect(listenable.hasListeners, false);
     });
     testWidgets("rebuilding with the same provider don't rebuilds descendants",
@@ -364,7 +405,6 @@ void main() {
       await tester.pumpWidget(changeNotifierProvider);
 
       clearInteractions(builder);
-      // ignore: invalid_use_of_protected_member
       listenable.notifyListeners();
       await Future<void>.value();
       await tester.pump();
