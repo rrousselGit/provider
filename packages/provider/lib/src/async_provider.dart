@@ -17,8 +17,8 @@ typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 
 /// Listens to a [Stream<T>] and exposes [T] to its descendants.
 ///
-/// Its main use-case it to provide to a large number of a widget the content
-/// of an existing stream, without caring about reacting to events.
+/// Its main use-case is to provide to a large number of a widget the content
+/// of a [Stream], without caring about reacting to events.
 ///
 /// A typical example would be to expose the battery level, or a Firebase query.
 /// Trying to use [Stream] to replace [ChangeNotifier] is outside of the scope
