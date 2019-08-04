@@ -64,7 +64,7 @@ import 'proxy_provider.dart';
 ///
 /// Failing to do so may dispose the [ChangeNotifier] when it is still in use.
 ///
-/// - DO use [ChangeNotifierProvider.value] to provider an existing
+/// - DO use [ChangeNotifierProvider.value] to provide an existing
 ///   [ChangeNotifier].
 /// ```dart
 /// MyChangeNotifier variable;
@@ -116,8 +116,8 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
 }
 
 /// {@template provider.changenotifierproxyprovider}
-/// A [ChangeNotifierProvider] that build and synchronize a [ChangeNotifier]
-/// from values obtained in other providers.
+/// A [ChangeNotifierProvider] that builds and synchronizes a [ChangeNotifier]
+/// from values obtained from other providers.
 ///
 /// To understand better this variation of [ChangeNotifierProvider], we can
 /// look into the following code using the original provider:
@@ -172,7 +172,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
 ///
 /// - DON'T create the [ChangeNotifier] inside `builder` directly.
 ///
-///   This will cause your state to be lost when one of the value used updates.
+///   This will cause your state to be lost when one of the values used updates.
 ///   It will also cause uncesserary overhead because it will dispose the
 ///   previous notifier, then subscribes to the new one.
 ///

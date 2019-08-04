@@ -183,7 +183,7 @@ class MultiProvider extends StatelessWidget
 /// When testing widgets that consumes providers, it is necessary to
 /// add the proper providers in the widget tree above the tested widget.
 ///
-/// A typical test may like like this:
+/// A typical test may like this:
 ///
 /// ```dart
 /// final foo = MockFoo();
@@ -207,7 +207,7 @@ class Provider<T> extends ValueDelegateWidget<T>
   /// Creates a value, store it, and expose it to its descendants.
   ///
   /// The value can be optionally disposed using [dispose] callback. This
-  /// callbackwhich will be called when [Provider] is unmounted from the
+  /// callback which will be called when [Provider] is unmounted from the
   /// widget tree, or if [Provider] is rebuilt to use [Provider.value] instead.
   ///
   Provider({
