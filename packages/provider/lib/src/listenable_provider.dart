@@ -75,31 +75,29 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
   ListenableProvider<T> cloneWithChild(Widget child) {
     return ListenableProvider._(
       key: key,
-      delegate: delegate as _ListenableDelegateMixin<T>,
+      delegate: delegate,
       child: child,
     );
   }
 
   @override
+  _ListenableDelegateMixin<T> get delegate =>
+      super.delegate as _ListenableDelegateMixin<T>;
+
+  @override
   Widget build(BuildContext context) {
-    final delegate = this.delegate as _ListenableDelegateMixin<T>;
-    T Function(BuildContext) startListening;
+    T Function() startListening;
     if (delegate is LazyBuilderStateDelegate<T>) {
-      final delegate = this.delegate as LazyBuilderStateDelegate<T>;
-      return InheritedProvider<T>(
-        value: delegate.value,
-        updateShouldNotify: updateShouldNotify,
-        startListening: (_) {
-          delegate.startListening();
-          return delegate.value;
-        },
-        child: child,
-      );
+      startListening = (delegate as LazyBuilderStateDelegate<T>).startListening;
+    }
+    if (delegate.state.dirty) {
+      delegate.state.dirty = false;
+      delegate.ref?.element?.notifyClients(delegate.ref.element.widget);
     }
     return InheritedProvider<T>(
       value: delegate.value,
+      ref: delegate.ref,
       startListening: startListening,
-      updateShouldNotify: delegate.updateShouldNotify,
       child: child,
     );
   }
@@ -115,16 +113,16 @@ class _ValueListenableDelegate<T extends Listenable>
   void didUpdateDelegate(_ValueListenableDelegate<T> oldDelegate) {
     super.didUpdateDelegate(oldDelegate);
     if (oldDelegate.value != value) {
-      _removeListener?.call();
+      state._removeListener?.call();
       oldDelegate.disposer?.call(context, oldDelegate.value);
-      if (value != null) startListeningListenable(value, rebuild: true);
+      if (value != null) startListeningListenable(value);
     }
   }
 
   @override
-  void startListeningListenable(T listenable, {bool rebuild = false}) {
+  void startListeningListenable(T listenable) {
     assert(disposer == null || debugCheckIsNewlyCreatedListenable(listenable));
-    super.startListeningListenable(listenable, rebuild: rebuild);
+    super.startListeningListenable(listenable);
   }
 }
 
@@ -134,15 +132,28 @@ class _BuilderListenableDelegate<T extends Listenable>
       : super(builder, dispose: dispose);
 
   @override
-  void startListeningListenable(T listenable, {bool rebuild = false}) {
+  void startListeningListenable(T listenable) {
     assert(debugCheckIsNewlyCreatedListenable(listenable));
-    super.startListeningListenable(listenable, rebuild: rebuild);
+    super.startListeningListenable(listenable);
+  }
+
+  @override
+  T startListening() {
+    final result = super.startListening();
+    assert(debugCheckIsNewlyCreatedListenable(result));
+    if (result != null) startListeningListenable(result);
+    return result;
   }
 }
 
-mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
-  UpdateShouldNotify<T> updateShouldNotify;
+class _State {
+  bool dirty = false;
   VoidCallback _removeListener;
+}
+
+mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
+  Ref ref;
+  _State state;
 
   bool debugCheckIsNewlyCreatedListenable(Listenable listenable) {
     if (listenable is ChangeNotifier) {
@@ -176,6 +187,8 @@ ChangeNotifierProvider(
   @override
   void initDelegate() {
     super.initDelegate();
+    ref = Ref();
+    state = _State();
     if (value != null) startListeningListenable(value);
   }
 
@@ -184,42 +197,27 @@ ChangeNotifierProvider(
     super.didUpdateDelegate(old);
     final delegate = old as _ListenableDelegateMixin<T>;
 
-    _removeListener = delegate._removeListener;
-    updateShouldNotify = delegate.updateShouldNotify;
+    ref = delegate.ref;
+    state = delegate.state;
   }
 
-  void startListeningListenable(T listenable, {bool rebuild = false}) {
-    /// The number of time [Listenable] called its listeners.
-    ///
-    /// It is used to differentiate external rebuilds from rebuilds caused by
-    /// the listenable emitting an event.  This allows
-    /// [InheritedWidget.updateShouldNotify] to return true only in the latter
-    /// scenario.
-    var buildCount = 0;
+  void startListeningListenable(T listenable) {
     final setState = this.setState;
-    final listener = () => setState(() => buildCount++);
-
-    var capturedBuildCount = buildCount;
-    // purposefully desynchronize buildCount and capturedBuildCount
-    // after an update to ensure that the first updateShouldNotify returns true
-    if (rebuild) capturedBuildCount--;
-    updateShouldNotify = (_, __) {
-      final res = buildCount != capturedBuildCount;
-      capturedBuildCount = buildCount;
-      return res;
+    final listener = () {
+      state.dirty = true;
+      setState(() {});
     };
 
     listenable.addListener(listener);
-    _removeListener = () {
+    state._removeListener = () {
       listenable.removeListener(listener);
-      _removeListener = null;
-      updateShouldNotify = null;
+      state._removeListener = null;
     };
   }
 
   @override
   void dispose() {
-    _removeListener?.call();
+    state._removeListener?.call();
     super.dispose();
   }
 }

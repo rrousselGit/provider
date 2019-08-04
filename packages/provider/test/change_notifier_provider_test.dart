@@ -11,7 +11,7 @@ void main() {
   group('ChangeNotifierProvider', () {
     testWidgets('Builder is lazily called', (tester) async {
       final notifier = MockNotifier();
-      final builder = ValueBuilderMock<ChangeNotifier>();
+      final builder = WidgetValueBuilderMock<ChangeNotifier>();
       when(builder(any)).thenReturn(notifier);
 
       await tester.pumpWidget(ChangeNotifierProvider(
@@ -54,7 +54,9 @@ void main() {
 
         await tester.pumpWidget(ChangeNotifierProvider(
           builder: (_) => notifier,
-          child: Container(),
+          child: Consumer<ValueNotifier<int>>(
+            builder: (_, __, ___) => Container(),
+          ),
         ));
 
         expect(tester.takeException(), isAssertionError);
@@ -153,13 +155,15 @@ void main() {
     );
     group('stateful constructor', () {
       testWidgets('called with context', (tester) async {
-        final builder = ValueBuilderMock<ChangeNotifier>();
+        final builder = WidgetValueBuilderMock<ChangeNotifier>();
         final key = GlobalKey();
 
         await tester.pumpWidget(ChangeNotifierProvider<ChangeNotifier>(
           key: key,
           builder: builder,
-          child: Container(),
+          child: Consumer<ChangeNotifier>(
+            builder: (_, __, ___) => Container(),
+          ),
         ));
         verify(builder(key.currentContext)).called(1);
       });
@@ -189,12 +193,14 @@ void main() {
     testWidgets('stateful builder called once', (tester) async {
       final notifier = MockNotifier();
       when(notifier.hasListeners).thenReturn(false);
-      final builder = ValueBuilderMock<ChangeNotifier>();
+      final builder = WidgetValueBuilderMock<ChangeNotifier>();
       when(builder(any)).thenReturn(notifier);
 
       await tester.pumpWidget(ChangeNotifierProvider(
         builder: builder,
-        child: Container(),
+        child: Consumer<ChangeNotifier>(
+          builder: (_, __, ___) => Container(),
+        ),
       ));
 
       final context = findElementOfWidget<ChangeNotifierProvider>();
@@ -214,12 +220,14 @@ void main() {
     testWidgets('dispose called on unmount', (tester) async {
       final notifier = MockNotifier();
       when(notifier.hasListeners).thenReturn(false);
-      final builder = ValueBuilderMock<ChangeNotifier>();
+      final builder = WidgetValueBuilderMock<ChangeNotifier>();
       when(builder(any)).thenReturn(notifier);
 
       await tester.pumpWidget(ChangeNotifierProvider(
         builder: builder,
-        child: Container(),
+        child: Consumer<ChangeNotifier>(
+          builder: (_, __, ___) => Container(),
+        ),
       ));
 
       final context = findElementOfWidget<ChangeNotifierProvider>();
@@ -282,7 +290,9 @@ void main() {
 
       await tester.pumpWidget(ChangeNotifierProvider(
         builder: (_) => notifier,
-        child: Container(),
+        child: Consumer<ChangeNotifier>(
+          builder: (_, __, ___) => Container(),
+        ),
       ));
 
       final listener = verify(notifier.addListener(captureAny)).captured.first

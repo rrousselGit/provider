@@ -9,6 +9,7 @@ import 'common.dart';
 
 void main() {
   group('ListenableProvider', () {
+    // TODO: add tests for lazy loading
     testWidgets('works with MultiProvider', (tester) async {
       final key = GlobalKey();
       var listenable = ChangeNotifier();
@@ -29,7 +30,9 @@ void main() {
 
         await tester.pumpWidget(ListenableProvider(
           builder: (_) => notifier,
-          child: Container(),
+          child: Consumer<ValueNotifier<int>>(
+            builder: (_, __, ___) => Container(),
+          ),
         ));
 
         expect(tester.takeException(), isAssertionError);
@@ -138,20 +141,25 @@ void main() {
       final key = GlobalKey();
       await tester.pumpWidget(ListenableProvider<ChangeNotifier>(
         builder: (_) => null,
-        child: Container(key: key),
+        child: Consumer<ChangeNotifier>(
+          key: key,
+          builder: (_, __, ___) => Container(),
+        ),
       ));
 
       expect(Provider.of<ChangeNotifier>(key.currentContext), null);
     });
     group('stateful constructor', () {
       testWidgets('called with context', (tester) async {
-        final builder = ValueBuilderMock<ChangeNotifier>();
+        final builder = WidgetValueBuilderMock<ChangeNotifier>();
         final key = GlobalKey();
 
         await tester.pumpWidget(ListenableProvider<ChangeNotifier>(
           key: key,
           builder: builder,
-          child: Container(),
+          child: Consumer<ChangeNotifier>(
+            builder: (_, __, ___) => Container(),
+          ),
         ));
         verify(builder(key.currentContext)).called(1);
       });
@@ -178,12 +186,14 @@ void main() {
     testWidgets('stateful builder called once', (tester) async {
       final listenable = MockNotifier();
       when(listenable.hasListeners).thenReturn(false);
-      final builder = ValueBuilderMock<Listenable>();
+      final builder = WidgetValueBuilderMock<Listenable>();
       when(builder(any)).thenReturn(listenable);
 
       await tester.pumpWidget(ListenableProvider(
         builder: builder,
-        child: Container(),
+        child: Consumer<Listenable>(
+          builder: (_, __, ___) => Container(),
+        ),
       ));
 
       final context = findElementOfWidget<ListenableProvider>();
@@ -203,14 +213,16 @@ void main() {
     testWidgets('dispose called on unmount', (tester) async {
       final listenable = MockNotifier();
       when(listenable.hasListeners).thenReturn(false);
-      final builder = ValueBuilderMock<Listenable>();
-      final disposer = DisposerMock<Listenable>();
+      final builder = WidgetValueBuilderMock<Listenable>();
       when(builder(any)).thenReturn(listenable);
+      final disposer = DisposerMock<Listenable>();
 
       await tester.pumpWidget(ListenableProvider(
         builder: builder,
         dispose: disposer,
-        child: Container(),
+        child: Consumer<Listenable>(
+          builder: (_, __, ___) => Container(),
+        ),
       ));
 
       final context = findElementOfWidget<ListenableProvider>();
@@ -270,7 +282,7 @@ void main() {
         // ignore: lines_longer_than_80_chars
         'Changing from stateful to default constructor dispose correctly stateful listenable',
         (tester) async {
-      final ChangeNotifier listenable = MockNotifier();
+      final listenable = MockNotifier();
       when(listenable.hasListeners).thenReturn(false);
       final disposer = DisposerMock<Listenable>();
       var listenable2 = ChangeNotifier();
@@ -279,10 +291,12 @@ void main() {
       await tester.pumpWidget(ListenableProvider(
         builder: (_) => listenable,
         dispose: disposer,
-        child: Container(),
+        child: Consumer<MockNotifier>(
+          builder: (_, __, ___) => Container(),
+        ),
       ));
 
-      final context = findElementOfWidget<ListenableProvider<ChangeNotifier>>();
+      final context = findElementOfWidget<ListenableProvider<MockNotifier>>();
 
       final listener = verify(listenable.addListener(captureAny)).captured.first
           as VoidCallback;

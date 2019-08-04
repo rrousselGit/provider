@@ -27,6 +27,11 @@ abstract class SingleChildCloneableWidget implements Widget {
   SingleChildCloneableWidget cloneWithChild(Widget child);
 }
 
+class Ref {
+  InheritedElement _element;
+  InheritedElement get element => _element;
+}
+
 /// A generic implementation of an [InheritedWidget].
 ///
 /// Any descendant of this widget can obtain `value` using [Provider.of].
@@ -37,12 +42,14 @@ class InheritedProvider<T> extends InheritedWidget {
   /// Allow customizing [updateShouldNotify].
   const InheritedProvider({
     Key key,
+    Ref ref,
     @required T value,
-    ValueBuilder<T> startListening,
+    T Function() startListening,
     UpdateShouldNotify<T> updateShouldNotify,
     @required Widget child,
   })  : _startListening = startListening,
         _value = value,
+        _ref = ref,
         _updateShouldNotify = updateShouldNotify,
         super(key: key, child: child);
 
@@ -52,7 +59,9 @@ class InheritedProvider<T> extends InheritedWidget {
   /// and replace [InheritedProvider] with one that holds the new value.
   final T _value;
 
-  final ValueBuilder<T> _startListening;
+  final Ref _ref;
+
+  final T Function() _startListening;
 
   final UpdateShouldNotify<T> _updateShouldNotify;
 
@@ -75,13 +84,14 @@ class _InheritedProviderElement<T> extends InheritedElement {
 
   bool _didStartListening = false;
   T _value;
+  Ref _ref;
 
   @override
   void updateDependencies(Element dependent, Object aspect) {
     if (!_didStartListening) {
       _didStartListening = true;
       if (widget._startListening != null) {
-        _value = widget._startListening(this);
+        _value = widget._startListening();
       }
     }
     super.updateDependencies(dependent, aspect);
@@ -90,13 +100,22 @@ class _InheritedProviderElement<T> extends InheritedElement {
   @override
   void mount(Element parent, dynamic newSlot) {
     _value = widget._value;
+    _mountRef();
     super.mount(parent, newSlot);
+  }
+
+  void _mountRef() {
+    _ref?._element = null;
+    assert(widget._ref?.element == null);
+    _ref = widget._ref;
+    _ref?._element = this;
   }
 
   @override
   void updated(InheritedProvider<T> oldWidget) {
     final previous = _value;
     _value = widget._value;
+    _mountRef();
 
     bool shouldUpdate;
     if (widget._updateShouldNotify != null) {
@@ -392,10 +411,7 @@ void main() {
       return InheritedProvider<T>(
         value: delegate.value,
         updateShouldNotify: updateShouldNotify,
-        startListening: (_) {
-          delegate.startListening();
-          return delegate.value;
-        },
+        startListening: delegate.startListening,
         child: child,
       );
     }

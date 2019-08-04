@@ -21,7 +21,7 @@ void main() {
     });
     testWidgets('builds its value synchronously on first listening',
         (tester) async {
-      final builder = ValueBuilderMock<int>();
+      final builder = WidgetValueBuilderMock<int>();
       when(builder(any)).thenReturn(42);
 
       final providerKey = GlobalKey();
@@ -58,7 +58,7 @@ void main() {
     });
 
     testWidgets("rebuilds don't call builder again", (tester) async {
-      final builder = ValueBuilderMock<int>();
+      final builder = WidgetValueBuilderMock<int>();
       when(builder(any)).thenReturn(42);
 
       final providerKey = GlobalKey();

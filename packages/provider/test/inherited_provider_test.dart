@@ -32,7 +32,7 @@ void main() {
     });
     testWidgets('can lazily set value using startListening', (tester) async {
       final startListening = ValueBuilderMock<int>();
-      when(startListening(any)).thenReturn(42);
+      when(startListening()).thenReturn(42);
 
       final key = GlobalKey();
 
@@ -58,14 +58,14 @@ void main() {
         }),
       ));
 
-      verify(startListening(key.currentContext)).called(1);
+      verify(startListening()).called(1);
       expect(find.text('0'), findsNothing);
       expect(find.text('42'), findsOneWidget);
     });
 
     testWidgets("don't call startListening again on rebuild", (tester) async {
       final startListening = ValueBuilderMock<int>();
-      when(startListening(any)).thenReturn(42);
+      when(startListening()).thenReturn(42);
 
       final child = Builder(builder: (context) {
         return Text(
@@ -86,7 +86,7 @@ void main() {
         child: child,
       ));
 
-      verify(startListening(any)).called(1);
+      verify(startListening()).called(1);
     });
   });
 }

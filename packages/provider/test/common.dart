@@ -12,6 +12,10 @@ Element findElementOfWidget<T extends Widget>() {
 Type typeOf<T>() => T;
 
 class ValueBuilderMock<T> extends Mock {
+  T call();
+}
+
+class WidgetValueBuilderMock<T> extends Mock {
   T call(BuildContext context);
 }
 

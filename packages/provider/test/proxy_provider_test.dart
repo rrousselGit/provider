@@ -110,7 +110,7 @@ void main() {
     });
 
     testWidgets('initialBuilder creates initial value', (tester) async {
-      final initialBuilder = ValueBuilderMock<Combined>();
+      final initialBuilder = WidgetValueBuilderMock<Combined>();
       final key = GlobalKey();
 
       when(initialBuilder(any)).thenReturn(Combined(null, null, null));

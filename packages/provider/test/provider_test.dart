@@ -7,6 +7,93 @@ import 'package:test_api/test_api.dart' show TypeMatcher;
 import 'common.dart';
 
 void main() {
+  group('ref', () {
+    testWidgets('mount/update refs', (tester) async {
+      final ref = Ref();
+      await tester.pumpWidget(InheritedProvider<dynamic>(
+        ref: ref,
+        value: null,
+        child: Container(),
+      ));
+
+      final element = tester.element(
+        find.byWidgetPredicate((w) => w is InheritedProvider),
+      );
+
+      expect(
+        ref.element,
+        equals(element),
+      );
+
+      final ref2 = Ref();
+      await tester.pumpWidget(InheritedProvider<dynamic>(
+        ref: ref2,
+        value: null,
+        child: Container(),
+      ));
+
+      expect(ref.element, isNull);
+      expect(ref2.element, equals(element));
+    });
+  });
+  testWidgets('rebuilding with the same ref is fine', (tester) async {
+    final ref = Ref();
+    await tester.pumpWidget(InheritedProvider<dynamic>(
+      ref: ref,
+      value: null,
+      child: Container(),
+    ));
+
+    await tester.pumpWidget(InheritedProvider<dynamic>(
+      ref: ref,
+      value: null,
+      child: Container(),
+    ));
+
+    expect(
+      ref.element,
+      tester.element(find.byWidgetPredicate((w) => w is InheritedProvider)),
+    );
+  });
+  testWidgets("can't the same ref twice", (tester) async {
+    final ref = Ref();
+    await tester.pumpWidget(
+      InheritedProvider<dynamic>(
+        ref: ref,
+        value: null,
+        child: InheritedProvider(
+          ref: ref,
+          value: null,
+          child: Container(),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isAssertionError);
+  });
+  testWidgets('can use ref inside build', (tester) async {
+    final ref = Ref();
+    await tester.pumpWidget(Builder(builder: (context) {
+      return InheritedProvider<dynamic>(
+        ref: ref,
+        value: null,
+        child: Container(),
+      );
+    }));
+
+    Element element;
+
+    await tester.pumpWidget(Builder(builder: (context) {
+      element = ref.element;
+      return InheritedProvider<dynamic>(
+        ref: ref,
+        value: null,
+        child: Container(),
+      );
+    }));
+
+    expect(element, isNotNull);
+  });
   group('Provider', () {
     testWidgets('throws if the provided value is a Listenable/Stream',
         (tester) async {

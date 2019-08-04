@@ -302,7 +302,7 @@ class LazyBuilderStateDelegate<T> extends ValueStateDelegate<T> {
   ///
   /// It is usually used as the parameter `startListening` of
   /// [InheritedProvider].
-  void startListening() {
+  T startListening() {
     assert(() {
       (context as _DelegateElement)._debugIsInitDelegate = true;
       return true;
@@ -313,6 +313,7 @@ class LazyBuilderStateDelegate<T> extends ValueStateDelegate<T> {
       (context as _DelegateElement)._debugIsInitDelegate = false;
       return true;
     }());
+    return value;
   }
 
   @override

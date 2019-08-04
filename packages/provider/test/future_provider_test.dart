@@ -239,7 +239,7 @@ Exception:
       testWidgets('create future with builder', (tester) async {
         final completer = Completer<int>();
 
-        final builder = ValueBuilderMock<Future<int>>();
+        final builder = WidgetValueBuilderMock<Future<int>>();
         when(builder(any)).thenAnswer((_) => completer.future);
 
         await tester.pumpWidget(FutureProvider<int>(
