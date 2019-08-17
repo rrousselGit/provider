@@ -36,8 +36,27 @@ class Selector0<T> extends StatefulWidget
         assert(selector != null),
         super(key: key);
 
+  /// A function that builds a widget tree from [child] and the last result of
+  /// [selector].
+  ///
+  /// [builder] will be called again whenever the its parent widget asks for an
+  /// update, or if [selector] return a value that is different from the
+  /// previous one using [operator==].
+  ///
+  /// Must not be `null`.
   final ValueWidgetBuilder<T> builder;
+
+  /// A function that obtains some [InheritedWidget] and map their content into
+  /// a new object with only a limited number of properties.
+  ///
+  /// The returned object must implement [operator==].
+  ///
+  /// Must not be `null`
   final ValueBuilder<T> selector;
+
+  /// A cache of a widget tree that does not depend on the value of [selector].
+  ///
+  /// See [Consumer] for an explanation on how to use it.
   final Widget child;
 
   @override
