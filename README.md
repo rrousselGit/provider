@@ -133,7 +133,7 @@ obtain a `BuildContext` descendant of the provider.
 
 See the [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do) or the documentation of [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
 and [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html)
-for more information. 
+for more information.
 
 ### MultiProvider
 
@@ -229,10 +229,7 @@ the widget tree:
 Foo(
   child: Consumer<A>(
     builder: (_, a, child) {
-      return Bar(
-        a: a,
-        child: child,
-      );
+      return Bar(a: a, child: child);
     },
     child: Baz(),
   ),
