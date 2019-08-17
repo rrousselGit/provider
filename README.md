@@ -131,9 +131,9 @@ Alternatively instead of using `Provider.of`, we can use `Consumer` and `Selecto
 These can be useful for performance optimizations or when it is difficult to
 obtain a `BuildContext` descendant of the provider.
 
-See the documentation of [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
+See the [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do) or the documentation of [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
 and [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html)
-for more information.
+for more information. 
 
 ### MultiProvider
 
