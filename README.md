@@ -236,7 +236,7 @@ Foo(
 )
 ```
 
-In this example, only `Bar` will rebbuild when `A` updates. `Foo` and `Baz` won't
+In this example, only `Bar` will rebuild when `A` updates. `Foo` and `Baz` won't
 unnecesseraly rebuild.
 
 To go one step further, it is possible to use `Selector` to ignore changes if
