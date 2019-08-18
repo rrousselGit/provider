@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-
 import 'provider.dart';
+import 'selector.dart' show Selector;
 
 /// {@template provider.consumer}
 /// Obtain [Provider<T>] from its ancestors and pass its value to [builder].
@@ -149,6 +149,9 @@ import 'provider.dart';
 ///   ],
 /// );
 /// ```
+///
+/// See also:
+///   * [Selector], a [Consumer] that can filter updates.
 /// {@endtemplate}
 class Consumer<T> extends StatelessWidget
     implements SingleChildCloneableWidget {

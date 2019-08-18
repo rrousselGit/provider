@@ -1,16 +1,20 @@
 [![Build Status](https://travis-ci.org/rrousselGit/provider.svg?branch=master)](https://travis-ci.org/rrousselGit/provider)
 [![pub package](https://img.shields.io/pub/v/provider.svg)](https://pub.dartlang.org/packages/provider) [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider) [![Gitter](https://badges.gitter.im/flutter_provider/community.svg)](https://gitter.im/flutter_provider/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-A mixture between dependency injection (DI) and state management, built with widgets for widgets.
+A mixture between dependency injection (DI) and state management, built with
+widgets for widgets.
 
-It purposefully uses widgets for DI/state management instead of dart-only classes like `Stream`.
+It purposefully uses widgets for DI/state management instead of dart-only
+classes like `Stream`.
 The reason is, widgets are very simple yet robust and scalable.
 
 By using widgets for state management, `provider` can guarantee:
 
 - maintainability, through a forced uni-directional data-flow
-- testability/composability, since it is always possible to mock/override a value
-- robustness, as it is harder to forget to handle the update scenario of a model/widget
+- testability/composability, since it is always possible to mock/override a
+  value
+- robustness, as it is harder to forget to handle the update scenario of a
+  model/widget
 
 To read more about `provider`, see the [documentation](https://pub.dev/documentation/provider/latest/).
 
@@ -19,8 +23,8 @@ To read more about `provider`, see the [documentation](https://pub.dev/documenta
 - Providers can no longer be instantiated with `const`.
 - `Provider` now throws if used with a `Listenable`/`Stream`.
   Consider using `ListenableProvider`/`StreamProvider` instead. Alternatively,
-  this exception can be disabled by setting `Provider.debugCheckInvalidValueType`
-  to `null` like so:
+  this exception can be disabled by setting
+  `Provider.debugCheckInvalidValueType` to `null` like so:
 
 ```dart
 void main() {
@@ -44,7 +48,9 @@ After:
 ChangeNotifierProvider.value(value: myNotifier),
 ```
 
-- `StreamProvider`'s default constructor now builds a `Stream` instead of a `StreamController`. The previous behavior has been moved to the named constructor `StreamProvider.controller`.
+- `StreamProvider`'s default constructor now builds a `Stream` instead of a
+  `StreamController`. The previous behavior has been moved to the named
+  constructor `StreamProvider.controller`.
 
 Before:
 
@@ -62,10 +68,12 @@ StreamProvider.controller(builder: (_) => StreamController<int>()),
 
 ### Exposing a value
 
-To expose a variable using `provider`, wrap any widget into one of the provider widgets from this package
-and pass it your variable. Then, all descendants of the newly added provider widget can access this variable.
+To expose a variable using `provider`, wrap any widget into one of the provider
+widgets from this package and pass it your variable. Then, all descendants of
+the newly added provider widget can access this variable.
 
-A simple example would be to wrap the entire application into a `Provider` widget and pass it our variable:
+A simple example would be to wrap the entire application into a `Provider`
+widget and pass it our variable:
 
 ```dart
 Provider<String>.value(
@@ -76,12 +84,15 @@ Provider<String>.value(
 )
 ```
 
-Alternatively, for complex objects, most providers expose a constructor that takes a function to create the value.
-The provider will call that function only once, when inserting the widget in the tree, and expose the result.
-This is perfect for exposing a complex object that never changes over time without writing a `StatefulWidget`.
+Alternatively, for complex objects, most providers expose a constructor that
+takes a function to create the value. The provider will call that function only
+once, when inserting the widget in the tree, and expose the result. This is
+perfect for exposing a complex object that never changes over time without
+writing a `StatefulWidget`.
 
-The following creates and exposes a `MyComplexClass`. And in the event where `Provider` is removed from the widget tree,
-the instantiated `MyComplexClass` will be disposed.
+The following creates and exposes a `MyComplexClass`. And in the event where
+`Provider` is removed from the widget tree, the instantiated `MyComplexClass`
+will be disposed.
 
 ```dart
 Provider<MyComplexClass>(
@@ -93,11 +104,15 @@ Provider<MyComplexClass>(
 
 ### Reading a value
 
-The easiest way to read a value is by using the static method `Provider.of<T>(BuildContext context)`. This method will look
-up in the widget tree starting from the widget associated with the `BuildContext` passed and it will return the nearest variable
-of type `T` found (or throw if nothing is found).
+The easiest way to read a value is by using the static method
+`Provider.of<T>(BuildContext context)`.
 
-Combined with the first example of [exposing a value](#exposing-a-value), this widget will read the exposed `String` and render "Hello World."
+This method will look up in the widget tree starting from the widget associated
+with the `BuildContext` passed and it will return the nearest variable of type
+`T` found (or throw if nothing is found).
+
+Combined with the first example of [exposing a value](#exposing-a-value), this
+widget will read the exposed `String` and render "Hello World."
 
 ```dart
 class Home extends StatelessWidget {
@@ -111,58 +126,19 @@ class Home extends StatelessWidget {
 }
 ```
 
-Alternatively instead of using `Provider.of`, we can use the `Consumer` widget.
+Alternatively instead of using `Provider.of`, we can use `Consumer` and `Selector`.
 
-This can be useful for performance optimizations or when it is difficult to obtain a `BuildContext` descendant of the provider.
+These can be useful for performance optimizations or when it is difficult to
+obtain a `BuildContext` descendant of the provider.
 
-```dart
-Provider<String>.value(
-  value: 'Hello World',
-  child: Consumer<String>(
-    builder: (context, value, child) => Text(value),
-  ),
-);
-```
-
-The widget `Consumer` can also be used inside `MultiProvider`. To do so,
-it must return the `child` passed to `builder` in the widget tree it creates.
-
-```dart
-MultiProvider(
-  providers: [
-    Provider(builder: (_) => Foo()),
-    Consumer<Foo>(
-      builder: (context, foo, child) =>
-        Provider.value(value: foo.bar, child: child),
-    )
-  ],
-);
-```
-
----
-
-Note that you can freely use multiple providers with different types together:
-
-```dart
-Provider<int>.value(
-  value: 42,
-  child: Provider<String>.value(
-    value: 'Hello World',
-    child: // ...
-  )
-)
-```
-
-And obtain their value independently:
-
-```dart
-var value = Provider.of<int>(context);
-var value2 = Provider.of<String>(context);
-```
+See the [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do) or the documentation of [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
+and [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html)
+for more information.
 
 ### MultiProvider
 
-When injecting many values in big applications, `Provider` can rapidly become pretty nested:
+When injecting many values in big applications, `Provider` can rapidly become
+pretty nested:
 
 ```dart
 Provider<Foo>.value(
@@ -190,19 +166,21 @@ MultiProvider(
 )
 ```
 
-The behavior of both examples is strictly the same. `MultiProvider` only changes the appearance of the code.
+The behavior of both examples is strictly the same. `MultiProvider` only changes
+the appearance of the code.
 
 ### ProxyProvider
 
 Since the 3.0.0, there is a new kind of provider: `ProxyProvider`.
 
-`ProxyProvider` is a provider that combines multiple values from other providers into a new object, and sends the result to `Provider`.
+`ProxyProvider` is a provider that combines multiple values from other providers
+into a new object, and sends the result to `Provider`.
 
 That new object will then be updated whenever one of the providers it depends on
 updates.
 
-The following example uses `ProxyProvider` to build translations based on a counter
-coming from another provider.
+The following example uses `ProxyProvider` to build translations based on a
+counter coming from another provider.
 
 ```dart
 Widget build(BuildContext context) {
@@ -230,13 +208,84 @@ It comes under multiple variations, such as:
 
 - `ProxyProvider` vs `ProxyProvider2` vs `ProxyProvider3`, ...
 
-  That digit after the class name is the number of other providers that `ProxyProvider` depends on.
+  That digit after the class name is the number of other providers that
+  `ProxyProvider` depends on.
 
 - `ProxyProvider` vs `ChangeNotifierProxyProvider` vs `ListenableProxyProvider`, ...
 
-  They all work similarly, but instead of sending the result into a `Provider`, a `ChangeNotifierProxyProvider` will send its value to a `ChangeNotifierProvider`.
+  They all work similarly, but instead of sending the result into a `Provider`,
+  a `ChangeNotifierProxyProvider` will send its value to a `ChangeNotifierProvider`.
 
-### Existing providers
+### FAQ
+
+#### My widget rebuilds too often, what can I do?
+
+Instead of `Provider.of`, you can use `Consumer`/`Selector`.
+
+Their optional `child` argument allows to rebuild only a very specific part of
+the widget tree:
+
+```dart
+Foo(
+  child: Consumer<A>(
+    builder: (_, a, child) {
+      return Bar(a: a, child: child);
+    },
+    child: Baz(),
+  ),
+)
+```
+
+In this example, only `Bar` will rebbuild when `A` updates. `Foo` and `Baz` won't
+unnecesseraly rebuild.
+
+To go one step further, it is possible to use `Selector` to ignore changes if
+they don't have an impact on the widget-tree:
+
+```dart
+Selector<List, int>(
+  selector: (_, list) => list.length,
+  builder: (_, length, __) {
+    return Text('$length');
+  }
+);
+```
+
+This snippet will rebuild only if the length of the list changes. But it won't
+unnecessarily update if an item is updated.
+
+#### Can I obtain two different providers using the same type?
+
+No. While you can have multiple providers sharing the same type, a widget will
+be able to obtain only one of them: the closest ancestor.
+
+Instead, you must explicitly give both providers a different type.
+
+Instead of:
+
+```dart
+Provider<String>(
+  builder: (_) => 'England',
+  child: Provider<Sring>(
+    builder: (_) => 'London',
+    child: ...,
+  ),
+),
+```
+
+Prefer:
+
+```dart
+Provider<Country>(
+  builder: (_) => Country('England'),
+  child: Provider<City>(
+    builder: (_) => City('London'),
+    child: ...,
+  ),
+),
+```
+
+## Existing providers
 
 `provider` exposes a few different kinds of "provider" for different types of objects.
 
