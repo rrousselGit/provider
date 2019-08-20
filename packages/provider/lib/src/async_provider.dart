@@ -179,7 +179,7 @@ class _StreamControllerBuilderDelegate<T>
   _StreamControllerBuilderDelegate(this._builder) : assert(_builder != null);
 
   StreamController<T> _controller;
-  ValueBuilder<StreamController<T>> _builder;
+  final ValueBuilder<StreamController<T>> _builder;
 
   @override
   Stream<T> value;
