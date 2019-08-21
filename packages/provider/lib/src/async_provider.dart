@@ -98,7 +98,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
           child: child,
         );
 
-  StreamProvider._({
+  const StreamProvider._({
     Key key,
     @required ValueStateDelegate<Stream<T>> delegate,
     this.initialData,
@@ -253,7 +253,7 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
           child: child,
         );
 
-  FutureProvider._({
+  const FutureProvider._({
     Key key,
     @required ValueStateDelegate<Future<T>> delegate,
     this.initialData,

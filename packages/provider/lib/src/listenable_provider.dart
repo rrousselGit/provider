@@ -57,7 +57,7 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
           child: child,
         );
 
-  ListenableProvider._({
+  const ListenableProvider._({
     Key key,
     @required _ListenableDelegateMixin<T> delegate,
     // ignore: lines_longer_than_80_chars
@@ -212,7 +212,7 @@ ChangeNotifierProvider(
 
 class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
-  _NumericProxyProvider({
+  const _NumericProxyProvider({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required this.builder,
@@ -289,7 +289,7 @@ class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
 class ListenableProxyProvider<T, R extends Listenable>
     extends _NumericProxyProvider<T, Void, Void, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
-  ListenableProxyProvider({
+  const ListenableProxyProvider({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder<T, R> builder,
@@ -312,7 +312,7 @@ class ListenableProxyProvider<T, R extends Listenable>
 class ListenableProxyProvider2<T, T2, R extends Listenable>
     extends _NumericProxyProvider<T, T2, Void, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
-  ListenableProxyProvider2({
+  const ListenableProxyProvider2({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder2<T, T2, R> builder,
@@ -335,7 +335,7 @@ class ListenableProxyProvider2<T, T2, R extends Listenable>
 class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
     extends _NumericProxyProvider<T, T2, T3, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
-  ListenableProxyProvider3({
+  const ListenableProxyProvider3({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder3<T, T2, T3, R> builder,
@@ -358,7 +358,7 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
 class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
     extends _NumericProxyProvider<T, T2, T3, T4, Void, Void, R> {
   /// Initializes [key] for subclasses.
-  ListenableProxyProvider4({
+  const ListenableProxyProvider4({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
@@ -381,7 +381,7 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
 class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
     extends _NumericProxyProvider<T, T2, T3, T4, T5, Void, R> {
   /// Initializes [key] for subclasses.
-  ListenableProxyProvider5({
+  const ListenableProxyProvider5({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
@@ -404,7 +404,7 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
 class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
     extends _NumericProxyProvider<T, T2, T3, T4, T5, T6, R> {
   /// Initializes [key] for subclasses.
-  ListenableProxyProvider6({
+  const ListenableProxyProvider6({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,

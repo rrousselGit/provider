@@ -196,7 +196,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
 class ChangeNotifierProxyProvider<T, R extends ChangeNotifier>
     extends ListenableProxyProvider<T, R> {
   /// Initializes [key] for subclasses.
-  ChangeNotifierProxyProvider({
+  const ChangeNotifierProxyProvider({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder<T, R> builder,
@@ -214,7 +214,7 @@ class ChangeNotifierProxyProvider<T, R extends ChangeNotifier>
 class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier>
     extends ListenableProxyProvider2<T, T2, R> {
   /// Initializes [key] for subclasses.
-  ChangeNotifierProxyProvider2({
+  const ChangeNotifierProxyProvider2({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder2<T, T2, R> builder,
@@ -232,7 +232,7 @@ class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier>
 class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier>
     extends ListenableProxyProvider3<T, T2, T3, R> {
   /// Initializes [key] for subclasses.
-  ChangeNotifierProxyProvider3({
+  const ChangeNotifierProxyProvider3({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder3<T, T2, T3, R> builder,
@@ -250,7 +250,7 @@ class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier>
 class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
     extends ListenableProxyProvider4<T, T2, T3, T4, R> {
   /// Initializes [key] for subclasses.
-  ChangeNotifierProxyProvider4({
+  const ChangeNotifierProxyProvider4({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
@@ -269,7 +269,7 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
 class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
     extends ListenableProxyProvider5<T, T2, T3, T4, T5, R> {
   /// Initializes [key] for subclasses.
-  ChangeNotifierProxyProvider5({
+  const ChangeNotifierProxyProvider5({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
@@ -288,7 +288,7 @@ class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6,
         R extends ChangeNotifier>
     extends ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R> {
   /// Initializes [key] for subclasses.
-  ChangeNotifierProxyProvider6({
+  const ChangeNotifierProxyProvider6({
     Key key,
     @required ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,

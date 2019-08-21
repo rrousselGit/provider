@@ -55,6 +55,7 @@ linter:
     - prefer_collection_literals
     - prefer_conditional_assignment
     - prefer_const_constructors
+    - prefer_const_constructors_in_immutables
     - prefer_contains
     - prefer_equal_for_default_values
     - prefer_final_fields

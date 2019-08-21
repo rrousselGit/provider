@@ -27,7 +27,7 @@ import 'delegate_widget.dart';
 class Selector0<T> extends StatefulWidget
     implements SingleChildCloneableWidget {
   /// Both `builder` and `selector` must not be `null`.
-  Selector0({
+  const Selector0({
     Key key,
     @required this.builder,
     @required this.selector,

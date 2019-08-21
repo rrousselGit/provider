@@ -61,7 +61,7 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
           child: child,
         );
 
-  ValueListenableProvider._({
+  const ValueListenableProvider._({
     Key key,
     @required ValueStateDelegate<ValueListenable<T>> delegate,
     this.updateShouldNotify,

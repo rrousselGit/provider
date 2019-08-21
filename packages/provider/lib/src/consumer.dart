@@ -158,7 +158,7 @@ class Consumer<T> extends StatelessWidget
   /// {@template provider.consumer.constructor}
   /// Consumes a [Provider<T>]
   /// {@endtemplate}
-  Consumer({
+  const Consumer({
     Key key,
     @required this.builder,
     this.child,
@@ -198,7 +198,7 @@ class Consumer<T> extends StatelessWidget
 class Consumer2<A, B> extends StatelessWidget
     implements SingleChildCloneableWidget {
   /// {@macro provider.consumer.constructor}
-  Consumer2({
+  const Consumer2({
     Key key,
     @required this.builder,
     this.child,
@@ -236,7 +236,7 @@ class Consumer2<A, B> extends StatelessWidget
 class Consumer3<A, B, C> extends StatelessWidget
     implements SingleChildCloneableWidget {
   /// {@macro provider.consumer.constructor}
-  Consumer3({
+  const Consumer3({
     Key key,
     @required this.builder,
     this.child,
@@ -275,7 +275,7 @@ class Consumer3<A, B, C> extends StatelessWidget
 class Consumer4<A, B, C, D> extends StatelessWidget
     implements SingleChildCloneableWidget {
   /// {@macro provider.consumer.constructor}
-  Consumer4({
+  const Consumer4({
     Key key,
     @required this.builder,
     this.child,
@@ -314,7 +314,7 @@ class Consumer4<A, B, C, D> extends StatelessWidget
 class Consumer5<A, B, C, D, E> extends StatelessWidget
     implements SingleChildCloneableWidget {
   /// {@macro provider.consumer.constructor}
-  Consumer5({
+  const Consumer5({
     Key key,
     @required this.builder,
     this.child,
@@ -355,7 +355,7 @@ class Consumer5<A, B, C, D, E> extends StatelessWidget
 class Consumer6<A, B, C, D, E, F> extends StatelessWidget
     implements SingleChildCloneableWidget {
   /// {@macro provider.consumer.constructor}
-  Consumer6({
+  const Consumer6({
     Key key,
     @required this.builder,
     this.child,

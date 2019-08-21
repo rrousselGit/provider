@@ -235,7 +235,7 @@ class Provider<T> extends ValueDelegateWidget<T>
           child: child,
         );
 
-  Provider._({
+  const Provider._({
     Key key,
     @required ValueStateDelegate<T> delegate,
     this.updateShouldNotify,

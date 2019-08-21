@@ -111,7 +111,7 @@ abstract class Void {}
 /// See [ProxyProvider] for a concrete implementation.
 abstract class ProxyProviderBase<R> extends ProxyProviderWidget {
   /// Initializes [key], [initialBuilder] and [dispose] for subclasses.
-  ProxyProviderBase({
+  const ProxyProviderBase({
     Key key,
     this.initialBuilder,
     this.dispose,
@@ -179,7 +179,7 @@ class _ProxyProviderState<R> extends ProxyProviderState<ProxyProviderBase<R>> {
 class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
     extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
   // ignore: public_member_api_docs
-  NumericProxyProvider({
+  const NumericProxyProvider({
     Key key,
     ValueBuilder<R> initialBuilder,
     @required this.builder,
@@ -322,7 +322,7 @@ class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
 class ProxyProvider<T, R>
     extends NumericProxyProvider<T, Void, Void, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
-  ProxyProvider({
+  const ProxyProvider({
     Key key,
     ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder<T, R> builder,
@@ -347,7 +347,7 @@ class ProxyProvider<T, R>
 class ProxyProvider2<T, T2, R>
     extends NumericProxyProvider<T, T2, Void, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
-  ProxyProvider2({
+  const ProxyProvider2({
     Key key,
     ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder2<T, T2, R> builder,
@@ -372,7 +372,7 @@ class ProxyProvider2<T, T2, R>
 class ProxyProvider3<T, T2, T3, R>
     extends NumericProxyProvider<T, T2, T3, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
-  ProxyProvider3({
+  const ProxyProvider3({
     Key key,
     ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder3<T, T2, T3, R> builder,
@@ -397,7 +397,7 @@ class ProxyProvider3<T, T2, T3, R>
 class ProxyProvider4<T, T2, T3, T4, R>
     extends NumericProxyProvider<T, T2, T3, T4, Void, Void, R> {
   /// Initializes [key] for subclasses.
-  ProxyProvider4({
+  const ProxyProvider4({
     Key key,
     ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
@@ -422,7 +422,7 @@ class ProxyProvider4<T, T2, T3, T4, R>
 class ProxyProvider5<T, T2, T3, T4, T5, R>
     extends NumericProxyProvider<T, T2, T3, T4, T5, Void, R> {
   /// Initializes [key] for subclasses.
-  ProxyProvider5({
+  const ProxyProvider5({
     Key key,
     ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
@@ -447,7 +447,7 @@ class ProxyProvider5<T, T2, T3, T4, T5, R>
 class ProxyProvider6<T, T2, T3, T4, T5, T6, R>
     extends NumericProxyProvider<T, T2, T3, T4, T5, T6, R> {
   /// Initializes [key] for subclasses.
-  ProxyProvider6({
+  const ProxyProvider6({
     Key key,
     ValueBuilder<R> initialBuilder,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,

@@ -341,7 +341,7 @@ class MockStateDelegate<T> extends StateDelegate {
 
 class BuilderDelegateWidget<T extends ValueStateDelegate<dynamic>>
     extends ValueDelegateWidget<dynamic> {
-  BuilderDelegateWidget({Key key, this.builder, T delegate})
+  const BuilderDelegateWidget({Key key, this.builder, T delegate})
       : super(key: key, delegate: delegate);
 
   final Widget Function(BuildContext context, T delegate) builder;
@@ -351,7 +351,7 @@ class BuilderDelegateWidget<T extends ValueStateDelegate<dynamic>>
 }
 
 class TestDelegateWidget extends DelegateWidget {
-  TestDelegateWidget({Key key, this.child, StateDelegate delegate})
+  const TestDelegateWidget({Key key, this.child, StateDelegate delegate})
       : super(key: key, delegate: delegate);
 
   final Widget child;

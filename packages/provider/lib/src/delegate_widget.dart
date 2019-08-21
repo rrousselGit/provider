@@ -272,7 +272,7 @@ abstract class ValueDelegateWidget<T> extends DelegateWidget {
   /// Initializes [key] for subclasses.
   ///
   /// The argument [delegate] must not be `null`.
-  ValueDelegateWidget({
+  const ValueDelegateWidget({
     Key key,
     @required ValueStateDelegate<T> delegate,
   }) : super(key: key, delegate: delegate);
