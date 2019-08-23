@@ -218,6 +218,76 @@ It comes under multiple variations, such as:
 
 ### FAQ
 
+#### Do I have to use `ChangeNotifier` for complex states?
+
+No.
+
+You can use any object to represent your state. For example, an alternate
+architecture is to use `Provider.value()` combined with a `StatefulWidget`.
+
+Here's a counter example using such architecture:
+
+```dart
+class Example extends StatefulWidget {
+  const Example({Key key, this.child}) : super(key: key);
+
+  final Widget child;
+
+  @override
+  ExampleState createState() => ExampleState();
+}
+
+class ExampleState extends State<Example> {
+  int _count;
+
+  void increment() {
+    setState(() {
+      _count++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider.value(
+      value: _count,
+      child: Provider.value(
+        value: this,
+        child: widget.child,
+      ),
+    );
+  }
+}
+```
+
+where we can read the state by doing:
+
+```dart
+return Text(Provider.of<int>(context).toString());
+```
+and modify the state with:
+```dart
+return FloatingActionButton(
+  onPressed: Provider.of<ExampleState>(context).increment,
+  child: Icon(Icons.plus_one),
+);
+```
+
+Alternatively, you can create your own provider.
+
+#### Can I make my own Provider?
+
+Yes. `provider` exposes all the small components that makes a fully fledged provider.
+
+This includes:
+
+- `SingleChildCloneableWidget`, to make any widget works with `MultiProvider`.
+- `InheritedProvider`, the generic `InheritedWidget` obtained when doing `Provider.of`.
+- `DelegateWidget`/`BuilderDelegate`/`ValueDelegate` to help handle the logic of
+  "MyProvider() that creates an object" vs "MyProvider.value() that can update over time".
+  
+Here's an example of a custom provider to use `ValueNotifier` as state:
+https://gist.github.com/rrousselGit/4910f3125e41600df3c2577e26967c91
+
 #### My widget rebuilds too often, what can I do?
 
 Instead of `Provider.of`, you can use `Consumer`/`Selector`.
