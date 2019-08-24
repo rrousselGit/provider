@@ -162,7 +162,7 @@ mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
 The default constructor of ListenableProvider/ChangeNotifierProvider
 must create a new, unused Listenable.
 
-If you want to reuse an existing Listenable constructor the second constructor:
+If you want to reuse an existing Listenable, use the second constructor:
 
 - DO use ChangeNotifierProvider.value to provider an existing ChangeNotifier:
 
@@ -286,7 +286,7 @@ class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
 
 /// {@template provider.listenableproxyprovider}
 /// A variation of [ListenableProvider] that builds its value from
-/// values obtained in other providers.
+/// values obtained from other providers.
 ///
 /// See the discussion on [ChangeNotifierProxyProvider] for a complete
 /// explanation on how to use it.

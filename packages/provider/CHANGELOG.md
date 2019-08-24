@@ -1,5 +1,6 @@
 # 3.1.0
 
+- Added `Selector`, similar to `Consumer` but can filter unneeded updates
 - improved the overall documentation
 - fixed a bug where `ChangeNotifierProvider.value` didn't update dependents
   when the `ChangeNotifier` instance changed.
