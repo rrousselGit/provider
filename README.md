@@ -336,7 +336,7 @@ Instead of:
 ```dart
 Provider<String>(
   builder: (_) => 'England',
-  child: Provider<Sring>(
+  child: Provider<String>(
     builder: (_) => 'London',
     child: ...,
   ),
