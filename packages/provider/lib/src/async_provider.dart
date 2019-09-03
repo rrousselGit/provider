@@ -107,6 +107,17 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     this.child,
   }) : super(key: key, delegate: delegate);
 
+  static Stream<T> of<T>(BuildContext context) {
+    final type = _typeOf<StreamBuilder<T>>();
+    final provider = context.ancestorWidgetOfExactType(type) as StreamBuilder<T>;
+
+    if (provider == null) {
+      throw ProviderNotFoundError(T, context.widget.runtimeType);
+    }
+
+    return provider.stream;
+  }
+
   /// {@macro provider.streamprovider.initialdata}
   final T initialData;
 
