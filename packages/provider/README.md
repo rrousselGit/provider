@@ -218,6 +218,99 @@ It comes under multiple variations, such as:
 
 ### FAQ
 
+### I have an exception when obtaining Providers inside `initState`. What can I do?
+
+This exception happens because you're trying to listen to a provider from a
+life-cycle that will never ever be called again.
+
+It means that you either should use another life-cycle
+(`didChangeDependencies`/`build`), or explicitly specify that you do not care
+about updates.
+
+As such, instead of:
+
+```dart
+initState() {
+  super.initState();
+  print(Provider.of<Foo>(context).value);
+}
+```
+
+you can do:
+
+```dart
+Value value;
+
+didChangeDependencies() {
+  super.didChangeDependencies();
+  final value = Provider.of<Foo>(context).value;
+  if (value != this.value) {
+    this.value = value;
+    print(value);
+  }
+}
+```
+
+which will print `value` whenever it changes.
+
+Alternatively you can do:
+
+```dart
+initState() {
+  super.initState();
+  print(Provider.of<Foo>(context, listen: false).value);
+}
+```
+
+Which will print `value` once and ignore updates.
+
+### I use `ChangeNotifier` and I have an exception when I update it, what happens?
+
+This likely happens because you are modifying the `ChangeNotifier` from one of
+its descendants _while the widget tree is building_.
+
+A typical situation where this happens is when starting an http request, where
+the future is stored inside the notifier:
+
+```dart
+initState() {
+  super.initState();
+  Provider.of<Foo>(context).fetchSomething();
+}
+```
+
+This is not allowed, because the modification is immediate.
+
+Which means that some widgets may build _before_ the mutation, while other
+widgets will build _after_ the mutation.
+This could cause inconsistencies in your UI and is therefore not allowed.
+
+Instead, you should perform that mutation in a place that would affect the
+entire tree equally:
+
+- directly inside the `builder` of your provider/constructor of your model:
+  ```dart
+  class MyNotifier with ChangeNotifier {
+    MyNotifier() {
+      _fetchSomething();
+    }
+
+    Future<void> _fetchSomething() async {}
+  }
+  ```
+  This is useful when there's no "external parameter".
+
+- asynchronously at the end of the frame:
+  ```dart
+  initState() {
+    super.initState();
+    Future.microtask(() =>
+      Provider.of<Foo>(context).fetchSomething(someValue);
+    );
+  }
+  ```
+  It is slightly less ideal, but allows passing parameters to the mutation.
+
 #### Do I have to use `ChangeNotifier` for complex states?
 
 No.
