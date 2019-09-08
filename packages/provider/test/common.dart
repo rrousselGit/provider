@@ -116,3 +116,11 @@ class MyStream extends Stream<void> {
     return null;
   }
 }
+
+class MockSelector<T> extends Mock {
+  T call(BuildContext context);
+}
+
+class MockBuilder<T> extends Mock {
+  Widget call(BuildContext context, T value, Widget child);
+}

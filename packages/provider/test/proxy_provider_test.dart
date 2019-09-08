@@ -49,6 +49,32 @@ void main() {
               Void, Combined>,
         );
 
+    testWidgets('lazy loaded', (tester) async {
+      final providerBuilder = WidgetValueBuilderMock<A>();
+      when(providerBuilder(any)).thenReturn(a);
+      final proxyBuilder = MockProxyBuilder<A, B>();
+      when(proxyBuilder(any, any, any)).thenReturn(b);
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider<A>(builder: providerBuilder),
+            ProxyProvider<A, B>(builder: proxyBuilder),
+          ],
+          child: Container(),
+        ),
+      );
+
+      verifyZeroInteractions(providerBuilder);
+      verifyZeroInteractions(proxyBuilder);
+
+      final context = tester.element(find.byType(Container));
+      expect(Provider.of<B>(context), equals(b));
+
+      verify(providerBuilder(argThat(isNotNull))).called(1);
+      verify(proxyBuilder(argThat(isNotNull), a, null)).called(1);
+    });
+
     testWidgets('throws if the provided value is a Listenable/Stream',
         (tester) async {
       await tester.pumpWidget(
@@ -551,4 +577,8 @@ void main() {
       ).called(1);
     });
   });
+}
+
+class MockProxyBuilder<A, B> extends Mock {
+  B call(BuildContext context, A a, B b);
 }

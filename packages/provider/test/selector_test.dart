@@ -5,6 +5,8 @@ import 'package:mockito/mockito.dart' as mockito show when;
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
+import 'common.dart';
+
 void mockImplementation<T extends Function>(VoidCallback when, T mock) {
   mockito.when(when()).thenAnswer((invo) {
     return Function.apply(mock, invo.positionalArguments, invo.namedArguments);
@@ -334,11 +336,3 @@ class D with _ToString {}
 class E with _ToString {}
 
 class F with _ToString {}
-
-class MockSelector<T> extends Mock {
-  T call(BuildContext context);
-}
-
-class MockBuilder<T> extends Mock {
-  Widget call(BuildContext context, T value, Widget child);
-}
