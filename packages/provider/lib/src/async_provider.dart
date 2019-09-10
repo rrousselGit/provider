@@ -298,7 +298,6 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
 
   @override
   Widget build(BuildContext context) {
-    Navigator
     return FutureBuilder<T>(
       future: delegate.value,
       initialData: initialData,
