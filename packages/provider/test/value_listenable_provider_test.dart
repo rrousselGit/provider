@@ -125,7 +125,7 @@ void main() {
         child: Container(key: key),
       ));
 
-      expect(Provider.of<int>(key.currentContext), 42);
+      expect(Provider.of<int>(key.currentContext, listen: false), 42);
     });
 
     test('works with MultiProvider #2', () {

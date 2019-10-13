@@ -1,3 +1,7 @@
+# 4.0.0
+
+- `Provider.of` now throws if `listen: false` is not specified inside click handlers
+
 # 3.1.0
 
 - Added `Selector`, similar to `Consumer` but can filter unneeded updates

@@ -20,7 +20,10 @@ void main() {
         child: Container(key: key),
       ));
 
-      expect(Provider.of<ChangeNotifier>(key.currentContext), notifier);
+      expect(
+        Provider.of<ChangeNotifier>(key.currentContext, listen: false),
+        notifier,
+      );
     });
     testWidgets(
       'asserts that the created notifier has no listener',
@@ -84,7 +87,10 @@ void main() {
         child: Container(key: key),
       ));
 
-      expect(Provider.of<ChangeNotifier>(key.currentContext), null);
+      expect(
+        Provider.of<ChangeNotifier>(key.currentContext, listen: false),
+        null,
+      );
     });
     testWidgets('works with null (builder)', (tester) async {
       final key = GlobalKey();
@@ -93,7 +99,10 @@ void main() {
         child: Container(key: key),
       ));
 
-      expect(Provider.of<ChangeNotifier>(key.currentContext), null);
+      expect(
+        Provider.of<ChangeNotifier>(key.currentContext, listen: false),
+        null,
+      );
     });
     testWidgets(
       'changing the Listenable instance rebuilds dependents',
@@ -240,7 +249,10 @@ void main() {
         child: Container(key: key),
       ));
 
-      expect(Provider.of<ChangeNotifier>(key.currentContext), notifier2);
+      expect(
+        Provider.of<ChangeNotifier>(key.currentContext, listen: false),
+        notifier2,
+      );
 
       await tester.pumpWidget(Container());
       verify(notifier.removeListener(listener)).called(1);
@@ -268,7 +280,10 @@ void main() {
         child: Container(key: key),
       ));
 
-      expect(Provider.of<ChangeNotifier>(key.currentContext), notifier2);
+      expect(
+        Provider.of<ChangeNotifier>(key.currentContext, listen: false),
+        notifier2,
+      );
 
       await tester.pumpWidget(Container());
 
@@ -327,9 +342,9 @@ void main() {
       final builder = BuilderMock();
       when(builder(any)).thenReturn(Container());
 
-      final child = Builder(
+      final child = Consumer<ChangeNotifier>(
         key: keyChild,
-        builder: builder,
+        builder: (context, _, __) => builder(context),
       );
 
       await tester.pumpWidget(ChangeNotifierProvider.value(
@@ -338,14 +353,20 @@ void main() {
       ));
 
       verify(builder(any)).called(1);
-      expect(Provider.of<ChangeNotifier>(keyChild.currentContext), notifier);
+      expect(
+        Provider.of<ChangeNotifier>(keyChild.currentContext, listen: false),
+        notifier,
+      );
 
       await tester.pumpWidget(ChangeNotifierProvider.value(
         value: notifier,
         child: child,
       ));
       verifyNoMoreInteractions(builder);
-      expect(Provider.of<ChangeNotifier>(keyChild.currentContext), notifier);
+      expect(
+        Provider.of<ChangeNotifier>(keyChild.currentContext, listen: false),
+        notifier,
+      );
     });
     testWidgets('notifylistener rebuilds descendants', (tester) async {
       final notifier = ChangeNotifier();
@@ -372,7 +393,10 @@ void main() {
       await Future<void>.value();
       await tester.pump();
       verify(builder(any)).called(1);
-      expect(Provider.of<ChangeNotifier>(keyChild.currentContext), notifier);
+      expect(
+        Provider.of<ChangeNotifier>(keyChild.currentContext, listen: false),
+        notifier,
+      );
     });
   });
 }

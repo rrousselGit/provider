@@ -249,6 +249,26 @@ class Provider<T> extends ValueDelegateWidget<T>
   /// [State.build] to widgets, and [State.didChangeDependencies] for
   /// [StatefulWidget].
   static T of<T>(BuildContext context, {bool listen = true}) {
+    assert(context.owner.debugBuilding || listen == false, '''
+Called [Provider.of] with `listen: true` when the widget tree wasn't building.
+
+It is likely caused by an event handler that wanted to obtain <T>, and forgot
+to specify `listen: false`.
+This is unsupported because the event handler would cause the widget tree to
+build more often, when the value isn't actually used by the widget tree.
+
+To fix, simply pass `listen: false` to [Provider.of]:
+
+```
+RaisedButton(
+  onPressed: () {
+    // we voluntarily added `listen: false` here
+    Provider.of<MyObject>(context, listen: false);
+  },
+  child: Text('example'),
+)
+```
+''');
     // this is required to get generic Type
     final type = _typeOf<InheritedProvider<T>>();
     final provider = listen
