@@ -83,7 +83,7 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
   @override
   Widget build(BuildContext context) {
     final delegate = this.delegate as _ListenableDelegateMixin<T>;
-    return InheritedProvider<T>(
+    return InheritedProvider<T>.value(
       value: delegate.value,
       updateShouldNotify: delegate.updateShouldNotify,
       child: child,

@@ -35,7 +35,7 @@ abstract class SingleChildCloneableWidget implements Widget {
 /// Instead use [Provider] class, which wraps [InheritedProvider].
 class InheritedProvider<T> extends InheritedWidget {
   /// Allow customizing [updateShouldNotify].
-  const InheritedProvider({
+  const InheritedProvider.value({
     Key key,
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
@@ -337,7 +337,7 @@ void main() {
       Provider.debugCheckInvalidValueType?.call<T>(delegate.value);
       return true;
     }());
-    return InheritedProvider<T>(
+    return InheritedProvider<T>.value(
       value: delegate.value,
       updateShouldNotify: updateShouldNotify,
       child: child,
