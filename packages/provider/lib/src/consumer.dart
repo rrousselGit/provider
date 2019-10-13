@@ -161,12 +161,16 @@ class Consumer<T> extends StatelessWidget
   Consumer({
     Key key,
     @required this.builder,
+    this.aspects,
     this.child,
   })  : assert(builder != null),
         super(key: key);
 
   /// The child widget to pass to [builder].
   final Widget child;
+
+  /// The list of aspects passed to [Provider.of].
+  final Set<Object> aspects;
 
   /// {@template provider.consumer.builder}
   /// Build a widget tree based on the value from a [Provider<T>].
@@ -177,11 +181,15 @@ class Consumer<T> extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return builder(
-      context,
-      Provider.of<T>(context),
-      child,
-    );
+    T value;
+    if (aspects != null) {
+      for (final aspect in aspects) {
+        value = Provider.of<T>(context, aspect: aspect);
+      }
+    } else {
+      value = Provider.of<T>(context);
+    }
+    return builder(context, value, child);
   }
 
   @override

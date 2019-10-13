@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:provider/src/delegate_widget.dart';
 
 /// A function that returns true when the update from [previous] to [current]
@@ -11,6 +12,8 @@ import 'package:provider/src/delegate_widget.dart';
 ///
 ///   * [InheritedWidget.updateShouldNotify]
 typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
+
+typedef GetChangedAspects<T> = Set<Object> Function(T previous, T current);
 
 /// Returns the type [T].
 /// See https://stackoverflow.com/questions/52891537/how-to-get-generic-type
@@ -32,23 +35,26 @@ class Ref {
   InheritedElement get element => _element;
 }
 
-/// A generic implementation of an [InheritedWidget].
+/// A generic implementation of an [InheritedModel].
 ///
 /// Any descendant of this widget can obtain `value` using [Provider.of].
 ///
 /// Do not use this class directly unless you are creating a custom "Provider".
 /// Instead use [Provider] class, which wraps [InheritedProvider].
-class InheritedProvider<T> extends InheritedWidget {
+class InheritedProvider<T> extends InheritedModel<Object> {
   /// Allow customizing [updateShouldNotify].
-  const InheritedProvider.value({
+  InheritedProvider.value({
     Key key,
     Ref ref,
     @required T value,
     T Function() startListening,
     UpdateShouldNotify<T> updateShouldNotify,
+    GetChangedAspects<T> getChangedAspects,
+    // TODO: support isSupportedAspect
     @required Widget child,
   })  : _startListening = startListening,
         _value = value,
+        _getChangedAspects = getChangedAspects,
         _ref = ref,
         _updateShouldNotify = updateShouldNotify,
         super(key: key, child: child);
@@ -62,8 +68,8 @@ class InheritedProvider<T> extends InheritedWidget {
   final Ref _ref;
 
   final T Function() _startListening;
-
   final UpdateShouldNotify<T> _updateShouldNotify;
+  final GetChangedAspects<T> _getChangedAspects;
 
   @override
   @protected
@@ -74,9 +80,17 @@ class InheritedProvider<T> extends InheritedWidget {
   @override
   _InheritedProviderElement<T> createElement() =>
       _InheritedProviderElement(this);
+
+  @override
+  bool updateShouldNotifyDependent(
+    InheritedModel<Object> oldWidget,
+    Set<Object> dependencies,
+  ) {
+    throw UnsupportedError('updateShouldNotify is handled internally');
+  }
 }
 
-class _InheritedProviderElement<T> extends InheritedElement {
+class _InheritedProviderElement<T> extends InheritedModelElement<Object> {
   _InheritedProviderElement(InheritedProvider<T> widget) : super(widget);
 
   @override
@@ -84,7 +98,10 @@ class _InheritedProviderElement<T> extends InheritedElement {
 
   bool _didStartListening = false;
   T _value;
+  T _previous;
   Ref _ref;
+  Set<Object> _getChangedAspectsCache;
+  Widget _getChangedAspectsCacheId;
 
   @override
   void updateDependencies(Element dependent, Object aspect) {
@@ -113,17 +130,41 @@ class _InheritedProviderElement<T> extends InheritedElement {
 
   @override
   void updated(InheritedProvider<T> oldWidget) {
-    final previous = _value;
+    _previous = _value;
     _value = widget._value;
     _mountRef();
 
     bool shouldUpdate;
     if (widget._updateShouldNotify != null) {
-      shouldUpdate = widget._updateShouldNotify(previous, _value);
+      shouldUpdate = widget._updateShouldNotify(_previous, _value);
     } else {
-      shouldUpdate = _value != previous;
+      shouldUpdate = _value != _previous;
     }
-    if (shouldUpdate) notifyClients(oldWidget);
+    if (shouldUpdate) {
+      notifyClients(oldWidget);
+    }
+    // TODO: test that
+    _previous = _value;
+  }
+
+  @override
+  void notifyDependent(InheritedModel<Object> oldWidget, Element dependent) {
+    final dependencies = getDependencies(dependent) as Set<Object>;
+    if (dependencies == null) return;
+    var didChangeDependencies = dependencies.isEmpty;
+
+    if (!didChangeDependencies && widget._getChangedAspects != null) {
+      if (_getChangedAspectsCacheId != widget) {
+        _getChangedAspectsCacheId = widget;
+        _getChangedAspectsCache = widget._getChangedAspects(_previous, _value);
+      }
+      didChangeDependencies =
+          _getChangedAspectsCache.any(dependencies.contains);
+    }
+
+    if (didChangeDependencies) {
+      dependent.didChangeDependencies();
+    }
   }
 }
 
@@ -294,17 +335,20 @@ class Provider<T> extends ValueDelegateWidget<T>
     Key key,
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
+    GetChangedAspects<T> getChangedAspects,
     Widget child,
   }) : this._(
           key: key,
           delegate: SingleValueDelegate<T>(value),
           updateShouldNotify: updateShouldNotify,
+          getChangedAspects: getChangedAspects,
           child: child,
         );
 
   Provider._({
     Key key,
     @required ValueStateDelegate<T> delegate,
+    this.getChangedAspects,
     this.updateShouldNotify,
     this.child,
   }) : super(key: key, delegate: delegate);
@@ -315,7 +359,8 @@ class Provider<T> extends ValueDelegateWidget<T>
   /// If [listen] is `true` (default), later value changes will trigger a new
   /// [State.build] to widgets, and [State.didChangeDependencies] for
   /// [StatefulWidget].
-  static T of<T>(BuildContext context, {bool listen = true}) {
+  static T of<T>(BuildContext context, {bool listen = true, Object aspect}) {
+    assert(aspect == null || listen == true);
     // this is required to get generic Type
     final type = _typeOf<InheritedProvider<T>>();
     final element = context.ancestorInheritedElementForWidgetOfExactType(type)
@@ -326,7 +371,7 @@ class Provider<T> extends ValueDelegateWidget<T>
     }
 
     if (listen) {
-      context.inheritFromElement(element);
+      context.inheritFromElement(element, aspect: aspect);
     }
 
     return element._value;
@@ -384,12 +429,16 @@ void main() {
   /// User-provided custom logic for [InheritedWidget.updateShouldNotify].
   final UpdateShouldNotify<T> updateShouldNotify;
 
+  ///
+  final GetChangedAspects<T> getChangedAspects;
+
   @override
   Provider<T> cloneWithChild(Widget child) {
     return Provider._(
       key: key,
       delegate: delegate,
       updateShouldNotify: updateShouldNotify,
+      getChangedAspects: getChangedAspects,
       child: child,
     );
   }
@@ -418,6 +467,7 @@ void main() {
     return InheritedProvider<T>.value(
       value: delegate.value,
       updateShouldNotify: updateShouldNotify,
+      getChangedAspects: getChangedAspects,
       child: child,
     );
   }

@@ -8,6 +8,15 @@ import 'common.dart';
 
 void main() {
   group('ref', () {
+    test(
+      'assertion error if both listen and aspect are passed to Provider.of',
+      () {
+        expect(
+          () => Provider.of<int>(null, aspect: 42, listen: false),
+          throwsAssertionError,
+        );
+      },
+    );
     testWidgets('mount/update refs', (tester) async {
       final ref = Ref();
       await tester.pumpWidget(InheritedProvider<dynamic>.value(
@@ -61,7 +70,7 @@ void main() {
       InheritedProvider<dynamic>.value(
         ref: ref,
         value: null,
-        child: InheritedProvider(
+        child: InheritedProvider<dynamic>.value(
           ref: ref,
           value: null,
           child: Container(),
@@ -135,11 +144,12 @@ void main() {
       );
     });
     test('cloneWithChild works', () {
-      final provider = Provider.value(
+      final provider = Provider<int>.value(
         value: 42,
         child: Container(),
         key: const ValueKey(42),
-        updateShouldNotify: (int _, int __) => true,
+        getChangedAspects: (_, __) => {},
+        updateShouldNotify: (_, __) => true,
       );
 
       final newChild = Container();
@@ -148,7 +158,10 @@ void main() {
       // ignore: invalid_use_of_protected_member
       expect(clone.delegate, equals(provider.delegate));
       expect(clone.key, equals(provider.key));
+      expect(provider.updateShouldNotify, isNotNull);
       expect(provider.updateShouldNotify, equals(clone.updateShouldNotify));
+      expect(provider.getChangedAspects, isNotNull);
+      expect(provider.getChangedAspects, equals(clone.getChangedAspects));
     });
     testWidgets('simple usage', (tester) async {
       var buildCount = 0;
@@ -250,6 +263,37 @@ If none of these solutions work, please file a bug at:
 https://github.com/rrousselGit/provider/issues
 '''),
       );
+    });
+
+    testWidgets('getChangedAspects', (tester) async {
+      var buildCount = 0;
+      final child = Consumer<int>(
+        aspects: {'a'},
+        builder: (_, __, ___) {
+          buildCount++;
+          return Container();
+        },
+      );
+
+      await tester.pumpWidget(Provider<int>.value(
+        value: 42,
+        child: child,
+      ));
+      expect(buildCount, equals(1));
+
+      await tester.pumpWidget(Provider<int>.value(
+        value: 43,
+        getChangedAspects: (_, __) => {'b'},
+        child: child,
+      ));
+      expect(buildCount, equals(1));
+
+      await tester.pumpWidget(Provider<int>.value(
+        value: 44,
+        getChangedAspects: (_, __) => {'a'},
+        child: child,
+      ));
+      expect(buildCount, equals(2));
     });
 
     testWidgets('update should notify', (tester) async {

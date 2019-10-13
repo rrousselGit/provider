@@ -62,6 +62,43 @@ void main() {
   });
 
   group('consumer', () {
+    testWidgets('supports aspects', (tester) async {
+      int value;
+      var buildCount = 0;
+      final child = Consumer<int>(
+        aspects: {'a'},
+        builder: (_, v, __) {
+          value = v;
+          buildCount++;
+          return Container();
+        },
+      );
+
+      await tester.pumpWidget(InheritedProvider<int>.value(
+        value: 42,
+        child: child,
+      ));
+
+      expect(buildCount, equals(1));
+      expect(value, equals(42));
+
+      await tester.pumpWidget(InheritedProvider<int>.value(
+        value: 43,
+        getChangedAspects: (_, __) => {'a'},
+        child: child,
+      ));
+
+      expect(buildCount, equals(2));
+      expect(value, equals(43));
+
+      await tester.pumpWidget(InheritedProvider<int>.value(
+        value: 44,
+        getChangedAspects: (_, __) => {'b'},
+        child: child,
+      ));
+
+      expect(buildCount, equals(2));
+    });
     testWidgets('obtains value from Provider<T>', (tester) async {
       final key = GlobalKey();
       final child = Container();
