@@ -9,7 +9,7 @@ void main() {
   group('InheritedProvider', () {
     testWidgets('updateShouldNotify throws', (tester) async {
       expect(
-        () => InheritedProvider<int>(
+        () => InheritedProvider<int>.value(
           value: 42,
           child: Container(),
           // ignore: invalid_use_of_protected_member
@@ -18,7 +18,7 @@ void main() {
       );
     });
     testWidgets('pass down value', (tester) async {
-      await tester.pumpWidget(InheritedProvider<int>(
+      await tester.pumpWidget(InheritedProvider<int>.value(
         value: 42,
         child: Builder(builder: (context) {
           return Text(
@@ -36,7 +36,7 @@ void main() {
 
       final key = GlobalKey();
 
-      await tester.pumpWidget(InheritedProvider<int>(
+      await tester.pumpWidget(InheritedProvider<int>.value(
         key: key,
         value: 0,
         startListening: startListening,
@@ -45,7 +45,7 @@ void main() {
 
       verifyZeroInteractions(startListening);
 
-      await tester.pumpWidget(InheritedProvider<int>(
+      await tester.pumpWidget(InheritedProvider<int>.value(
         key: key,
         value: 0,
         startListening: startListening,
@@ -74,13 +74,13 @@ void main() {
         );
       });
 
-      await tester.pumpWidget(InheritedProvider<int>(
+      await tester.pumpWidget(InheritedProvider<int>.value(
         value: 0,
         startListening: startListening,
         child: child,
       ));
 
-      await tester.pumpWidget(InheritedProvider<int>(
+      await tester.pumpWidget(InheritedProvider<int>.value(
         value: 0,
         startListening: startListening,
         child: child,

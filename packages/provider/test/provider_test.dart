@@ -10,7 +10,7 @@ void main() {
   group('ref', () {
     testWidgets('mount/update refs', (tester) async {
       final ref = Ref();
-      await tester.pumpWidget(InheritedProvider<dynamic>(
+      await tester.pumpWidget(InheritedProvider<dynamic>.value(
         ref: ref,
         value: null,
         child: Container(),
@@ -26,7 +26,7 @@ void main() {
       );
 
       final ref2 = Ref();
-      await tester.pumpWidget(InheritedProvider<dynamic>(
+      await tester.pumpWidget(InheritedProvider<dynamic>.value(
         ref: ref2,
         value: null,
         child: Container(),
@@ -38,13 +38,13 @@ void main() {
   });
   testWidgets('rebuilding with the same ref is fine', (tester) async {
     final ref = Ref();
-    await tester.pumpWidget(InheritedProvider<dynamic>(
+    await tester.pumpWidget(InheritedProvider<dynamic>.value(
       ref: ref,
       value: null,
       child: Container(),
     ));
 
-    await tester.pumpWidget(InheritedProvider<dynamic>(
+    await tester.pumpWidget(InheritedProvider<dynamic>.value(
       ref: ref,
       value: null,
       child: Container(),
@@ -58,7 +58,7 @@ void main() {
   testWidgets("can't the same ref twice", (tester) async {
     final ref = Ref();
     await tester.pumpWidget(
-      InheritedProvider<dynamic>(
+      InheritedProvider<dynamic>.value(
         ref: ref,
         value: null,
         child: InheritedProvider(
@@ -74,7 +74,7 @@ void main() {
   testWidgets('can use ref inside build', (tester) async {
     final ref = Ref();
     await tester.pumpWidget(Builder(builder: (context) {
-      return InheritedProvider<dynamic>(
+      return InheritedProvider<dynamic>.value(
         ref: ref,
         value: null,
         child: Container(),
@@ -85,7 +85,7 @@ void main() {
 
     await tester.pumpWidget(Builder(builder: (context) {
       element = ref.element;
-      return InheritedProvider<dynamic>(
+      return InheritedProvider<dynamic>.value(
         ref: ref,
         value: null,
         child: Container(),

@@ -232,7 +232,7 @@ class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
       Provider.debugCheckInvalidValueType?.call(value);
       return true;
     }());
-    return InheritedProvider<R>(
+    return InheritedProvider<R>.value(
       value: value,
       updateShouldNotify: updateShouldNotify,
       child: child,

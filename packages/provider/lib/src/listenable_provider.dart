@@ -94,7 +94,7 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
       delegate.state.dirty = false;
       delegate.ref?.element?.notifyClients(delegate.ref.element.widget);
     }
-    return InheritedProvider<T>(
+    return InheritedProvider<T>.value(
       value: delegate.value,
       ref: delegate.ref,
       startListening: startListening,

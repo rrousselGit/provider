@@ -73,7 +73,7 @@ void main() {
 
       verify(providerBuilder(argThat(isNotNull))).called(1);
       verify(proxyBuilder(argThat(isNotNull), a, null)).called(1);
-    });
+    }, skip: true);
 
     testWidgets('throws if the provided value is a Listenable/Stream',
         (tester) async {

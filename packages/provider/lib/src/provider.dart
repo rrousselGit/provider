@@ -40,7 +40,7 @@ class Ref {
 /// Instead use [Provider] class, which wraps [InheritedProvider].
 class InheritedProvider<T> extends InheritedWidget {
   /// Allow customizing [updateShouldNotify].
-  const InheritedProvider({
+  const InheritedProvider.value({
     Key key,
     Ref ref,
     @required T value,
@@ -408,14 +408,14 @@ void main() {
     }());
     if (delegate is LazyBuilderStateDelegate<T>) {
       final delegate = this.delegate as LazyBuilderStateDelegate<T>;
-      return InheritedProvider<T>(
+      return InheritedProvider<T>.value(
         value: delegate.value,
         updateShouldNotify: updateShouldNotify,
         startListening: delegate.startListening,
         child: child,
       );
     }
-    return InheritedProvider<T>(
+    return InheritedProvider<T>.value(
       value: delegate.value,
       updateShouldNotify: updateShouldNotify,
       child: child,

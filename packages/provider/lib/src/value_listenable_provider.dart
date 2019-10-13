@@ -96,7 +96,7 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
     return ValueListenableBuilder<T>(
       valueListenable: delegate.value,
       builder: (_, value, child) {
-        return InheritedProvider<T>(
+        return InheritedProvider<T>.value(
           value: value,
           updateShouldNotify: updateShouldNotify,
           child: child,

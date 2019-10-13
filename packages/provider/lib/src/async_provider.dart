@@ -145,7 +145,7 @@ class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
       stream: delegate.value,
       initialData: initialData,
       builder: (_, snapshot) {
-        return InheritedProvider<T>(
+        return InheritedProvider<T>.value(
           value: _snapshotToValue(snapshot, context, catchError, this),
           child: child,
           updateShouldNotify: updateShouldNotify,
@@ -302,7 +302,7 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
       future: delegate.value,
       initialData: initialData,
       builder: (_, snapshot) {
-        return InheritedProvider<T>(
+        return InheritedProvider<T>.value(
           value: _snapshotToValue(snapshot, context, catchError, this),
           updateShouldNotify: updateShouldNotify,
           child: child,
