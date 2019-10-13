@@ -8,6 +8,19 @@ import 'common.dart';
 
 void main() {
   group('Provider', () {
+    testWidgets('throws if Provider.of called outside of build & listen:true',
+        (tester) async {
+      await tester.pumpWidget(
+        Provider.value(
+          value: 42,
+          child: Container(),
+        ),
+      );
+
+      final context = tester.element(find.byType(Container));
+
+      expect(() => Provider.of<int>(context), throwsAssertionError);
+    });
     testWidgets('throws if the provided value is a Listenable/Stream',
         (tester) async {
       await tester.pumpWidget(

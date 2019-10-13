@@ -336,7 +336,7 @@ void main() {
       final context = tester.element(findProxyProvider<A>());
 
       expect(
-        Provider.of<Combined>(key.currentContext),
+        Provider.of<Combined>(key.currentContext, listen: false),
         Combined(context, null, a),
       );
     });

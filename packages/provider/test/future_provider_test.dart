@@ -27,13 +27,13 @@ void main() {
         child: Container(key: key),
       ));
 
-      expect(Provider.of<int>(key.currentContext), null);
+      expect(Provider.of<int>(key.currentContext, listen: false), null);
 
       completer.complete(0);
       // futures are asynchronous so we have to delay the pump
       await Future.microtask(tester.pump);
 
-      expect(Provider.of<int>(key.currentContext), 0);
+      expect(Provider.of<int>(key.currentContext, listen: false), 0);
     });
 
     testWidgets("don't notify descendants when rebuilding by default",
@@ -148,7 +148,7 @@ Exception:
 
       await Future.microtask(tester.pump);
 
-      expect(Provider.of<int>(key.currentContext), 0);
+      expect(Provider.of<int>(key.currentContext, listen: false), 0);
 
       final context = findElementOfWidget<FutureProvider<int>>();
 
@@ -164,7 +164,7 @@ Exception:
         child: Container(key: key),
       ));
 
-      expect(Provider.of<int>(key.currentContext), null);
+      expect(Provider.of<int>(key.currentContext, listen: false), null);
     });
     test('works with MultiProvider #2', () {
       final provider = FutureProvider<int>.value(
@@ -213,7 +213,7 @@ Exception:
         child: Container(key: key),
       ));
 
-      expect(Provider.of<int>(key.currentContext), null);
+      expect(Provider.of<int>(key.currentContext, listen: false), null);
     });
 
     group('stateful constructor', () {
@@ -231,7 +231,7 @@ Exception:
           child: Container(key: key),
         ));
 
-        expect(Provider.of<int>(key.currentContext), null);
+        expect(Provider.of<int>(key.currentContext, listen: false), null);
 
         await tester.pumpWidget(Container());
       });
@@ -301,7 +301,7 @@ Exception:
 
         await tester.pump();
 
-        expect(Provider.of<int>(key.currentContext), 42);
+        expect(Provider.of<int>(key.currentContext, listen: false), 42);
 
         await tester.pumpWidget(Container());
       });
@@ -319,7 +319,7 @@ Exception:
         ));
         await tester.pump();
 
-        expect(Provider.of<int>(key.currentContext), 1);
+        expect(Provider.of<int>(key.currentContext, listen: false), 1);
       });
     });
   });

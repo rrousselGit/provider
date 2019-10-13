@@ -33,13 +33,13 @@ void main() {
       ));
 
       expect(context, equals(providerKey.currentContext));
-      expect(Provider.of<int>(childKey.currentContext), null);
+      expect(Provider.of<int>(childKey.currentContext, listen: false), null);
 
       controller.add(0);
       // adding to stream is asynchronous so we have to delay the pump
       await Future.microtask(tester.pump);
 
-      expect(Provider.of<int>(childKey.currentContext), 0);
+      expect(Provider.of<int>(childKey.currentContext, listen: false), 0);
     });
     testWidgets('update when value change (.value)', (tester) async {
       final controller = StreamController<int>();
@@ -50,13 +50,13 @@ void main() {
         child: Container(key: key),
       ));
 
-      expect(Provider.of<int>(key.currentContext), null);
+      expect(Provider.of<int>(key.currentContext, listen: false), null);
 
       controller.add(0);
       // adding to stream is asynchronous so we have to delay the pump
       await Future.microtask(tester.pump);
 
-      expect(Provider.of<int>(key.currentContext), 0);
+      expect(Provider.of<int>(key.currentContext, listen: false), 0);
     });
 
     testWidgets("don't notify descendants when rebuilding by default",
@@ -178,7 +178,7 @@ Exception:
 
       await Future.microtask(tester.pump);
 
-      expect(Provider.of<int>(key.currentContext), 0);
+      expect(Provider.of<int>(key.currentContext, listen: false), 0);
 
       final context = findElementOfWidget<StreamProvider<int>>();
 
@@ -194,7 +194,7 @@ Exception:
         child: Container(key: key),
       ));
 
-      expect(Provider.of<int>(key.currentContext), null);
+      expect(Provider.of<int>(key.currentContext, listen: false), null);
     });
     test('works with MultiProvider #2', () {
       final provider = StreamProvider<int>.value(
@@ -243,7 +243,7 @@ Exception:
         child: Container(key: key),
       ));
 
-      expect(Provider.of<int>(key.currentContext), null);
+      expect(Provider.of<int>(key.currentContext, listen: false), null);
     });
 
     group('stateful constructor', () {
@@ -261,7 +261,7 @@ Exception:
           child: Container(key: key),
         ));
 
-        expect(Provider.of<int>(key.currentContext), null);
+        expect(Provider.of<int>(key.currentContext, listen: false), null);
 
         await tester.pumpWidget(Container());
       });
@@ -341,7 +341,7 @@ Exception:
 
         await tester.pump();
 
-        expect(Provider.of<int>(key.currentContext), 42);
+        expect(Provider.of<int>(key.currentContext, listen: false), 42);
 
         await tester.pumpWidget(Container());
 
@@ -368,7 +368,7 @@ Exception:
         ));
         await tester.pump();
 
-        expect(Provider.of<int>(key.currentContext), 42);
+        expect(Provider.of<int>(key.currentContext, listen: false), 42);
 
         await tester.pumpWidget(Container());
 
