@@ -34,13 +34,28 @@ abstract class SingleChildCloneableWidget implements Widget {
 /// Do not use this class directly unless you are creating a custom "Provider".
 /// Instead use [Provider] class, which wraps [InheritedProvider].
 class InheritedProvider<T> extends InheritedWidget {
-  /// Allow customizing [updateShouldNotify].
+  /// Create a value, then expose it to its descendants.
+  ///
+  /// The value will be disposed of when [InheritedProvider] is removed from
+  /// the widget tree.
+  const InheritedProvider({
+    Key key,
+    @required ValueBuilder<T> initialValueBuilder,
+    UpdateShouldNotify<T> updateShouldNotify,
+    @required Widget child,
+  })  : _value = null,
+        _initialValueBuilder = initialValueBuilder,
+        _updateShouldNotify = updateShouldNotify,
+        super(key: key, child: child);
+
+  /// Expose to its descendants an existing value,
   const InheritedProvider.value({
     Key key,
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
-    Widget child,
+    @required Widget child,
   })  : _value = value,
+        _initialValueBuilder = null,
         _updateShouldNotify = updateShouldNotify,
         super(key: key, child: child);
 
@@ -49,6 +64,8 @@ class InheritedProvider<T> extends InheritedWidget {
   /// Mutating `value` should be avoided. Instead rebuild the widget tree
   /// and replace [InheritedProvider] with one that holds the new value.
   final T _value;
+  final ValueBuilder<T> _initialValueBuilder;
+
   final UpdateShouldNotify<T> _updateShouldNotify;
 
   @override
