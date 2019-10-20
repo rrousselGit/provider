@@ -1,19 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart' show Provider;
-
-/// A function that creates an object of type [T].
-///
-/// See also:
-///
-///  * [BuilderStateDelegate]
-typedef ValueBuilder<T> = T Function(BuildContext context);
-
-/// A function that disposes an object of type [T].
-///
-/// See also:
-///
-///  * [BuilderStateDelegate]
-typedef Disposer<T> = void Function(BuildContext context, T value);
+import 'inherited_provider.dart';
 
 /// The state of a [DelegateWidget].
 ///

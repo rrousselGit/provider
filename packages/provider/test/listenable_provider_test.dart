@@ -145,7 +145,7 @@ void main() {
     });
     group('stateful constructor', () {
       testWidgets('called with context', (tester) async {
-        final builder = ValueBuilderMock<ChangeNotifier>();
+        final builder = InitialValueBuilderMock<ChangeNotifier>();
         final key = GlobalKey();
 
         await tester.pumpWidget(ListenableProvider<ChangeNotifier>(
@@ -178,7 +178,7 @@ void main() {
     testWidgets('stateful builder called once', (tester) async {
       final listenable = MockNotifier();
       when(listenable.hasListeners).thenReturn(false);
-      final builder = ValueBuilderMock<Listenable>();
+      final builder = InitialValueBuilderMock<Listenable>();
       when(builder(any)).thenReturn(listenable);
 
       await tester.pumpWidget(ListenableProvider(
@@ -203,7 +203,7 @@ void main() {
     testWidgets('dispose called on unmount', (tester) async {
       final listenable = MockNotifier();
       when(listenable.hasListeners).thenReturn(false);
-      final builder = ValueBuilderMock<Listenable>();
+      final builder = InitialValueBuilderMock<Listenable>();
       final disposer = DisposerMock<Listenable>();
       when(builder(any)).thenReturn(listenable);
 

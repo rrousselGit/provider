@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import 'delegate_widget.dart';
+import 'inherited_provider.dart';
 import 'provider.dart';
 
 /// A callback used to build a valid value from an error.

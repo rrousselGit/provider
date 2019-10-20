@@ -4,13 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/src/delegate_widget.dart';
 
-/// A function that returns true when the update from [previous] to [current]
-/// should notify listeners, if any.
-///
-/// See also:
-///
-///   * [InheritedWidget.updateShouldNotify]
-typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
+import 'inherited_provider.dart';
 
 /// Returns the type [T].
 /// See https://stackoverflow.com/questions/52891537/how-to-get-generic-type
@@ -25,56 +19,6 @@ abstract class SingleChildCloneableWidget implements Widget {
   /// Note for implementers: all other values, including [Key] must be
   /// preserved.
   SingleChildCloneableWidget cloneWithChild(Widget child);
-}
-
-/// A generic implementation of an [InheritedWidget].
-///
-/// Any descendant of this widget can obtain `value` using [Provider.of].
-///
-/// Do not use this class directly unless you are creating a custom "Provider".
-/// Instead use [Provider] class, which wraps [InheritedProvider].
-class InheritedProvider<T> extends InheritedWidget {
-  /// Create a value, then expose it to its descendants.
-  ///
-  /// The value will be disposed of when [InheritedProvider] is removed from
-  /// the widget tree.
-  const InheritedProvider({
-    Key key,
-    @required ValueBuilder<T> initialValueBuilder,
-    UpdateShouldNotify<T> updateShouldNotify,
-    @required Widget child,
-  })  : _value = null,
-        _initialValueBuilder = initialValueBuilder,
-        _updateShouldNotify = updateShouldNotify,
-        super(key: key, child: child);
-
-  /// Expose to its descendants an existing value,
-  const InheritedProvider.value({
-    Key key,
-    @required T value,
-    UpdateShouldNotify<T> updateShouldNotify,
-    @required Widget child,
-  })  : _value = value,
-        _initialValueBuilder = null,
-        _updateShouldNotify = updateShouldNotify,
-        super(key: key, child: child);
-
-  /// The currently exposed value.
-  ///
-  /// Mutating `value` should be avoided. Instead rebuild the widget tree
-  /// and replace [InheritedProvider] with one that holds the new value.
-  final T _value;
-  final ValueBuilder<T> _initialValueBuilder;
-
-  final UpdateShouldNotify<T> _updateShouldNotify;
-
-  @override
-  bool updateShouldNotify(InheritedProvider<T> oldWidget) {
-    if (_updateShouldNotify != null) {
-      return _updateShouldNotify(oldWidget._value, _value);
-    }
-    return oldWidget._value != _value;
-  }
 }
 
 /// A provider that merges multiple providers into a single linear widget tree.
@@ -268,16 +212,20 @@ class Provider<T> extends ValueDelegateWidget<T>
   static T of<T>(BuildContext context, {bool listen = true}) {
     // this is required to get generic Type
     final type = _typeOf<InheritedProvider<T>>();
-    final provider = listen
-        ? context.inheritFromWidgetOfExactType(type) as InheritedProvider<T>
-        : context.ancestorInheritedElementForWidgetOfExactType(type)?.widget
-            as InheritedProvider<T>;
 
-    if (provider == null) {
+    final inheritedElement =
+        context.ancestorInheritedElementForWidgetOfExactType(type)
+            as InheritedProviderElement<T>;
+
+    if (inheritedElement == null) {
       throw ProviderNotFoundError(T, context.widget.runtimeType);
     }
 
-    return provider._value;
+    if (listen) {
+      context.inheritFromElement(inheritedElement);
+    }
+
+    return inheritedElement.value;
   }
 
   /// A sanity check to prevent misuse of [Provider] when a variant should be

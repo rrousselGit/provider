@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'delegate_widget.dart';
+import 'inherited_provider.dart';
 import 'listenable_provider.dart';
 import 'provider.dart';
 import 'proxy_provider.dart';

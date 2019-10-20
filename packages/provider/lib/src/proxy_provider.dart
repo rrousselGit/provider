@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-import 'delegate_widget.dart';
+import 'inherited_provider.dart';
 import 'provider.dart';
 
 typedef ProviderBuilder<R> = Widget Function(

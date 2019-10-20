@@ -271,7 +271,7 @@ Exception:
         final controller = MockStreamController<int>();
         when(controller.stream).thenAnswer((_) => realController.stream);
 
-        final builder = ValueBuilderMock<StreamController<int>>();
+        final builder = InitialValueBuilderMock<StreamController<int>>();
         when(builder(any)).thenReturn(controller);
 
         await tester.pumpWidget(StreamProvider<int>.controller(

@@ -74,8 +74,8 @@ void main() {
       final builder = Builder(
         builder: (context) {
           buildCount++;
-          value = Provider.of(context);
-          second = Provider.of(context, listen: false);
+          value = Provider.of<int>(context);
+          second = Provider.of<double>(context, listen: false);
           return Container();
         },
       );

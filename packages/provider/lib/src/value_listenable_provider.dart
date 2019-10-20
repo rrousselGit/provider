@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'delegate_widget.dart';
+import 'inherited_provider.dart';
 import 'listenable_provider.dart' show ListenableProvider;
 import 'provider.dart';
 

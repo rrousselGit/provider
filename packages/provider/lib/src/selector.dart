@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
 
 import 'consumer.dart';
-import 'delegate_widget.dart';
+import 'inherited_provider.dart';
 
 /// A base class for custom [Selector].
 ///
