@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
 
 Element findElementOfWidget<T extends Widget>() {
   return find.byType(T).first.evaluate().first;
@@ -12,11 +13,30 @@ Element findElementOfWidget<T extends Widget>() {
 Type typeOf<T>() => T;
 
 class InitialValueBuilderMock<T> extends Mock {
+  InitialValueBuilderMock([T value]) {
+    when(this(any)).thenReturn(value);
+  }
+
   T call(BuildContext context);
 }
 
 class ValueBuilderMock<T> extends Mock {
+  ValueBuilderMock([T value]) {
+    when(this(any, any)).thenReturn(value);
+  }
   T call(BuildContext context, T previous);
+}
+
+class StartListeningMock<T> extends Mock {
+  StartListeningMock([VoidCallback value]) {
+    when(this(any, any)).thenReturn(value);
+  }
+
+  VoidCallback call(InheritedProviderElement<T> context, T value);
+}
+
+class StopListeningMock extends Mock {
+  void call();
 }
 
 class DisposerMock<T> extends Mock {
@@ -35,6 +55,18 @@ class MockConsumerBuilder<T> extends Mock {
 
 class UpdateShouldNotifyMock<T> extends Mock {
   bool call(T old, T newValue);
+}
+
+class TextOf<T> extends StatelessWidget {
+  const TextOf();
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      Provider.of<T>(context).toString(),
+      textDirection: TextDirection.ltr,
+    );
+  }
 }
 
 class A with DiagnosticableTreeMixin {}

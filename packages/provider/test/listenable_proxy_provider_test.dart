@@ -51,7 +51,7 @@ void main() {
               dispose: (_, __) {},
             )
           ],
-          child: Container(),
+          child: const TextOf<ValueNotifier<int>>(),
         ));
 
         expect(tester.takeException(), isAssertionError);
@@ -69,7 +69,7 @@ void main() {
               dispose: (_, __) {},
             )
           ],
-          child: Container(),
+          child: const TextOf<ValueNotifier<int>>(),
         ));
 
         final notifier = ValueNotifier(0)..addListener(() {});
@@ -82,7 +82,7 @@ void main() {
               dispose: (_, __) {},
             )
           ],
-          child: Container(),
+          child: const TextOf<ValueNotifier<int>>(),
         ));
 
         expect(tester.takeException(), isAssertionError);
@@ -97,7 +97,7 @@ void main() {
             Provider.value(value: 0),
             ListenableProxyProvider<int, ValueNotifier<int>>(
               initialBuilder: (_) => notifier,
-              builder: (_, count, value) => value..value = count,
+              builder: (_, count, value) => value,
             )
           ],
           child: Consumer<ValueNotifier<int>>(builder: (_, value, __) {
@@ -146,6 +146,13 @@ void main() {
         clearInteractions(builder);
 
         final dispose2 = DisposerMock<MockNotifier>();
+        int i = 0;
+        when(dispose2(any, any)).thenAnswer((_) {
+          i++;
+          if (i > 1) {
+            throw 42;
+          }
+        });
         final notifier2 = MockNotifier();
         when(notifier2.hasListeners).thenReturn(false);
         await tester.pumpWidget(
@@ -166,6 +173,7 @@ void main() {
         verifyNoMoreInteractions(builder);
         verify(dispose(argThat(isNotNull), notifier)).called(1);
         verifyNoMoreInteractions(dispose);
+        verifyNoMoreInteractions(dispose2);
 
         await tester.pumpWidget(Container());
 
@@ -190,23 +198,22 @@ void main() {
               dispose: dispose,
             )
           ],
-          child: Container(),
+          child: const TextOf<ValueNotifier<int>>(),
         ),
       );
 
-      final context = key.currentContext;
       verifyZeroInteractions(dispose);
 
       await tester.pumpWidget(Container());
 
-      verify(dispose(context, notifier)).called(1);
+      verify(dispose(argThat(isNotNull), notifier)).called(1);
       verifyNoMoreInteractions(dispose);
     });
   });
 
   group('ListenableProxyProvider variants', () {
-    Finder findProxyProvider() => find
-        .byWidgetPredicate((widget) => widget is ProxyProviderBase<Combined>);
+    Finder findInheritedProvider() => find
+        .byWidgetPredicate((widget) => widget is InheritedProvider<Combined>);
     testWidgets('ListenableProxyProvider2', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -227,7 +234,7 @@ void main() {
         ),
       );
 
-      final context = tester.element(findProxyProvider());
+      final context = tester.element(findInheritedProvider());
 
       verify(
         combinedConsumerMock(
@@ -256,7 +263,7 @@ void main() {
         ),
       );
 
-      final context = tester.element(findProxyProvider());
+      final context = tester.element(findInheritedProvider());
 
       verify(
         combinedConsumerMock(
@@ -285,7 +292,7 @@ void main() {
         ),
       );
 
-      final context = tester.element(findProxyProvider());
+      final context = tester.element(findInheritedProvider());
 
       verify(
         combinedConsumerMock(
@@ -314,7 +321,7 @@ void main() {
         ),
       );
 
-      final context = tester.element(findProxyProvider());
+      final context = tester.element(findInheritedProvider());
 
       verify(
         combinedConsumerMock(
@@ -343,8 +350,7 @@ void main() {
         ),
       );
 
-      final context = tester.element(findProxyProvider());
-
+      final context = tester.element(findInheritedProvider());
       verify(
         combinedConsumerMock(
           _ListenableCombined(

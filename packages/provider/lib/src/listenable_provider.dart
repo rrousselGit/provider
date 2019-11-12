@@ -17,7 +17,7 @@ import 'proxy_provider.dart';
 /// You will generaly want to use [ChangeNotifierProvider] instead.
 /// But [ListenableProvider] is available in case you want to implement
 /// [Listenable] yourself, or use [Animation].
-class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
+class ListenableProvider<T extends Listenable> extends StatelessWidget
     implements SingleChildCloneableWidget {
   /// Creates a [Listenable] using [builder] and subscribes to it.
   ///
@@ -29,42 +29,52 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
     Key key,
     @required ValueBuilder<T> builder,
     Disposer<T> dispose,
-    Widget child,
-  }) : this._(
-          key: key,
-          delegate: _BuilderListenableDelegate(builder, dispose: dispose),
-          child: child,
-        );
+    this.child,
+  })  : assert(builder != null),
+        _debugCheckType = true,
+        _builder = builder,
+        _dispose = dispose,
+        _value = null,
+        updateShouldNotify = null,
+        super(key: key);
 
   /// Provides an existing [Listenable].
   ListenableProvider.value({
     Key key,
     @required T value,
-    Widget child,
-  }) : this._(
-          key: key,
-          delegate: _ValueListenableDelegate(value),
-          child: child,
-        );
-
-  ListenableProvider._valueDispose({
-    Key key,
-    @required T value,
-    Disposer<T> disposer,
-    Widget child,
-  }) : this._(
-          key: key,
-          delegate: _ValueListenableDelegate(value, disposer),
-          child: child,
-        );
-
-  ListenableProvider._({
-    Key key,
-    @required _ListenableDelegateMixin<T> delegate,
-    // ignore: lines_longer_than_80_chars
-    // TODO: updateShouldNotify for when the listenable instance change with `.value` constructor
+    this.updateShouldNotify,
     this.child,
-  }) : super(key: key, delegate: delegate);
+  })  : _value = value,
+        _debugCheckType = false,
+        _dispose = null,
+        _builder = null,
+        super(key: key);
+
+  ListenableProvider._(
+    this._debugCheckType,
+    this._builder,
+    this._dispose,
+    this._value, {
+    Key key,
+    this.updateShouldNotify,
+    this.child,
+  }) : super(key: key);
+
+  static VoidCallback _startListening(
+    InheritedProviderElement<Listenable> e,
+    Listenable value,
+  ) {
+    value?.addListener(e.markNeedsNotifyDependents);
+    return () => value?.removeListener(e.markNeedsNotifyDependents);
+  }
+
+  final ValueBuilder<T> _builder;
+  final Disposer<T> _dispose;
+  final T _value;
+  final bool _debugCheckType;
+
+  /// User-provided custom logic for [InheritedWidget.updateShouldNotify].
+  final UpdateShouldNotify<T> updateShouldNotify;
 
   /// The widget that is below the current [ListenableProvider] widget in the
   /// tree.
@@ -75,18 +85,44 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
   @override
   ListenableProvider<T> cloneWithChild(Widget child) {
     return ListenableProvider._(
+      _debugCheckType,
+      _builder,
+      _dispose,
+      _value,
       key: key,
-      delegate: delegate as _ListenableDelegateMixin<T>,
+      updateShouldNotify: updateShouldNotify,
       child: child,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final delegate = this.delegate as _ListenableDelegateMixin<T>;
-    return InheritedProvider<T>.value(
-      value: delegate.value,
-      updateShouldNotify: delegate.updateShouldNotify,
+    if (_builder != null) {
+      void Function(T value) checkType;
+      assert(() {
+        checkType = (value) {
+          if (value is ChangeNotifier) {
+            // ignore: invalid_use_of_protected_member
+            assert(value.hasListeners != true);
+          }
+        };
+        return true;
+      }());
+      return InheritedProvider(
+        initialValueBuilder: _builder,
+        dispose: _dispose,
+        startListening: _startListening,
+        // TODO: test updateShouldNotify builder
+        updateShouldNotify: updateShouldNotify,
+        debugCheckInvalidValueType: checkType,
+        child: child,
+      );
+    }
+
+    return InheritedProvider.value(
+      value: _value,
+      startListening: _startListening,
+      updateShouldNotify: updateShouldNotify,
       child: child,
     );
   }
@@ -211,19 +247,18 @@ ChangeNotifierProvider(
   }
 }
 
-class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
-    extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
-  _NumericProxyProvider({
+class _ListenableProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
+    extends StatelessWidget implements SingleChildCloneableWidget {
+  _ListenableProxyProvider({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
+    @required this.initialBuilder,
     @required this.builder,
-    Disposer<R> dispose,
+    this.dispose,
+    this.updateShouldNotify,
     this.child,
   })  : assert(builder != null),
         super(
           key: key,
-          initialBuilder: initialBuilder,
-          dispose: dispose,
         );
 
   /// The widget that is below the current [Provider] widget in the
@@ -233,43 +268,48 @@ class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
   final Widget child;
 
   /// {@macro provider.proxyprovider.builder}
-  final Function builder;
+  final R Function(BuildContext context, R previous) builder;
+
+  final UpdateShouldNotify<R> updateShouldNotify;
+
+  final Disposer<R> dispose;
+  final ValueBuilder<R> initialBuilder;
 
   @override
-  _NumericProxyProvider<T, T2, T3, T4, T5, T6, R> cloneWithChild(Widget child) {
-    return _NumericProxyProvider(
+  _ListenableProxyProvider<T, T2, T3, T4, T5, T6, R> cloneWithChild(
+    Widget child,
+  ) {
+    return _ListenableProxyProvider(
       key: key,
       initialBuilder: initialBuilder,
       builder: builder,
       dispose: dispose,
+      updateShouldNotify: updateShouldNotify,
       child: child,
     );
   }
 
   @override
-  Widget build(BuildContext context, R value) {
-    return ListenableProvider<R>._valueDispose(
-      value: value,
-      disposer: dispose,
+  Widget build(BuildContext context) {
+    void Function(R value) checkType;
+    assert(() {
+      checkType = (value) {
+        if (value is ChangeNotifier) {
+          // ignore: invalid_use_of_protected_member
+          assert(value.hasListeners != true);
+        }
+      };
+      return true;
+    }());
+    return InheritedProvider<R>(
+      initialValueBuilder: initialBuilder,
+      valueBuilder: builder,
+      dispose: dispose,
+      startListening: ListenableProvider._startListening,
+      debugCheckInvalidValueType: checkType,
+      updateShouldNotify: updateShouldNotify,
       child: child,
     );
-  }
-
-  @override
-  R didChangeDependencies(BuildContext context, R previous) {
-    final arguments = <dynamic>[
-      context,
-      Provider.of<T>(context),
-    ];
-
-    if (T2 != Void) arguments.add(Provider.of<T2>(context));
-    if (T3 != Void) arguments.add(Provider.of<T3>(context));
-    if (T4 != Void) arguments.add(Provider.of<T4>(context));
-    if (T5 != Void) arguments.add(Provider.of<T5>(context));
-    if (T6 != Void) arguments.add(Provider.of<T6>(context));
-
-    arguments.add(previous);
-    return Function.apply(builder, arguments) as R;
   }
 }
 
@@ -288,7 +328,7 @@ class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
 /// [Animation].
 /// {@endtemplate}
 class ListenableProxyProvider<T, R extends Listenable>
-    extends _NumericProxyProvider<T, Void, Void, Void, Void, Void, R> {
+    extends _ListenableProxyProvider<T, Void, Void, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider({
     Key key,
@@ -296,22 +336,23 @@ class ListenableProxyProvider<T, R extends Listenable>
     @required ProxyProviderBuilder<T, R> builder,
     Disposer<R> dispose,
     Widget child,
-  }) : super(
+  })  : assert(builder != null),
+        super(
           key: key,
           initialBuilder: initialBuilder,
-          builder: builder,
+          builder: (context, previous) => builder(
+            context,
+            Provider.of(context),
+            previous,
+          ),
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder<T, R> get builder =>
-      super.builder as ProxyProviderBuilder<T, R>;
 }
 
 /// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider2<T, T2, R extends Listenable>
-    extends _NumericProxyProvider<T, T2, Void, Void, Void, Void, R> {
+    extends _ListenableProxyProvider<T, T2, Void, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider2({
     Key key,
@@ -319,22 +360,24 @@ class ListenableProxyProvider2<T, T2, R extends Listenable>
     @required ProxyProviderBuilder2<T, T2, R> builder,
     Disposer<R> dispose,
     Widget child,
-  }) : super(
+  })  : assert(builder != null),
+        super(
           key: key,
           initialBuilder: initialBuilder,
-          builder: builder,
+          builder: (context, previous) => builder(
+            context,
+            Provider.of(context),
+            Provider.of(context),
+            previous,
+          ),
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder2<T, T2, R> get builder =>
-      super.builder as ProxyProviderBuilder2<T, T2, R>;
 }
 
 /// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
-    extends _NumericProxyProvider<T, T2, T3, Void, Void, Void, R> {
+    extends _ListenableProxyProvider<T, T2, T3, Void, Void, Void, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider3({
     Key key,
@@ -342,22 +385,25 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
     @required ProxyProviderBuilder3<T, T2, T3, R> builder,
     Disposer<R> dispose,
     Widget child,
-  }) : super(
+  })  : assert(builder != null),
+        super(
           key: key,
           initialBuilder: initialBuilder,
-          builder: builder,
+          builder: (context, previous) => builder(
+            context,
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            previous,
+          ),
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder3<T, T2, T3, R> get builder =>
-      super.builder as ProxyProviderBuilder3<T, T2, T3, R>;
 }
 
 /// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
-    extends _NumericProxyProvider<T, T2, T3, T4, Void, Void, R> {
+    extends _ListenableProxyProvider<T, T2, T3, T4, Void, Void, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider4({
     Key key,
@@ -365,22 +411,26 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
     Disposer<R> dispose,
     Widget child,
-  }) : super(
+  })  : assert(builder != null),
+        super(
           key: key,
           initialBuilder: initialBuilder,
-          builder: builder,
+          builder: (context, previous) => builder(
+            context,
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            previous,
+          ),
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder4<T, T2, T3, T4, R> get builder =>
-      super.builder as ProxyProviderBuilder4<T, T2, T3, T4, R>;
 }
 
 /// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
-    extends _NumericProxyProvider<T, T2, T3, T4, T5, Void, R> {
+    extends _ListenableProxyProvider<T, T2, T3, T4, T5, Void, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider5({
     Key key,
@@ -388,22 +438,27 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
     Disposer<R> dispose,
     Widget child,
-  }) : super(
+  })  : assert(builder != null),
+        super(
           key: key,
           initialBuilder: initialBuilder,
-          builder: builder,
+          builder: (context, previous) => builder(
+            context,
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            previous,
+          ),
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder5<T, T2, T3, T4, T5, R> get builder =>
-      super.builder as ProxyProviderBuilder5<T, T2, T3, T4, T5, R>;
 }
 
 /// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
-    extends _NumericProxyProvider<T, T2, T3, T4, T5, T6, R> {
+    extends _ListenableProxyProvider<T, T2, T3, T4, T5, T6, R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider6({
     Key key,
@@ -411,15 +466,21 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
     Disposer<R> dispose,
     Widget child,
-  }) : super(
+  })  : assert(builder != null),
+        super(
           key: key,
           initialBuilder: initialBuilder,
-          builder: builder,
+          builder: (context, previous) => builder(
+            context,
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            previous,
+          ),
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> get builder =>
-      super.builder as ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R>;
 }

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/src/delegate_widget.dart';
 
 import 'inherited_provider.dart';
 
@@ -163,7 +162,7 @@ class MultiProvider extends StatelessWidget
 /// downcast the mock to the type of the mocked class.
 /// Otherwise, the type inference will resolve to `Provider<MockFoo>` instead of
 /// `Provider<Foo>`, which will cause `Provider.of<Foo>` to fail.
-class Provider<T> extends ValueDelegateWidget<T>
+class Provider<T> extends StatelessWidget
     implements SingleChildCloneableWidget {
   /// Creates a value, store it, and expose it to its descendants.
   ///
@@ -175,33 +174,33 @@ class Provider<T> extends ValueDelegateWidget<T>
     Key key,
     @required ValueBuilder<T> builder,
     Disposer<T> dispose,
-    Widget child,
-  }) : this._(
-          key: key,
-          delegate: BuilderStateDelegate<T>(builder, dispose: dispose),
-          updateShouldNotify: null,
-          child: child,
-        );
+    this.child,
+  })  : assert(builder != null),
+        _value = null,
+        _builder = builder,
+        _dispose = dispose,
+        updateShouldNotify = null,
+        super(key: key);
 
   /// Allows to specify parameters to [Provider].
   Provider.value({
     Key key,
     @required T value,
-    UpdateShouldNotify<T> updateShouldNotify,
-    Widget child,
-  }) : this._(
-          key: key,
-          delegate: SingleValueDelegate<T>(value),
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
-
-  Provider._({
-    Key key,
-    @required ValueStateDelegate<T> delegate,
     this.updateShouldNotify,
     this.child,
-  }) : super(key: key, delegate: delegate);
+  })  : _value = value,
+        _builder = null,
+        _dispose = null,
+        super(key: key);
+
+  Provider._(
+    this._builder,
+    this._dispose,
+    this._value, {
+    Key key,
+    this.updateShouldNotify,
+    this.child,
+  }) : super(key: key);
 
   /// Obtains the nearest [Provider<T>] up its widget tree and returns its
   /// value.
@@ -280,30 +279,52 @@ void main() {
   /// User-provided custom logic for [InheritedWidget.updateShouldNotify].
   final UpdateShouldNotify<T> updateShouldNotify;
 
-  @override
-  Provider<T> cloneWithChild(Widget child) {
-    return Provider._(
-      key: key,
-      delegate: delegate,
-      updateShouldNotify: updateShouldNotify,
-      child: child,
-    );
-  }
-
   /// The widget that is below the current [Provider] widget in the
   /// tree.
   ///
   /// {@macro flutter.widgets.child}
   final Widget child;
 
+  final ValueBuilder<T> _builder;
+  final Disposer<T> _dispose;
+  final T _value;
+
   @override
   Widget build(BuildContext context) {
+    if (_builder != null) {
+      void Function(T value) checkValue;
+
+      assert(() {
+        checkValue =
+            (T value) => Provider.debugCheckInvalidValueType?.call<T>(value);
+        return true;
+      }());
+      return InheritedProvider(
+        initialValueBuilder: _builder,
+        dispose: _dispose,
+        debugCheckInvalidValueType: checkValue,
+        child: child,
+      );
+    }
+
     assert(() {
-      Provider.debugCheckInvalidValueType?.call<T>(delegate.value);
+      Provider.debugCheckInvalidValueType?.call<T>(_value);
       return true;
     }());
-    return InheritedProvider<T>.value(
-      value: delegate.value,
+    return InheritedProvider.value(
+      value: _value,
+      updateShouldNotify: updateShouldNotify,
+      child: child,
+    );
+  }
+
+  @override
+  Provider<T> cloneWithChild(Widget child) {
+    return Provider._(
+      _builder,
+      _dispose,
+      _value,
+      key: key,
       updateShouldNotify: updateShouldNotify,
       child: child,
     );

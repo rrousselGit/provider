@@ -59,7 +59,7 @@ void main() {
               builder: (_, __, ___) => MyListenable(),
             )
           ],
-          child: Container(),
+          child: const TextOf<MyListenable>(),
         ),
       );
 
@@ -73,7 +73,7 @@ void main() {
               builder: (_, __, ___) => MyStream(),
             )
           ],
-          child: Container(),
+          child: const TextOf<MyStream>(),
         ),
       );
 
@@ -92,7 +92,7 @@ void main() {
               builder: (_, __, ___) => MyListenable(),
             )
           ],
-          child: Container(),
+          child: const TextOf<MyListenable>(),
         ),
       );
 
@@ -104,7 +104,7 @@ void main() {
               builder: (_, __, ___) => MyStream(),
             )
           ],
-          child: Container(),
+          child: const TextOf<MyStream>(),
         ),
       );
     });
