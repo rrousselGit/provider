@@ -128,41 +128,6 @@ class ListenableProvider<T extends Listenable> extends StatelessWidget
   }
 }
 
-class _ValueListenableDelegate<T extends Listenable>
-    extends SingleValueDelegate<T> with _ListenableDelegateMixin<T> {
-  _ValueListenableDelegate(T value, [this.disposer]) : super(value);
-
-  final Disposer<T> disposer;
-
-  @override
-  void didUpdateDelegate(_ValueListenableDelegate<T> oldDelegate) {
-    super.didUpdateDelegate(oldDelegate);
-    if (oldDelegate.value != value) {
-      _removeListener?.call();
-      oldDelegate.disposer?.call(context, oldDelegate.value);
-      if (value != null) startListening(value, rebuild: true);
-    }
-  }
-
-  @override
-  void startListening(T listenable, {bool rebuild = false}) {
-    assert(disposer == null || debugCheckIsNewlyCreatedListenable(listenable));
-    super.startListening(listenable, rebuild: rebuild);
-  }
-}
-
-class _BuilderListenableDelegate<T extends Listenable>
-    extends BuilderStateDelegate<T> with _ListenableDelegateMixin<T> {
-  _BuilderListenableDelegate(ValueBuilder<T> builder, {Disposer<T> dispose})
-      : super(builder, dispose: dispose);
-
-  @override
-  void startListening(T listenable, {bool rebuild = false}) {
-    assert(debugCheckIsNewlyCreatedListenable(listenable));
-    super.startListening(listenable, rebuild: rebuild);
-  }
-}
-
 mixin _ListenableDelegateMixin<T extends Listenable> on ValueStateDelegate<T> {
   UpdateShouldNotify<T> updateShouldNotify;
   VoidCallback _removeListener;

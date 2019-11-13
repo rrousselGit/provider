@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/src/proxy_provider.dart' show ProxyProviderBase;
 
 import 'common.dart';
 
@@ -146,13 +145,6 @@ void main() {
         clearInteractions(builder);
 
         final dispose2 = DisposerMock<MockNotifier>();
-        int i = 0;
-        when(dispose2(any, any)).thenAnswer((_) {
-          i++;
-          if (i > 1) {
-            throw 42;
-          }
-        });
         final notifier2 = MockNotifier();
         when(notifier2.hasListeners).thenReturn(false);
         await tester.pumpWidget(

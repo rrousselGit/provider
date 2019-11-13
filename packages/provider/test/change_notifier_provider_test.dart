@@ -201,7 +201,8 @@
 
 //       verify(builder(context)).called(1);
 //       verifyNoMoreInteractions(builder);
-//       final listener = verify(notifier.addListener(captureAny)).captured.first
+//       final listener = verify(notifier.addListener(captureAny))
+// .captured.first
 //           as VoidCallback;
 //       clearInteractions(notifier);
 
@@ -220,7 +221,7 @@
 //       await tester.pumpWidget(Container());
 //     });
 //     testWidgets(
-//         'Changing from default to stateful constructor calls stateful builder',
+//       'Changing from default to stateful constructor calls stateful builder',
 //         (tester) async {
 //       final notifier = MockNotifier();
 //       var notifier2 = ChangeNotifier();
@@ -229,7 +230,7 @@
 //         value: notifier,
 //         child: Container(),
 //       ));
-//       final listener = verify(notifier.addListener(captureAny)).captured.first
+//     final listener = verify(notifier.addListener(captureAny)).captured.first
 //           as VoidCallback;
 //       clearInteractions(notifier);
 
@@ -247,8 +248,8 @@
 //       verifyNoMoreInteractions(notifier);
 //     });
 //     testWidgets(
-//         // ignore: lines_longer_than_80_chars
-//         'Changing from stateful to default constructor dispose correctly stateful notifier',
+// ignore: lines_longer_than_80_chars
+//        'Changing from stateful to default constructor dispose correctly stateful notifier',
 //         (tester) async {
 //       final ChangeNotifier notifier = MockNotifier();
 //       when(notifier.hasListeners).thenReturn(false);
@@ -259,7 +260,7 @@
 //         builder: (_) => notifier,
 //         child: Container(),
 //       ));
-
+// ignore: lines_longer_than_80_chars
 //       final listener = verify(notifier.addListener(captureAny)).captured.first
 //           as VoidCallback;
 //       clearInteractions(notifier);
@@ -320,6 +321,7 @@
 
 //       expect(notifier.hasListeners, false);
 //     });
+// ignore: lines_longer_than_80_chars
 //     testWidgets("rebuilding with the same provider don't rebuilds descendants",
 //         (tester) async {
 //       final notifier = ChangeNotifier();

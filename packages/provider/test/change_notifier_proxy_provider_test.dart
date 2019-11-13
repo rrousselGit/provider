@@ -112,6 +112,7 @@
 
 //   group('ChangeNotifierProxyProvider variants', () {
 //     Finder findProxyProvider() => find
+// ignore: lines_longer_than_80_chars
 //         .byWidgetPredicate((widget) => widget is ProxyProviderBase<Combined>);
 //     testWidgets('ChangeNotifierProxyProvider2', (tester) async {
 //       await tester.pumpWidget(
@@ -224,6 +225,7 @@
 
 //       verify(
 //         combinedConsumerMock(
+// ignore: lines_longer_than_80_chars
 //           _ListenableCombined(context, _ListenableCombined(null, null, null), a,
 //               b, c, d, e, null),
 //         ),
@@ -239,6 +241,7 @@
 //             Provider.value(value: d),
 //             Provider.value(value: e),
 //             Provider.value(value: f),
+// ignore: lines_longer_than_80_chars
 //             ChangeNotifierProxyProvider6<A, B, C, D, E, F, _ListenableCombined>(
 //               initialBuilder: (_) => _ListenableCombined(null, null, null),
 //               builder: (context, a, b, c, d, e, f, previous) =>
@@ -254,6 +257,7 @@
 //       verify(
 //         combinedConsumerMock(
 //           _ListenableCombined(
+// ignore: lines_longer_than_80_chars
 //               context, _ListenableCombined(null, null, null), a, b, c, d, e, f),
 //         ),
 //       ).called(1);
