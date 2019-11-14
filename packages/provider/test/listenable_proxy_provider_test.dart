@@ -35,6 +35,41 @@ void main() {
         ),
         throwsAssertionError,
       );
+      expect(
+        () => ListenableProxyProvider2<A, B, _ListenableCombined>(
+          initialBuilder: null,
+          builder: null,
+        ),
+        throwsAssertionError,
+      );
+      expect(
+        () => ListenableProxyProvider3<A, B, C, _ListenableCombined>(
+          initialBuilder: null,
+          builder: null,
+        ),
+        throwsAssertionError,
+      );
+      expect(
+        () => ListenableProxyProvider4<A, B, C, D, _ListenableCombined>(
+          initialBuilder: null,
+          builder: null,
+        ),
+        throwsAssertionError,
+      );
+      expect(
+        () => ListenableProxyProvider5<A, B, C, D, E, _ListenableCombined>(
+          initialBuilder: null,
+          builder: null,
+        ),
+        throwsAssertionError,
+      );
+      expect(
+        () => ListenableProxyProvider6<A, B, C, D, E, F, _ListenableCombined>(
+          initialBuilder: null,
+          builder: null,
+        ),
+        throwsAssertionError,
+      );
     });
     testWidgets(
       'asserts that the created notifier has no listener',

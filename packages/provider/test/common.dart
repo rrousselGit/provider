@@ -69,6 +69,10 @@ class TextOf<T> extends StatelessWidget {
   }
 }
 
+class DebugCheckValueTypeMock<T> extends Mock {
+  void call(T value);
+}
+
 class A with DiagnosticableTreeMixin {}
 
 class B with DiagnosticableTreeMixin {}

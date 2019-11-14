@@ -132,7 +132,6 @@ ChangeNotifierProvider(
         initialValueBuilder: _builder,
         dispose: _dispose,
         startListening: _startListening,
-        // TODO: test updateShouldNotify builder
         updateShouldNotify: updateShouldNotify,
         debugCheckInvalidValueType: checkType,
         child: child,
@@ -157,10 +156,7 @@ class _ListenableProxyProvider<R extends Listenable> extends StatelessWidget
     this.dispose,
     this.updateShouldNotify,
     this.child,
-  })  : assert(builder != null),
-        super(
-          key: key,
-        );
+  }) : super(key: key);
 
   /// The widget that is below the current [Provider] widget in the
   /// tree.

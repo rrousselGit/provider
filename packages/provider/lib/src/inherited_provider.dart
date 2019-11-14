@@ -158,6 +158,7 @@ class InheritedProviderElement<T> extends InheritedElement {
     }
 
     _removeListener ??= widget._startListening?.call(this, _value);
+    assert(widget._startListening == null || _removeListener != null);
     return _value;
   }
 
@@ -205,9 +206,6 @@ class InheritedProviderElement<T> extends InheritedElement {
       // value with the upcoming one. Therefore we have to force an update on
       // dependents, so that they load the value if they need it.
       _shouldNotifyDependents = true;
-
-      // TODO: test switch value to builder but with no dependent
-      // -> builder not called
     }
     if (!newWidget._isStateful) {
       _value = newWidget._value;
