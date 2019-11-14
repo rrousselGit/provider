@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 
 import 'inherited_provider.dart';
 import 'listenable_provider.dart';
-import 'provider.dart';
 import 'proxy_provider.dart';
 
 /// Listens to a [ChangeNotifier], expose it to its descendants and rebuilds
@@ -93,7 +92,7 @@ import 'proxy_provider.dart';
 ///   * [ListenableProvider], similar to [ChangeNotifierProvider] but works with
 ///     any [Listenable].
 class ChangeNotifierProvider<T extends ChangeNotifier>
-    extends ListenableProvider<T> implements SingleChildCloneableWidget {
+    extends ListenableProvider<T> {
   static void _disposer(BuildContext context, ChangeNotifier notifier) =>
       notifier?.dispose();
 
