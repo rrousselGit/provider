@@ -201,6 +201,13 @@ class InheritedProviderElement<T> extends InheritedElement {
     }
     if (oldWidget._isStateful != newWidget._isStateful) {
       _value = null;
+      // since `value` is lazy loaded, it's not possible to compare the current
+      // value with the upcoming one. Therefore we have to force an update on
+      // dependents, so that they load the value if they need it.
+      _shouldNotifyDependents = true;
+      
+      // TODO: test switch value to builder but with no dependent
+      // -> builder not called
     }
     if (!newWidget._isStateful) {
       _value = newWidget._value;
