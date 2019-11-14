@@ -205,7 +205,7 @@ class InheritedProviderElement<T> extends InheritedElement {
       // value with the upcoming one. Therefore we have to force an update on
       // dependents, so that they load the value if they need it.
       _shouldNotifyDependents = true;
-      
+
       // TODO: test switch value to builder but with no dependent
       // -> builder not called
     }
