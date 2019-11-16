@@ -234,68 +234,6 @@ void main() {
 
       await tester.pumpWidget(Container());
     });
-    testWidgets(
-        'Changing from default to stateful constructor calls stateful builder',
-        (tester) async {
-      final listenable = MockNotifier();
-      var listenable2 = ChangeNotifier();
-
-      final key = GlobalKey();
-      await tester.pumpWidget(ListenableProvider<ChangeNotifier>.value(
-        value: listenable,
-        child: const TextOf<ChangeNotifier>(),
-      ));
-      final listener = verify(listenable.addListener(captureAny)).captured.first
-          as VoidCallback;
-      clearInteractions(listenable);
-
-      await tester.pumpWidget(ListenableProvider<ChangeNotifier>(
-        builder: (_) {
-          return listenable2;
-        },
-        child: Container(key: key),
-      ));
-
-      expect(Provider.of<ChangeNotifier>(key.currentContext), listenable2);
-
-      await tester.pumpWidget(Container());
-      verify(listenable.removeListener(listener)).called(1);
-      verifyNoMoreInteractions(listenable);
-    });
-    testWidgets(
-        // ignore: lines_longer_than_80_chars
-        'Changing from stateful to default constructor dispose correctly stateful listenable',
-        (tester) async {
-      final ChangeNotifier listenable = MockNotifier();
-      when(listenable.hasListeners).thenReturn(false);
-      final disposer = DisposerMock<Listenable>();
-      var listenable2 = ChangeNotifier();
-      final key = GlobalKey();
-
-      await tester.pumpWidget(ListenableProvider(
-        builder: (_) => listenable,
-        dispose: disposer,
-        child: const TextOf<ChangeNotifier>(),
-      ));
-
-      final context = findElementOfWidget<InheritedProvider<ChangeNotifier>>();
-
-      final listener = verify(listenable.addListener(captureAny)).captured.first
-          as VoidCallback;
-      clearInteractions(listenable);
-      await tester.pumpWidget(ListenableProvider.value(
-        value: listenable2,
-        child: Container(key: key),
-      ));
-
-      expect(Provider.of<ChangeNotifier>(key.currentContext), listenable2);
-
-      verifyInOrder([
-        listenable.removeListener(listener),
-        disposer(context, listenable),
-      ]);
-      verifyNoMoreInteractions(listenable);
-    });
 
     testWidgets('changing listenable rebuilds descendants', (tester) async {
       final builder = BuilderMock();

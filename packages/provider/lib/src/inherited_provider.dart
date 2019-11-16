@@ -40,12 +40,12 @@ typedef StartListening<T> = VoidCallback Function(
 ///
 /// Do not use this class directly unless you are creating a custom "Provider".
 /// Instead use [Provider] class, which wraps [InheritedProvider].
-class InheritedProvider<T> extends InheritedWidget {
+abstract class InheritedProvider<T> extends InheritedWidget {
   /// Create a value, then expose it to its descendants.
   ///
   /// The value will be disposed of when [InheritedProvider] is removed from
   /// the widget tree.
-  InheritedProvider({
+  factory InheritedProvider({
     Key key,
     ValueBuilder<T> initialValueBuilder,
     T valueBuilder(BuildContext context, T value),
@@ -54,201 +54,45 @@ class InheritedProvider<T> extends InheritedWidget {
     StartListening<T> startListening,
     Disposer<T> dispose,
     @required Widget child,
-  })  : assert(initialValueBuilder != null || valueBuilder != null),
-        _isStateful = true,
-        _value = null,
-        _startListening = startListening,
-        _initialValueBuilder = initialValueBuilder,
-        _valueBuilder = valueBuilder,
-        _updateShouldNotify = updateShouldNotify,
-        _debugCheckInvalidValueType = debugCheckInvalidValueType,
-        _dispose = dispose,
-        super(key: key, child: child);
+  }) = _CreateInheritedProvider<T>;
 
   /// Expose to its descendants an existing value,
-  InheritedProvider.value({
+  factory InheritedProvider.value({
     Key key,
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
     StartListening<T> startListening,
     @required Widget child,
-  })  : _isStateful = false,
-        _value = value,
-        _startListening = startListening,
-        _dispose = null,
-        _initialValueBuilder = null,
-        _valueBuilder = null,
-        _debugCheckInvalidValueType = null,
-        _updateShouldNotify = updateShouldNotify,
-        super(key: key, child: child);
+  }) = _ValueInheritedProvider<T>;
 
-  final bool _isStateful;
-
-  /// The currently exposed value.
-  ///
-  /// Mutating `value` should be avoided. Instead rebuild the widget tree
-  /// and replace [InheritedProvider] with one that holds the new value.
-  final T _value;
-  final ValueBuilder<T> _initialValueBuilder;
-  final T Function(BuildContext context, T value) _valueBuilder;
-  final UpdateShouldNotify<T> _updateShouldNotify;
-  final Disposer<T> _dispose;
-  final void Function(T value) _debugCheckInvalidValueType;
-  final StartListening<T> _startListening;
+  InheritedProvider._constructor({Key key, Widget child})
+      : super(key: key, child: child);
 
   @override
-  bool updateShouldNotify(InheritedProvider<T> oldWidget) {
-    throw StateError(
-      '''updateShouldNotify is implemented internally by InheritedProviderElement''',
-    );
-  }
+  InheritedProviderElement<T> createElement();
 
   @override
-  InheritedProviderElement<T> createElement() =>
-      InheritedProviderElement<T>(this);
+  Type get runtimeType => _typeOf<InheritedProvider<T>>();
 }
 
+Type _typeOf<T>() => T;
+
 /// An [Element] that uses an [InheritedProvider] as its configuration.
-class InheritedProviderElement<T> extends InheritedElement {
+abstract class InheritedProviderElement<T> extends InheritedElement {
   /// Creates an element that uses the given widget as its configuration.
   InheritedProviderElement(InheritedProvider<T> widget) : super(widget);
 
   @override
   InheritedProvider<T> get widget => super.widget as InheritedProvider<T>;
 
-  bool _didInitValue = false;
-  bool _debugInheritLocked = false;
-  T _value;
-  VoidCallback _removeListener;
-  bool _shouldNotifyDependents = false;
-  InheritedProvider<T> _previousWidget;
-
   /// The current value exposed by [InheritedProvider].
   ///
   /// If [InheritedProvider] was built using the default constructor and
   /// `initialValueBuilder` haven't been called yet, then reading [value]
   /// will call `initialValueBuilder`.
-  T get value {
-    if (widget._isStateful && !_didInitValue) {
-      _didInitValue = true;
-      assert(() {
-        _debugInheritLocked = true;
-        return true;
-      }());
-      if (widget._initialValueBuilder != null) {
-        _value = widget._initialValueBuilder(this);
+  T get value;
 
-        assert(() {
-          widget._debugCheckInvalidValueType?.call(_value);
-          return true;
-        }());
-      }
-      assert(() {
-        _debugInheritLocked = false;
-        return true;
-      }());
-      if (widget._valueBuilder != null) {
-        _value = widget._valueBuilder(this, _value);
-
-        assert(() {
-          widget._debugCheckInvalidValueType?.call(_value);
-          return true;
-        }());
-      }
-    }
-
-    _removeListener ??= widget._startListening?.call(this, _value);
-    assert(widget._startListening == null || _removeListener != null);
-    return _value;
-  }
-
-  @override
-  void mount(Element parent, dynamic newSlot) {
-    _value = widget._value;
-    super.mount(parent, newSlot);
-  }
-
-  @override
-  void updated(InheritedProvider<T> oldWidget) {
-    if (!widget._isStateful) {
-      bool shouldNotify;
-      if (widget._updateShouldNotify != null) {
-        shouldNotify = widget._updateShouldNotify(oldWidget._value, _value);
-      } else {
-        shouldNotify = oldWidget._value != _value;
-      }
-
-      if (shouldNotify) {
-        if (_removeListener != null) {
-          _removeListener();
-          _removeListener = null;
-        }
-
-        notifyClients(oldWidget);
-      }
-    }
-  }
-
-  @override
-  void update(InheritedProvider<T> newWidget) {
-    final oldWidget = widget;
-    final oldValue = _value;
-    var shouldDispose = false;
-    if (!newWidget._isStateful && oldWidget._isStateful) {
-      if (_didInitValue) {
-        shouldDispose = true;
-        _didInitValue = false;
-      }
-    }
-    if (oldWidget._isStateful != newWidget._isStateful) {
-      _value = null;
-      // since `value` is lazy loaded, it's not possible to compare the current
-      // value with the upcoming one. Therefore we have to force an update on
-      // dependents, so that they load the value if they need it.
-      _shouldNotifyDependents = true;
-    }
-    if (!newWidget._isStateful) {
-      _value = newWidget._value;
-    }
-
-    super.update(newWidget);
-
-    if (shouldDispose) {
-      oldWidget._dispose?.call(this, oldValue);
-    }
-  }
-
-  @override
-  Widget build() {
-    var shouldNotify = false;
-    if (_didInitValue && widget._valueBuilder != null) {
-      final previousValue = _value;
-      _value = widget._valueBuilder(this, _value);
-
-      shouldNotify = widget._updateShouldNotify != null
-          ? widget._updateShouldNotify(previousValue, _value)
-          : _value != previousValue;
-
-      if (shouldNotify) {
-        assert(() {
-          widget._debugCheckInvalidValueType?.call(_value);
-          return true;
-        }());
-        if (_removeListener != null) {
-          _removeListener();
-          _removeListener = null;
-        }
-        _previousWidget?._dispose?.call(this, previousValue);
-      }
-    }
-
-    if (shouldNotify || _shouldNotifyDependents) {
-      _shouldNotifyDependents = false;
-      notifyClients(widget);
-    }
-    _previousWidget = widget;
-    return super.build();
-  }
+  bool _shouldNotifyDependents = false;
 
   /// Mark the [InheritedProvider] as needing to update dependents.
   ///
@@ -257,6 +101,136 @@ class InheritedProviderElement<T> extends InheritedElement {
   void markNeedsNotifyDependents() {
     markNeedsBuild();
     _shouldNotifyDependents = true;
+  }
+
+  @override
+  Widget build() {
+    if (_shouldNotifyDependents) {
+      _shouldNotifyDependents = false;
+      notifyClients(widget);
+    }
+    return super.build();
+  }
+}
+
+class _CreateInheritedProvider<T> extends InheritedProvider<T> {
+  _CreateInheritedProvider({
+    Key key,
+    this.initialValueBuilder,
+    this.valueBuilder,
+    UpdateShouldNotify<T> updateShouldNotify,
+    this.debugCheckInvalidValueType,
+    this.startListening,
+    this.dispose,
+    @required Widget child,
+  })  : assert(initialValueBuilder != null || valueBuilder != null),
+        _updateShouldNotify = updateShouldNotify,
+        super._constructor(key: key, child: child);
+
+  final ValueBuilder<T> initialValueBuilder;
+  final T Function(BuildContext context, T value) valueBuilder;
+  final UpdateShouldNotify<T> _updateShouldNotify;
+  final void Function(T value) debugCheckInvalidValueType;
+  final StartListening<T> startListening;
+  final Disposer<T> dispose;
+
+  @override
+  bool updateShouldNotify(InheritedProvider<T> oldWidget) {
+    return false;
+  }
+
+  @override
+  _CreateInheritedProviderElement<T> createElement() =>
+      _CreateInheritedProviderElement(this);
+}
+
+class _CreateInheritedProviderElement<T> extends InheritedProviderElement<T> {
+  _CreateInheritedProviderElement(_CreateInheritedProvider<T> widget)
+      : super(widget);
+
+  @override
+  _CreateInheritedProvider<T> get widget =>
+      super.widget as _CreateInheritedProvider<T>;
+
+  VoidCallback _removeListener;
+  bool _didInitValue = false;
+  bool _debugInheritLocked = false;
+  T _value;
+  _CreateInheritedProvider<T> _previousWidget;
+
+  @override
+  T get value {
+    if (!_didInitValue) {
+      _didInitValue = true;
+      assert(() {
+        _debugInheritLocked = true;
+        return true;
+      }());
+      if (widget.initialValueBuilder != null) {
+        _value = widget.initialValueBuilder(this);
+
+        assert(() {
+          widget.debugCheckInvalidValueType?.call(_value);
+          return true;
+        }());
+      }
+      assert(() {
+        _debugInheritLocked = false;
+        return true;
+      }());
+      if (widget.valueBuilder != null) {
+        _value = widget.valueBuilder(this, _value);
+
+        assert(() {
+          widget.debugCheckInvalidValueType?.call(_value);
+          return true;
+        }());
+      }
+    }
+
+    _removeListener ??= widget.startListening?.call(this, _value);
+    assert(widget.startListening == null || _removeListener != null);
+    return _value;
+  }
+
+  @override
+  void unmount() {
+    super.unmount();
+    _removeListener?.call();
+    if (_didInitValue) {
+      widget.dispose?.call(this, _value);
+    }
+  }
+
+  @override
+  Widget build() {
+    var shouldNotify = false;
+    if (_didInitValue && widget.valueBuilder != null) {
+      final previousValue = _value;
+      _value = widget.valueBuilder(this, _value);
+
+      shouldNotify = widget._updateShouldNotify != null
+          ? widget._updateShouldNotify(previousValue, _value)
+          : _value != previousValue;
+
+      if (shouldNotify) {
+        assert(() {
+          widget.debugCheckInvalidValueType?.call(_value);
+          return true;
+        }());
+        if (_removeListener != null) {
+          _removeListener();
+          _removeListener = null;
+        }
+        _previousWidget?.dispose?.call(this, previousValue);
+      }
+    }
+
+    if (shouldNotify) {
+      _shouldNotifyDependents = true;
+    }
+    _previousWidget = widget;
+    return super.build();
   }
 
   @override
@@ -294,13 +268,73 @@ To fix, consider:
     }());
     return super.inheritFromElement(ancestor, aspect: aspect);
   }
+}
+
+class _ValueInheritedProvider<T> extends InheritedProvider<T> {
+  _ValueInheritedProvider({
+    Key key,
+    @required this.value,
+    UpdateShouldNotify<T> updateShouldNotify,
+    this.startListening,
+    @required Widget child,
+  })  : _updateShouldNotify = updateShouldNotify,
+        super._constructor(key: key, child: child);
+
+  final T value;
+  final UpdateShouldNotify<T> _updateShouldNotify;
+  final StartListening<T> startListening;
+
+  @override
+  bool updateShouldNotify(InheritedProvider<T> oldWidget) {
+    throw StateError(
+      '''updateShouldNotify is implemented internally by InheritedProviderElement''',
+    );
+  }
+
+  @override
+  _ValueInheritedProviderElement<T> createElement() =>
+      _ValueInheritedProviderElement<T>(this);
+}
+
+class _ValueInheritedProviderElement<T> extends InheritedProviderElement<T> {
+  _ValueInheritedProviderElement(_ValueInheritedProvider<T> widget)
+      : super(widget);
+
+  @override
+  _ValueInheritedProvider<T> get widget =>
+      super.widget as _ValueInheritedProvider<T>;
+
+  VoidCallback _removeListener;
+
+  @override
+  T get value {
+    _removeListener ??= widget.startListening?.call(this, widget.value);
+    assert(widget.startListening == null || _removeListener != null);
+    return widget.value;
+  }
+
+  @override
+  void updated(_ValueInheritedProvider<T> oldWidget) {
+    bool shouldNotify;
+    if (widget._updateShouldNotify != null) {
+      shouldNotify = widget._updateShouldNotify(oldWidget.value, widget.value);
+    } else {
+      shouldNotify = oldWidget.value != widget.value;
+    }
+
+    if (shouldNotify) {
+      if (_removeListener != null) {
+        _removeListener();
+        _removeListener = null;
+      }
+
+      notifyClients(oldWidget);
+    }
+  }
 
   @override
   void unmount() {
     super.unmount();
     _removeListener?.call();
-    if (_didInitValue) {
-      widget._dispose?.call(this, _value);
-    }
   }
 }

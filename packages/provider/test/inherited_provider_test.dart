@@ -18,6 +18,155 @@ T of<T>([BuildContext c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
   group('InheritedProvider.value()', () {
+    testWidgets(
+        'startListening called again when valueBuilder returns new value',
+        (tester) async {
+      final stopListening = StopListeningMock();
+      final startListening = StartListeningMock<int>(stopListening);
+
+      await tester.pumpWidget(
+        InheritedProvider<int>.value(
+          value: 42,
+          startListening: startListening,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      final element = tester.element<InheritedProviderElement<int>>(
+          find.byWidgetPredicate((w) => w is InheritedProvider<int>));
+
+      verify(startListening(element, 42)).called(1);
+      verifyNoMoreInteractions(startListening);
+      verifyZeroInteractions(stopListening);
+
+      final stopListening2 = StopListeningMock();
+      final startListening2 = StartListeningMock<int>(stopListening2);
+
+      await tester.pumpWidget(
+        InheritedProvider<int>.value(
+          value: 24,
+          startListening: startListening2,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      verifyNoMoreInteractions(startListening);
+      verifyInOrder([
+        stopListening(),
+        startListening2(element, 24),
+      ]);
+      verifyNoMoreInteractions(startListening2);
+      verifyZeroInteractions(stopListening2);
+
+      await tester.pumpWidget(Container());
+
+      verifyNoMoreInteractions(startListening);
+      verify(stopListening2()).called(1);
+    });
+    testWidgets('startListening', (tester) async {
+      final stopListening = StopListeningMock();
+      final startListening = StartListeningMock<int>(stopListening);
+
+      await tester.pumpWidget(
+        InheritedProvider<int>.value(
+          value: 42,
+          startListening: startListening,
+          child: Container(),
+        ),
+      );
+
+      verifyZeroInteractions(startListening);
+
+      await tester.pumpWidget(
+        InheritedProvider<int>.value(
+          value: 42,
+          startListening: startListening,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      final element = tester.element<InheritedProviderElement<int>>(
+          find.byWidgetPredicate((w) => w is InheritedProvider<int>));
+
+      verify(startListening(element, 42)).called(1);
+      verifyNoMoreInteractions(startListening);
+      verifyZeroInteractions(stopListening);
+
+      await tester.pumpWidget(
+        InheritedProvider<int>.value(
+          value: 42,
+          startListening: startListening,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      verifyNoMoreInteractions(startListening);
+      verifyZeroInteractions(stopListening);
+
+      await tester.pumpWidget(Container());
+
+      verifyNoMoreInteractions(startListening);
+      verify(stopListening()).called(1);
+    });
+    testWidgets(
+      "stopListening not called twice if rebuild doesn't have listeners",
+      (tester) async {
+        final stopListening = StopListeningMock();
+        final startListening = StartListeningMock<int>(stopListening);
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 42,
+            startListening: startListening,
+            child: const TextOf<int>(),
+          ),
+        );
+        verify(startListening(argThat(isNotNull), 42)).called(1);
+        verifyZeroInteractions(stopListening);
+
+        final stopListening2 = StopListeningMock();
+        final startListening2 = StartListeningMock<int>(stopListening2);
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 24,
+            startListening: startListening2,
+            child: Container(),
+          ),
+        );
+
+        verifyNoMoreInteractions(startListening);
+        verify(stopListening()).called(1);
+        verifyZeroInteractions(startListening2);
+        verifyZeroInteractions(stopListening2);
+
+        await tester.pumpWidget(Container());
+
+        verifyNoMoreInteractions(startListening);
+        verifyNoMoreInteractions(stopListening);
+        verifyZeroInteractions(startListening2);
+        verifyZeroInteractions(stopListening2);
+      },
+    );
+
+    testWidgets('removeListener cannot be null', (tester) async {
+      await tester.pumpWidget(
+        InheritedProvider<int>.value(
+          value: 42,
+          startListening: (_, __) => null,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      expect(tester.takeException(), isAssertionError);
+    });
+    test('updateShouldNotify throws', () {
+      expect(
+        () => InheritedProvider<int>.value(value: 42, child: Container())
+            // ignore: invalid_use_of_protected_member
+            .updateShouldNotify(null),
+        throwsStateError,
+      );
+    });
     testWidgets('pass down current value', (tester) async {
       int value;
       final child = Consumer<int>(
@@ -107,6 +256,190 @@ void main() {
     });
   });
   group('InheritedProvider()', () {
+    testWidgets('_debugCheckInvalidValueType', (tester) async {
+      final checkType = DebugCheckValueTypeMock<int>();
+
+      await tester.pumpWidget(
+        InheritedProvider<int>(
+          initialValueBuilder: (_) => 0,
+          valueBuilder: (_, __) => 1,
+          debugCheckInvalidValueType: checkType,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      verifyInOrder([
+        checkType(0),
+        checkType(1),
+      ]);
+      verifyNoMoreInteractions(checkType);
+
+      await tester.pumpWidget(
+        InheritedProvider<int>(
+          initialValueBuilder: (_) => 0,
+          valueBuilder: (_, __) => 1,
+          debugCheckInvalidValueType: checkType,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      verifyNoMoreInteractions(checkType);
+
+      await tester.pumpWidget(
+        InheritedProvider<int>(
+          initialValueBuilder: (_) => 0,
+          valueBuilder: (_, __) => 2,
+          debugCheckInvalidValueType: checkType,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      verify(checkType(2)).called(1);
+      verifyNoMoreInteractions(checkType);
+    });
+    testWidgets('startListening', (tester) async {
+      final stopListening = StopListeningMock();
+      final startListening = StartListeningMock<int>(stopListening);
+      final dispose = DisposerMock<int>();
+
+      await tester.pumpWidget(
+        InheritedProvider<int>(
+          valueBuilder: (_, __) => 42,
+          startListening: startListening,
+          dispose: dispose,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      final element = tester.element<InheritedProviderElement<int>>(
+          find.byWidgetPredicate((w) => w is InheritedProvider<int>));
+
+      verify(startListening(element, 42)).called(1);
+      verifyNoMoreInteractions(startListening);
+      verifyZeroInteractions(stopListening);
+      verifyZeroInteractions(dispose);
+
+      await tester.pumpWidget(
+        InheritedProvider<int>(
+          valueBuilder: (_, __) => 42,
+          startListening: startListening,
+          dispose: dispose,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      verifyNoMoreInteractions(startListening);
+      verifyZeroInteractions(stopListening);
+      verifyZeroInteractions(dispose);
+
+      await tester.pumpWidget(Container());
+
+      verifyNoMoreInteractions(startListening);
+      verifyInOrder([
+        stopListening(),
+        dispose(element, 42),
+      ]);
+      verifyNoMoreInteractions(dispose);
+      verifyNoMoreInteractions(stopListening);
+    });
+
+    testWidgets(
+        'startListening called again when valueBuilder returns new value',
+        (tester) async {
+      final stopListening = StopListeningMock();
+      final startListening = StartListeningMock<int>(stopListening);
+
+      await tester.pumpWidget(
+        InheritedProvider<int>(
+          valueBuilder: (_, __) => 42,
+          startListening: startListening,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      final element = tester.element<InheritedProviderElement<int>>(
+          find.byWidgetPredicate((w) => w is InheritedProvider<int>));
+
+      verify(startListening(element, 42)).called(1);
+      verifyNoMoreInteractions(startListening);
+      verifyZeroInteractions(stopListening);
+
+      final stopListening2 = StopListeningMock();
+      final startListening2 = StartListeningMock<int>(stopListening2);
+
+      await tester.pumpWidget(
+        InheritedProvider<int>(
+          valueBuilder: (_, __) => 24,
+          startListening: startListening2,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      verifyNoMoreInteractions(startListening);
+      verifyInOrder([
+        stopListening(),
+        startListening2(element, 24),
+      ]);
+      verifyNoMoreInteractions(startListening2);
+      verifyZeroInteractions(stopListening2);
+
+      await tester.pumpWidget(Container());
+
+      verifyNoMoreInteractions(startListening);
+      verify(stopListening2()).called(1);
+    });
+
+    testWidgets(
+      "stopListening not called twice if rebuild doesn't have listeners",
+      (tester) async {
+        final stopListening = StopListeningMock();
+        final startListening = StartListeningMock<int>(stopListening);
+
+        await tester.pumpWidget(
+          InheritedProvider<int>(
+            valueBuilder: (_, __) => 42,
+            startListening: startListening,
+            child: const TextOf<int>(),
+          ),
+        );
+        verify(startListening(argThat(isNotNull), 42)).called(1);
+        verifyZeroInteractions(stopListening);
+
+        final stopListening2 = StopListeningMock();
+        final startListening2 = StartListeningMock<int>(stopListening2);
+        await tester.pumpWidget(
+          InheritedProvider<int>(
+            valueBuilder: (_, __) => 24,
+            startListening: startListening2,
+            child: Container(),
+          ),
+        );
+
+        verifyNoMoreInteractions(startListening);
+        verify(stopListening()).called(1);
+        verifyZeroInteractions(startListening2);
+        verifyZeroInteractions(stopListening2);
+
+        await tester.pumpWidget(Container());
+
+        verifyNoMoreInteractions(startListening);
+        verifyNoMoreInteractions(stopListening);
+        verifyZeroInteractions(startListening2);
+        verifyZeroInteractions(stopListening2);
+      },
+    );
+
+    testWidgets('removeListener cannot be null', (tester) async {
+      await tester.pumpWidget(
+        InheritedProvider<int>(
+          valueBuilder: (_, __) => 42,
+          startListening: (_, __) => null,
+          child: const TextOf<int>(),
+        ),
+      );
+
+      expect(tester.takeException(), isAssertionError);
+    });
     testWidgets(
       'fails if initialValueBuilder calls inheritFromElement/inheritFromWiggetOfExactType',
       (tester) async {
@@ -180,7 +513,7 @@ void main() {
       },
     );
     testWidgets(
-      'builder calls updateShouldNotify & use == if missing',
+      'builder with no updateShouldNotify use ==',
       (tester) async {
         int lastValue;
         var buildCount = 0;
@@ -388,106 +721,6 @@ void main() {
       verify(dispose(context, 42)).called(1);
       verifyNoMoreInteractions(dispose);
     });
-    testWidgets('switching between builder and value correctly update/dispose',
-        (tester) async {
-      final dispose1 = DisposerMock<int>();
-      final initialBuilder1 = InitialValueBuilderMock<int>(42);
-      final valueBuilder1 = ValueBuilderMock<int>(0);
-
-      await tester.pumpWidget(
-        InheritedProvider<int>(
-          initialValueBuilder: initialBuilder1,
-          valueBuilder: valueBuilder1,
-          dispose: dispose1,
-          child: const TextOf<int>(),
-        ),
-      );
-
-      final context = tester
-          .element(find.byWidgetPredicate((w) => w is InheritedProvider<int>));
-
-      expect(find.text('0'), findsOneWidget);
-      verify(initialBuilder1(context));
-      verify(valueBuilder1(context, 42));
-      verifyNoMoreInteractions(initialBuilder1);
-      verifyNoMoreInteractions(valueBuilder1);
-      verifyZeroInteractions(dispose1);
-
-      await tester.pumpWidget(
-        InheritedProvider<int>.value(
-          value: 1,
-          child: const TextOf<int>(),
-        ),
-      );
-
-      expect(find.text('1'), findsOneWidget);
-      verify(dispose1(context, 0)).called(1);
-      verifyNoMoreInteractions(dispose1);
-      verifyNoMoreInteractions(initialBuilder1);
-      verifyNoMoreInteractions(valueBuilder1);
-
-      final dispose2 = DisposerMock<int>();
-      final initialBuilder2 = InitialValueBuilderMock<int>(42);
-      final valueBuilder2 = ValueBuilderMock<int>(2);
-
-      await tester.pumpWidget(
-        InheritedProvider<int>(
-          initialValueBuilder: initialBuilder2,
-          valueBuilder: valueBuilder2,
-          dispose: dispose2,
-          child: const TextOf<int>(),
-        ),
-      );
-
-      expect(find.text('2'), findsOneWidget);
-      verify(initialBuilder2(context));
-      verify(valueBuilder2(context, 42));
-      verifyNoMoreInteractions(initialBuilder2);
-      verifyNoMoreInteractions(valueBuilder2);
-      verifyZeroInteractions(dispose2);
-    });
-    testWidgets(
-        '.value to builder without initialBuilder, initialvalue is null',
-        (tester) async {
-      await tester.pumpWidget(
-        InheritedProvider<int>.value(
-          value: 1,
-          child: const TextOf<int>(),
-        ),
-      );
-
-      int previousValue;
-
-      await tester.pumpWidget(
-        InheritedProvider<int>(
-          valueBuilder: (_, prev) => previousValue = prev,
-          child: const TextOf<int>(),
-        ),
-      );
-
-      expect(previousValue, isNull);
-    });
-    testWidgets('builder to .value, dispose not called if value never read',
-        (tester) async {
-      final dispose = DisposerMock<int>();
-
-      await tester.pumpWidget(
-        InheritedProvider<int>(
-          valueBuilder: (_, __) => 42,
-          dispose: dispose,
-          child: Container(),
-        ),
-      );
-
-      await tester.pumpWidget(
-        InheritedProvider<int>.value(
-          value: 1,
-          child: const TextOf<int>(),
-        ),
-      );
-
-      verifyZeroInteractions(dispose);
-    });
     testWidgets('builder unmount, dispose not called if value never read',
         (tester) async {
       final dispose = DisposerMock<int>();
@@ -612,226 +845,6 @@ void main() {
     });
   });
 
-  testWidgets('builder startListening', (tester) async {
-    final stopListening = StopListeningMock();
-    final startListening = StartListeningMock<int>(stopListening);
-    final dispose = DisposerMock<int>();
-
-    await tester.pumpWidget(
-      InheritedProvider<int>(
-        valueBuilder: (_, __) => 42,
-        startListening: startListening,
-        dispose: dispose,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    final element = tester.element<InheritedProviderElement<int>>(
-        find.byWidgetPredicate((w) => w is InheritedProvider<int>));
-
-    verify(startListening(element, 42)).called(1);
-    verifyNoMoreInteractions(startListening);
-    verifyZeroInteractions(stopListening);
-    verifyZeroInteractions(dispose);
-
-    await tester.pumpWidget(
-      InheritedProvider<int>(
-        valueBuilder: (_, __) => 42,
-        startListening: startListening,
-        dispose: dispose,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    verifyNoMoreInteractions(startListening);
-    verifyZeroInteractions(stopListening);
-    verifyZeroInteractions(dispose);
-
-    await tester.pumpWidget(Container());
-
-    verifyNoMoreInteractions(startListening);
-    verifyInOrder([
-      stopListening(),
-      dispose(element, 42),
-    ]);
-    verifyNoMoreInteractions(dispose);
-    verifyNoMoreInteractions(stopListening);
-  });
-  testWidgets('.value startListening', (tester) async {
-    final stopListening = StopListeningMock();
-    final startListening = StartListeningMock<int>(stopListening);
-
-    await tester.pumpWidget(
-      InheritedProvider<int>.value(
-        value: 42,
-        startListening: startListening,
-        child: Container(),
-      ),
-    );
-
-    verifyZeroInteractions(startListening);
-
-    await tester.pumpWidget(
-      InheritedProvider<int>.value(
-        value: 42,
-        startListening: startListening,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    final element = tester.element<InheritedProviderElement<int>>(
-        find.byWidgetPredicate((w) => w is InheritedProvider<int>));
-
-    verify(startListening(element, 42)).called(1);
-    verifyNoMoreInteractions(startListening);
-    verifyZeroInteractions(stopListening);
-
-    await tester.pumpWidget(
-      InheritedProvider<int>.value(
-        value: 42,
-        startListening: startListening,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    verifyNoMoreInteractions(startListening);
-    verifyZeroInteractions(stopListening);
-
-    await tester.pumpWidget(Container());
-
-    verifyNoMoreInteractions(startListening);
-    verify(stopListening()).called(1);
-  });
-  testWidgets(
-      'builder startListening called again when valueBuilder returns new value',
-      (tester) async {
-    final stopListening = StopListeningMock();
-    final startListening = StartListeningMock<int>(stopListening);
-
-    await tester.pumpWidget(
-      InheritedProvider<int>(
-        valueBuilder: (_, __) => 42,
-        startListening: startListening,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    final element = tester.element<InheritedProviderElement<int>>(
-        find.byWidgetPredicate((w) => w is InheritedProvider<int>));
-
-    verify(startListening(element, 42)).called(1);
-    verifyNoMoreInteractions(startListening);
-    verifyZeroInteractions(stopListening);
-
-    final stopListening2 = StopListeningMock();
-    final startListening2 = StartListeningMock<int>(stopListening2);
-
-    await tester.pumpWidget(
-      InheritedProvider<int>(
-        valueBuilder: (_, __) => 24,
-        startListening: startListening2,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    verifyNoMoreInteractions(startListening);
-    verifyInOrder([
-      stopListening(),
-      startListening2(element, 24),
-    ]);
-    verifyNoMoreInteractions(startListening2);
-    verifyZeroInteractions(stopListening2);
-
-    await tester.pumpWidget(Container());
-
-    verifyNoMoreInteractions(startListening);
-    verify(stopListening2()).called(1);
-  });
-  testWidgets(
-      'value startListening called again when valueBuilder returns new value',
-      (tester) async {
-    final stopListening = StopListeningMock();
-    final startListening = StartListeningMock<int>(stopListening);
-
-    await tester.pumpWidget(
-      InheritedProvider<int>.value(
-        value: 42,
-        startListening: startListening,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    final element = tester.element<InheritedProviderElement<int>>(
-        find.byWidgetPredicate((w) => w is InheritedProvider<int>));
-
-    verify(startListening(element, 42)).called(1);
-    verifyNoMoreInteractions(startListening);
-    verifyZeroInteractions(stopListening);
-
-    final stopListening2 = StopListeningMock();
-    final startListening2 = StartListeningMock<int>(stopListening2);
-
-    await tester.pumpWidget(
-      InheritedProvider<int>.value(
-        value: 24,
-        startListening: startListening2,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    verifyNoMoreInteractions(startListening);
-    verifyInOrder([
-      stopListening(),
-      startListening2(element, 24),
-    ]);
-    verifyNoMoreInteractions(startListening2);
-    verifyZeroInteractions(stopListening2);
-
-    await tester.pumpWidget(Container());
-
-    verifyNoMoreInteractions(startListening);
-    verify(stopListening2()).called(1);
-  });
-  testWidgets(
-    "stopListening not called twice if rebuild doesn't have listeners",
-    (tester) async {
-      final stopListening = StopListeningMock();
-      final startListening = StartListeningMock<int>(stopListening);
-
-      await tester.pumpWidget(
-        InheritedProvider<int>.value(
-          value: 42,
-          startListening: startListening,
-          child: const TextOf<int>(),
-        ),
-      );
-      verify(startListening(argThat(isNotNull), 42)).called(1);
-      verifyZeroInteractions(stopListening);
-
-      final stopListening2 = StopListeningMock();
-      final startListening2 = StartListeningMock<int>(stopListening2);
-      await tester.pumpWidget(
-        InheritedProvider<int>.value(
-          value: 24,
-          startListening: startListening2,
-          child: Container(),
-        ),
-      );
-
-      verifyNoMoreInteractions(startListening);
-      verify(stopListening()).called(1);
-      verifyZeroInteractions(startListening2);
-      verifyZeroInteractions(stopListening2);
-
-      await tester.pumpWidget(Container());
-
-      verifyNoMoreInteractions(startListening);
-      verifyNoMoreInteractions(stopListening);
-      verifyZeroInteractions(startListening2);
-      verifyZeroInteractions(stopListening2);
-    },
-  );
-
   testWidgets('startListening markNeedsNotifyDependents', (tester) async {
     InheritedProviderElement<int> element;
     var buildCount = 0;
@@ -862,101 +875,5 @@ void main() {
     await tester.pump();
 
     expect(buildCount, equals(2));
-  });
-  testWidgets('value to builder & reverse does notify dependents',
-      (tester) async {
-    var buildCount = 0;
-    final child = Consumer<int>(
-      builder: (_, __, ___) {
-        buildCount++;
-        return Container();
-      },
-    );
-
-    await tester.pumpWidget(
-      InheritedProvider<int>(
-        valueBuilder: (_, __) => 42,
-        child: child,
-      ),
-    );
-
-    expect(buildCount, equals(1));
-
-    await tester.pumpWidget(
-      InheritedProvider<int>.value(
-        value: 42,
-        child: child,
-      ),
-    );
-
-    expect(buildCount, equals(2));
-
-    await tester.pumpWidget(
-      InheritedProvider<int>(
-        valueBuilder: (_, __) => 42,
-        child: child,
-      ),
-    );
-
-    expect(buildCount, equals(3));
-  });
-  testWidgets('removeListener cannot be null', (tester) async {
-    await tester.pumpWidget(
-      InheritedProvider<int>.value(
-        value: 42,
-        startListening: (_, __) => null,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    expect(tester.takeException(), isAssertionError);
-  });
-  test('updateShouldNotify throws', () {
-    expect(
-      () => InheritedProvider<int>.value(value: 42, child: Container())
-          .updateShouldNotify(null),
-      throwsStateError,
-    );
-  });
-  testWidgets('_debugCheckInvalidValueType', (tester) async {
-    final checkType = DebugCheckValueTypeMock<int>();
-
-    await tester.pumpWidget(
-      InheritedProvider<int>(
-        initialValueBuilder: (_) => 0,
-        valueBuilder: (_, __) => 1,
-        debugCheckInvalidValueType: checkType,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    verifyInOrder([
-      checkType(0),
-      checkType(1),
-    ]);
-    verifyNoMoreInteractions(checkType);
-
-    await tester.pumpWidget(
-      InheritedProvider<int>(
-        initialValueBuilder: (_) => 0,
-        valueBuilder: (_, __) => 1,
-        debugCheckInvalidValueType: checkType,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    verifyNoMoreInteractions(checkType);
-
-    await tester.pumpWidget(
-      InheritedProvider<int>(
-        initialValueBuilder: (_) => 0,
-        valueBuilder: (_, __) => 2,
-        debugCheckInvalidValueType: checkType,
-        child: const TextOf<int>(),
-      ),
-    );
-
-    verify(checkType(2)).called(1);
-    verifyNoMoreInteractions(checkType);
   });
 }
