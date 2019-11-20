@@ -69,6 +69,33 @@ class TextOf<T> extends StatelessWidget {
   }
 }
 
+class DeferredStartListeningMock<T, R> extends Mock {
+  DeferredStartListeningMock(
+      [VoidCallback call(
+        DeferredInheritedProviderElement<T, R> context,
+        void Function(R value) setState,
+        T controller,
+        R value,
+      )]) {
+    if (call != null) {
+      when(this(any, any, any, any)).thenAnswer((invoc) {
+        return Function.apply(
+          call,
+          invoc.positionalArguments,
+          invoc.namedArguments,
+        ) as VoidCallback;
+      });
+    }
+  }
+
+  VoidCallback call(
+    DeferredInheritedProviderElement<T, R> context,
+    void Function(R value) setState,
+    T controller,
+    R value,
+  );
+}
+
 class DebugCheckValueTypeMock<T> extends Mock {
   void call(T value);
 }

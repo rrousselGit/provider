@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import 'provider.dart' show Provider;
@@ -33,6 +35,17 @@ typedef Disposer<T> = void Function(BuildContext context, T value);
 /// value.
 typedef StartListening<T> = VoidCallback Function(
     InheritedProviderElement<T> element, T value);
+
+/// A callback used to handle the subscription of `controller`.
+/// 
+/// It is expected to start the listening process and return a callback
+/// that will later be used to stop that listening.
+typedef DeferredStartListening<T, R> = VoidCallback Function(
+  DeferredInheritedProviderElement<T, R> context,
+  void Function(R value) setState,
+  T controller,
+  R value,
+);
 
 /// A generic implementation of an [InheritedWidget].
 ///
@@ -87,12 +100,12 @@ abstract class InheritedProviderElement<T> extends InheritedElement {
 
   /// The current value exposed by [InheritedProvider].
   ///
-  /// If [InheritedProvider] was built using the default constructor and
-  /// `initialValueBuilder` haven't been called yet, then reading [value]
-  /// will call `initialValueBuilder`.
+  /// This property is lazy loaded, and reading it the first time may trigger
+  /// some side-effects such as creating a [T] instance or start a subscription.
   T get value;
 
   bool _shouldNotifyDependents = false;
+  bool _debugInheritLocked = false;
 
   /// Mark the [InheritedProvider] as needing to update dependents.
   ///
@@ -110,6 +123,67 @@ abstract class InheritedProviderElement<T> extends InheritedElement {
       notifyClients(widget);
     }
     return super.build();
+  }
+
+  @override
+  void update(InheritedProvider<T> newWidget) {
+    assert(() {
+      if (widget.createElement.runtimeType !=
+          newWidget.createElement.runtimeType) {
+        throw StateError('''
+InheritedProvider was rebuilt with a different kind of provider.
+
+This is unsupported. If you need to switch between types of providers consider
+passing a different "key" to each type of provider.
+''');
+      }
+      return true;
+    }());
+    super.update(newWidget);
+  }
+
+  bool _debugSetInheritedLock(bool value) {
+    assert(() {
+      _debugInheritLocked = value;
+      return true;
+    }());
+    return true;
+  }
+
+  @override
+  InheritedWidget inheritFromElement(
+    InheritedElement ancestor, {
+    Object aspect,
+  }) {
+    assert(() {
+      if (_debugInheritLocked) {
+        throw FlutterError.fromParts(
+          <DiagnosticsNode>[
+            ErrorSummary(
+              'Tried to listen to an InheritedWidget '
+              'in a life-cycle that will never be called again.',
+            ),
+            ErrorDescription('''
+This error typically happens when calling Provider.of with `listen` to `true`,
+in a situation where listening to the provider doesn't make sense, such as:
+- initState of a StatefulWidget
+- the "builder" callback of a provider
+
+This is undesired because these life-cycles are called only once in the
+lifetime of a widget. As such, while `listen` is `true`, the widget has
+no mean to handle the update scenario.
+
+To fix, consider:
+- passing `listen: false` to `Provider.of`
+- use a life-cycle that handles update (like didChangeDependencies)
+- use a provider that handle updates (like ProxyProvider).
+'''),
+          ],
+        );
+      }
+      return true;
+    }());
+    return super.inheritFromElement(ancestor, aspect: aspect);
   }
 }
 
@@ -154,7 +228,6 @@ class _CreateInheritedProviderElement<T> extends InheritedProviderElement<T> {
 
   VoidCallback _removeListener;
   bool _didInitValue = false;
-  bool _debugInheritLocked = false;
   T _value;
   _CreateInheritedProvider<T> _previousWidget;
 
@@ -162,22 +235,16 @@ class _CreateInheritedProviderElement<T> extends InheritedProviderElement<T> {
   T get value {
     if (!_didInitValue) {
       _didInitValue = true;
-      assert(() {
-        _debugInheritLocked = true;
-        return true;
-      }());
       if (widget.initialValueBuilder != null) {
+        assert(_debugSetInheritedLock(true));
         _value = widget.initialValueBuilder(this);
+        assert(_debugSetInheritedLock(false));
 
         assert(() {
           widget.debugCheckInvalidValueType?.call(_value);
           return true;
         }());
       }
-      assert(() {
-        _debugInheritLocked = false;
-        return true;
-      }());
       if (widget.valueBuilder != null) {
         _value = widget.valueBuilder(this, _value);
 
@@ -231,42 +298,6 @@ class _CreateInheritedProviderElement<T> extends InheritedProviderElement<T> {
     }
     _previousWidget = widget;
     return super.build();
-  }
-
-  @override
-  InheritedWidget inheritFromElement(
-    InheritedElement ancestor, {
-    Object aspect,
-  }) {
-    assert(() {
-      if (_debugInheritLocked) {
-        throw FlutterError.fromParts(
-          <DiagnosticsNode>[
-            ErrorSummary(
-              'Tried to listen to an InheritedWidget '
-              'in a life-cycle that will never be called again.',
-            ),
-            ErrorDescription('''
-This error typically happens when calling Provider.of with `listen` to `true`,
-in a situation where listening to the provider doesn't make sense, such as:
-- initState of a StatefulWidget
-- the "builder" callback of a provider
-
-This is undesired because these life-cycles are called only once in the
-lifetime of a widget. As such, while `listen` is `true`, the widget has
-no mean to handle the update scenario.
-
-To fix, consider:
-- passing `listen: false` to `Provider.of`
-- use a life-cycle that handles update (like didChangeDependencies)
-- use a provider that handle updates (like ProxyProvider).
-'''),
-          ],
-        );
-      }
-      return true;
-    }());
-    return super.inheritFromElement(ancestor, aspect: aspect);
   }
 }
 
@@ -337,4 +368,248 @@ class _ValueInheritedProviderElement<T> extends InheritedProviderElement<T> {
     super.unmount();
     _removeListener?.call();
   }
+}
+
+/// An [InheritedProvider] where the object listened is _not_ the object
+/// emitted.
+///
+/// For example, for a stream provider, we'll want to listen to `Stream<T>`,
+/// but expose `T` not the [Stream].
+abstract class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
+  DeferredInheritedProvider._constructor({
+    Key key,
+    @required DeferredStartListening<T, R> startListening,
+    UpdateShouldNotify<R> updateShouldNotify,
+    @required Widget child,
+  })  : assert(startListening != null),
+        assert(child != null),
+        _startListening = startListening,
+        _updateShouldNotify = updateShouldNotify,
+        super._constructor(key: key, child: child);
+
+  /// Lazily create an object automatically disposed when
+  /// [DeferredInheritedProvider] is removed from the tree.
+  ///
+  /// The object create will be listened using `startListening`, and its content
+  /// will be exposed to `child` and its descendants.
+  factory DeferredInheritedProvider({
+    Key key,
+    @required ValueBuilder<T> create,
+    Disposer<T> dispose,
+    @required DeferredStartListening<T, R> startListening,
+    UpdateShouldNotify<R> updateShouldNotify,
+    @required Widget child,
+  }) = _CreateDeferredInheritedProvider<T, R>;
+
+  /// Listens to `value` and expose its content to `child` and its descendants.
+  factory DeferredInheritedProvider.value({
+    Key key,
+    @required T value,
+    @required DeferredStartListening<T, R> startListening,
+    UpdateShouldNotify<R> updateShouldNotify,
+    @required Widget child,
+  }) = _ValueDeferredInheritedProvider<T, R>;
+
+  final DeferredStartListening<T, R> _startListening;
+  final UpdateShouldNotify<R> _updateShouldNotify;
+
+  @override
+  DeferredInheritedProviderElement<T, R> createElement();
+
+  @override
+  bool updateShouldNotify(InheritedProvider<T> oldWidget) {
+    throw StateError(
+      '''updateShouldNotify is implemented internally by InheritedProviderElement''',
+    );
+  }
+}
+
+/// The element associated to [DeferredInheritedProvider].
+///
+/// It is responsible for updating dependents, managing subscriptions,
+/// and creatinng/disposing [T].
+abstract class DeferredInheritedProviderElement<T, R>
+    extends InheritedProviderElement<R> {
+  /// Creates an element that uses the given widget as its configuration.
+  DeferredInheritedProviderElement(DeferredInheritedProvider<T, R> widget)
+      : super(widget);
+
+  @override
+  DeferredInheritedProvider<T, R> get widget =>
+      super.widget as DeferredInheritedProvider<T, R>;
+
+  VoidCallback _removeListener;
+
+  R _value;
+  @override
+  R get value {
+    // setState should be no-op inside startListening, as it's lazy-loaded
+    // otherwise Flutter will throw an exception for reason.
+    _setStateShouldNotify = false;
+    _removeListener ??=
+        widget._startListening.call(this, setState, controller, _value);
+    _setStateShouldNotify = true;
+    assert(hasValue, '''
+The callback "startListening" was called, but it left DeferredInhertitedProviderElement<$T, $R>
+in an unitialized state.
+
+It is necessary for "startListening" to call "setState" at least once the very
+first time "value" is requested.
+
+To fix, consider:
+
+DeferredInheritedProvider(
+  ...,
+  startListening: (element, setState, controller, value) {
+    if (!element.hasValue) {
+      setState(myInitialValue); // TODO replace myInitialValue with your own
+    }
+    ...
+  }
+)
+    ''');
+    assert(_removeListener != null);
+    return _value;
+  }
+
+  /// The object listened (and potentially created/disposed) by
+  /// [DeferredInheritedProvider], which will be used to control [value].
+  T get controller;
+
+  bool _hasValue = false;
+
+  /// Wether [setState] was called at least once or not.
+  ///
+  /// It can be used to differentiate between the very first listening,
+  /// and a rebuild after [controller] changed.
+  bool get hasValue => _hasValue;
+
+  var _setStateShouldNotify = true;
+
+  /// Update [value] and mark dependents as needing build.
+  ///
+  /// Contrarily to [markNeedsNotifyDependents], this method follows
+  /// [InheritedProvider.updateShouldNotify] and will not rebuild dependents if
+  /// the new value is the same as the previous one.
+  void setState(R value) {
+    if (_setStateShouldNotify && _hasValue) {
+      final shouldNotify = widget._updateShouldNotify != null
+          ? widget._updateShouldNotify(_value, value)
+          : _value != value;
+      if (shouldNotify) {
+        markNeedsNotifyDependents();
+      }
+    }
+    _hasValue = true;
+    _value = value;
+  }
+
+  @override
+  void unmount() {
+    super.unmount();
+    _removeListener?.call();
+  }
+}
+
+class _CreateDeferredInheritedProvider<T, R>
+    extends DeferredInheritedProvider<T, R> {
+  _CreateDeferredInheritedProvider({
+    Key key,
+    @required this.create,
+    @required DeferredStartListening<T, R> startListening,
+    UpdateShouldNotify<R> updateShouldNotify,
+    this.dispose,
+    @required Widget child,
+  }) : super._constructor(
+          key: key,
+          startListening: startListening,
+          updateShouldNotify: updateShouldNotify,
+          child: child,
+        );
+
+  final ValueBuilder<T> create;
+  final Disposer<T> dispose;
+
+  @override
+  _CreateDeferredInheritedProviderElement<T, R> createElement() =>
+      _CreateDeferredInheritedProviderElement(this);
+}
+
+class _CreateDeferredInheritedProviderElement<T, R>
+    extends DeferredInheritedProviderElement<T, R> {
+  _CreateDeferredInheritedProviderElement(
+      _CreateDeferredInheritedProvider<T, R> widget)
+      : super(widget);
+
+  @override
+  _CreateDeferredInheritedProvider<T, R> get widget =>
+      super.widget as _CreateDeferredInheritedProvider<T, R>;
+
+  bool _didBuild = false;
+
+  T _controller;
+  @override
+  T get controller {
+    if (!_didBuild) {
+      assert(_debugSetInheritedLock(true));
+      _controller = widget.create(this);
+      _didBuild = true;
+    }
+    return _controller;
+  }
+
+  @override
+  void unmount() {
+    super.unmount();
+    if (_didBuild) {
+      widget.dispose?.call(this, _controller);
+    }
+  }
+}
+
+class _ValueDeferredInheritedProvider<T, R>
+    extends DeferredInheritedProvider<T, R> {
+  _ValueDeferredInheritedProvider({
+    Key key,
+    @required this.value,
+    @required DeferredStartListening<T, R> startListening,
+    UpdateShouldNotify<R> updateShouldNotify,
+    @required Widget child,
+  }) : super._constructor(
+          key: key,
+          startListening: startListening,
+          updateShouldNotify: updateShouldNotify,
+          child: child,
+        );
+
+  final T value;
+
+  @override
+  _ValueDeferredInheritedProviderElement<T, R> createElement() =>
+      _ValueDeferredInheritedProviderElement(this);
+}
+
+class _ValueDeferredInheritedProviderElement<T, R>
+    extends DeferredInheritedProviderElement<T, R> {
+  _ValueDeferredInheritedProviderElement(
+      _ValueDeferredInheritedProvider<T, R> widget)
+      : super(widget);
+
+  @override
+  _ValueDeferredInheritedProvider<T, R> get widget =>
+      super.widget as _ValueDeferredInheritedProvider<T, R>;
+
+  @override
+  void updated(_ValueDeferredInheritedProvider<T, R> oldWidget) {
+    if (widget.value != oldWidget.value) {
+      if (_removeListener != null) {
+        _removeListener();
+        _removeListener = null;
+      }
+      notifyClients(widget);
+    }
+  }
+
+  @override
+  T get controller => widget.value;
 }
