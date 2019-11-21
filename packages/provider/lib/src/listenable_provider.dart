@@ -231,7 +231,7 @@ class ListenableProxyProvider<T, R extends Listenable>
     @required ProxyProviderBuilder<T, R> update,
     Disposer<R> dispose,
     Widget child,
-  })  : assert(create != null),
+  })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
@@ -255,7 +255,7 @@ class ListenableProxyProvider2<T, T2, R extends Listenable>
     @required ProxyProviderBuilder2<T, T2, R> update,
     Disposer<R> dispose,
     Widget child,
-  })  : assert(create != null),
+  })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
@@ -280,7 +280,7 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
     Disposer<R> dispose,
     Widget child,
-  })  : assert(create != null),
+  })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
@@ -306,7 +306,7 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     Disposer<R> dispose,
     Widget child,
-  })  : assert(create != null),
+  })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
@@ -333,7 +333,7 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     Disposer<R> dispose,
     Widget child,
-  })  : assert(create != null),
+  })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
@@ -361,7 +361,7 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     Disposer<R> dispose,
     Widget child,
-  })  : assert(create != null),
+  })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
