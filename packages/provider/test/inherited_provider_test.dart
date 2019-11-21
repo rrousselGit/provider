@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/src/inherited_provider.dart';
 
 import 'common.dart';
 
@@ -17,6 +18,27 @@ BuildContext get context => find.byType(Context).evaluate().single;
 T of<T>([BuildContext c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
+  test('autoDeferred crash', () {
+    expect(
+      () => autoDeferred<int, int>(
+        create: (_) => 42,
+        value: 42,
+        startListening: (_, __, ___, ____) => () {},
+        child: Container(),
+      ),
+      throwsAssertionError,
+    );
+    expect(
+      () => autoDeferred<int, int>(
+        create: null,
+        value: 42,
+        dispose: (_, __) {},
+        startListening: (_, __, ___, ____) => () {},
+        child: Container(),
+      ),
+      throwsAssertionError,
+    );
+  });
   group('InheritedProvider.value()', () {
     testWidgets(
         'startListening called again when valueBuilder returns new value',
