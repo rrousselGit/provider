@@ -30,43 +30,43 @@ void main() {
     test('throws if builder is missing', () {
       expect(
         () => ListenableProxyProvider<A, _ListenableCombined>(
-          initialBuilder: null,
-          builder: null,
+          create: null,
+          update: null,
         ),
         throwsAssertionError,
       );
       expect(
         () => ListenableProxyProvider2<A, B, _ListenableCombined>(
-          initialBuilder: null,
-          builder: null,
+          create: null,
+          update: null,
         ),
         throwsAssertionError,
       );
       expect(
         () => ListenableProxyProvider3<A, B, C, _ListenableCombined>(
-          initialBuilder: null,
-          builder: null,
+          create: null,
+          update: null,
         ),
         throwsAssertionError,
       );
       expect(
         () => ListenableProxyProvider4<A, B, C, D, _ListenableCombined>(
-          initialBuilder: null,
-          builder: null,
+          create: null,
+          update: null,
         ),
         throwsAssertionError,
       );
       expect(
         () => ListenableProxyProvider5<A, B, C, D, E, _ListenableCombined>(
-          initialBuilder: null,
-          builder: null,
+          create: null,
+          update: null,
         ),
         throwsAssertionError,
       );
       expect(
         () => ListenableProxyProvider6<A, B, C, D, E, F, _ListenableCombined>(
-          initialBuilder: null,
-          builder: null,
+          create: null,
+          update: null,
         ),
         throwsAssertionError,
       );
@@ -80,8 +80,8 @@ void main() {
           providers: [
             Provider.value(value: 0),
             ListenableProxyProvider<int, ValueNotifier<int>>(
-              initialBuilder: null,
-              builder: (_, __, ___) => notifier,
+              create: null,
+              update: (_, __, ___) => notifier,
               dispose: (_, __) {},
             )
           ],
@@ -98,8 +98,8 @@ void main() {
           providers: [
             Provider.value(value: 0),
             ListenableProxyProvider<int, ValueNotifier<int>>(
-              initialBuilder: null,
-              builder: (_, __, ___) => ValueNotifier(0),
+              create: null,
+              update: (_, __, ___) => ValueNotifier(0),
               dispose: (_, __) {},
             )
           ],
@@ -111,8 +111,8 @@ void main() {
           providers: [
             Provider.value(value: 1),
             ListenableProxyProvider<int, ValueNotifier<int>>(
-              initialBuilder: null,
-              builder: (_, __, ___) => notifier,
+              create: null,
+              update: (_, __, ___) => notifier,
               dispose: (_, __) {},
             )
           ],
@@ -130,8 +130,8 @@ void main() {
           providers: [
             Provider.value(value: 0),
             ListenableProxyProvider<int, ValueNotifier<int>>(
-              initialBuilder: (_) => notifier,
-              builder: (_, count, value) => value,
+              create: (_) => notifier,
+              update: (_, count, value) => value,
             )
           ],
           child: Consumer<ValueNotifier<int>>(builder: (_, value, __) {
@@ -168,8 +168,8 @@ void main() {
             providers: [
               Provider.value(value: 0),
               ListenableProxyProvider<int, MockNotifier>(
-                initialBuilder: null,
-                builder: (_, count, value) => notifier,
+                create: null,
+                update: (_, count, value) => notifier,
                 dispose: dispose,
               )
             ],
@@ -187,8 +187,8 @@ void main() {
             providers: [
               Provider.value(value: 1),
               ListenableProxyProvider<int, MockNotifier>(
-                initialBuilder: null,
-                builder: (_, count, value) => notifier2,
+                create: null,
+                update: (_, count, value) => notifier2,
                 dispose: dispose2,
               )
             ],
@@ -220,8 +220,8 @@ void main() {
             Provider.value(value: 0),
             ListenableProxyProvider<int, ValueNotifier<int>>(
               key: key,
-              initialBuilder: (_) => notifier,
-              builder: (_, count, value) => value..value = count,
+              create: (_) => notifier,
+              update: (_, count, value) => value..value = count,
               dispose: dispose,
             )
           ],
@@ -252,8 +252,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ListenableProxyProvider2<A, B, _ListenableCombined>(
-              initialBuilder: (_) => _ListenableCombined(null, null, null),
-              builder: (context, a, b, previous) =>
+              create: (_) => _ListenableCombined(null, null, null),
+              update: (context, a, b, previous) =>
                   _ListenableCombined(context, previous, a, b),
             )
           ],
@@ -281,8 +281,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ListenableProxyProvider3<A, B, C, _ListenableCombined>(
-              initialBuilder: (_) => _ListenableCombined(null, null, null),
-              builder: (context, a, b, c, previous) =>
+              create: (_) => _ListenableCombined(null, null, null),
+              update: (context, a, b, c, previous) =>
                   _ListenableCombined(context, previous, a, b, c),
             )
           ],
@@ -310,8 +310,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ListenableProxyProvider4<A, B, C, D, _ListenableCombined>(
-              initialBuilder: (_) => _ListenableCombined(null, null, null),
-              builder: (context, a, b, c, d, previous) =>
+              create: (_) => _ListenableCombined(null, null, null),
+              update: (context, a, b, c, d, previous) =>
                   _ListenableCombined(context, previous, a, b, c, d),
             )
           ],
@@ -339,8 +339,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ListenableProxyProvider5<A, B, C, D, E, _ListenableCombined>(
-              initialBuilder: (_) => _ListenableCombined(null, null, null),
-              builder: (context, a, b, c, d, e, previous) =>
+              create: (_) => _ListenableCombined(null, null, null),
+              update: (context, a, b, c, d, e, previous) =>
                   _ListenableCombined(context, previous, a, b, c, d, e),
             )
           ],
@@ -368,8 +368,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ListenableProxyProvider6<A, B, C, D, E, F, _ListenableCombined>(
-              initialBuilder: (_) => _ListenableCombined(null, null, null),
-              builder: (context, a, b, c, d, e, f, previous) =>
+              create: (_) => _ListenableCombined(null, null, null),
+              update: (context, a, b, c, d, e, f, previous) =>
                   _ListenableCombined(context, previous, a, b, c, d, e, f),
             )
           ],

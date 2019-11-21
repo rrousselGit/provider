@@ -44,7 +44,7 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
-            ChangeNotifierProvider(builder: (_) => myNotifier),
+            ChangeNotifierProvider(create: (_) => myNotifier),
           ],
           child: Consumer<ValueNotifier<int>>(
             builder: (_, value, __) {
@@ -74,10 +74,10 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
-            Provider(builder: (_) => A()),
+            Provider(create: (_) => A()),
             ChangeNotifierProxyProvider<A, ValueNotifier<int>>(
-              initialBuilder: (_) => null,
-              builder: (_, __, ___) => myNotifier,
+              create: (_) => null,
+              update: (_, __, ___) => myNotifier,
             ),
           ],
           child: Consumer<ValueNotifier<int>>(
@@ -108,11 +108,11 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
-            Provider(builder: (_) => A()),
-            Provider(builder: (_) => B()),
+            Provider(create: (_) => A()),
+            Provider(create: (_) => B()),
             ChangeNotifierProxyProvider2<A, B, ValueNotifier<int>>(
-              initialBuilder: (_) => null,
-              builder: (_, _a, _b, ___) => myNotifier,
+              create: (_) => null,
+              update: (_, _a, _b, ___) => myNotifier,
             ),
           ],
           child: Consumer<ValueNotifier<int>>(
@@ -143,12 +143,12 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
-            Provider(builder: (_) => A()),
-            Provider(builder: (_) => B()),
-            Provider(builder: (_) => C()),
+            Provider(create: (_) => A()),
+            Provider(create: (_) => B()),
+            Provider(create: (_) => C()),
             ChangeNotifierProxyProvider3<A, B, C, ValueNotifier<int>>(
-              initialBuilder: (_) => null,
-              builder: (_, _a, _b, _c, ___) => myNotifier,
+              create: (_) => null,
+              update: (_, _a, _b, _c, ___) => myNotifier,
             ),
           ],
           child: Consumer<ValueNotifier<int>>(
@@ -179,13 +179,13 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
-            Provider(builder: (_) => A()),
-            Provider(builder: (_) => B()),
-            Provider(builder: (_) => C()),
-            Provider(builder: (_) => D()),
+            Provider(create: (_) => A()),
+            Provider(create: (_) => B()),
+            Provider(create: (_) => C()),
+            Provider(create: (_) => D()),
             ChangeNotifierProxyProvider4<A, B, C, D, ValueNotifier<int>>(
-              initialBuilder: (_) => null,
-              builder: (_, _a, _b, _c, _d, ___) => myNotifier,
+              create: (_) => null,
+              update: (_, _a, _b, _c, _d, ___) => myNotifier,
             ),
           ],
           child: Consumer<ValueNotifier<int>>(
@@ -216,14 +216,14 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
-            Provider(builder: (_) => A()),
-            Provider(builder: (_) => B()),
-            Provider(builder: (_) => C()),
-            Provider(builder: (_) => D()),
-            Provider(builder: (_) => E()),
+            Provider(create: (_) => A()),
+            Provider(create: (_) => B()),
+            Provider(create: (_) => C()),
+            Provider(create: (_) => D()),
+            Provider(create: (_) => E()),
             ChangeNotifierProxyProvider5<A, B, C, D, E, ValueNotifier<int>>(
-              initialBuilder: (_) => null,
-              builder: (_, _a, _b, _c, _d, _e, ___) => myNotifier,
+              create: (_) => null,
+              update: (_, _a, _b, _c, _d, _e, ___) => myNotifier,
             ),
           ],
           child: Consumer<ValueNotifier<int>>(
@@ -254,15 +254,15 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
-            Provider(builder: (_) => A()),
-            Provider(builder: (_) => B()),
-            Provider(builder: (_) => C()),
-            Provider(builder: (_) => D()),
-            Provider(builder: (_) => E()),
-            Provider(builder: (_) => F()),
+            Provider(create: (_) => A()),
+            Provider(create: (_) => B()),
+            Provider(create: (_) => C()),
+            Provider(create: (_) => D()),
+            Provider(create: (_) => E()),
+            Provider(create: (_) => F()),
             ChangeNotifierProxyProvider6<A, B, C, D, E, F, ValueNotifier<int>>(
-              initialBuilder: (_) => null,
-              builder: (_, _a, _b, _c, _d, _e, _f, ___) => myNotifier,
+              create: (_) => null,
+              update: (_, _a, _b, _c, _d, _e, _f, ___) => myNotifier,
             ),
           ],
           child: Consumer<ValueNotifier<int>>(

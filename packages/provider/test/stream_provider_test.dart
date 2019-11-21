@@ -115,7 +115,7 @@ Exception:
 
   test('StreamProvider() crashes if builder is null', () {
     expect(
-      () => StreamProvider<int>(builder: null),
+      () => StreamProvider<int>(create: null),
       throwsAssertionError,
     );
   });
@@ -123,7 +123,7 @@ Exception:
   group('StreamProvider()', () {
     test('crashes if builder is null', () {
       expect(
-        () => StreamProvider<int>(builder: null),
+        () => StreamProvider<int>(create: null),
         throwsAssertionError,
       );
     });
@@ -137,7 +137,7 @@ Exception:
 
       await tester.pumpWidget(
         StreamProvider<int>(
-          builder: builder,
+          create: builder,
           child: const TextOf<int>(),
         ),
       );

@@ -186,7 +186,7 @@ Exception:
 
   test('FutureProvider() crashes if builder is null', () {
     expect(
-      () => FutureProvider<int>(builder: null),
+      () => FutureProvider<int>(create: null),
       throwsAssertionError,
     );
   });
@@ -194,7 +194,7 @@ Exception:
   group('FutureProvider()', () {
     test('crashes if builder is null', () {
       expect(
-        () => FutureProvider<int>(builder: null),
+        () => FutureProvider<int>(create: null),
         throwsAssertionError,
       );
     });
@@ -205,7 +205,7 @@ Exception:
     await tester.pumpWidget(
       FutureProvider<int>(
         initialData: 42,
-        builder: (_) => completer.future,
+        create: (_) => completer.future,
         child: const TextOf<int>(),
       ),
     );

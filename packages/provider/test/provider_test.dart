@@ -23,7 +23,7 @@ void main() {
       await tester.pumpWidget(
         Provider(
           key: UniqueKey(),
-          builder: (_) => MyListenable(),
+          create: (_) => MyListenable(),
           child: const TextOf<MyListenable>(),
         ),
       );
@@ -43,7 +43,7 @@ void main() {
       await tester.pumpWidget(
         Provider(
           key: UniqueKey(),
-          builder: (_) => MyStream(),
+          create: (_) => MyStream(),
           child: const TextOf<MyStream>(),
         ),
       );

@@ -17,7 +17,7 @@ class Dispose extends Mock {
 void main() {
   test('cloneWithChild works', () {
     final provider = Provider(
-      builder: (_) => 42,
+      create: (_) => 42,
       child: Container(),
       key: const ValueKey(42),
     );
@@ -32,21 +32,21 @@ void main() {
   }, skip: true);
   test('asserts', () {
     expect(
-      () => Provider<dynamic>(builder: null, child: null),
+      () => Provider<dynamic>(create: null, child: null),
       throwsAssertionError,
     );
     // don't throw
-    Provider<dynamic>(builder: (_) => null, child: null);
+    Provider<dynamic>(create: (_) => null, child: null);
   });
 
   testWidgets('calls builder only once', (tester) async {
     final builder = ValueBuilder();
     await tester.pumpWidget(Provider<int>(
-      builder: builder,
+      create: builder,
       child: const TextOf<int>(),
     ));
     await tester.pumpWidget(Provider<int>(
-      builder: builder,
+      create: builder,
       child: const TextOf<int>(),
     ));
     await tester.pumpWidget(Container());
@@ -59,7 +59,7 @@ void main() {
 
     await tester.pumpWidget(
       Provider<int>(
-        builder: (_) => 42,
+        create: (_) => 42,
         dispose: dispose,
         child: const TextOf<int>(),
       ),

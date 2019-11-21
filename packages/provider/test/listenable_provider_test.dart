@@ -28,7 +28,7 @@ void main() {
         final notifier = ValueNotifier(0)..addListener(() {});
 
         await tester.pumpWidget(ListenableProvider(
-          builder: (_) => notifier,
+          create: (_) => notifier,
           child: const TextOf<ValueNotifier<int>>(),
         ));
 
@@ -50,7 +50,7 @@ void main() {
     }, skip: true);
     test('works with MultiProvider #3', () {
       final provider = ListenableProvider<ChangeNotifier>(
-        builder: (_) => ChangeNotifier(),
+        create: (_) => ChangeNotifier(),
         dispose: (_, n) {},
         child: Container(),
         key: const Key('42'),
@@ -137,7 +137,7 @@ void main() {
     testWidgets('works with null (builder)', (tester) async {
       final key = GlobalKey();
       await tester.pumpWidget(ListenableProvider<ChangeNotifier>(
-        builder: (_) => null,
+        create: (_) => null,
         child: Container(key: key),
       ));
 
@@ -148,14 +148,14 @@ void main() {
         final builder = InitialValueBuilderMock<ChangeNotifier>();
 
         await tester.pumpWidget(ListenableProvider<ChangeNotifier>(
-          builder: builder,
+          create: builder,
           child: const TextOf<ChangeNotifier>(),
         ));
         verify(builder(argThat(isNotNull))).called(1);
       });
       test('throws if builder is null', () {
         expect(
-          () => ListenableProvider(builder: null),
+          () => ListenableProvider(create: null),
           throwsAssertionError,
         );
       });
@@ -164,7 +164,7 @@ void main() {
 
         await tester.pumpWidget(ListenableProvider(
           key: keyProvider,
-          builder: (_) => ChangeNotifier(),
+          create: (_) => ChangeNotifier(),
           child: Container(),
         ));
         expect(
@@ -180,7 +180,7 @@ void main() {
       when(builder(any)).thenReturn(listenable);
 
       await tester.pumpWidget(ListenableProvider(
-        builder: builder,
+        create: builder,
         child: const TextOf<Listenable>(),
       ));
 
@@ -189,7 +189,7 @@ void main() {
       clearInteractions(listenable);
 
       await tester.pumpWidget(ListenableProvider(
-        builder: builder,
+        create: builder,
         child: Container(),
       ));
 
@@ -204,7 +204,7 @@ void main() {
       when(builder(any)).thenReturn(listenable);
 
       await tester.pumpWidget(ListenableProvider(
-        builder: builder,
+        create: builder,
         dispose: disposer,
         child: const TextOf<Listenable>(),
       ));
@@ -228,7 +228,7 @@ void main() {
     });
     testWidgets('dispose can be null', (tester) async {
       await tester.pumpWidget(ListenableProvider(
-        builder: (_) => ChangeNotifier(),
+        create: (_) => ChangeNotifier(),
         child: Container(),
       ));
 

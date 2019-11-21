@@ -130,7 +130,7 @@ class MultiProvider extends StatelessWidget
 ///   @override
 ///   Widget build(BuildContext context) {
 ///     return Provider<Model>(
-///       builder: (context) =>  Model(),
+///       create: (context) =>  Model(),
 ///       dispose: (context, value) => value.dispose(),
 ///       child: ...,
 ///     );
@@ -172,12 +172,12 @@ class Provider<T> extends StatelessWidget
   ///
   Provider({
     Key key,
-    @required ValueBuilder<T> builder,
+    @required ValueBuilder<T> create,
     Disposer<T> dispose,
     this.child,
-  })  : assert(builder != null),
+  })  : assert(create != null),
         _value = null,
-        _builder = builder,
+        _create = create,
         _dispose = dispose,
         updateShouldNotify = null,
         super(key: key);
@@ -189,12 +189,12 @@ class Provider<T> extends StatelessWidget
     this.updateShouldNotify,
     this.child,
   })  : _value = value,
-        _builder = null,
+        _create = null,
         _dispose = null,
         super(key: key);
 
   Provider._(
-    this._builder,
+    this._create,
     this._dispose,
     this._value, {
     Key key,
@@ -285,13 +285,13 @@ void main() {
   /// {@macro flutter.widgets.child}
   final Widget child;
 
-  final ValueBuilder<T> _builder;
+  final ValueBuilder<T> _create;
   final Disposer<T> _dispose;
   final T _value;
 
   @override
   Widget build(BuildContext context) {
-    if (_builder != null) {
+    if (_create != null) {
       void Function(T value) checkValue;
 
       assert(() {
@@ -300,7 +300,7 @@ void main() {
         return true;
       }());
       return InheritedProvider(
-        initialValueBuilder: _builder,
+        create: _create,
         dispose: _dispose,
         debugCheckInvalidValueType: checkValue,
         child: child,
@@ -321,7 +321,7 @@ void main() {
   @override
   Provider<T> cloneWithChild(Widget child) {
     return Provider._(
-      _builder,
+      _create,
       _dispose,
       _value,
       key: key,

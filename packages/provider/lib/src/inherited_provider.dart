@@ -60,8 +60,8 @@ abstract class InheritedProvider<T> extends InheritedWidget {
   /// the widget tree.
   factory InheritedProvider({
     Key key,
-    ValueBuilder<T> initialValueBuilder,
-    T valueBuilder(BuildContext context, T value),
+    ValueBuilder<T> create,
+    T update(BuildContext context, T value),
     UpdateShouldNotify<T> updateShouldNotify,
     void Function(T value) debugCheckInvalidValueType,
     StartListening<T> startListening,
@@ -190,19 +190,19 @@ To fix, consider:
 class _CreateInheritedProvider<T> extends InheritedProvider<T> {
   _CreateInheritedProvider({
     Key key,
-    this.initialValueBuilder,
-    this.valueBuilder,
+    this.create,
+    this.update,
     UpdateShouldNotify<T> updateShouldNotify,
     this.debugCheckInvalidValueType,
     this.startListening,
     this.dispose,
     @required Widget child,
-  })  : assert(initialValueBuilder != null || valueBuilder != null),
+  })  : assert(create != null || update != null),
         _updateShouldNotify = updateShouldNotify,
         super._constructor(key: key, child: child);
 
-  final ValueBuilder<T> initialValueBuilder;
-  final T Function(BuildContext context, T value) valueBuilder;
+  final ValueBuilder<T> create;
+  final T Function(BuildContext context, T value) update;
   final UpdateShouldNotify<T> _updateShouldNotify;
   final void Function(T value) debugCheckInvalidValueType;
   final StartListening<T> startListening;
@@ -235,9 +235,9 @@ class _CreateInheritedProviderElement<T> extends InheritedProviderElement<T> {
   T get value {
     if (!_didInitValue) {
       _didInitValue = true;
-      if (widget.initialValueBuilder != null) {
+      if (widget.create != null) {
         assert(_debugSetInheritedLock(true));
-        _value = widget.initialValueBuilder(this);
+        _value = widget.create(this);
         assert(_debugSetInheritedLock(false));
 
         assert(() {
@@ -245,8 +245,8 @@ class _CreateInheritedProviderElement<T> extends InheritedProviderElement<T> {
           return true;
         }());
       }
-      if (widget.valueBuilder != null) {
-        _value = widget.valueBuilder(this, _value);
+      if (widget.update != null) {
+        _value = widget.update(this, _value);
 
         assert(() {
           widget.debugCheckInvalidValueType?.call(_value);
@@ -272,9 +272,9 @@ class _CreateInheritedProviderElement<T> extends InheritedProviderElement<T> {
   @override
   Widget build() {
     var shouldNotify = false;
-    if (_didInitValue && widget.valueBuilder != null) {
+    if (_didInitValue && widget.update != null) {
       final previousValue = _value;
-      _value = widget.valueBuilder(this, _value);
+      _value = widget.update(this, _value);
 
       shouldNotify = widget._updateShouldNotify != null
           ? widget._updateShouldNotify(previousValue, _value)

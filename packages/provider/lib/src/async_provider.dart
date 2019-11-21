@@ -38,23 +38,23 @@ typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 ///   * [Stream], which is listened by [StreamProvider].
 ///   * [StreamController], to create a [Stream]
 class StreamProvider<T> extends StatelessWidget {
-  /// Creates a [Stream] from [builder] and subscribes to it.
+  /// Creates a [Stream] from [create] and subscribes to it.
   ///
-  /// The parameter [builder] must not be `null`.
+  /// The parameter [create] must not be `null`.
   StreamProvider({
     Key key,
-    @required ValueBuilder<Stream<T>> builder,
+    @required ValueBuilder<Stream<T>> create,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
-  })  : assert(builder != null),
+  })  : assert(create != null),
         _initialData = initialData,
         _value = null,
         _catchError = catchError,
         _updateShouldNotify = updateShouldNotify,
         _child = child,
-        _create = builder,
+        _create = create,
         super(key: key);
 
   /// Listens to [value] and expose it to all of [StreamProvider] descendants.
@@ -142,23 +142,23 @@ $error
 ///
 ///   * [Future], which is listened by [FutureProvider].
 class FutureProvider<T> extends StatelessWidget {
-  /// Creates a [Future] from [builder] and subscribes to it.
+  /// Creates a [Future] from [create] and subscribes to it.
   ///
-  /// [builder] must not be `null`.
+  /// [create] must not be `null`.
   FutureProvider({
     Key key,
-    @required ValueBuilder<Future<T>> builder,
+    @required ValueBuilder<Future<T>> create,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
-  })  : assert(builder != null),
+  })  : assert(create != null),
         _initialData = initialData,
         _value = null,
         _catchError = catchError,
         _updateShouldNotify = updateShouldNotify,
         _child = child,
-        _create = builder,
+        _create = create,
         super(key: key);
 
   /// Listens to [value] and expose it to all of [FutureProvider] descendants.

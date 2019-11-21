@@ -283,8 +283,8 @@ void main() {
 
       await tester.pumpWidget(
         InheritedProvider<int>(
-          initialValueBuilder: (_) => 0,
-          valueBuilder: (_, __) => 1,
+          create: (_) => 0,
+          update: (_, __) => 1,
           debugCheckInvalidValueType: checkType,
           child: const TextOf<int>(),
         ),
@@ -298,8 +298,8 @@ void main() {
 
       await tester.pumpWidget(
         InheritedProvider<int>(
-          initialValueBuilder: (_) => 0,
-          valueBuilder: (_, __) => 1,
+          create: (_) => 0,
+          update: (_, __) => 1,
           debugCheckInvalidValueType: checkType,
           child: const TextOf<int>(),
         ),
@@ -309,8 +309,8 @@ void main() {
 
       await tester.pumpWidget(
         InheritedProvider<int>(
-          initialValueBuilder: (_) => 0,
-          valueBuilder: (_, __) => 2,
+          create: (_) => 0,
+          update: (_, __) => 2,
           debugCheckInvalidValueType: checkType,
           child: const TextOf<int>(),
         ),
@@ -326,7 +326,7 @@ void main() {
 
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, __) => 42,
+          update: (_, __) => 42,
           startListening: startListening,
           dispose: dispose,
           child: const TextOf<int>(),
@@ -343,7 +343,7 @@ void main() {
 
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, __) => 42,
+          update: (_, __) => 42,
           startListening: startListening,
           dispose: dispose,
           child: const TextOf<int>(),
@@ -373,7 +373,7 @@ void main() {
 
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, __) => 42,
+          update: (_, __) => 42,
           startListening: startListening,
           child: const TextOf<int>(),
         ),
@@ -391,7 +391,7 @@ void main() {
 
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, __) => 24,
+          update: (_, __) => 24,
           startListening: startListening2,
           child: const TextOf<int>(),
         ),
@@ -419,7 +419,7 @@ void main() {
 
         await tester.pumpWidget(
           InheritedProvider<int>(
-            valueBuilder: (_, __) => 42,
+            update: (_, __) => 42,
             startListening: startListening,
             child: const TextOf<int>(),
           ),
@@ -431,7 +431,7 @@ void main() {
         final startListening2 = StartListeningMock<int>(stopListening2);
         await tester.pumpWidget(
           InheritedProvider<int>(
-            valueBuilder: (_, __) => 24,
+            update: (_, __) => 24,
             startListening: startListening2,
             child: Container(),
           ),
@@ -454,7 +454,7 @@ void main() {
     testWidgets('removeListener cannot be null', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, __) => 42,
+          update: (_, __) => 42,
           startListening: (_, __) => null,
           child: const TextOf<int>(),
         ),
@@ -469,8 +469,7 @@ void main() {
           InheritedProvider<int>.value(
             value: 42,
             child: InheritedProvider<double>(
-              initialValueBuilder: (context) =>
-                  Provider.of<int>(context).toDouble(),
+              create: (context) => Provider.of<int>(context).toDouble(),
               child: Consumer<double>(
                 builder: (_, __, ___) => Container(),
               ),
@@ -498,8 +497,8 @@ void main() {
 
         await tester.pumpWidget(
           InheritedProvider<int>(
-            initialValueBuilder: (_) => 42,
-            valueBuilder: valueBuilder,
+            create: (_) => 42,
+            update: valueBuilder,
             child: Container(),
           ),
         );
@@ -511,8 +510,8 @@ void main() {
 
         await tester.pumpWidget(
           InheritedProvider<int>(
-            initialValueBuilder: (_) => 42,
-            valueBuilder: valueBuilder,
+            create: (_) => 42,
+            update: valueBuilder,
             child: child,
           ),
         );
@@ -522,8 +521,8 @@ void main() {
 
         await tester.pumpWidget(
           InheritedProvider<int>(
-            initialValueBuilder: (_) => 42,
-            valueBuilder: valueBuilder,
+            create: (_) => 42,
+            update: valueBuilder,
             child: child,
           ),
         );
@@ -549,8 +548,8 @@ void main() {
 
         await tester.pumpWidget(
           InheritedProvider<int>(
-            initialValueBuilder: (_) => null,
-            valueBuilder: (_, __) => 42,
+            create: (_) => null,
+            update: (_, __) => 42,
             child: child,
           ),
         );
@@ -560,8 +559,8 @@ void main() {
 
         await tester.pumpWidget(
           InheritedProvider<int>(
-            initialValueBuilder: (_) => null,
-            valueBuilder: (_, __) => 42,
+            create: (_) => null,
+            update: (_, __) => 42,
             child: child,
           ),
         );
@@ -571,8 +570,8 @@ void main() {
 
         await tester.pumpWidget(
           InheritedProvider<int>(
-            initialValueBuilder: (_) => null,
-            valueBuilder: (_, __) => 43,
+            create: (_) => null,
+            update: (_, __) => 43,
             child: child,
           ),
         );
@@ -598,8 +597,8 @@ void main() {
 
         await tester.pumpWidget(
           InheritedProvider<int>(
-            initialValueBuilder: (_) => null,
-            valueBuilder: (_, __) => 42,
+            create: (_) => null,
+            update: (_, __) => 42,
             updateShouldNotify: updateShouldNotify,
             child: child,
           ),
@@ -612,8 +611,8 @@ void main() {
         when(updateShouldNotify(any, any)).thenReturn(true);
         await tester.pumpWidget(
           InheritedProvider<int>(
-            initialValueBuilder: (_) => null,
-            valueBuilder: (_, __) => 42,
+            create: (_) => null,
+            update: (_, __) => 42,
             updateShouldNotify: updateShouldNotify,
             child: child,
           ),
@@ -626,8 +625,8 @@ void main() {
         when(updateShouldNotify(any, any)).thenReturn(false);
         await tester.pumpWidget(
           InheritedProvider<int>(
-            initialValueBuilder: (_) => null,
-            valueBuilder: (_, __) => 43,
+            create: (_) => null,
+            update: (_, __) => 43,
             updateShouldNotify: updateShouldNotify,
             child: child,
           ),
@@ -644,8 +643,8 @@ void main() {
       int lastValue;
       await tester.pumpWidget(
         InheritedProvider<int>(
-          initialValueBuilder: (_) => 0,
-          valueBuilder: (_, last) {
+          create: (_) => 0,
+          update: (_, last) {
             lastValue = last;
             return 42;
           },
@@ -667,8 +666,8 @@ void main() {
 
       var buildCount = 0;
       final child = InheritedProvider<int>(
-        initialValueBuilder: (_) => 0,
-        valueBuilder: valueBuilder,
+        create: (_) => 0,
+        update: valueBuilder,
         child: Consumer<int>(
           builder: (_, value, __) {
             buildCount++;
@@ -714,7 +713,7 @@ void main() {
     testWidgets('exposes initialValue if valueBuilder is null', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>(
-          initialValueBuilder: (_) => 42,
+          create: (_) => 42,
           child: Context(),
         ),
       );
@@ -725,7 +724,7 @@ void main() {
       final dispose = DisposerMock<int>();
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, __) => 42,
+          update: (_, __) => 42,
           dispose: dispose,
           child: Context(),
         ),
@@ -749,7 +748,7 @@ void main() {
 
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, __) => 42,
+          update: (_, __) => 42,
           dispose: dispose,
           child: Container(),
         ),
@@ -763,7 +762,7 @@ void main() {
       final dispose = DisposerMock<int>();
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, __) => 42,
+          update: (_, __) => 42,
           dispose: dispose,
           child: Context(),
         ),
@@ -774,7 +773,7 @@ void main() {
       final dispose2 = DisposerMock<int>();
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, __) => 42,
+          update: (_, __) => 42,
           dispose: dispose2,
           child: Container(),
         ),
@@ -789,7 +788,7 @@ void main() {
       final dispose3 = DisposerMock<int>();
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, __) => 24,
+          update: (_, __) => 24,
           dispose: dispose3,
           child: Container(),
         ),
@@ -805,7 +804,7 @@ void main() {
       int lastValue;
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, last) {
+          update: (_, last) {
             lastValue = last;
             return 42;
           },
@@ -818,7 +817,7 @@ void main() {
 
       await tester.pumpWidget(
         InheritedProvider<int>(
-          valueBuilder: (_, last) {
+          update: (_, last) {
             lastValue = last;
             return 24;
           },
@@ -841,7 +840,7 @@ void main() {
 
       await tester.pumpWidget(
         InheritedProvider<int>(
-          initialValueBuilder: initialValueBuilder,
+          create: initialValueBuilder,
           child: Context(),
         ),
       );
@@ -857,7 +856,7 @@ void main() {
 
       await tester.pumpWidget(
         InheritedProvider<int>(
-          initialValueBuilder: initialValueBuilder,
+          create: initialValueBuilder,
           child: Context(),
         ),
       );
@@ -1327,7 +1326,7 @@ void main() {
 
     await tester.pumpWidget(
       InheritedProvider<int>(
-        valueBuilder: (_, __) => 24,
+        update: (_, __) => 24,
         startListening: (e, value) {
           element = e;
           return () {};
@@ -1356,7 +1355,7 @@ void main() {
   testWidgets('throw if the widget ctor changes', (tester) async {
     await tester.pumpWidget(
       InheritedProvider<int>(
-        valueBuilder: (_, __) => 42,
+        update: (_, __) => 42,
         child: Container(),
       ),
     );
