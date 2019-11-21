@@ -273,49 +273,53 @@ void main() {
     testWidgets("rebuilding with the same provider don't rebuilds descendants",
         (tester) async {
       final listenable = ChangeNotifier();
-      final keyChild = GlobalKey();
-      final builder = BuilderMock();
-      when(builder(any)).thenReturn(Container());
 
-      final child = Builder(
-        key: keyChild,
-        builder: builder,
+      var buildCount = 0;
+      final child = Consumer<ChangeNotifier>(
+        builder: (_, __, ___) {
+          buildCount++;
+          return Container();
+        },
       );
 
+      await tester.pumpWidget(
+        ListenableProvider.value(
+          value: listenable,
+          child: child,
+        ),
+      );
+
+      final context = tester.element(find.byWidget(child));
+
+      expect(buildCount, equals(1));
+      expect(Provider.of<ChangeNotifier>(context), listenable);
+
       await tester.pumpWidget(ListenableProvider.value(
         value: listenable,
         child: child,
       ));
-
-      verify(builder(any)).called(1);
-      expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
-
-      await tester.pumpWidget(ListenableProvider.value(
-        value: listenable,
-        child: child,
-      ));
-      verifyNoMoreInteractions(builder);
-      expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
+      expect(buildCount, equals(1));
+      expect(Provider.of<ChangeNotifier>(context), listenable);
 
       listenable.notifyListeners();
       await tester.pump();
 
-      verify(builder(any)).called(1);
-      expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
+      expect(buildCount, equals(2));
+      expect(Provider.of<ChangeNotifier>(context), listenable);
 
       await tester.pumpWidget(ListenableProvider.value(
         value: listenable,
         child: child,
       ));
-      verifyNoMoreInteractions(builder);
-      expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
+      expect(buildCount, equals(2));
+      expect(Provider.of<ChangeNotifier>(context), listenable);
 
       await tester.pumpWidget(ListenableProvider.value(
         value: listenable,
         child: child,
       ));
-      verifyNoMoreInteractions(builder);
-      expect(Provider.of<ChangeNotifier>(keyChild.currentContext), listenable);
+      expect(buildCount, equals(2));
+      expect(Provider.of<ChangeNotifier>(context), listenable);
     });
     testWidgets('notifylistener rebuilds descendants', (tester) async {
       final listenable = ChangeNotifier();

@@ -205,10 +205,41 @@ class Provider<T> extends StatelessWidget
   /// Obtains the nearest [Provider<T>] up its widget tree and returns its
   /// value.
   ///
-  /// If [listen] is `true` (default), later value changes will trigger a new
+  /// If [listen] is `true`, later value changes will trigger a new
   /// [State.build] to widgets, and [State.didChangeDependencies] for
   /// [StatefulWidget].
-  static T of<T>(BuildContext context, {bool listen = true}) {
+  ///
+  /// By default, `listen` is inferred based on wether the widget tree is
+  /// currently building or not:
+  /// - if widgets are building, `listen` is `true`
+  /// - if widgets aren't, `listen` is `false`.
+  ///
+  /// As such, it is fine to call `Provider.of` inside event handlers without
+  /// specifying `listen: false`:
+  ///
+  /// ```dart
+  /// RaisedButton(
+  ///   onPressed: () {
+  ///     Provider.of<Model>(context); // no need to pass listen:false
+  ///
+  ///     Provider.of<Model>(context, listen: false); // unnecessary flag
+  ///   }
+  /// )
+  /// ```
+  ///
+  /// On the other hand, `listen: false` is necessary to be able to call
+  /// `Provider.of` inside [State.initState] or the `create` method of providers
+  /// like so:
+  ///
+  /// ```dart
+  /// Provider(
+  ///   create: (context) {
+  ///     return Model(Provider.of<Something>(context, listen: false)),
+  ///   },
+  /// )
+  /// ```
+  static T of<T>(BuildContext context, {bool listen}) {
+    assert(listen == false || listen == null || isWidgetTreeBuilding);
     // this is required to get generic Type
     final type = _typeOf<InheritedProvider<T>>();
 
@@ -220,7 +251,7 @@ class Provider<T> extends StatelessWidget
       throw ProviderNotFoundError(T, context.widget.runtimeType);
     }
 
-    if (listen) {
+    if (listen ?? isWidgetTreeBuilding) {
       context.inheritFromElement(inheritedElement);
     }
 

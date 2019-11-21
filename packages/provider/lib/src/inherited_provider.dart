@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
 import 'provider.dart' show Provider;
@@ -90,6 +91,47 @@ abstract class InheritedProvider<T> extends InheritedWidget {
 
 Type _typeOf<T>() => T;
 
+/// Express if the widget tree is currently being updated.
+bool get isWidgetTreeBuilding => _isWidgetTreeBuilding;
+
+bool _isWidgetTreeBuilding = false;
+int _frameId;
+// we track the number of providers in the widget tree, such that when all of
+// them are disposed, we can stop scheduling frames.
+//
+// This is a requirement for testWidgets, as it would otherwise fail if there's
+// an uncancelled frame callback.
+int _providerCount = 0;
+
+void _startWatchingScheduler() {
+  _isWidgetTreeBuilding = true;
+
+  final endFrameCallback = (Duration _) {
+    _isWidgetTreeBuilding = false;
+    if (_providerCount == 0 && _frameId != null) {
+      SchedulerBinding.instance.cancelFrameCallbackWithId(_frameId);
+      _frameId = null;
+    }
+  };
+
+  void Function(Duration) startFrameCallback;
+  startFrameCallback = (Duration _) {
+    _isWidgetTreeBuilding = true;
+
+    SchedulerBinding.instance.addPostFrameCallback(endFrameCallback);
+
+    _frameId = SchedulerBinding.instance.scheduleFrameCallback(
+      startFrameCallback,
+      rescheduling: true,
+    );
+  };
+
+  _frameId = SchedulerBinding.instance.scheduleFrameCallback(
+    startFrameCallback,
+  );
+  SchedulerBinding.instance.addPostFrameCallback(endFrameCallback);
+}
+
 /// An [Element] that uses an [InheritedProvider] as its configuration.
 abstract class InheritedProviderElement<T> extends InheritedElement {
   /// Creates an element that uses the given widget as its configuration.
@@ -106,6 +148,21 @@ abstract class InheritedProviderElement<T> extends InheritedElement {
 
   bool _shouldNotifyDependents = false;
   bool _debugInheritLocked = false;
+
+  @override
+  void mount(Element parent, dynamic newSlot) {
+    _providerCount++;
+    if (_providerCount == 1) {
+      _startWatchingScheduler();
+    }
+    super.mount(parent, newSlot);
+  }
+
+  @override
+  void unmount() {
+    _providerCount--;
+    super.unmount();
+  }
 
   /// Mark the [InheritedProvider] as needing to update dependents.
   ///
@@ -130,6 +187,8 @@ abstract class InheritedProviderElement<T> extends InheritedElement {
     assert(() {
       if (widget.createElement.runtimeType !=
           newWidget.createElement.runtimeType) {
+        _providerCount--;
+
         throw StateError('''
 InheritedProvider was rebuilt with a different kind of provider.
 

@@ -1,3 +1,12 @@
+# 4.0.0
+
+- The default constructor of providers now lazily create the value.
+- The `listen` argument of `Provider.of` is now automatically inferred.
+  It is no longer necessary to pass `listen: false` when calling `Provider.of`
+  outside of the widget tree.
+- renamed `initialBuilder` & `builder` of `*ProxyProvider` to `create` & `update`
+- renamed `builder` `*Provider` to `create`
+
 # 3.1.0
 
 - Added `Selector`, similar to `Consumer` but can filter unneeded updates

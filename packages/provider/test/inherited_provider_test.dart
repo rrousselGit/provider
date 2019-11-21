@@ -18,6 +18,50 @@ BuildContext get context => find.byType(Context).evaluate().single;
 T of<T>([BuildContext c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
+  testWidgets('isBuilding', (tester) async {
+    expect(isWidgetTreeBuilding, isFalse);
+
+    bool valueDuringBuild;
+    await tester.pumpWidget(
+      InheritedProvider.value(
+        value: 42,
+        child: Builder(
+          builder: (_) {
+            valueDuringBuild = isWidgetTreeBuilding;
+            return Container();
+          },
+        ),
+      ),
+    );
+
+    expect(valueDuringBuild, isTrue);
+    expect(isWidgetTreeBuilding, isFalse);
+
+    tester.element(find.byType(Builder)).markNeedsBuild();
+
+    await tester.pump();
+
+    expect(valueDuringBuild, isTrue);
+    expect(isWidgetTreeBuilding, isFalse);
+
+    // remove the listener
+    await tester.pumpWidget(Container());
+
+    expect(isWidgetTreeBuilding, isFalse);
+
+    await tester.pumpWidget(
+      Builder(
+        builder: (_) {
+          valueDuringBuild = isWidgetTreeBuilding;
+          return Container();
+        },
+      ),
+    );
+
+    // the listener was removed so it doesn't update anymore
+    expect(valueDuringBuild, isFalse);
+    expect(isWidgetTreeBuilding, isFalse);
+  });
   test('autoDeferred crash', () {
     expect(
       () => autoDeferred<int, int>(

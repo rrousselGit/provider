@@ -7,6 +7,126 @@ import 'package:test_api/test_api.dart' show TypeMatcher;
 import 'common.dart';
 
 void main() {
+  group('Provider.of', () {
+    testWidgets(
+      'listen defaults to true when building widgets',
+      (tester) async {
+        var buildCount = 0;
+        final child = Builder(
+          builder: (context) {
+            buildCount++;
+            Provider.of<int>(context);
+            return Container();
+          },
+        );
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 42,
+            child: child,
+          ),
+        );
+
+        expect(buildCount, equals(1));
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 24,
+            child: child,
+          ),
+        );
+
+        expect(buildCount, equals(2));
+      },
+    );
+    testWidgets(
+      'listen defaults to false outside of the widget tree',
+      (tester) async {
+        var buildCount = 0;
+        final child = Builder(
+          builder: (context) {
+            buildCount++;
+            return Container();
+          },
+        );
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 42,
+            child: child,
+          ),
+        );
+
+        final context = tester.element(find.byWidget(child));
+        Provider.of<int>(context);
+        expect(buildCount, equals(1));
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 24,
+            child: child,
+          ),
+        );
+
+        expect(buildCount, equals(1));
+      },
+    );
+    testWidgets(
+      "listen:false doesn't trigger rebuild",
+      (tester) async {
+        var buildCount = 0;
+        final child = Builder(
+          builder: (context) {
+            Provider.of<int>(context, listen: false);
+            buildCount++;
+            return Container();
+          },
+        );
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 42,
+            child: child,
+          ),
+        );
+
+        expect(buildCount, equals(1));
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 24,
+            child: child,
+          ),
+        );
+
+        expect(buildCount, equals(1));
+      },
+    );
+    testWidgets(
+      'listen:true outside of the widget tree throws',
+      (tester) async {
+        final child = Builder(
+          builder: (context) {
+            return Container();
+          },
+        );
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 42,
+            child: child,
+          ),
+        );
+
+        final context = tester.element(find.byWidget(child));
+
+        expect(
+          () => Provider.of<int>(context, listen: true),
+          throwsAssertionError,
+        );
+      },
+    );
+  });
   group('Provider', () {
     testWidgets('throws if the provided value is a Listenable/Stream',
         (tester) async {
