@@ -1,14 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'delegate_widget.dart';
 import 'inherited_provider.dart';
 import 'listenable_provider.dart' show ListenableProvider;
-import 'provider.dart';
 
 /// Listens to a [ValueListenable] and expose its current value.
-class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
-    implements SingleChildCloneableWidget {
+class ValueListenableProvider<T> extends StatelessWidget {
   /// Creates a [ValueNotifier] using [builder] and automatically dispose it
   /// when [ValueListenableProvider] is removed from the tree.
   ///
@@ -26,15 +23,11 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
     @required ValueBuilder<ValueNotifier<T>> builder,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
-  }) : this._(
-          key: key,
-          delegate: BuilderStateDelegate<ValueNotifier<T>>(
-            builder,
-            dispose: _dispose,
-          ),
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
+  })  : _child = child,
+        _updateShouldNotify = updateShouldNotify,
+        _create = builder,
+        _value = null,
+        super(key: key);
 
   /// Listens to [value] and exposes its current value.
   ///
@@ -55,55 +48,43 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
     @required ValueListenable<T> value,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
-  }) : this._(
-          key: key,
-          delegate: SingleValueDelegate(value),
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
+  })  : _value = value,
+        _updateShouldNotify = updateShouldNotify,
+        _create = null,
+        _child = child,
+        super(key: key);
 
-  ValueListenableProvider._({
-    Key key,
-    @required ValueStateDelegate<ValueListenable<T>> delegate,
-    this.updateShouldNotify,
-    this.child,
-  }) : super(key: key, delegate: delegate);
-
-  static void _dispose(BuildContext context, ValueNotifier notifier) {
-    notifier.dispose();
+  static void _dispose(BuildContext context, ValueListenable<Object> notifier) {
+    if (notifier is ValueNotifier) {
+      notifier.dispose();
+    }
   }
 
-  /// The widget that is below the current [ValueListenableProvider] widget in
-  /// the tree.
-  ///
-  /// {@macro flutter.widgets.child}
-  final Widget child;
-
-  /// {@macro provider.updateshouldnotify}
-  final UpdateShouldNotify<T> updateShouldNotify;
-
-  @override
-  ValueListenableProvider<T> cloneWithChild(Widget child) {
-    return ValueListenableProvider._(
-      key: key,
-      delegate: delegate,
-      updateShouldNotify: updateShouldNotify,
-      child: child,
-    );
-  }
+  final Widget _child;
+  final UpdateShouldNotify<T> _updateShouldNotify;
+  final ValueListenable<T> _value;
+  final ValueBuilder<ValueListenable<T>> _create;
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<T>(
-      valueListenable: delegate.value,
-      builder: (_, value, child) {
-        return InheritedProvider<T>.value(
-          value: value,
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
+    return autoDeferred<ValueListenable<T>, T>(
+      // TODO: conisider a ValueDelegate & CreateDelegate.
+      // The issue being, InheritedProvider wouldn't have these delegates
+      // because the create ctor doesn't have an updateShouldNotify
+
+      // valid because _value and _create will never be both not null together
+      value: _value,
+      create: _create,
+      dispose: _create == null ? null : _dispose,
+      startListening: (_, setState, controller, __) {
+        setState(controller.value);
+
+        final listener = () => setState(controller.value);
+        controller.addListener(listener);
+        return () => controller.removeListener(listener);
       },
-      child: child,
+      updateShouldNotify: _updateShouldNotify,
+      child: _child,
     );
   }
 }

@@ -14,7 +14,7 @@ Type typeOf<T>() => T;
 
 class InitialValueBuilderMock<T> extends Mock {
   InitialValueBuilderMock([T value]) {
-    when(this(any)).thenReturn(value);
+    when(this(any)).thenAnswer((_) => value);
   }
 
   T call(BuildContext context);
@@ -48,6 +48,12 @@ class MockNotifier extends Mock implements ChangeNotifier {}
 class BuilderMock extends Mock {
   Widget call(BuildContext context);
 }
+
+class StreamMock<T> extends Mock implements Stream<T> {}
+
+class FutureMock<T> extends Mock implements Future<T> {}
+
+class StreamSubscriptionMock<T> extends Mock implements StreamSubscription<T> {}
 
 class MockConsumerBuilder<T> extends Mock {
   Widget call(BuildContext context, T value, Widget child);

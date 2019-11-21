@@ -37,7 +37,7 @@ typedef StartListening<T> = VoidCallback Function(
     InheritedProviderElement<T> element, T value);
 
 /// A callback used to handle the subscription of `controller`.
-/// 
+///
 /// It is expected to start the listening process and return a callback
 /// that will later be used to stop that listening.
 typedef DeferredStartListening<T, R> = VoidCallback Function(
@@ -368,6 +368,38 @@ class _ValueInheritedProviderElement<T> extends InheritedProviderElement<T> {
     super.unmount();
     _removeListener?.call();
   }
+}
+
+/// Listens to an object and expose its internal state to `child`.
+DeferredInheritedProvider<T, R> autoDeferred<T, R>({
+  Key key,
+  @required ValueBuilder<T> create,
+  Disposer<T> dispose,
+  @required T value,
+  @required DeferredStartListening<T, R> startListening,
+  UpdateShouldNotify<R> updateShouldNotify,
+  @required Widget child,
+}) {
+  assert(dispose == null || create != null);
+  assert(value == null || create == null);
+
+  if (create != null) {
+    return _CreateDeferredInheritedProvider(
+      key: key,
+      create: create,
+      dispose: dispose,
+      startListening: startListening,
+      updateShouldNotify: updateShouldNotify,
+      child: child,
+    );
+  }
+  return _ValueDeferredInheritedProvider(
+    key: key,
+    value: value,
+    startListening: startListening,
+    updateShouldNotify: updateShouldNotify,
+    child: child,
+  );
 }
 
 /// An [InheritedProvider] where the object listened is _not_ the object
