@@ -239,7 +239,25 @@ class Provider<T> extends StatelessWidget
   /// )
   /// ```
   static T of<T>(BuildContext context, {bool listen}) {
-    assert(listen == false || listen == null || isWidgetTreeBuilding);
+    assert(listen == false || listen == null || isWidgetTreeBuilding, '''
+It is likely caused by an event handler that wanted to obtain <T>, and forgot
+to specify `listen: false`.
+This is unsupported because the event handler would cause the widget tree to
+build more often, when the value isn't actually used by the widget tree.
+
+To fix, simply pass `listen: false` to [Provider.of]:
+
+```
+RaisedButton(
+  onPressed: () {
+    // we voluntarily added `listen: false` here
+    Provider.of<MyObject>(context, listen: false);
+  },
+  child: Text('example'),
+)
+```
+''');
+
     // this is required to get generic Type
     final type = _typeOf<InheritedProvider<T>>();
 
