@@ -14,7 +14,7 @@ void main() {
         'the ValueNotifier', (tester) async {
       final mock = ValueNotifierMock<int>();
       await tester.pumpWidget(ValueListenableProvider<int>(
-        builder: (_) => mock,
+        create: (_) => mock,
         child: const TextOf<int>(),
       ));
 

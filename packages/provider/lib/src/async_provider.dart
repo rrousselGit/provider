@@ -8,42 +8,41 @@ import 'inherited_provider.dart';
 ///
 /// See also:
 ///
-///   * [StreamProvider] which uses [ErrorBuilder] to handle errors
-///     emitted by a [Stream].
-///   * [FutureProvider] which uses [ErrorBuilder] to handle
-///     [Future.catch].
+///   * [StreamProvider] and [FutureProvider], which both uses [ErrorBuilder] to
+///     handle respectively [Stream.catchError] and [Future.catch].
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 
-/// Listens to a [Stream<T>] and exposes [T] to its descendants.
+/// Listens to a [Stream] and exposes its content to `child` and descendants.
 ///
 /// Its main use-case is to provide to a large number of a widget the content
 /// of a [Stream], without caring about reacting to events.
-///
 /// A typical example would be to expose the battery level, or a Firebase query.
+///
 /// Trying to use [Stream] to replace [ChangeNotifier] is outside of the scope
 /// of this class.
 ///
 /// It is considered an error to pass a stream that can emit errors without
 /// providing a `catchError` method.
 ///
-/// {@template provider.streamprovider.initialdata}
 /// `initialData` determines the value exposed until the [Stream] emits a value.
 /// If omitted, defaults to `null`.
-/// {@endtemplate}
 ///
-/// {@macro provider.updateshouldnotify}
+/// By default, [StreamProvider] considers that the [Stream] listened uses
+/// immutable data. As such, it will not rebuild dependents if the previous and
+/// the new value are `==`.
+/// To change this behavior, pass a custom `updateShouldNotify`.
 ///
 /// See also:
 ///
 ///   * [Stream], which is listened by [StreamProvider].
-///   * [StreamController], to create a [Stream]
+///   * [StreamController], to create a [Stream].
 class StreamProvider<T> extends StatelessWidget {
-  /// Creates a [Stream] from [create] and subscribes to it.
+  /// Creates a [Stream] using `create` and subscribes to it.
   ///
-  /// The parameter [create] must not be `null`.
+  /// The parameter `create` must not be `null`.
   StreamProvider({
     Key key,
-    @required ValueBuilder<Stream<T>> create,
+    @required Create<Stream<T>> create,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
@@ -57,7 +56,7 @@ class StreamProvider<T> extends StatelessWidget {
         _create = create,
         super(key: key);
 
-  /// Listens to [value] and expose it to all of [StreamProvider] descendants.
+  /// Listens to `value` and expose it to all of [StreamProvider] descendants.
   StreamProvider.value({
     Key key,
     @required Stream<T> value,
@@ -76,7 +75,7 @@ class StreamProvider<T> extends StatelessWidget {
   final Widget _child;
   final UpdateShouldNotify<T> _updateShouldNotify;
   final Stream<T> _value;
-  final ValueBuilder<Stream<T>> _create;
+  final Create<Stream<T>> _create;
   final T _initialData;
 
   /// An optional function used whenever the [Stream] emits an error.
@@ -131,7 +130,7 @@ $error
   }
 }
 
-/// Listens to a [Future<T>] and exposes [T] to its descendants.
+/// Listens to a [Future] and exposes its result to `child` and its descendants.
 ///
 /// It is considered an error to pass a future that can emit errors without
 /// providing a `catchError` method.
@@ -142,12 +141,12 @@ $error
 ///
 ///   * [Future], which is listened by [FutureProvider].
 class FutureProvider<T> extends StatelessWidget {
-  /// Creates a [Future] from [create] and subscribes to it.
+  /// Creates a [Future] from `create` and subscribes to it.
   ///
-  /// [create] must not be `null`.
+  /// `create` must not be `null`.
   FutureProvider({
     Key key,
-    @required ValueBuilder<Future<T>> create,
+    @required Create<Future<T>> create,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
@@ -161,7 +160,7 @@ class FutureProvider<T> extends StatelessWidget {
         _create = create,
         super(key: key);
 
-  /// Listens to [value] and expose it to all of [FutureProvider] descendants.
+  /// Listens to `value` and expose it to all of [FutureProvider] descendants.
   FutureProvider.value({
     Key key,
     @required Future<T> value,
@@ -180,16 +179,16 @@ class FutureProvider<T> extends StatelessWidget {
   final Widget _child;
   final UpdateShouldNotify<T> _updateShouldNotify;
   final Future<T> _value;
-  final ValueBuilder<Future<T>> _create;
+  final Create<Future<T>> _create;
   final T _initialData;
 
-  /// An optional function used whenever the [Stream] emits an error.
+  /// An optional function used whenever the [Future] emits an error.
   ///
   /// [_catchError] will be called with the emitted error and is expected to
   /// return a fallback value without throwing.
   ///
   /// The returned value will then be exposed to the descendants of
-  /// [StreamProvider] like any valid value.
+  /// [FutureProvider] like any valid value.
   final ErrorBuilder<T> _catchError;
 
   @override

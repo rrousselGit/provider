@@ -52,7 +52,7 @@ class Selector0<T> extends StatefulWidget
   /// The returned object must implement [operator==].
   ///
   /// Must not be `null`
-  final ValueBuilder<T> selector;
+  final Create<T> selector;
 
   /// A cache of a widget tree that does not depend on the value of [selector].
   ///

@@ -287,5 +287,38 @@ void main() {
 
       expect(myNotifier.notifyListeners, throwsAssertionError);
     });
+    testWidgets('builder0', (tester) async {
+      final myNotifier = ValueNotifier<int>(0);
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProxyProvider0<ValueNotifier<int>>(
+              create: (_) => null,
+              update: (_, ___) => myNotifier,
+            ),
+          ],
+          child: Consumer<ValueNotifier<int>>(
+            builder: (_, value, __) {
+              return Text(
+                value.value.toString(),
+                textDirection: TextDirection.ltr,
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('0'), findsOneWidget);
+
+      myNotifier.value++;
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+
+      await tester.pumpWidget(Container());
+
+      expect(myNotifier.notifyListeners, throwsAssertionError);
+    });
   });
 }

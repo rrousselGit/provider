@@ -6,10 +6,10 @@ import 'listenable_provider.dart' show ListenableProvider;
 
 /// Listens to a [ValueListenable] and expose its current value.
 class ValueListenableProvider<T> extends StatelessWidget {
-  /// Creates a [ValueNotifier] using [builder] and automatically dispose it
+  /// Creates a [ValueNotifier] using [create] and automatically dispose it
   /// when [ValueListenableProvider] is removed from the tree.
   ///
-  /// [builder] must not be `null`.
+  /// [create] must not be `null`.
   ///
   /// {@macro provider.updateshouldnotify}
   ///
@@ -20,12 +20,12 @@ class ValueListenableProvider<T> extends StatelessWidget {
   /// kind of [Listenable].
   ValueListenableProvider({
     Key key,
-    @required ValueBuilder<ValueNotifier<T>> builder,
+    @required Create<ValueNotifier<T>> create,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
   })  : _child = child,
         _updateShouldNotify = updateShouldNotify,
-        _create = builder,
+        _create = create,
         _value = null,
         super(key: key);
 
@@ -63,7 +63,7 @@ class ValueListenableProvider<T> extends StatelessWidget {
   final Widget _child;
   final UpdateShouldNotify<T> _updateShouldNotify;
   final ValueListenable<T> _value;
-  final ValueBuilder<ValueListenable<T>> _create;
+  final Create<ValueListenable<T>> _create;
 
   @override
   Widget build(BuildContext context) {

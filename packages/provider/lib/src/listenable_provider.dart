@@ -26,12 +26,12 @@ class ListenableProvider<T extends Listenable> extends StatelessWidget
   /// [create] must not be `null`.
   ListenableProvider({
     Key key,
-    @required ValueBuilder<T> create,
+    @required Create<T> create,
     Disposer<T> dispose,
     this.child,
   })  : assert(create != null),
         _debugCheckType = true,
-        _builder = create,
+        _create = create,
         _dispose = dispose,
         _value = null,
         updateShouldNotify = null,
@@ -46,12 +46,12 @@ class ListenableProvider<T extends Listenable> extends StatelessWidget
   })  : _value = value,
         _debugCheckType = false,
         _dispose = null,
-        _builder = null,
+        _create = null,
         super(key: key);
 
   ListenableProvider._(
     this._debugCheckType,
-    this._builder,
+    this._create,
     this._dispose,
     this._value, {
     Key key,
@@ -67,7 +67,7 @@ class ListenableProvider<T extends Listenable> extends StatelessWidget
     return () => value?.removeListener(e.markNeedsNotifyDependents);
   }
 
-  final ValueBuilder<T> _builder;
+  final Create<T> _create;
   final Disposer<T> _dispose;
   final T _value;
   final bool _debugCheckType;
@@ -85,7 +85,7 @@ class ListenableProvider<T extends Listenable> extends StatelessWidget
   ListenableProvider<T> cloneWithChild(Widget child) {
     return ListenableProvider._(
       _debugCheckType,
-      _builder,
+      _create,
       _dispose,
       _value,
       key: key,
@@ -96,7 +96,7 @@ class ListenableProvider<T extends Listenable> extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    if (_builder != null) {
+    if (_create != null) {
       void Function(T value) checkType;
       assert(() {
         checkType = (value) {
@@ -129,7 +129,7 @@ ChangeNotifierProvider(
         return true;
       }());
       return InheritedProvider(
-        create: _builder,
+        create: _create,
         dispose: _dispose,
         startListening: _startListening,
         updateShouldNotify: updateShouldNotify,
@@ -147,39 +147,39 @@ ChangeNotifierProvider(
   }
 }
 
-class _ListenableProxyProvider<R extends Listenable> extends StatelessWidget
+/// {@macro provider.listenableproxyprovider}
+class ListenableProxyProvider0<R extends Listenable> extends StatelessWidget
     implements SingleChildCloneableWidget {
-  _ListenableProxyProvider({
+  /// Initializes [key] for subclasses.
+  ListenableProxyProvider0({
     Key key,
-    @required this.create,
-    @required this.update,
-    this.dispose,
-    this.updateShouldNotify,
-    this.child,
-  }) : super(key: key);
+    @required Create<R> create,
+    @required R Function(BuildContext, R previous) update,
+    Disposer<R> dispose,
+    UpdateShouldNotify<R> updateShouldNotify,
+    Widget child,
+  })  : assert(create != null || update != null),
+        _create = create,
+        _update = update,
+        _dispose = dispose,
+        _updateShouldNotify = updateShouldNotify,
+        _child = child,
+        super(key: key);
 
-  /// The widget that is below the current [Provider] widget in the
-  /// tree.
-  ///
-  /// {@macro flutter.widgets.child}
-  final Widget child;
-
-  /// {@macro provider.proxyprovider.update}
-  final R Function(BuildContext context, R previous) update;
-
-  final UpdateShouldNotify<R> updateShouldNotify;
-
-  final Disposer<R> dispose;
-  final ValueBuilder<R> create;
+  final Widget _child;
+  final R Function(BuildContext context, R previous) _update;
+  final UpdateShouldNotify<R> _updateShouldNotify;
+  final Disposer<R> _dispose;
+  final Create<R> _create;
 
   @override
-  _ListenableProxyProvider<R> cloneWithChild(Widget child) {
-    return _ListenableProxyProvider(
+  ListenableProxyProvider0<R> cloneWithChild(Widget child) {
+    return ListenableProxyProvider0(
       key: key,
-      create: create,
-      update: update,
-      dispose: dispose,
-      updateShouldNotify: updateShouldNotify,
+      create: _create,
+      update: _update,
+      dispose: _dispose,
+      updateShouldNotify: _updateShouldNotify,
       child: child,
     );
   }
@@ -197,13 +197,13 @@ class _ListenableProxyProvider<R extends Listenable> extends StatelessWidget
       return true;
     }());
     return InheritedProvider<R>(
-      create: create,
-      update: update,
-      dispose: dispose,
+      create: _create,
+      update: _update,
+      dispose: _dispose,
       startListening: ListenableProvider._startListening,
       debugCheckInvalidValueType: checkType,
-      updateShouldNotify: updateShouldNotify,
-      child: child,
+      updateShouldNotify: _updateShouldNotify,
+      child: _child,
     );
   }
 }
@@ -223,11 +223,11 @@ class _ListenableProxyProvider<R extends Listenable> extends StatelessWidget
 /// [Animation].
 /// {@endtemplate}
 class ListenableProxyProvider<T, R extends Listenable>
-    extends _ListenableProxyProvider<R> {
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider({
     Key key,
-    @required ValueBuilder<R> create,
+    @required Create<R> create,
     @required ProxyProviderBuilder<T, R> update,
     Disposer<R> dispose,
     Widget child,
@@ -247,11 +247,11 @@ class ListenableProxyProvider<T, R extends Listenable>
 
 /// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider2<T, T2, R extends Listenable>
-    extends _ListenableProxyProvider<R> {
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider2({
     Key key,
-    @required ValueBuilder<R> create,
+    @required Create<R> create,
     @required ProxyProviderBuilder2<T, T2, R> update,
     Disposer<R> dispose,
     Widget child,
@@ -272,11 +272,11 @@ class ListenableProxyProvider2<T, T2, R extends Listenable>
 
 /// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
-    extends _ListenableProxyProvider<R> {
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider3({
     Key key,
-    @required ValueBuilder<R> create,
+    @required Create<R> create,
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
     Disposer<R> dispose,
     Widget child,
@@ -298,11 +298,11 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
 
 /// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
-    extends _ListenableProxyProvider<R> {
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider4({
     Key key,
-    @required ValueBuilder<R> create,
+    @required Create<R> create,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     Disposer<R> dispose,
     Widget child,
@@ -325,11 +325,11 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
 
 /// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
-    extends _ListenableProxyProvider<R> {
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider5({
     Key key,
-    @required ValueBuilder<R> create,
+    @required Create<R> create,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     Disposer<R> dispose,
     Widget child,
@@ -353,11 +353,11 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
 
 /// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
-    extends _ListenableProxyProvider<R> {
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider6({
     Key key,
-    @required ValueBuilder<R> create,
+    @required Create<R> create,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     Disposer<R> dispose,
     Widget child,

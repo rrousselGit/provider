@@ -18,13 +18,13 @@ typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
 /// See also:
 ///
 ///  * [Disposer], to free the resources associated to the value created.
-typedef ValueBuilder<T> = T Function(BuildContext context);
+typedef Create<T> = T Function(BuildContext context);
 
 /// A function that disposes an object of type [T].
 ///
 /// See also:
 ///
-///  * [ValueBuilder], to create a value that will later be disposed of.
+///  * [Create], to create a value that will later be disposed of.
 typedef Disposer<T> = void Function(BuildContext context, T value);
 
 /// A callback used to start and an object, and return a function that allows
@@ -55,13 +55,13 @@ typedef DeferredStartListening<T, R> = VoidCallback Function(
 /// Do not use this class directly unless you are creating a custom "Provider".
 /// Instead use [Provider] class, which wraps [InheritedProvider].
 abstract class InheritedProvider<T> extends InheritedWidget {
-  /// Create a value, then expose it to its descendants.
+  /// Creates a value, then expose it to its descendants.
   ///
   /// The value will be disposed of when [InheritedProvider] is removed from
   /// the widget tree.
   factory InheritedProvider({
     Key key,
-    ValueBuilder<T> create,
+    Create<T> create,
     T update(BuildContext context, T value),
     UpdateShouldNotify<T> updateShouldNotify,
     void Function(T value) debugCheckInvalidValueType,
@@ -85,6 +85,7 @@ abstract class InheritedProvider<T> extends InheritedWidget {
   @override
   InheritedProviderElement<T> createElement();
 
+  // Necessary override so that subclasses can work with Provider.of.
   @override
   Type get runtimeType => _typeOf<InheritedProvider<T>>();
 }
@@ -226,7 +227,7 @@ passing a different "key" to each type of provider.
 This error typically happens when calling Provider.of with `listen` to `true`,
 in a situation where listening to the provider doesn't make sense, such as:
 - initState of a StatefulWidget
-- the "builder" callback of a provider
+- the "create" callback of a provider
 
 This is undesired because these life-cycles are called only once in the
 lifetime of a widget. As such, while `listen` is `true`, the widget has
@@ -234,8 +235,8 @@ no mean to handle the update scenario.
 
 To fix, consider:
 - passing `listen: false` to `Provider.of`
-- use a life-cycle that handles update (like didChangeDependencies)
-- use a provider that handle updates (like ProxyProvider).
+- use a life-cycle that handles updates (like didChangeDependencies)
+- use a provider that handles updates (like ProxyProvider).
 '''),
           ],
         );
@@ -260,7 +261,7 @@ class _CreateInheritedProvider<T> extends InheritedProvider<T> {
         _updateShouldNotify = updateShouldNotify,
         super._constructor(key: key, child: child);
 
-  final ValueBuilder<T> create;
+  final Create<T> create;
   final T Function(BuildContext context, T value) update;
   final UpdateShouldNotify<T> _updateShouldNotify;
   final void Function(T value) debugCheckInvalidValueType;
@@ -432,7 +433,7 @@ class _ValueInheritedProviderElement<T> extends InheritedProviderElement<T> {
 /// Listens to an object and expose its internal state to `child`.
 DeferredInheritedProvider<T, R> autoDeferred<T, R>({
   Key key,
-  @required ValueBuilder<T> create,
+  @required Create<T> create,
   Disposer<T> dispose,
   @required T value,
   @required DeferredStartListening<T, R> startListening,
@@ -485,7 +486,7 @@ abstract class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
   /// will be exposed to `child` and its descendants.
   factory DeferredInheritedProvider({
     Key key,
-    @required ValueBuilder<T> create,
+    @required Create<T> create,
     Disposer<T> dispose,
     @required DeferredStartListening<T, R> startListening,
     UpdateShouldNotify<R> updateShouldNotify,
@@ -618,7 +619,7 @@ class _CreateDeferredInheritedProvider<T, R>
           child: child,
         );
 
-  final ValueBuilder<T> create;
+  final Create<T> create;
   final Disposer<T> dispose;
 
   @override

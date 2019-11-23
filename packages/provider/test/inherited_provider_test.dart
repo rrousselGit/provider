@@ -84,8 +84,7 @@ void main() {
     );
   });
   group('InheritedProvider.value()', () {
-    testWidgets(
-        'startListening called again when valueBuilder returns new value',
+    testWidgets('startListening called again when create returns new value',
         (tester) async {
       final stopListening = StopListeningMock();
       final startListening = StartListeningMock<int>(stopListening);
@@ -322,6 +321,24 @@ void main() {
     });
   });
   group('InheritedProvider()', () {
+    testWidgets(
+      'update can obtain parent of the same type than self',
+      (tester) async {
+        await tester.pumpWidget(
+          InheritedProvider<String>.value(
+            value: 'root',
+            child: InheritedProvider<String>(
+              update: (context, _) {
+                return Provider.of(context);
+              },
+              child: const TextOf<String>(),
+            ),
+          ),
+        );
+
+        expect(find.text('root'), findsOneWidget);
+      },
+    );
     testWidgets('_debugCheckInvalidValueType', (tester) async {
       final checkType = DebugCheckValueTypeMock<int>();
 
@@ -409,8 +426,7 @@ void main() {
       verifyNoMoreInteractions(stopListening);
     });
 
-    testWidgets(
-        'startListening called again when valueBuilder returns new value',
+    testWidgets('startListening called again when create returns new value',
         (tester) async {
       final stopListening = StopListeningMock();
       final startListening = StartListeningMock<int>(stopListening);
@@ -535,14 +551,14 @@ void main() {
             return Container();
           },
         );
-        final valueBuilder = ValueBuilderMock<int>();
-        when(valueBuilder(any, any))
+        final update = ValueBuilderMock<int>();
+        when(update(any, any))
             .thenAnswer((i) => (i.positionalArguments[1] as int) * 2);
 
         await tester.pumpWidget(
           InheritedProvider<int>(
             create: (_) => 42,
-            update: valueBuilder,
+            update: update,
             child: Container(),
           ),
         );
@@ -550,31 +566,31 @@ void main() {
         final inheritedElement = tester.element(
           find.byWidgetPredicate((w) => w is InheritedProvider<int>),
         );
-        verifyZeroInteractions(valueBuilder);
+        verifyZeroInteractions(update);
 
         await tester.pumpWidget(
           InheritedProvider<int>(
             create: (_) => 42,
-            update: valueBuilder,
+            update: update,
             child: child,
           ),
         );
 
-        verify(valueBuilder(inheritedElement, 42)).called(1);
+        verify(update(inheritedElement, 42)).called(1);
         expect(lastValue, equals(84));
 
         await tester.pumpWidget(
           InheritedProvider<int>(
             create: (_) => 42,
-            update: valueBuilder,
+            update: update,
             child: child,
           ),
         );
 
-        verify(valueBuilder(inheritedElement, 84)).called(1);
+        verify(update(inheritedElement, 84)).called(1);
         expect(lastValue, equals(168));
 
-        verifyNoMoreInteractions(valueBuilder);
+        verifyNoMoreInteractions(update);
       },
     );
     testWidgets(
@@ -641,7 +657,6 @@ void main() {
 
         await tester.pumpWidget(
           InheritedProvider<int>(
-            create: (_) => null,
             update: (_, __) => 42,
             updateShouldNotify: updateShouldNotify,
             child: child,
@@ -655,7 +670,6 @@ void main() {
         when(updateShouldNotify(any, any)).thenReturn(true);
         await tester.pumpWidget(
           InheritedProvider<int>(
-            create: (_) => null,
             update: (_, __) => 42,
             updateShouldNotify: updateShouldNotify,
             child: child,
@@ -669,7 +683,6 @@ void main() {
         when(updateShouldNotify(any, any)).thenReturn(false);
         await tester.pumpWidget(
           InheritedProvider<int>(
-            create: (_) => null,
             update: (_, __) => 43,
             updateShouldNotify: updateShouldNotify,
             child: child,

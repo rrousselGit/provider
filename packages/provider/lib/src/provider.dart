@@ -101,13 +101,13 @@ class MultiProvider extends StatelessWidget
 }
 
 /// A [Provider] that manages the lifecycle of the value it provides by
-/// delegating to a pair of [ValueBuilder] and [Disposer].
+/// delegating to a pair of [Create] and [Disposer].
 ///
 /// It is usually used to avoid making a [StatefulWidget] for something trivial,
 /// such as instantiating a BLoC.
 ///
 /// [Provider] is the equivalent of a [State.initState] combined with
-/// [State.dispose]. [ValueBuilder] is called only once in [State.initState].
+/// [State.dispose]. [Create] is called only once in [State.initState].
 /// We cannot use [InheritedWidget] as it requires the value to be
 /// constructor-initialized and final.
 ///
@@ -172,7 +172,7 @@ class Provider<T> extends StatelessWidget
   ///
   Provider({
     Key key,
-    @required ValueBuilder<T> create,
+    @required Create<T> create,
     Disposer<T> dispose,
     this.child,
   })  : assert(create != null),
@@ -243,9 +243,22 @@ class Provider<T> extends StatelessWidget
     // this is required to get generic Type
     final type = _typeOf<InheritedProvider<T>>();
 
-    final inheritedElement =
-        context.ancestorInheritedElementForWidgetOfExactType(type)
-            as InheritedProviderElement<T>;
+    InheritedProviderElement<T> inheritedElement;
+
+    if (context.widget is InheritedProvider<T>) {
+      // An InheritedProvider<T>'s update tries to obtain a parent provider of
+      // the same type.
+      context.visitAncestorElements((parent) {
+        inheritedElement =
+            parent.ancestorInheritedElementForWidgetOfExactType(type)
+                as InheritedProviderElement<T>;
+        return false;
+      });
+    } else {
+      inheritedElement =
+          context.ancestorInheritedElementForWidgetOfExactType(type)
+              as InheritedProviderElement<T>;
+    }
 
     if (inheritedElement == null) {
       throw ProviderNotFoundError(T, context.widget.runtimeType);
@@ -316,7 +329,7 @@ void main() {
   /// {@macro flutter.widgets.child}
   final Widget child;
 
-  final ValueBuilder<T> _create;
+  final Create<T> _create;
   final Disposer<T> _dispose;
   final T _value;
 

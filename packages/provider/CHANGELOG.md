@@ -6,6 +6,7 @@
   outside of the widget tree.
 - renamed `initialBuilder` & `builder` of `*ProxyProvider` to `create` & `update`
 - renamed `builder` `*Provider` to `create`
+- added a `*ProxyProvider0` variant
 
 # 3.1.0
 

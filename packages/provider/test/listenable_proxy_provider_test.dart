@@ -29,6 +29,13 @@ void main() {
   group('ListenableProxyProvider', () {
     test('throws if builder is missing', () {
       expect(
+        () => ListenableProxyProvider0<_ListenableCombined>(
+          create: null,
+          update: null,
+        ),
+        throwsAssertionError,
+      );
+      expect(
         () => ListenableProxyProvider<A, _ListenableCombined>(
           create: null,
           update: null,
@@ -241,6 +248,51 @@ void main() {
   group('ListenableProxyProvider variants', () {
     Finder findInheritedProvider() => find
         .byWidgetPredicate((widget) => widget is InheritedProvider<Combined>);
+    testWidgets('ListenableProxyProvider', (tester) async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: a),
+            Provider.value(value: b),
+            Provider.value(value: c),
+            Provider.value(value: d),
+            Provider.value(value: e),
+            Provider.value(value: f),
+            ListenableProxyProvider0<_ListenableCombined>(
+              create: (_) => _ListenableCombined(null, null, null),
+              update: (context, previous) => _ListenableCombined(
+                context,
+                previous,
+                Provider.of<A>(context),
+                Provider.of<B>(context),
+                Provider.of<C>(context),
+                Provider.of<D>(context),
+                Provider.of<E>(context),
+                Provider.of<F>(context),
+              ),
+            )
+          ],
+          child: mockConsumer,
+        ),
+      );
+
+      final context = tester.element(findInheritedProvider());
+
+      verify(
+        combinedConsumerMock(
+          _ListenableCombined(
+            context,
+            _ListenableCombined(null, null, null),
+            a,
+            b,
+            c,
+            d,
+            e,
+            f,
+          ),
+        ),
+      ).called(1);
+    });
     testWidgets('ListenableProxyProvider2', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
