@@ -1,12 +1,11 @@
 import 'package:flutter/widgets.dart';
 
-import 'delegate_widget.dart';
+import 'inherited_provider.dart';
 import 'listenable_provider.dart';
-import 'provider.dart';
 import 'proxy_provider.dart';
 
 /// Listens to a [ChangeNotifier], expose it to its descendants and rebuilds
-/// dependents whenever the [ChangeNotifier.notifyListeners] is called.
+/// dependents whenever [ChangeNotifier.notifyListeners] is called.
 ///
 /// Depending on wether you want to **create** or **reuse** a [ChangeNotifier],
 /// you will want to use different constructors.
@@ -21,15 +20,18 @@ import 'proxy_provider.dart';
 /// which explains in further details why using the `.value` constructor to
 /// create values is undesired.
 ///
-/// - DO create a new [ChangeNotifier] inside `builder`.
+/// - **DO** create a new [ChangeNotifier] inside `update`.
+///
 /// ```dart
 /// ChangeNotifierProvider(
-///   builder: (_) => new MyChangeNotifier(),
+///   create: (_) => new MyChangeNotifier(),
 ///   child: ...
 /// )
 /// ```
 ///
-/// - DON'T use [ChangeNotifierProvider.value] to create your [ChangeNotifier].
+/// - **DON'T** use [ChangeNotifierProvider.value] to create your
+///   [ChangeNotifier].
+///
 /// ```dart
 /// ChangeNotifierProvider.value(
 ///   value: new MyChangeNotifier(),
@@ -37,24 +39,23 @@ import 'proxy_provider.dart';
 /// )
 /// ```
 ///
-/// - DON'T create your [ChangeNotifier] from variables that can change over
+/// - **DON'T** create your [ChangeNotifier] from variables that can change over
 ///   the time.
 ///
 ///   In such situation, your [ChangeNotifier] would never be updated when the
 ///   value changes.
+///
 /// ```dart
 /// int count;
 ///
 /// ChangeNotifierProvider(
-///   builder: (_) => new MyChangeNotifier(count),
+///   create: (_) => new MyChangeNotifier(count),
 ///   child: ...
 /// )
 /// ```
 ///
-/// If your updating variable comes from a provider, consider using
+/// If you want to pass variables to your [ChangeNotifier], consider using
 /// [ChangeNotifierProxyProvider].
-/// Otherwise, consider making a [StatefulWidget] and managing your
-/// [ChangeNotifier] manually.
 ///
 /// ## Reusing an existing instance of [ChangeNotifier]:
 ///
@@ -64,8 +65,9 @@ import 'proxy_provider.dart';
 ///
 /// Failing to do so may dispose the [ChangeNotifier] when it is still in use.
 ///
-/// - DO use [ChangeNotifierProvider.value] to provide an existing
+/// - **DO** use [ChangeNotifierProvider.value] to provide an existing
 ///   [ChangeNotifier].
+///
 /// ```dart
 /// MyChangeNotifier variable;
 ///
@@ -75,12 +77,13 @@ import 'proxy_provider.dart';
 /// )
 /// ```
 ///
-/// - DON'T reuse an existing [ChangeNotifier] using the default constructor.
+/// - **DON'T** reuse an existing [ChangeNotifier] using the default constructor
+///
 /// ```dart
 /// MyChangeNotifier variable;
 ///
 /// ChangeNotifierProvider(
-///   builder: (_) => variable,
+///   create: (_) => variable,
 ///   child: ...
 /// )
 /// ```
@@ -93,19 +96,19 @@ import 'proxy_provider.dart';
 ///   * [ListenableProvider], similar to [ChangeNotifierProvider] but works with
 ///     any [Listenable].
 class ChangeNotifierProvider<T extends ChangeNotifier>
-    extends ListenableProvider<T> implements SingleChildCloneableWidget {
-  static void _disposer(BuildContext context, ChangeNotifier notifier) =>
+    extends ListenableProvider<T> {
+  static void _dispose(BuildContext context, ChangeNotifier notifier) =>
       notifier?.dispose();
 
-  /// Creates a [ChangeNotifier] using `builder` and automatically
+  /// Creates a [ChangeNotifier] using `create` and automatically
   /// dispose it when [ChangeNotifierProvider] is removed from the widget tree.
   ///
-  /// `builder` must not be `null`.
+  /// `create` must not be `null`.
   ChangeNotifierProvider({
     Key key,
-    @required ValueBuilder<T> builder,
+    @required Create<T> create,
     Widget child,
-  }) : super(key: key, builder: builder, dispose: _disposer, child: child);
+  }) : super(key: key, create: create, dispose: _dispose, child: child);
 
   /// Provides an existing [ChangeNotifier].
   ChangeNotifierProvider.value({
@@ -117,77 +120,73 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
 
 /// {@template provider.changenotifierproxyprovider}
 /// A [ChangeNotifierProvider] that builds and synchronizes a [ChangeNotifier]
-/// from values obtained from other providers.
+/// with external values.
 ///
 /// To understand better this variation of [ChangeNotifierProvider], we can
 /// look into the following code using the original provider:
 ///
 /// ```dart
 /// ChangeNotifierProvider(
-///   builder: (context) {
+///   create: (context) {
 ///     return MyChangeNotifier(
-///       foo: Provider.of<Foo>(context, listen: false),
+///       myModel: Provider.of<MyModel>(context, listen: false),
 ///     );
 ///   },
 ///   child: ...
 /// )
 /// ```
 ///
-/// In example, we built a `MyChangeNotifier` from a value coming from another
-/// provider: `Foo`.
+/// In this example, we built a `MyChangeNotifier` from a value coming from
+/// another provider: `MyModel`.
 ///
-/// This works as long as `Foo` never changes. But if it somehow updates, then
-/// our [ChangeNotifier] will never update accordingly.
+/// This works as long as `MyModel` never changes. But if it somehow updates,
+/// then our [ChangeNotifier] will never update accordingly.
 ///
 /// To solve this issue, we could instead use this class, like so:
 ///
 /// ```dart
-/// ChangeNotifierProxyProvider<Foo, MyChangeNotifier>(
-///   initialBuilder: (_) => MyChangeNotifier(),
-///   builder: (_, foo, myNotifier) => myNotifier
-///     ..foo = foo,
+/// ChangeNotifierProxyProvider<MyModel, MyChangeNotifier>(
+///   create: (_) => MyChangeNotifier(),
+///   update: (_, myModel, myNotifier) => myNotifier
+///     ..update(myModel),
 ///   child: ...
 /// );
 /// ```
 ///
-/// In that situation, if `Foo` were to update, then `MyChangeNotifier` will
+/// In that situation, if `MyModel` were to update, then `MyChangeNotifier` will
 /// be able to update accordingly.
 ///
-/// Notice how `MyChangeNotifier` doesn't receive `Foo` in its constructor
-/// anymore. It is now passed through a custom setter instead.
+/// Notice how `MyChangeNotifier` doesn't receive `MyModel` in its constructor
+/// anymore. It is now passed through a custom setter/method instead.
 ///
-/// A typical implementation of such `MyChangeNotifier` would be:
+/// A typical implementation of such `MyChangeNotifier` could be:
 ///
 /// ```dart
 /// class MyChangeNotifier with ChangeNotifier {
-///   Foo _foo;
-///   set foo(Foo value) {
-///     if (_foo != value) {
-///       _foo = value;
-///       // do some extra work, that may call `notifyListeners()`
-///     }
+///   void update(MyModel myModel) {
+///     // Do some custom work based on myModel that may call `notifyListeners`
 ///   }
 /// }
 /// ```
 ///
-/// - DON'T create the [ChangeNotifier] inside `builder` directly.
+/// - **DON'T** create the [ChangeNotifier] inside `update` directly.
 ///
 ///   This will cause your state to be lost when one of the values used updates.
 ///   It will also cause uncesserary overhead because it will dispose the
 ///   previous notifier, then subscribes to the new one.
 ///
-///  Instead use properties with custom setters like shown previously, or
-///   methods.
+///  Instead reuse the previous instance, and update some properties or call
+///  some methods.
 ///
 /// ```dart
-/// ChangeNotifierProxyProvider<Foo, MyChangeNotifier>(
+/// ChangeNotifierProxyProvider<MyModel, MyChangeNotifier>(
 ///   // may cause the state to be destroyed unvoluntarily
-///   builder: (_, foo, myNotifier) => MyChangeNotifier(foo: foo),
+///   update: (_, myModel, myNotifier) => MyChangeNotifier(myModel: myModel),
 ///   child: ...
 /// );
 /// ```
 ///
-/// - PREFER using [ProxyProvider] when possible.
+/// - **PREFER** using [ProxyProvider] when possible.
 ///
 ///   If the created object is only a combination of other objects, without
 ///   http calls or similar side-effects, then it is likely that an immutable
@@ -198,14 +197,32 @@ class ChangeNotifierProxyProvider<T, R extends ChangeNotifier>
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder<T, R> builder,
+    @required Create<R> create,
+    @required ProxyProviderBuilder<T, R> update,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
-          dispose: ChangeNotifierProvider._disposer,
+          create: create,
+          update: update,
+          dispose: ChangeNotifierProvider._dispose,
+          child: child,
+        );
+}
+
+/// {@macro provider.changenotifierproxyprovider}
+class ChangeNotifierProxyProvider0<R extends ChangeNotifier>
+    extends ListenableProxyProvider0<R> {
+  /// Initializes [key] for subclasses.
+  ChangeNotifierProxyProvider0({
+    Key key,
+    @required Create<R> create,
+    @required R Function(BuildContext, R value) update,
+    Widget child,
+  }) : super(
+          key: key,
+          create: create,
+          update: update,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }
@@ -216,14 +233,14 @@ class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier>
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider2({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder2<T, T2, R> builder,
+    @required Create<R> create,
+    @required ProxyProviderBuilder2<T, T2, R> update,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
-          dispose: ChangeNotifierProvider._disposer,
+          create: create,
+          update: update,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }
@@ -234,14 +251,14 @@ class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier>
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider3({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder3<T, T2, T3, R> builder,
+    @required Create<R> create,
+    @required ProxyProviderBuilder3<T, T2, T3, R> update,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
-          dispose: ChangeNotifierProvider._disposer,
+          create: create,
+          update: update,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }
@@ -252,14 +269,14 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider4({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
+    @required Create<R> create,
+    @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
-          dispose: ChangeNotifierProvider._disposer,
+          create: create,
+          update: update,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }
@@ -271,14 +288,14 @@ class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider5({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
+    @required Create<R> create,
+    @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
-          dispose: ChangeNotifierProvider._disposer,
+          create: create,
+          update: update,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }
@@ -290,14 +307,14 @@ class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6,
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider6({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
+    @required Create<R> create,
+    @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
-          dispose: ChangeNotifierProvider._disposer,
+          create: create,
+          update: update,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }

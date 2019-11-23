@@ -2,15 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/src/delegate_widget.dart';
 
-/// A function that returns true when the update from [previous] to [current]
-/// should notify listeners, if any.
-///
-/// See also:
-///
-///   * [InheritedWidget.updateShouldNotify]
-typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
+import 'inherited_provider.dart';
 
 /// Returns the type [T].
 /// See https://stackoverflow.com/questions/52891537/how-to-get-generic-type
@@ -25,39 +18,6 @@ abstract class SingleChildCloneableWidget implements Widget {
   /// Note for implementers: all other values, including [Key] must be
   /// preserved.
   SingleChildCloneableWidget cloneWithChild(Widget child);
-}
-
-/// A generic implementation of an [InheritedWidget].
-///
-/// Any descendant of this widget can obtain `value` using [Provider.of].
-///
-/// Do not use this class directly unless you are creating a custom "Provider".
-/// Instead use [Provider] class, which wraps [InheritedProvider].
-class InheritedProvider<T> extends InheritedWidget {
-  /// Allow customizing [updateShouldNotify].
-  const InheritedProvider({
-    Key key,
-    @required T value,
-    UpdateShouldNotify<T> updateShouldNotify,
-    Widget child,
-  })  : _value = value,
-        _updateShouldNotify = updateShouldNotify,
-        super(key: key, child: child);
-
-  /// The currently exposed value.
-  ///
-  /// Mutating `value` should be avoided. Instead rebuild the widget tree
-  /// and replace [InheritedProvider] with one that holds the new value.
-  final T _value;
-  final UpdateShouldNotify<T> _updateShouldNotify;
-
-  @override
-  bool updateShouldNotify(InheritedProvider<T> oldWidget) {
-    if (_updateShouldNotify != null) {
-      return _updateShouldNotify(oldWidget._value, _value);
-    }
-    return oldWidget._value != _value;
-  }
 }
 
 /// A provider that merges multiple providers into a single linear widget tree.
@@ -141,13 +101,13 @@ class MultiProvider extends StatelessWidget
 }
 
 /// A [Provider] that manages the lifecycle of the value it provides by
-/// delegating to a pair of [ValueBuilder] and [Disposer].
+/// delegating to a pair of [Create] and [Dispose].
 ///
 /// It is usually used to avoid making a [StatefulWidget] for something trivial,
 /// such as instantiating a BLoC.
 ///
 /// [Provider] is the equivalent of a [State.initState] combined with
-/// [State.dispose]. [ValueBuilder] is called only once in [State.initState].
+/// [State.dispose]. [Create] is called only once in [State.initState].
 /// We cannot use [InheritedWidget] as it requires the value to be
 /// constructor-initialized and final.
 ///
@@ -170,7 +130,7 @@ class MultiProvider extends StatelessWidget
 ///   @override
 ///   Widget build(BuildContext context) {
 ///     return Provider<Model>(
-///       builder: (context) =>  Model(),
+///       create: (context) =>  Model(),
 ///       dispose: (context, value) => value.dispose(),
 ///       child: ...,
 ///     );
@@ -202,7 +162,7 @@ class MultiProvider extends StatelessWidget
 /// downcast the mock to the type of the mocked class.
 /// Otherwise, the type inference will resolve to `Provider<MockFoo>` instead of
 /// `Provider<Foo>`, which will cause `Provider.of<Foo>` to fail.
-class Provider<T> extends ValueDelegateWidget<T>
+class Provider<T> extends StatelessWidget
     implements SingleChildCloneableWidget {
   /// Creates a value, store it, and expose it to its descendants.
   ///
@@ -212,46 +172,74 @@ class Provider<T> extends ValueDelegateWidget<T>
   ///
   Provider({
     Key key,
-    @required ValueBuilder<T> builder,
-    Disposer<T> dispose,
-    Widget child,
-  }) : this._(
-          key: key,
-          delegate: BuilderStateDelegate<T>(builder, dispose: dispose),
-          updateShouldNotify: null,
-          child: child,
-        );
+    @required Create<T> create,
+    Dispose<T> dispose,
+    this.child,
+  })  : assert(create != null),
+        _value = null,
+        _create = create,
+        _dispose = dispose,
+        updateShouldNotify = null,
+        super(key: key);
 
   /// Allows to specify parameters to [Provider].
   Provider.value({
     Key key,
     @required T value,
-    UpdateShouldNotify<T> updateShouldNotify,
-    Widget child,
-  }) : this._(
-          key: key,
-          delegate: SingleValueDelegate<T>(value),
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
-
-  Provider._({
-    Key key,
-    @required ValueStateDelegate<T> delegate,
     this.updateShouldNotify,
     this.child,
-  }) : super(key: key, delegate: delegate);
+  })  : _value = value,
+        _create = null,
+        _dispose = null,
+        super(key: key);
+
+  Provider._(
+    this._create,
+    this._dispose,
+    this._value, {
+    Key key,
+    this.updateShouldNotify,
+    this.child,
+  }) : super(key: key);
 
   /// Obtains the nearest [Provider<T>] up its widget tree and returns its
   /// value.
   ///
-  /// If [listen] is `true` (default), later value changes will trigger a new
+  /// If [listen] is `true`, later value changes will trigger a new
   /// [State.build] to widgets, and [State.didChangeDependencies] for
   /// [StatefulWidget].
-  static T of<T>(BuildContext context, {bool listen = true}) {
-    assert(context.owner.debugBuilding || listen == false, '''
-Called [Provider.of] with `listen: true` when the widget tree wasn't building.
-
+  ///
+  /// By default, `listen` is inferred based on wether the widget tree is
+  /// currently building or not:
+  /// - if widgets are building, `listen` is `true`
+  /// - if widgets aren't, `listen` is `false`.
+  ///
+  /// As such, it is fine to call `Provider.of` inside event handlers without
+  /// specifying `listen: false`:
+  ///
+  /// ```dart
+  /// RaisedButton(
+  ///   onPressed: () {
+  ///     Provider.of<Model>(context); // no need to pass listen:false
+  ///
+  ///     Provider.of<Model>(context, listen: false); // unnecessary flag
+  ///   }
+  /// )
+  /// ```
+  ///
+  /// On the other hand, `listen: false` is necessary to be able to call
+  /// `Provider.of` inside [State.initState] or the `create` method of providers
+  /// like so:
+  ///
+  /// ```dart
+  /// Provider(
+  ///   create: (context) {
+  ///     return Model(Provider.of<Something>(context, listen: false)),
+  ///   },
+  /// )
+  /// ```
+  static T of<T>(BuildContext context, {bool listen}) {
+    assert(listen == false || listen == null || isWidgetTreeBuilding, '''
 It is likely caused by an event handler that wanted to obtain <T>, and forgot
 to specify `listen: false`.
 This is unsupported because the event handler would cause the widget tree to
@@ -269,18 +257,36 @@ RaisedButton(
 )
 ```
 ''');
+
     // this is required to get generic Type
     final type = _typeOf<InheritedProvider<T>>();
-    final provider = listen
-        ? context.inheritFromWidgetOfExactType(type) as InheritedProvider<T>
-        : context.ancestorInheritedElementForWidgetOfExactType(type)?.widget
-            as InheritedProvider<T>;
 
-    if (provider == null) {
+    InheritedProviderElement<T> inheritedElement;
+
+    if (context.widget is InheritedProvider<T>) {
+      // An InheritedProvider<T>'s update tries to obtain a parent provider of
+      // the same type.
+      context.visitAncestorElements((parent) {
+        inheritedElement =
+            parent.ancestorInheritedElementForWidgetOfExactType(type)
+                as InheritedProviderElement<T>;
+        return false;
+      });
+    } else {
+      inheritedElement =
+          context.ancestorInheritedElementForWidgetOfExactType(type)
+              as InheritedProviderElement<T>;
+    }
+
+    if (inheritedElement == null) {
       throw ProviderNotFoundError(T, context.widget.runtimeType);
     }
 
-    return provider._value;
+    if (listen ?? isWidgetTreeBuilding) {
+      context.inheritFromElement(inheritedElement);
+    }
+
+    return inheritedElement.value;
   }
 
   /// A sanity check to prevent misuse of [Provider] when a variant should be
@@ -335,30 +341,52 @@ void main() {
   /// User-provided custom logic for [InheritedWidget.updateShouldNotify].
   final UpdateShouldNotify<T> updateShouldNotify;
 
-  @override
-  Provider<T> cloneWithChild(Widget child) {
-    return Provider._(
-      key: key,
-      delegate: delegate,
-      updateShouldNotify: updateShouldNotify,
-      child: child,
-    );
-  }
-
   /// The widget that is below the current [Provider] widget in the
   /// tree.
   ///
   /// {@macro flutter.widgets.child}
   final Widget child;
 
+  final Create<T> _create;
+  final Dispose<T> _dispose;
+  final T _value;
+
   @override
   Widget build(BuildContext context) {
+    if (_create != null) {
+      void Function(T value) checkValue;
+
+      assert(() {
+        checkValue =
+            (T value) => Provider.debugCheckInvalidValueType?.call<T>(value);
+        return true;
+      }());
+      return InheritedProvider(
+        create: _create,
+        dispose: _dispose,
+        debugCheckInvalidValueType: checkValue,
+        child: child,
+      );
+    }
+
     assert(() {
-      Provider.debugCheckInvalidValueType?.call<T>(delegate.value);
+      Provider.debugCheckInvalidValueType?.call<T>(_value);
       return true;
     }());
-    return InheritedProvider<T>(
-      value: delegate.value,
+    return InheritedProvider.value(
+      value: _value,
+      updateShouldNotify: updateShouldNotify,
+      child: child,
+    );
+  }
+
+  @override
+  Provider<T> cloneWithChild(Widget child) {
+    return Provider._(
+      _create,
+      _dispose,
+      _value,
+      key: key,
       updateShouldNotify: updateShouldNotify,
       child: child,
     );

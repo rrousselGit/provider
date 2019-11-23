@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
 
 Element findElementOfWidget<T extends Widget>() {
   return find.byType(T).first.evaluate().first;
@@ -11,11 +12,34 @@ Element findElementOfWidget<T extends Widget>() {
 
 Type typeOf<T>() => T;
 
-class ValueBuilderMock<T> extends Mock {
+class InitialValueBuilderMock<T> extends Mock {
+  InitialValueBuilderMock([T value]) {
+    when(this(any)).thenAnswer((_) => value);
+  }
+
   T call(BuildContext context);
 }
 
-class DisposerMock<T> extends Mock {
+class ValueBuilderMock<T> extends Mock {
+  ValueBuilderMock([T value]) {
+    when(this(any, any)).thenReturn(value);
+  }
+  T call(BuildContext context, T previous);
+}
+
+class StartListeningMock<T> extends Mock {
+  StartListeningMock([VoidCallback value]) {
+    when(this(any, any)).thenReturn(value);
+  }
+
+  VoidCallback call(InheritedProviderElement<T> context, T value);
+}
+
+class StopListeningMock extends Mock {
+  void call();
+}
+
+class DisposeMock<T> extends Mock {
   void call(BuildContext context, T value);
 }
 
@@ -25,12 +49,61 @@ class BuilderMock extends Mock {
   Widget call(BuildContext context);
 }
 
+class StreamMock<T> extends Mock implements Stream<T> {}
+
+class FutureMock<T> extends Mock implements Future<T> {}
+
+class StreamSubscriptionMock<T> extends Mock implements StreamSubscription<T> {}
+
 class MockConsumerBuilder<T> extends Mock {
   Widget call(BuildContext context, T value, Widget child);
 }
 
 class UpdateShouldNotifyMock<T> extends Mock {
   bool call(T old, T newValue);
+}
+
+class TextOf<T> extends StatelessWidget {
+  const TextOf();
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      Provider.of<T>(context).toString(),
+      textDirection: TextDirection.ltr,
+    );
+  }
+}
+
+class DeferredStartListeningMock<T, R> extends Mock {
+  DeferredStartListeningMock(
+      [VoidCallback call(
+        DeferredInheritedProviderElement<T, R> context,
+        void Function(R value) setState,
+        T controller,
+        R value,
+      )]) {
+    if (call != null) {
+      when(this(any, any, any, any)).thenAnswer((invoc) {
+        return Function.apply(
+          call,
+          invoc.positionalArguments,
+          invoc.namedArguments,
+        ) as VoidCallback;
+      });
+    }
+  }
+
+  VoidCallback call(
+    DeferredInheritedProviderElement<T, R> context,
+    void Function(R value) setState,
+    T controller,
+    R value,
+  );
+}
+
+class DebugCheckValueTypeMock<T> extends Mock {
+  void call(T value);
 }
 
 class A with DiagnosticableTreeMixin {}

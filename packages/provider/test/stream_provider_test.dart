@@ -11,369 +11,148 @@ class ErrorBuilderMock<T> extends Mock {
   T call(BuildContext context, Object error);
 }
 
-class MockStreamController<T> extends Mock implements StreamController<T> {}
-
-class MockStream<T> extends Mock implements Stream<T> {}
-
 void main() {
-  group('streamProvider', () {
-    testWidgets('update when value change (default) ', (tester) async {
-      final controller = StreamController<int>();
-      final providerKey = GlobalKey();
-      final childKey = GlobalKey();
-      BuildContext context;
+  testWidgets(
+    'transition from stream to stream preserve state',
+    (tester) async {
+      final controller = StreamController<int>(sync: true);
+      final controller2 = StreamController<int>(sync: true);
 
-      await tester.pumpWidget(StreamProvider(
-        key: providerKey,
-        builder: (c) {
-          context = c;
-          return controller.stream;
-        },
-        child: Container(key: childKey),
-      ));
+      await tester.pumpWidget(
+        StreamProvider.value(
+          initialData: 0,
+          value: controller.stream,
+          child: const TextOf<int>(),
+        ),
+      );
 
-      expect(context, equals(providerKey.currentContext));
-      expect(Provider.of<int>(childKey.currentContext, listen: false), null);
-
-      controller.add(0);
-      // adding to stream is asynchronous so we have to delay the pump
-      await Future.microtask(tester.pump);
-
-      expect(Provider.of<int>(childKey.currentContext, listen: false), 0);
-    });
-    testWidgets('update when value change (.value)', (tester) async {
-      final controller = StreamController<int>();
-      final key = GlobalKey();
-
-      await tester.pumpWidget(StreamProvider.value(
-        value: controller.stream,
-        child: Container(key: key),
-      ));
-
-      expect(Provider.of<int>(key.currentContext, listen: false), null);
-
-      controller.add(0);
-      // adding to stream is asynchronous so we have to delay the pump
-      await Future.microtask(tester.pump);
-
-      expect(Provider.of<int>(key.currentContext, listen: false), 0);
-    });
-
-    testWidgets("don't notify descendants when rebuilding by default",
-        (tester) async {
-      final controller = StreamController<int>();
-
-      final builder = BuilderMock();
-      when(builder(any)).thenAnswer((invocation) {
-        final context = invocation.positionalArguments.first as BuildContext;
-        Provider.of<int>(context);
-        return Container();
-      });
-      final child = Builder(builder: builder);
-
-      await tester.pumpWidget(StreamProvider.value(
-        value: controller.stream,
-        child: child,
-      ));
-
-      await tester.pumpWidget(StreamProvider.value(
-        value: controller.stream,
-        child: child,
-      ));
-
-      verify(builder(any)).called(1);
-    });
-
-    testWidgets('pass down keys', (tester) async {
-      final controller = StreamController<int>();
-      final key = GlobalKey();
-
-      await tester.pumpWidget(StreamProvider.value(
-        key: key,
-        value: controller.stream,
-        child: Container(),
-      ));
-
-      expect(key.currentWidget, isInstanceOf<StreamProvider>());
-    });
-
-    testWidgets('pass updateShouldNotify', (tester) async {
-      final shouldNotify = UpdateShouldNotifyMock<int>();
-      when(shouldNotify(null, 1)).thenReturn(true);
-
-      final controller = StreamController<int>();
-      await tester.pumpWidget(StreamProvider.value(
-        value: controller.stream,
-        updateShouldNotify: shouldNotify,
-        child: Container(),
-      ));
-
-      verifyZeroInteractions(shouldNotify);
+      expect(find.text('0'), findsOneWidget);
 
       controller.add(1);
-      // adding to stream is asynchronous so we have to delay the pump
-      await Future.microtask(tester.pump);
 
-      verify(shouldNotify(null, 1)).called(1);
-      verifyNoMoreInteractions(shouldNotify);
-    });
+      await tester.pump();
 
-    testWidgets("don't listen again if stream instance doesn't change",
-        (tester) async {
-      final stream = MockStream<int>();
-      await tester.pumpWidget(StreamProvider.value(
-        value: stream,
-        child: Container(),
-      ));
-      await tester.pumpWidget(StreamProvider.value(
-        value: stream,
-        child: Container(),
-      ));
+      expect(find.text('1'), findsOneWidget);
 
-      verify(
-        stream.listen(any,
-            onError: anyNamed('onError'),
-            onDone: anyNamed('onDone'),
-            cancelOnError: anyNamed('cancelOnError')),
-      ).called(1);
-      verifyNoMoreInteractions(stream);
-    });
+      await tester.pumpWidget(
+        StreamProvider.value(
+          initialData: 0,
+          value: controller2.stream,
+          child: const TextOf<int>(),
+        ),
+      );
 
-    testWidgets('throws if stream has error and catchError is missing',
-        (tester) async {
-      final controller = StreamController<int>();
+      expect(find.text('1'), findsOneWidget);
 
-      await tester.pumpWidget(StreamProvider.value(
-        value: controller.stream,
-        child: Container(),
-      ));
+      controller.add(0);
+      await tester.pump();
 
-      controller.addError(42);
+      expect(find.text('1'), findsOneWidget);
 
-      await Future.microtask(tester.pump);
-      final exception = tester.takeException() as Object;
-      expect(exception, isFlutterError);
-      expect(exception.toString(), equals('''
+      controller2.add(2);
+      await tester.pump();
+
+      expect(find.text('2'), findsOneWidget);
+    },
+  );
+  testWidgets('throws if stream has error and catchError is missing',
+      (tester) async {
+    final controller = StreamController<int>();
+
+    await tester.pumpWidget(StreamProvider.value(
+      value: controller.stream,
+      child: const TextOf<int>(),
+    ));
+
+    controller.addError(42);
+    await Future.microtask(tester.pump);
+
+    final dynamic exception = tester.takeException();
+    expect(exception, isFlutterError);
+    expect(exception.toString(), equals('''
 An exception was throw by _ControllerStream<int> listened by
 StreamProvider<int>, but no `catchError` was provided.
 
 Exception:
 42
 '''));
-    });
-    testWidgets('calls catchError if present and stream has error',
-        (tester) async {
-      final controller = StreamController<int>();
-      final key = GlobalKey();
-      final catchError = ErrorBuilderMock<int>();
-      when(catchError(any, 42)).thenReturn(0);
+  });
+  testWidgets('calls catchError if present and stream has error',
+      (tester) async {
+    final controller = StreamController<int>(sync: true);
+    final catchError = ErrorBuilderMock<int>();
+    when(catchError(any, 42)).thenReturn(42);
 
-      await tester.pumpWidget(StreamProvider.value(
-        value: controller.stream,
-        catchError: catchError,
-        child: Container(key: key),
-      ));
+    await tester.pumpWidget(StreamProvider.value(
+      value: controller.stream,
+      catchError: catchError,
+      child: const TextOf<int>(),
+    ));
 
-      controller.addError(42);
+    expect(find.text('null'), findsOneWidget);
 
-      await Future.microtask(tester.pump);
+    controller.addError(42);
 
-      expect(Provider.of<int>(key.currentContext, listen: false), 0);
+    await Future.microtask(tester.pump);
 
-      final context = findElementOfWidget<StreamProvider<int>>();
-
-      verify(catchError(context, 42));
-    });
-
-    testWidgets('works with MultiProvider', (tester) async {
-      final key = GlobalKey();
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          StreamProvider<int>.value(value: const Stream<int>.empty()),
-        ],
-        child: Container(key: key),
-      ));
-
-      expect(Provider.of<int>(key.currentContext, listen: false), null);
-    });
-    test('works with MultiProvider #2', () {
-      final provider = StreamProvider<int>.value(
-        value: const Stream<int>.empty(),
+    expect(find.text('42'), findsOneWidget);
+    verify(catchError(argThat(isNotNull), 42)).called(1);
+    verifyNoMoreInteractions(catchError);
+  });
+  testWidgets('works with null', (tester) async {
+    await tester.pumpWidget(
+      StreamProvider<int>.value(
         initialData: 42,
-        child: Container(),
-        catchError: (_, __) => 42,
-        key: const Key('42'),
-        updateShouldNotify: (_, __) => true,
-      );
-      var child2 = Container();
-      final clone = provider.cloneWithChild(child2);
-
-      expect(clone.child, equals(child2));
-      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
-      expect(clone.key, equals(provider.key));
-      expect(clone.initialData, equals(provider.initialData));
-      // ignore: invalid_use_of_protected_member
-      expect(clone.delegate, equals(provider.delegate));
-      expect(clone.catchError, equals(provider.catchError));
-    });
-    test('works with MultiProvider #3', () {
-      final provider = StreamProvider<int>.controller(
-        builder: (_) => StreamController<int>(),
-        initialData: 42,
-        child: Container(),
-        catchError: (_, __) => 42,
-        key: const Key('42'),
-        updateShouldNotify: (_, __) => true,
-      );
-      var child2 = Container();
-      final clone = provider.cloneWithChild(child2);
-
-      expect(clone.child, equals(child2));
-      expect(clone.updateShouldNotify, equals(provider.updateShouldNotify));
-      expect(clone.key, equals(provider.key));
-      expect(clone.initialData, equals(provider.initialData));
-      // ignore: invalid_use_of_protected_member
-      expect(clone.delegate, equals(provider.delegate));
-      expect(clone.catchError, equals(provider.catchError));
-    });
-    testWidgets('works with null', (tester) async {
-      final key = GlobalKey();
-      await tester.pumpWidget(StreamProvider<int>.value(
         value: null,
-        child: Container(key: key),
-      ));
+        child: const TextOf<int>(),
+      ),
+    );
 
-      expect(Provider.of<int>(key.currentContext, listen: false), null);
+    expect(find.text('42'), findsOneWidget);
+
+    await tester.pumpWidget(Container());
+  });
+
+  test('StreamProvider() crashes if builder is null', () {
+    expect(
+      () => StreamProvider<int>(create: null),
+      throwsAssertionError,
+    );
+  });
+
+  group('StreamProvider()', () {
+    test('crashes if builder is null', () {
+      expect(
+        () => StreamProvider<int>(create: null),
+        throwsAssertionError,
+      );
     });
 
-    group('stateful constructor', () {
-      test('crashes if builder is null', () {
-        expect(
-          () => StreamProvider<int>.controller(builder: null),
-          throwsAssertionError,
-        );
-      });
+    testWidgets('create and dispose stream with builder', (tester) async {
+      final stream = StreamMock<int>();
+      final sub = StreamSubscriptionMock<int>();
+      when(stream.listen(any, onError: anyNamed('onError'))).thenReturn(sub);
 
-      testWidgets('works with null', (tester) async {
-        final key = GlobalKey();
-        await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: (_) => null,
-          child: Container(key: key),
-        ));
+      final builder = InitialValueBuilderMock(stream);
 
-        expect(Provider.of<int>(key.currentContext, listen: false), null);
+      await tester.pumpWidget(
+        StreamProvider<int>(
+          create: builder,
+          child: const TextOf<int>(),
+        ),
+      );
 
-        await tester.pumpWidget(Container());
-      });
+      verify(builder(argThat(isNotNull))).called(1);
 
-      testWidgets('create and dispose stream with builder', (tester) async {
-        final realController = StreamController<int>();
-        final controller = MockStreamController<int>();
-        when(controller.stream).thenAnswer((_) => realController.stream);
+      verify(stream.listen(any, onError: anyNamed('onError'))).called(1);
+      verifyNoMoreInteractions(stream);
 
-        final builder = ValueBuilderMock<StreamController<int>>();
-        when(builder(any)).thenReturn(controller);
+      await tester.pumpWidget(Container());
 
-        await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: builder,
-          child: Container(),
-        ));
-
-        final context = findElementOfWidget<StreamProvider<int>>();
-
-        verify(builder(context)).called(1);
-        clearInteractions(controller);
-
-        // extra build to see if builder isn't called again
-        await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: builder,
-          child: Container(),
-        ));
-
-        await tester.pumpWidget(Container());
-
-        verifyNoMoreInteractions(builder);
-        verify(controller.close());
-      });
-
-      testWidgets('pass updateShouldNotify', (tester) async {
-        final shouldNotify = UpdateShouldNotifyMock<int>();
-        when(shouldNotify(null, 1)).thenReturn(true);
-
-        var controller = StreamController<int>();
-        await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: (_) => controller,
-          updateShouldNotify: shouldNotify,
-          child: Container(),
-        ));
-
-        verifyZeroInteractions(shouldNotify);
-
-        controller.add(1);
-        // adding to stream is asynchronous so we have to delay the pump
-        await Future.microtask(tester.pump);
-
-        verify(shouldNotify(null, 1)).called(1);
-        verifyNoMoreInteractions(shouldNotify);
-      });
-
-      testWidgets(
-          // ignore: lines_longer_than_80_chars
-          'Changing from default to stateful constructor calls stateful builder',
-          (tester) async {
-        final key = GlobalKey();
-        final controller = StreamController<int>();
-        await tester.pumpWidget(StreamProvider<int>.value(
-          value: controller.stream,
-          child: Container(),
-        ));
-
-        final realController2 = StreamController<int>();
-        final controller2 = MockStreamController<int>();
-        when(controller2.stream).thenAnswer((_) => realController2.stream);
-
-        realController2.add(42);
-
-        await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: (_) => controller2,
-          child: Container(key: key),
-        ));
-
-        await tester.pump();
-
-        expect(Provider.of<int>(key.currentContext, listen: false), 42);
-
-        await tester.pumpWidget(Container());
-
-        verify(controller2.close()).called(1);
-      });
-      testWidgets(
-          // ignore: lines_longer_than_80_chars
-          'Changing from stateful to default constructor dispose correctly stateful stream',
-          (tester) async {
-        final realController = StreamController<int>();
-        final controller = MockStreamController<int>();
-        when(controller.stream).thenAnswer((_) => realController.stream);
-
-        final key = GlobalKey();
-
-        await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: (_) => controller,
-          child: Container(),
-        ));
-
-        await tester.pumpWidget(StreamProvider.value(
-          value: Stream<int>.fromIterable([42]),
-          child: Container(key: key),
-        ));
-        await tester.pump();
-
-        expect(Provider.of<int>(key.currentContext, listen: false), 42);
-
-        await tester.pumpWidget(Container());
-
-        verify(controller.close()).called(1);
-      });
+      verifyNoMoreInteractions(builder);
+      verify(sub.cancel()).called(1);
+      verifyNoMoreInteractions(sub);
+      verifyNoMoreInteractions(stream);
     });
   });
 }

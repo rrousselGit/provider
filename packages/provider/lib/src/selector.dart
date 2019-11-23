@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/src/provider.dart';
 
 import 'consumer.dart';
-import 'delegate_widget.dart';
+import 'inherited_provider.dart';
 
 /// A base class for custom [Selector].
 ///
@@ -52,7 +52,7 @@ class Selector0<T> extends StatefulWidget
   /// The returned object must implement [operator==].
   ///
   /// Must not be `null`
-  final ValueBuilder<T> selector;
+  final Create<T> selector;
 
   /// A cache of a widget tree that does not depend on the value of [selector].
   ///

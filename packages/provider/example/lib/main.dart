@@ -1,7 +1,14 @@
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, lines_longer_than_80_chars
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+/// This is an example of a counter application using `provider` + [ChangeNotifier].
+///
+/// It builds a typical `+` button, with a twist: the texts using the counter
+/// are built using the localization framework.
+///
+/// This shows how to bind our custom [ChangeNotifier] to things like [LocalizationsDelegate].
 
 void main() => runApp(MyApp());
 
@@ -20,7 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(builder: (_) => Counter()),
+        ChangeNotifierProvider(create: (_) => Counter()),
       ],
       child: Consumer<Counter>(
         builder: (context, counter, _) {
@@ -73,6 +80,18 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      /// Tons of small widgets!
+      ///
+      /// Splitting our app in small widgets like [Title] or [CounterLabel] is
+      /// useful for rebuild optimization.
+      ///
+      /// Since they are instanciated using `const`, they won't unnecessarily
+      /// rebuild when their parent changes.
+      /// But they can still have dynamic content, as they can obtain providers!
+      ///
+      /// This means only the widgets that depends on a provider to rebuild when they change.
+      /// Alternatively, we could use [Consumer] or [Selector] to acheive the
+      /// same result.
       appBar: AppBar(title: const Title()),
       body: const Center(child: CounterLabel()),
       floatingActionButton: const IncrementCounterButton(),
@@ -87,9 +106,10 @@ class IncrementCounterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
-        // `listen: false` is specified here because otherwise that would make
-        // `IncrementCounterButton` rebuild when the counter updates.
-        Provider.of<Counter>(context, listen: false).increment();
+        // We don't need to do `Provider.of<Counter>(context, listen: false)`
+        // because the listen:false is inferred automatically since Provider.of
+        // is called when the widget tree is not building anymore.
+        Provider.of<Counter>(context).increment();
       },
       tooltip: 'Increment',
       child: const Icon(Icons.add),
