@@ -100,59 +100,42 @@ class ProxyProvider0<R> extends StatelessWidget
 /// {@template provider.proxyprovider}
 /// A provider that builds a value based on other providers.
 ///
-/// The exposed value is built through `builder`, and then passed to
-/// [InheritedProvider].
+/// The exposed value is built through either `create` or `update`, then passed
+/// to [InheritedProvider].
 ///
-/// As opposed to the `builder` parameter of [Provider], `builder` may be called
-/// more than once. It will be called once when the widget is mounted, then once
-/// whenever any of the [InheritedWidget] which [ProxyProvider] depends emits an
-/// update.
-///
-/// [ProxyProvider] comes in different variants such as [ProxyProvider2].  This
-/// only changes the `builder` function, such that it takes a different number
-/// of arguments.  The `2` in [ProxyProvider2] means that `builder` builds its
-/// value from **2** other providers.
-///
-/// All variations of `builder` will receive the [BuildContext] as first
-/// parameter, and the previously built value as last parameter.
-///
-/// This previously built value will be `null` by default, unless
-/// `create` is specified – in which case, it will be the value returned
-/// by `create`.
-///
-/// `builder` must not be `null`.
-///
-/// ## Note:
-///
-/// While [ProxyProvider] has built-in support with [Provider.of], it works
-/// with *any* [InheritedWidget].
-///
-/// As such, `ProxyProvider2<Foo, Bar, Baz>` is just syntax sugar for:
-///
-/// ```dart
-/// ProxyProvider<Foo, Baz>(
-///   builder: (context, foo, baz) {
-///     final bar = Provider.of<Bar>(context);
-///   },
-///   child: ...,
-/// )
-/// ```
-///
-/// And it will also work with other `.of` patterns, including [Scrollable.of],
-/// [MediaQuery.of], and many more:
-///
-/// ```dart
-/// ProxyProvider<Foo, Baz>(
-///   builder: (context, foo, _) {
-///     final mediaQuery = MediaQuery.of(context);
-///     return Baz(mediaQuery.size);
-///   },
-///   child: ...,
-/// )
-/// ```
-///
-/// This previous example will correctly rebuild `Baz` when the `MediaQuery`
+/// As opposed to the `create`, `update` may be called more than once.
+/// It will be called once the first time the value is obtained, then once
+/// whenever [ProxyProvider] rebuilds or when one of the providers it depends on
 /// updates.
+///
+/// [ProxyProvider] comes in different variants such as [ProxyProvider2]. This
+/// is syntax sugar on the top of [ProxyProvider0].
+///
+/// As such, `ProxyProvider<A, Result>` is equal to:
+/// ```dart
+/// ProxyProvider0<Result>(
+///   update: (context, result) {
+///     final a = Provider.of<A>(context);
+///     return update(context, a, b, result);
+///   }
+/// );
+/// ```
+///
+/// Whereas `ProxyProvider2<A, B, Result>` is equal to:
+/// ```dart
+/// ProxyProvider0<Result>(
+///   update: (context, result) {
+///     final a = Provider.of<A>(context);
+///     final b = Provider.of<B>(context);
+///     return update(context, a, b, result);
+///   }
+/// );
+/// ```
+///
+/// This last parameter of `update` is previous value returned by either
+/// `create` or `update`. It is `null` by default.
+///
+/// `update` must not be `null`.
 ///
 /// See also:
 ///
