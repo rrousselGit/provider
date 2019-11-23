@@ -383,7 +383,7 @@ void main() {
     testWidgets('startListening', (tester) async {
       final stopListening = StopListeningMock();
       final startListening = StartListeningMock<int>(stopListening);
-      final dispose = DisposerMock<int>();
+      final dispose = DisposeMock<int>();
 
       await tester.pumpWidget(
         InheritedProvider<int>(
@@ -778,7 +778,7 @@ void main() {
       expect(of<int>(), equals(42));
     });
     testWidgets('call dispose on unmount', (tester) async {
-      final dispose = DisposerMock<int>();
+      final dispose = DisposeMock<int>();
       await tester.pumpWidget(
         InheritedProvider<int>(
           update: (_, __) => 42,
@@ -801,7 +801,7 @@ void main() {
     });
     testWidgets('builder unmount, dispose not called if value never read',
         (tester) async {
-      final dispose = DisposerMock<int>();
+      final dispose = DisposeMock<int>();
 
       await tester.pumpWidget(
         InheritedProvider<int>(
@@ -816,7 +816,7 @@ void main() {
       verifyZeroInteractions(dispose);
     });
     testWidgets('call dispose after new value', (tester) async {
-      final dispose = DisposerMock<int>();
+      final dispose = DisposeMock<int>();
       await tester.pumpWidget(
         InheritedProvider<int>(
           update: (_, __) => 42,
@@ -827,7 +827,7 @@ void main() {
 
       expect(of<int>(), equals(42));
 
-      final dispose2 = DisposerMock<int>();
+      final dispose2 = DisposeMock<int>();
       await tester.pumpWidget(
         InheritedProvider<int>(
           update: (_, __) => 42,
@@ -842,7 +842,7 @@ void main() {
       BuildContext context = tester
           .element(find.byWidgetPredicate((w) => w is InheritedProvider<int>));
 
-      final dispose3 = DisposerMock<int>();
+      final dispose3 = DisposeMock<int>();
       await tester.pumpWidget(
         InheritedProvider<int>(
           update: (_, __) => 24,
@@ -1327,7 +1327,7 @@ void main() {
       verifyZeroInteractions(stopListening);
     });
     testWidgets('dispose', (tester) async {
-      final dispose = DisposerMock<String>();
+      final dispose = DisposeMock<String>();
       final stopListening = StopListeningMock();
 
       await tester.pumpWidget(
@@ -1355,7 +1355,7 @@ void main() {
       verifyNoMoreInteractions(dispose);
     });
     testWidgets('dispose no-op if never built', (tester) async {
-      final dispose = DisposerMock<String>();
+      final dispose = DisposeMock<String>();
 
       await tester.pumpWidget(
         DeferredInheritedProvider<String, int>(

@@ -50,7 +50,7 @@ class ProxyProvider0<R> extends StatelessWidget
     Create<R> create,
     @required R Function(BuildContext context, R value) update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(update != null),
         _update = update,
@@ -64,7 +64,7 @@ class ProxyProvider0<R> extends StatelessWidget
   final R Function(BuildContext context, R value) _update;
   final UpdateShouldNotify<R> _updateShouldNotify;
   final Create<R> _create;
-  final Disposer<R> _dispose;
+  final Dispose<R> _dispose;
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +149,7 @@ class ProxyProvider<T, R> extends ProxyProvider0<R> {
     Create<R> create,
     @required ProxyProviderBuilder<T, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(update != null),
         super(
@@ -174,7 +174,7 @@ class ProxyProvider2<T, T2, R> extends ProxyProvider0<R> {
     Create<R> create,
     @required ProxyProviderBuilder2<T, T2, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(update != null),
         super(
@@ -200,7 +200,7 @@ class ProxyProvider3<T, T2, T3, R> extends ProxyProvider0<R> {
     Create<R> create,
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(update != null),
         super(
@@ -227,7 +227,7 @@ class ProxyProvider4<T, T2, T3, T4, R> extends ProxyProvider0<R> {
     Create<R> create,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(update != null),
         super(
@@ -255,7 +255,7 @@ class ProxyProvider5<T, T2, T3, T4, T5, R> extends ProxyProvider0<R> {
     Create<R> create,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(update != null),
         super(
@@ -284,7 +284,7 @@ class ProxyProvider6<T, T2, T3, T4, T5, T6, R> extends ProxyProvider0<R> {
     Create<R> create,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(update != null),
         super(

@@ -200,12 +200,12 @@ void main() {
       final listenable = MockNotifier();
       when(listenable.hasListeners).thenReturn(false);
       final builder = InitialValueBuilderMock<Listenable>();
-      final disposer = DisposerMock<Listenable>();
+      final dispose = DisposeMock<Listenable>();
       when(builder(any)).thenReturn(listenable);
 
       await tester.pumpWidget(ListenableProvider(
         create: builder,
-        dispose: disposer,
+        dispose: dispose,
         child: const TextOf<Listenable>(),
       ));
 
@@ -221,7 +221,7 @@ void main() {
 
       verifyInOrder([
         listenable.removeListener(listener),
-        disposer(context, listenable),
+        dispose(context, listenable),
       ]);
       verifyNoMoreInteractions(builder);
       verifyNoMoreInteractions(listenable);

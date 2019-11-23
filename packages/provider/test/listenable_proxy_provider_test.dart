@@ -167,7 +167,7 @@ void main() {
         when(builder(any, any, any)).thenReturn(Container());
         final child = Consumer<MockNotifier>(builder: builder);
 
-        final dispose = DisposerMock<MockNotifier>();
+        final dispose = DisposeMock<MockNotifier>();
         final notifier = MockNotifier();
         when(notifier.hasListeners).thenReturn(false);
         await tester.pumpWidget(
@@ -186,7 +186,7 @@ void main() {
 
         clearInteractions(builder);
 
-        final dispose2 = DisposerMock<MockNotifier>();
+        final dispose2 = DisposeMock<MockNotifier>();
         final notifier2 = MockNotifier();
         when(notifier2.hasListeners).thenReturn(false);
         await tester.pumpWidget(
@@ -217,7 +217,7 @@ void main() {
       },
     );
     testWidgets('disposes of created value', (tester) async {
-      final dispose = DisposerMock<ValueNotifier<int>>();
+      final dispose = DisposeMock<ValueNotifier<int>>();
       final notifier = ValueNotifier(0);
       final key = GlobalKey();
 

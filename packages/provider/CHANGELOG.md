@@ -1,11 +1,13 @@
 # 4.0.0
 
-- The default constructor of providers now lazily create the value.
+- The creation and listening of objects using providers is now performed lazily.
+  This means that objects are created the first time the value is read instead of
+  the first time the provider is mounted.
 - The `listen` argument of `Provider.of` is now automatically inferred.
   It is no longer necessary to pass `listen: false` when calling `Provider.of`
   outside of the widget tree.
 - renamed `initialBuilder` & `builder` of `*ProxyProvider` to `create` & `update`
-- renamed `builder` `*Provider` to `create`
+- renamed `builder` of `*Provider` to `create`
 - added a `*ProxyProvider0` variant
 
 # 3.1.0

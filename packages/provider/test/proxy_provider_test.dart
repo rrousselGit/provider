@@ -211,8 +211,8 @@ void main() {
     });
     testWidgets('call dispose when unmounted with the latest result',
         (tester) async {
-      final dispose = DisposerMock<Combined>();
-      final dispose2 = DisposerMock<Combined>();
+      final dispose = DisposeMock<Combined>();
+      final dispose2 = DisposeMock<Combined>();
 
       await tester.pumpWidget(
         MultiProvider(

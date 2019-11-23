@@ -27,7 +27,7 @@ class ListenableProvider<T extends Listenable> extends StatelessWidget
   ListenableProvider({
     Key key,
     @required Create<T> create,
-    Disposer<T> dispose,
+    Dispose<T> dispose,
     this.child,
   })  : assert(create != null),
         _debugCheckType = true,
@@ -68,7 +68,7 @@ class ListenableProvider<T extends Listenable> extends StatelessWidget
   }
 
   final Create<T> _create;
-  final Disposer<T> _dispose;
+  final Dispose<T> _dispose;
   final T _value;
   final bool _debugCheckType;
 
@@ -155,7 +155,7 @@ class ListenableProxyProvider0<R extends Listenable> extends StatelessWidget
     Key key,
     @required Create<R> create,
     @required R Function(BuildContext, R previous) update,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     UpdateShouldNotify<R> updateShouldNotify,
     Widget child,
   })  : assert(create != null || update != null),
@@ -169,7 +169,7 @@ class ListenableProxyProvider0<R extends Listenable> extends StatelessWidget
   final Widget _child;
   final R Function(BuildContext context, R previous) _update;
   final UpdateShouldNotify<R> _updateShouldNotify;
-  final Disposer<R> _dispose;
+  final Dispose<R> _dispose;
   final Create<R> _create;
 
   @override
@@ -229,7 +229,7 @@ class ListenableProxyProvider<T, R extends Listenable>
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder<T, R> update,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -253,7 +253,7 @@ class ListenableProxyProvider2<T, T2, R extends Listenable>
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder2<T, T2, R> update,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -278,7 +278,7 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -304,7 +304,7 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -331,7 +331,7 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -359,7 +359,7 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
     Widget child,
   })  : assert(create != null || update != null),
         super(

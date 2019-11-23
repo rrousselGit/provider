@@ -17,7 +17,7 @@ typedef UpdateShouldNotify<T> = bool Function(T previous, T current);
 ///
 /// See also:
 ///
-///  * [Disposer], to free the resources associated to the value created.
+///  * [Dispose], to free the resources associated to the value created.
 typedef Create<T> = T Function(BuildContext context);
 
 /// A function that disposes an object of type [T].
@@ -25,15 +25,21 @@ typedef Create<T> = T Function(BuildContext context);
 /// See also:
 ///
 ///  * [Create], to create a value that will later be disposed of.
-typedef Disposer<T> = void Function(BuildContext context, T value);
+typedef Dispose<T> = void Function(BuildContext context, T value);
 
-/// A callback used to start and an object, and return a function that allows
-/// cancelling the subscription.
+/// A callback used to start the listening of an object and return a function
+/// that cancels the subscription.
 ///
 /// It is called the first time the value is obtained (through
 /// [InheritedProviderElement.value]). And the returned callback will be called
 /// when [InheritedProvider] is unmounted or when the it is rebuilt with a new
 /// value.
+///
+/// See also:
+///
+/// - [InheritedProvider]
+/// - [DeferredStartListening], a variant of this typedef for more advanced
+///   listening.
 typedef StartListening<T> = VoidCallback Function(
     InheritedProviderElement<T> element, T value);
 
@@ -41,6 +47,11 @@ typedef StartListening<T> = VoidCallback Function(
 ///
 /// It is expected to start the listening process and return a callback
 /// that will later be used to stop that listening.
+///
+/// See also:
+///
+/// - [DeferredInheritedProvider]
+/// - [StartListening], a simpler version of this typedef.
 typedef DeferredStartListening<T, R> = VoidCallback Function(
   DeferredInheritedProviderElement<T, R> context,
   void Function(R value) setState,
@@ -66,7 +77,7 @@ abstract class InheritedProvider<T> extends InheritedWidget {
     UpdateShouldNotify<T> updateShouldNotify,
     void Function(T value) debugCheckInvalidValueType,
     StartListening<T> startListening,
-    Disposer<T> dispose,
+    Dispose<T> dispose,
     @required Widget child,
   }) = _CreateInheritedProvider<T>;
 
@@ -165,7 +176,7 @@ abstract class InheritedProviderElement<T> extends InheritedElement {
     super.unmount();
   }
 
-  /// Mark the [InheritedProvider] as needing to update dependents.
+  /// Marks the [InheritedProvider] as needing to update dependents.
   ///
   /// This bypass [InheritedWidget.updateShouldNotify] and will force widgets
   /// that depends on [T] to rebuild.
@@ -266,7 +277,7 @@ class _CreateInheritedProvider<T> extends InheritedProvider<T> {
   final UpdateShouldNotify<T> _updateShouldNotify;
   final void Function(T value) debugCheckInvalidValueType;
   final StartListening<T> startListening;
-  final Disposer<T> dispose;
+  final Dispose<T> dispose;
 
   @override
   bool updateShouldNotify(InheritedProvider<T> oldWidget) {
@@ -434,7 +445,7 @@ class _ValueInheritedProviderElement<T> extends InheritedProviderElement<T> {
 DeferredInheritedProvider<T, R> autoDeferred<T, R>({
   Key key,
   @required Create<T> create,
-  Disposer<T> dispose,
+  Dispose<T> dispose,
   @required T value,
   @required DeferredStartListening<T, R> startListening,
   UpdateShouldNotify<R> updateShouldNotify,
@@ -487,7 +498,7 @@ abstract class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
   factory DeferredInheritedProvider({
     Key key,
     @required Create<T> create,
-    Disposer<T> dispose,
+    Dispose<T> dispose,
     @required DeferredStartListening<T, R> startListening,
     UpdateShouldNotify<R> updateShouldNotify,
     @required Widget child,
@@ -519,7 +530,7 @@ abstract class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
 /// The element associated to [DeferredInheritedProvider].
 ///
 /// It is responsible for updating dependents, managing subscriptions,
-/// and creatinng/disposing [T].
+/// and creating/disposing [T].
 abstract class DeferredInheritedProviderElement<T, R>
     extends InheritedProviderElement<R> {
   /// Creates an element that uses the given widget as its configuration.
@@ -536,10 +547,10 @@ abstract class DeferredInheritedProviderElement<T, R>
   @override
   R get value {
     // setState should be no-op inside startListening, as it's lazy-loaded
-    // otherwise Flutter will throw an exception for reason.
+    // otherwise Flutter will throw an exception for no reason.
     _setStateShouldNotify = false;
     _removeListener ??=
-        widget._startListening.call(this, setState, controller, _value);
+        widget._startListening(this, setState, controller, _value);
     _setStateShouldNotify = true;
     assert(hasValue, '''
 The callback "startListening" was called, but it left DeferredInhertitedProviderElement<$T, $R>
@@ -572,8 +583,8 @@ DeferredInheritedProvider(
 
   /// Wether [setState] was called at least once or not.
   ///
-  /// It can be used to differentiate between the very first listening,
-  /// and a rebuild after [controller] changed.
+  /// It can be used by [DeferredStartListening] to differentiate between the
+  /// very first listening, and a rebuild after [controller] changed.
   bool get hasValue => _hasValue;
 
   var _setStateShouldNotify = true;
@@ -620,7 +631,7 @@ class _CreateDeferredInheritedProvider<T, R>
         );
 
   final Create<T> create;
-  final Disposer<T> dispose;
+  final Dispose<T> dispose;
 
   @override
   _CreateDeferredInheritedProviderElement<T, R> createElement() =>

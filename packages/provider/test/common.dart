@@ -39,7 +39,7 @@ class StopListeningMock extends Mock {
   void call();
 }
 
-class DisposerMock<T> extends Mock {
+class DisposeMock<T> extends Mock {
   void call(BuildContext context, T value);
 }
 

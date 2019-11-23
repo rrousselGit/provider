@@ -101,7 +101,7 @@ class MultiProvider extends StatelessWidget
 }
 
 /// A [Provider] that manages the lifecycle of the value it provides by
-/// delegating to a pair of [Create] and [Disposer].
+/// delegating to a pair of [Create] and [Dispose].
 ///
 /// It is usually used to avoid making a [StatefulWidget] for something trivial,
 /// such as instantiating a BLoC.
@@ -173,7 +173,7 @@ class Provider<T> extends StatelessWidget
   Provider({
     Key key,
     @required Create<T> create,
-    Disposer<T> dispose,
+    Dispose<T> dispose,
     this.child,
   })  : assert(create != null),
         _value = null,
@@ -330,7 +330,7 @@ void main() {
   final Widget child;
 
   final Create<T> _create;
-  final Disposer<T> _dispose;
+  final Dispose<T> _dispose;
   final T _value;
 
   @override

@@ -97,7 +97,7 @@ import 'proxy_provider.dart';
 ///     any [Listenable].
 class ChangeNotifierProvider<T extends ChangeNotifier>
     extends ListenableProvider<T> {
-  static void _disposer(BuildContext context, ChangeNotifier notifier) =>
+  static void _dispose(BuildContext context, ChangeNotifier notifier) =>
       notifier?.dispose();
 
   /// Creates a [ChangeNotifier] using `create` and automatically
@@ -108,7 +108,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
     Key key,
     @required Create<T> create,
     Widget child,
-  }) : super(key: key, create: create, dispose: _disposer, child: child);
+  }) : super(key: key, create: create, dispose: _dispose, child: child);
 
   /// Provides an existing [ChangeNotifier].
   ChangeNotifierProvider.value({
@@ -204,7 +204,7 @@ class ChangeNotifierProxyProvider<T, R extends ChangeNotifier>
           key: key,
           create: create,
           update: update,
-          dispose: ChangeNotifierProvider._disposer,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }
@@ -222,7 +222,7 @@ class ChangeNotifierProxyProvider0<R extends ChangeNotifier>
           key: key,
           create: create,
           update: update,
-          dispose: ChangeNotifierProvider._disposer,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }
@@ -240,7 +240,7 @@ class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier>
           key: key,
           create: create,
           update: update,
-          dispose: ChangeNotifierProvider._disposer,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }
@@ -258,7 +258,7 @@ class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier>
           key: key,
           create: create,
           update: update,
-          dispose: ChangeNotifierProvider._disposer,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }
@@ -276,7 +276,7 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
           key: key,
           create: create,
           update: update,
-          dispose: ChangeNotifierProvider._disposer,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }
@@ -295,7 +295,7 @@ class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
           key: key,
           create: create,
           update: update,
-          dispose: ChangeNotifierProvider._disposer,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }
@@ -314,7 +314,7 @@ class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6,
           key: key,
           create: create,
           update: update,
-          dispose: ChangeNotifierProvider._disposer,
+          dispose: ChangeNotifierProvider._dispose,
           child: child,
         );
 }

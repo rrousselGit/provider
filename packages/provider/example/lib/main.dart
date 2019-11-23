@@ -89,8 +89,9 @@ class MyHomePage extends StatelessWidget {
       /// rebuild when their parent changes.
       /// But they can still have dynamic content, as they can obtain providers!
       ///
-      /// This only the widgets that depends on a provider to rebuild when they change.
-      /// Alternatively, we can think of things like [Consumer] or [Selector].
+      /// This means only the widgets that depends on a provider to rebuild when they change.
+      /// Alternatively, we could use [Consumer] or [Selector] to acheive the
+      /// same result.
       appBar: AppBar(title: const Title()),
       body: const Center(child: CounterLabel()),
       floatingActionButton: const IncrementCounterButton(),
