@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 Type _typeOf<T>() => T;
 
 Matcher throwsProviderNotFound({Type widgetType, Type valueType}) {
-  return throwsA(const TypeMatcher<ProviderNotFoundError>()
+  return throwsA(const TypeMatcher<ProviderNotFoundException>()
       .having((err) => err.valueType, 'valueType', valueType)
       .having((err) => err.widgetType, 'widgetType', widgetType));
 }

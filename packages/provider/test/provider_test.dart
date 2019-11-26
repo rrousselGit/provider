@@ -270,7 +270,7 @@ void main() {
 
       expect(
         tester.takeException(),
-        const TypeMatcher<ProviderNotFoundError>()
+        const TypeMatcher<ProviderNotFoundException>()
             .having((err) => err.valueType, 'valueType', String)
             .having((err) => err.widgetType, 'widgetType', Builder)
             .having((err) => err.toString(), 'toString()', '''

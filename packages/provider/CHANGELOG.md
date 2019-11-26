@@ -1,5 +1,8 @@
 # 4.0.0
 
+- renamed `ProviderNotFoundError` to `ProviderNotFoundException`.
+  This allows calling `Provider.of` inside a `try/catch` without triggering a
+  warning.
 - update provider to work with Flutter 1.12.1
 - The creation and listening of objects using providers is now performed lazily.
   This means that objects are created the first time the value is read instead of

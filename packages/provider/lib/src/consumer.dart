@@ -31,7 +31,7 @@ import 'selector.dart' show Selector;
 /// }
 /// ```
 ///
-/// This example will throw a [ProviderNotFoundError], because [Provider.of]
+/// This example will throw a [ProviderNotFoundException], because [Provider.of]
 /// is called with a [BuildContext] that is an ancestor of the provider.
 ///
 /// Instead, we can use the [Consumer] widget, that will call [Provider.of]
@@ -51,7 +51,7 @@ import 'selector.dart' show Selector;
 /// }
 /// ```
 ///
-/// This won't throw a [ProviderNotFoundError] and will correctly build the
+/// This won't throw a [ProviderNotFoundException] and will correctly build the
 /// [Text]. It will also update the [Text] whenever the value `foo` changes.
 ///
 ///

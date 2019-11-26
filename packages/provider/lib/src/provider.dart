@@ -215,7 +215,7 @@ RaisedButton(
     }
 
     if (inheritedElement == null) {
-      throw ProviderNotFoundError(T, context.widget.runtimeType);
+      throw ProviderNotFoundException(T, context.widget.runtimeType);
     }
 
     if (listen ?? isWidgetTreeBuilding) {
@@ -312,7 +312,7 @@ void main() {
 
 /// The error that will be thrown if [Provider.of<T>] fails to find a
 /// [Provider<T>] as an ancestor of the [BuildContext] used.
-class ProviderNotFoundError extends Error {
+class ProviderNotFoundException implements Exception {
   /// The type of the value being retrieved
   final Type valueType;
 
@@ -320,7 +320,7 @@ class ProviderNotFoundError extends Error {
   final Type widgetType;
 
   /// Create a ProviderNotFound error with the type represented as a String.
-  ProviderNotFoundError(
+  ProviderNotFoundException(
     this.valueType,
     this.widgetType,
   );
