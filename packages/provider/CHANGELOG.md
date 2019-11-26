@@ -1,5 +1,6 @@
 # 4.0.0
 
+- update provider to work with Flutter 1.12.1
 - The creation and listening of objects using providers is now performed lazily.
   This means that objects are created the first time the value is read instead of
   the first time the provider is mounted.

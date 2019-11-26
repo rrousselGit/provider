@@ -5,11 +5,6 @@ import 'package:flutter/widgets.dart';
 
 import 'inherited_provider.dart';
 
-/// Returns the type [T].
-/// See https://stackoverflow.com/questions/52891537/how-to-get-generic-type
-/// and https://github.com/dart-lang/sdk/issues/11923.
-Type _typeOf<T>() => T;
-
 /// A base class for providers so that [MultiProvider] can regroup them into a
 /// linear list.
 abstract class SingleChildCloneableWidget implements Widget {
@@ -258,24 +253,21 @@ RaisedButton(
 ```
 ''');
 
-    // this is required to get generic Type
-    final type = _typeOf<InheritedProvider<T>>();
-
     InheritedProviderElement<T> inheritedElement;
 
     if (context.widget is InheritedProvider<T>) {
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
       // the same type.
       context.visitAncestorElements((parent) {
-        inheritedElement =
-            parent.ancestorInheritedElementForWidgetOfExactType(type)
-                as InheritedProviderElement<T>;
+        inheritedElement = parent
+                .getElementForInheritedWidgetOfExactType<InheritedProvider<T>>()
+            as InheritedProviderElement<T>;
         return false;
       });
     } else {
-      inheritedElement =
-          context.ancestorInheritedElementForWidgetOfExactType(type)
-              as InheritedProviderElement<T>;
+      inheritedElement = context
+              .getElementForInheritedWidgetOfExactType<InheritedProvider<T>>()
+          as InheritedProviderElement<T>;
     }
 
     if (inheritedElement == null) {
@@ -283,7 +275,7 @@ RaisedButton(
     }
 
     if (listen ?? isWidgetTreeBuilding) {
-      context.inheritFromElement(inheritedElement);
+      context.dependOnInheritedElement(inheritedElement);
     }
 
     return inheritedElement.value;

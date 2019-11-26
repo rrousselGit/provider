@@ -222,7 +222,7 @@ passing a different "key" to each type of provider.
   }
 
   @override
-  InheritedWidget inheritFromElement(
+  InheritedWidget dependOnInheritedElement(
     InheritedElement ancestor, {
     Object aspect,
   }) {
@@ -254,7 +254,7 @@ To fix, consider:
       }
       return true;
     }());
-    return super.inheritFromElement(ancestor, aspect: aspect);
+    return super.dependOnInheritedElement(ancestor, aspect: aspect);
   }
 }
 
