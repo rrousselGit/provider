@@ -929,6 +929,7 @@ void main() {
           () => DeferredInheritedProvider<int, int>(
                 create: (_) => 42,
                 startListening: (_, __, ___, ____) => () {},
+                child: null,
               ),
           throwsAssertionError);
     });
@@ -936,6 +937,7 @@ void main() {
       expect(
           () => DeferredInheritedProvider<int, int>(
                 create: (_) => 42,
+                startListening: null,
                 child: Container(),
               ),
           throwsAssertionError);

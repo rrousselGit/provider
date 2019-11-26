@@ -13,37 +13,11 @@ Matcher throwsProviderNotFound({Type widgetType, Type valueType}) {
 
 void main() {
   group('MultiProvider', () {
-    test('cloneWithChild works', () {
-      final provider = MultiProvider(
-        providers: [],
-        child: Container(),
-        key: const ValueKey(42),
-      );
-
-      final newChild = Container();
-      final clone = provider.cloneWithChild(newChild);
-      expect(clone.child, newChild);
-      expect(clone.providers, provider.providers);
-      expect(clone.key, provider.key);
-    });
     test('throw if providers is null', () {
       expect(
         () => MultiProvider(providers: null, child: Container()),
         throwsAssertionError,
       );
-    });
-
-    testWidgets('MultiProvider with empty providers returns child',
-        (tester) async {
-      await tester.pumpWidget(const MultiProvider(
-        providers: [],
-        child: Text(
-          'Foo',
-          textDirection: TextDirection.ltr,
-        ),
-      ));
-
-      expect(find.text('Foo'), findsOneWidget);
     });
 
     testWidgets('MultiProvider children can only access parent providers',

@@ -2,18 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nested/nested.dart';
 
 import 'inherited_provider.dart';
-
-/// A base class for providers so that [MultiProvider] can regroup them into a
-/// linear list.
-abstract class SingleChildCloneableWidget implements Widget {
-  /// Clones the current provider with a new [child].
-  ///
-  /// Note for implementers: all other values, including [Key] must be
-  /// preserved.
-  SingleChildCloneableWidget cloneWithChild(Widget child);
-}
 
 /// A provider that merges multiple providers into a single linear widget tree.
 /// It is used to improve readability and reduce boilerplate code of having to
@@ -48,51 +39,14 @@ abstract class SingleChildCloneableWidget implements Widget {
 /// ```
 ///
 /// The widget tree representation of the two approaches are identical.
-class MultiProvider extends StatelessWidget
-    implements SingleChildCloneableWidget {
-  /// Build a tree of providers from a list of [SingleChildCloneableWidget].
-  const MultiProvider({
+class MultiProvider extends Nested {
+  /// Build a tree of providers from a list of [SingleChildWidget].
+  MultiProvider({
     Key key,
-    @required this.providers,
-    this.child,
+    @required List<SingleChildWidget> providers,
+    Widget child,
   })  : assert(providers != null),
-        super(key: key);
-
-  /// The list of providers that will be transformed into a tree from top to
-  /// bottom.
-  ///
-  /// Example: with [A, B, C] and [child], the resulting widget tree looks like:
-  ///   A
-  ///   |
-  ///   B
-  ///   |
-  ///   C
-  ///   |
-  /// child
-  final List<SingleChildCloneableWidget> providers;
-
-  /// The child of the last provider in [providers].
-  ///
-  /// If [providers] is empty, [MultiProvider] just returns [child].
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    var tree = child;
-    for (final provider in providers.reversed) {
-      tree = provider.cloneWithChild(tree);
-    }
-    return tree;
-  }
-
-  @override
-  MultiProvider cloneWithChild(Widget child) {
-    return MultiProvider(
-      key: key,
-      providers: providers,
-      child: child,
-    );
-  }
+        super(key: key, children: providers, child: child);
 }
 
 /// A [Provider] that manages the lifecycle of the value it provides by
@@ -157,8 +111,7 @@ class MultiProvider extends StatelessWidget
 /// downcast the mock to the type of the mocked class.
 /// Otherwise, the type inference will resolve to `Provider<MockFoo>` instead of
 /// `Provider<Foo>`, which will cause `Provider.of<Foo>` to fail.
-class Provider<T> extends StatelessWidget
-    implements SingleChildCloneableWidget {
+class Provider<T> extends SingleChildStatelessWidget {
   /// Creates a value, store it, and expose it to its descendants.
   ///
   /// The value can be optionally disposed using [dispose] callback. This
@@ -169,33 +122,24 @@ class Provider<T> extends StatelessWidget
     Key key,
     @required Create<T> create,
     Dispose<T> dispose,
-    this.child,
+    Widget child,
   })  : assert(create != null),
         _value = null,
         _create = create,
         _dispose = dispose,
         updateShouldNotify = null,
-        super(key: key);
+        super(key: key, child: child);
 
   /// Allows to specify parameters to [Provider].
   Provider.value({
     Key key,
     @required T value,
     this.updateShouldNotify,
-    this.child,
+    Widget child,
   })  : _value = value,
         _create = null,
         _dispose = null,
-        super(key: key);
-
-  Provider._(
-    this._create,
-    this._dispose,
-    this._value, {
-    Key key,
-    this.updateShouldNotify,
-    this.child,
-  }) : super(key: key);
+        super(key: key, child: child);
 
   /// Obtains the nearest [Provider<T>] up its widget tree and returns its
   /// value.
@@ -332,19 +276,12 @@ void main() {
 
   /// User-provided custom logic for [InheritedWidget.updateShouldNotify].
   final UpdateShouldNotify<T> updateShouldNotify;
-
-  /// The widget that is below the current [Provider] widget in the
-  /// tree.
-  ///
-  /// {@macro flutter.widgets.child}
-  final Widget child;
-
   final Create<T> _create;
   final Dispose<T> _dispose;
   final T _value;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     if (_create != null) {
       void Function(T value) checkValue;
 
@@ -367,18 +304,6 @@ void main() {
     }());
     return InheritedProvider.value(
       value: _value,
-      updateShouldNotify: updateShouldNotify,
-      child: child,
-    );
-  }
-
-  @override
-  Provider<T> cloneWithChild(Widget child) {
-    return Provider._(
-      _create,
-      _dispose,
-      _value,
-      key: key,
       updateShouldNotify: updateShouldNotify,
       child: child,
     );

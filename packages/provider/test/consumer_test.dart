@@ -42,16 +42,15 @@ void main() {
   final d = D();
   final e = E();
   final f = F();
-  final provider = MultiProvider(
-    providers: [
-      Provider.value(value: a),
-      Provider.value(value: b),
-      Provider.value(value: c),
-      Provider.value(value: d),
-      Provider.value(value: e),
-      Provider.value(value: f),
-    ],
-  );
+
+  final multiProviderNodes = [
+    Provider.value(value: a),
+    Provider.value(value: b),
+    Provider.value(value: c),
+    Provider.value(value: d),
+    Provider.value(value: e),
+    Provider.value(value: f),
+  ];
 
   final mock = ConsumerBuilderMock();
   setUp(() {
@@ -67,11 +66,13 @@ void main() {
       final child = Container();
 
       await tester.pumpWidget(
-        provider.cloneWithChild(
-          Consumer<A>(
+        MultiProvider(
+          providers: multiProviderNodes,
+          child: Consumer<A>(
             key: key,
-            builder: (context, value, child) =>
-                mock(Combined(context, child, value)),
+            builder: (context, value, child) {
+              return mock(Combined(context, child, value));
+            },
             child: child,
           ),
         ),
@@ -89,11 +90,13 @@ void main() {
       final key = GlobalKey();
 
       await tester.pumpWidget(MultiProvider(
-        providers: List.from(provider.providers)
-          ..add(Consumer<A>(
+        providers: [
+          ...multiProviderNodes,
+          Consumer<A>(
             key: key,
             builder: (_, a, child) => Container(child: child),
-          )),
+          )
+        ],
         child: const Text('foo', textDirection: TextDirection.ltr),
       ));
 
@@ -109,8 +112,9 @@ void main() {
       final child = Container();
 
       await tester.pumpWidget(
-        provider.cloneWithChild(
-          Consumer2<A, B>(
+        MultiProvider(
+          providers: multiProviderNodes,
+          child: Consumer2<A, B>(
             key: key,
             builder: (context, value, v2, child) =>
                 mock(Combined(context, child, value, v2)),
@@ -132,11 +136,13 @@ void main() {
       final key = GlobalKey();
 
       await tester.pumpWidget(MultiProvider(
-        providers: List.from(provider.providers)
-          ..add(Consumer2<A, B>(
+        providers: [
+          ...multiProviderNodes,
+          Consumer2<A, B>(
             key: key,
             builder: (_, a, b, child) => Container(child: child),
-          )),
+          )
+        ],
         child: const Text('foo', textDirection: TextDirection.ltr),
       ));
 
@@ -151,8 +157,9 @@ void main() {
       final child = Container();
 
       await tester.pumpWidget(
-        provider.cloneWithChild(
-          Consumer3<A, B, C>(
+        MultiProvider(
+          providers: multiProviderNodes,
+          child: Consumer3<A, B, C>(
             key: key,
             builder: (context, value, v2, v3, child) =>
                 mock(Combined(context, child, value, v2, v3)),
@@ -174,11 +181,13 @@ void main() {
       final key = GlobalKey();
 
       await tester.pumpWidget(MultiProvider(
-        providers: List.from(provider.providers)
-          ..add(Consumer3<A, B, C>(
+        providers: [
+          ...multiProviderNodes,
+          Consumer3<A, B, C>(
             key: key,
             builder: (_, a, b, c, child) => Container(child: child),
-          )),
+          )
+        ],
         child: const Text('foo', textDirection: TextDirection.ltr),
       ));
 
@@ -193,8 +202,9 @@ void main() {
       final child = Container();
 
       await tester.pumpWidget(
-        provider.cloneWithChild(
-          Consumer4<A, B, C, D>(
+        MultiProvider(
+          providers: multiProviderNodes,
+          child: Consumer4<A, B, C, D>(
             key: key,
             builder: (context, value, v2, v3, v4, child) =>
                 mock(Combined(context, child, value, v2, v3, v4)),
@@ -216,11 +226,13 @@ void main() {
       final key = GlobalKey();
 
       await tester.pumpWidget(MultiProvider(
-        providers: List.from(provider.providers)
-          ..add(Consumer4<A, B, C, D>(
+        providers: [
+          ...multiProviderNodes,
+          Consumer4<A, B, C, D>(
             key: key,
             builder: (_, a, b, c, d, child) => Container(child: child),
-          )),
+          )
+        ],
         child: const Text('foo', textDirection: TextDirection.ltr),
       ));
 
@@ -235,8 +247,9 @@ void main() {
       final child = Container();
 
       await tester.pumpWidget(
-        provider.cloneWithChild(
-          Consumer5<A, B, C, D, E>(
+        MultiProvider(
+          providers: multiProviderNodes,
+          child: Consumer5<A, B, C, D, E>(
             key: key,
             builder: (context, value, v2, v3, v4, v5, child) =>
                 mock(Combined(context, child, value, v2, v3, v4, v5)),
@@ -258,11 +271,13 @@ void main() {
       final key = GlobalKey();
 
       await tester.pumpWidget(MultiProvider(
-        providers: List.from(provider.providers)
-          ..add(Consumer5<A, B, C, D, E>(
+        providers: [
+          ...multiProviderNodes,
+          Consumer5<A, B, C, D, E>(
             key: key,
             builder: (_, a, b, c, d, e, child) => Container(child: child),
-          )),
+          )
+        ],
         child: const Text('foo', textDirection: TextDirection.ltr),
       ));
 
@@ -277,8 +292,9 @@ void main() {
       final child = Container();
 
       await tester.pumpWidget(
-        provider.cloneWithChild(
-          Consumer6<A, B, C, D, E, F>(
+        MultiProvider(
+          providers: multiProviderNodes,
+          child: Consumer6<A, B, C, D, E, F>(
             key: key,
             builder: (context, value, v2, v3, v4, v5, v6, child) =>
                 mock(Combined(context, child, value, v2, v3, v4, v5, v6)),
@@ -300,11 +316,13 @@ void main() {
       final key = GlobalKey();
 
       await tester.pumpWidget(MultiProvider(
-        providers: List.from(provider.providers)
-          ..add(Consumer6<A, B, C, D, E, F>(
+        providers: [
+          ...multiProviderNodes,
+          Consumer6<A, B, C, D, E, F>(
             key: key,
             builder: (_, a, b, c, d, e, f, child) => Container(child: child),
-          )),
+          )
+        ],
         child: const Text('foo', textDirection: TextDirection.ltr),
       ));
 

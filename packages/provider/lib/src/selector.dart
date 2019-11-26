@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:nested/nested.dart';
 import 'package:provider/src/provider.dart';
 
 import 'consumer.dart';
@@ -24,19 +25,18 @@ import 'inherited_provider.dart';
 /// ```
 ///
 /// will still call `builder` again, even if `value` didn't change.
-class Selector0<T> extends StatefulWidget
-    implements SingleChildCloneableWidget {
+class Selector0<T> extends SingleChildStatefulWidget {
   /// Both `builder` and `selector` must not be `null`.
   Selector0({
     Key key,
     @required this.builder,
     @required this.selector,
-    this.child,
+    Widget child,
   })  : assert(builder != null),
         assert(selector != null),
-        super(key: key);
+        super(key: key, child: child);
 
-  /// A function that builds a widget tree from [child] and the last result of
+  /// A function that builds a widget tree from `child` and the last result of
   /// [selector].
   ///
   /// [builder] will be called again whenever the its parent widget asks for an
@@ -54,32 +54,17 @@ class Selector0<T> extends StatefulWidget
   /// Must not be `null`
   final Create<T> selector;
 
-  /// A cache of a widget tree that does not depend on the value of [selector].
-  ///
-  /// See [Consumer] for an explanation on how to use it.
-  final Widget child;
-
   @override
   _Selector0State<T> createState() => _Selector0State<T>();
-
-  @override
-  Selector0<T> cloneWithChild(Widget child) {
-    return Selector0(
-      key: key,
-      selector: selector,
-      builder: builder,
-      child: child,
-    );
-  }
 }
 
-class _Selector0State<T> extends State<Selector0<T>> {
+class _Selector0State<T> extends SingleChildState<Selector0<T>> {
   T value;
   Widget cache;
   Widget oldWidget;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     final selected = widget.selector(context);
 
     if (oldWidget != widget || selected != value) {
@@ -88,7 +73,7 @@ class _Selector0State<T> extends State<Selector0<T>> {
       cache = widget.builder(
         context,
         selected,
-        widget.child,
+        child,
       );
     }
     return cache;

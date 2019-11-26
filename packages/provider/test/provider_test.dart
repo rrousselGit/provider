@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' hide TypeMatcher;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -189,22 +188,7 @@ void main() {
         ),
       );
     });
-    test('cloneWithChild works', () {
-      final provider = Provider.value(
-        value: 42,
-        child: Container(),
-        key: const ValueKey(42),
-        updateShouldNotify: (int _, int __) => true,
-      );
 
-      final newChild = Container();
-      final clone = provider.cloneWithChild(newChild);
-      expect(clone.child, equals(newChild));
-      // ignore: invalid_use_of_protected_member
-      // expect(clone.delegate, equals(provider.delegate));
-      expect(clone.key, equals(provider.key));
-      expect(provider.updateShouldNotify, equals(clone.updateShouldNotify));
-    }, skip: true);
     testWidgets('simple usage', (tester) async {
       var buildCount = 0;
       int value;

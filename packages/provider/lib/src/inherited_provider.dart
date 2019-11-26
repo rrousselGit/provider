@@ -592,7 +592,7 @@ DeferredInheritedProvider(
   /// Update [value] and mark dependents as needing build.
   ///
   /// Contrarily to [markNeedsNotifyDependents], this method follows
-  /// [InheritedProvider.updateShouldNotify] and will not rebuild dependents if
+  /// `InheritedProvider.updateShouldNotify` and will not rebuild dependents if
   /// the new value is the same as the previous one.
   void setState(R value) {
     if (_setStateShouldNotify && _hasValue) {

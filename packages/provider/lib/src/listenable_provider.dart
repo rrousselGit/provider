@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nested/nested.dart';
 import 'package:provider/src/inherited_provider.dart';
 
 import 'change_notifier_provider.dart'
@@ -16,8 +17,8 @@ import 'proxy_provider.dart';
 /// You will generaly want to use [ChangeNotifierProvider] instead.
 /// But [ListenableProvider] is available in case you want to implement
 /// [Listenable] yourself, or use [Animation].
-class ListenableProvider<T extends Listenable> extends StatelessWidget
-    implements SingleChildCloneableWidget {
+class ListenableProvider<T extends Listenable>
+    extends SingleChildStatelessWidget {
   /// Creates a [Listenable] using [create] and subscribes to it.
   ///
   /// [dispose] can optionally passed to free resources
@@ -28,36 +29,24 @@ class ListenableProvider<T extends Listenable> extends StatelessWidget
     Key key,
     @required Create<T> create,
     Dispose<T> dispose,
-    this.child,
+    Widget child,
   })  : assert(create != null),
-        _debugCheckType = true,
         _create = create,
         _dispose = dispose,
         _value = null,
         updateShouldNotify = null,
-        super(key: key);
+        super(key: key, child: child);
 
   /// Provides an existing [Listenable].
   ListenableProvider.value({
     Key key,
     @required T value,
     this.updateShouldNotify,
-    this.child,
+    Widget child,
   })  : _value = value,
-        _debugCheckType = false,
         _dispose = null,
         _create = null,
-        super(key: key);
-
-  ListenableProvider._(
-    this._debugCheckType,
-    this._create,
-    this._dispose,
-    this._value, {
-    Key key,
-    this.updateShouldNotify,
-    this.child,
-  }) : super(key: key);
+        super(key: key, child: child);
 
   static VoidCallback _startListening(
     InheritedProviderElement<Listenable> e,
@@ -70,32 +59,12 @@ class ListenableProvider<T extends Listenable> extends StatelessWidget
   final Create<T> _create;
   final Dispose<T> _dispose;
   final T _value;
-  final bool _debugCheckType;
 
   /// User-provided custom logic for [InheritedWidget.updateShouldNotify].
   final UpdateShouldNotify<T> updateShouldNotify;
 
-  /// The widget that is below the current [ListenableProvider] widget in the
-  /// tree.
-  ///
-  /// {@macro flutter.widgets.child}
-  final Widget child;
-
   @override
-  ListenableProvider<T> cloneWithChild(Widget child) {
-    return ListenableProvider._(
-      _debugCheckType,
-      _create,
-      _dispose,
-      _value,
-      key: key,
-      updateShouldNotify: updateShouldNotify,
-      child: child,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     if (_create != null) {
       void Function(T value) checkType;
       assert(() {
@@ -148,8 +117,8 @@ ChangeNotifierProvider(
 }
 
 /// {@macro provider.listenableproxyprovider}
-class ListenableProxyProvider0<R extends Listenable> extends StatelessWidget
-    implements SingleChildCloneableWidget {
+class ListenableProxyProvider0<R extends Listenable>
+    extends SingleChildStatelessWidget {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider0({
     Key key,
@@ -163,29 +132,15 @@ class ListenableProxyProvider0<R extends Listenable> extends StatelessWidget
         _update = update,
         _dispose = dispose,
         _updateShouldNotify = updateShouldNotify,
-        _child = child,
-        super(key: key);
+        super(key: key, child: child);
 
-  final Widget _child;
   final R Function(BuildContext context, R previous) _update;
   final UpdateShouldNotify<R> _updateShouldNotify;
   final Dispose<R> _dispose;
   final Create<R> _create;
 
   @override
-  ListenableProxyProvider0<R> cloneWithChild(Widget child) {
-    return ListenableProxyProvider0(
-      key: key,
-      create: _create,
-      update: _update,
-      dispose: _dispose,
-      updateShouldNotify: _updateShouldNotify,
-      child: child,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     void Function(R value) checkType;
     assert(() {
       checkType = (value) {
@@ -203,7 +158,7 @@ class ListenableProxyProvider0<R extends Listenable> extends StatelessWidget
       startListening: ListenableProvider._startListening,
       debugCheckInvalidValueType: checkType,
       updateShouldNotify: _updateShouldNotify,
-      child: _child,
+      child: child,
     );
   }
 }

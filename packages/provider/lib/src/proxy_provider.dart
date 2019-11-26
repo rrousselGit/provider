@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import 'inherited_provider.dart';
@@ -42,8 +43,7 @@ typedef ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> = R Function(
 
 /// {@macro provider.proxyprovider}
 @visibleForTesting
-class ProxyProvider0<R> extends StatelessWidget
-    implements SingleChildCloneableWidget {
+class ProxyProvider0<R> extends SingleChildStatelessWidget {
   /// Initializes [key] for subclasses.
   ProxyProvider0({
     Key key,
@@ -57,17 +57,15 @@ class ProxyProvider0<R> extends StatelessWidget
         _create = create,
         _updateShouldNotify = updateShouldNotify,
         _dispose = dispose,
-        _child = child,
-        super(key: key);
+        super(key: key, child: child);
 
-  final Widget _child;
   final R Function(BuildContext context, R value) _update;
   final UpdateShouldNotify<R> _updateShouldNotify;
   final Create<R> _create;
   final Dispose<R> _dispose;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     void Function(R value) checkValue;
     assert(() {
       checkValue =
@@ -80,18 +78,6 @@ class ProxyProvider0<R> extends StatelessWidget
       dispose: _dispose,
       updateShouldNotify: _updateShouldNotify,
       debugCheckInvalidValueType: checkValue,
-      child: _child,
-    );
-  }
-
-  @override
-  ProxyProvider0<R> cloneWithChild(Widget child) {
-    return ProxyProvider0(
-      key: key,
-      create: _create,
-      update: _update,
-      updateShouldNotify: _updateShouldNotify,
-      dispose: _dispose,
       child: child,
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:nested/nested.dart';
 import 'provider.dart';
 import 'selector.dart' show Selector;
 
@@ -112,7 +113,7 @@ import 'selector.dart' show Selector;
 /// ```
 ///
 /// Using [Consumer], we can handle this kind of scenario using the optional
-/// [child] argument:
+/// `child` argument:
 ///
 /// ```dart
 ///  @override
@@ -153,20 +154,16 @@ import 'selector.dart' show Selector;
 /// See also:
 ///   * [Selector], a [Consumer] that can filter updates.
 /// {@endtemplate}
-class Consumer<T> extends StatelessWidget
-    implements SingleChildCloneableWidget {
+class Consumer<T> extends SingleChildStatelessWidget {
   /// {@template provider.consumer.constructor}
   /// Consumes a [Provider<T>]
   /// {@endtemplate}
   Consumer({
     Key key,
     @required this.builder,
-    this.child,
+    Widget child,
   })  : assert(builder != null),
-        super(key: key);
-
-  /// The child widget to pass to [builder].
-  final Widget child;
+        super(key: key, child: child);
 
   /// {@template provider.consumer.builder}
   /// Build a widget tree based on the value from a [Provider<T>].
@@ -176,44 +173,31 @@ class Consumer<T> extends StatelessWidget
   final Widget Function(BuildContext context, T value, Widget child) builder;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
       Provider.of<T>(context),
       child,
     );
   }
-
-  @override
-  Consumer<T> cloneWithChild(Widget child) {
-    return Consumer(
-      key: key,
-      builder: builder,
-      child: child,
-    );
-  }
 }
 
 /// {@macro provider.consumer}
-class Consumer2<A, B> extends StatelessWidget
-    implements SingleChildCloneableWidget {
+class Consumer2<A, B> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
   Consumer2({
     Key key,
     @required this.builder,
-    this.child,
+    Widget child,
   })  : assert(builder != null),
-        super(key: key);
-
-  /// The child widget to pass to [builder].
-  final Widget child;
+        super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
   final Widget Function(BuildContext context, A value, B value2, Widget child)
       builder;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
       Provider.of<A>(context),
@@ -221,37 +205,24 @@ class Consumer2<A, B> extends StatelessWidget
       child,
     );
   }
-
-  @override
-  Consumer2<A, B> cloneWithChild(Widget child) {
-    return Consumer2(
-      key: key,
-      builder: builder,
-      child: child,
-    );
-  }
 }
 
 /// {@macro provider.consumer}
-class Consumer3<A, B, C> extends StatelessWidget
-    implements SingleChildCloneableWidget {
+class Consumer3<A, B, C> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
   Consumer3({
     Key key,
     @required this.builder,
-    this.child,
+    Widget child,
   })  : assert(builder != null),
-        super(key: key);
-
-  /// The child widget to pass to [builder].
-  final Widget child;
+        super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
   final Widget Function(
       BuildContext context, A value, B value2, C value3, Widget child) builder;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
       Provider.of<A>(context),
@@ -260,36 +231,23 @@ class Consumer3<A, B, C> extends StatelessWidget
       child,
     );
   }
-
-  @override
-  Consumer3<A, B, C> cloneWithChild(Widget child) {
-    return Consumer3(
-      key: key,
-      builder: builder,
-      child: child,
-    );
-  }
 }
 
 /// {@macro provider.consumer}
-class Consumer4<A, B, C, D> extends StatelessWidget
-    implements SingleChildCloneableWidget {
+class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
   Consumer4({
     Key key,
     @required this.builder,
-    this.child,
+    Widget child,
   })  : assert(builder != null),
-        super(key: key);
-
-  /// The child widget to pass to [builder].
-  final Widget child;
+        super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
   final Widget Function(BuildContext context, A value, B value2, C value3,
       D value4, Widget child) builder;
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
       Provider.of<A>(context),
@@ -299,37 +257,24 @@ class Consumer4<A, B, C, D> extends StatelessWidget
       child,
     );
   }
-
-  @override
-  Consumer4<A, B, C, D> cloneWithChild(Widget child) {
-    return Consumer4(
-      key: key,
-      builder: builder,
-      child: child,
-    );
-  }
 }
 
 /// {@macro provider.consumer}
-class Consumer5<A, B, C, D, E> extends StatelessWidget
-    implements SingleChildCloneableWidget {
+class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
   Consumer5({
     Key key,
     @required this.builder,
-    this.child,
+    Widget child,
   })  : assert(builder != null),
-        super(key: key);
-
-  /// The child widget to pass to [builder].
-  final Widget child;
+        super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
   final Widget Function(BuildContext context, A value, B value2, C value3,
       D value4, E value5, Widget child) builder;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
       Provider.of<A>(context),
@@ -340,37 +285,24 @@ class Consumer5<A, B, C, D, E> extends StatelessWidget
       child,
     );
   }
-
-  @override
-  Consumer5<A, B, C, D, E> cloneWithChild(Widget child) {
-    return Consumer5(
-      key: key,
-      builder: builder,
-      child: child,
-    );
-  }
 }
 
 /// {@macro provider.consumer}
-class Consumer6<A, B, C, D, E, F> extends StatelessWidget
-    implements SingleChildCloneableWidget {
+class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
   Consumer6({
     Key key,
     @required this.builder,
-    this.child,
+    Widget child,
   })  : assert(builder != null),
-        super(key: key);
-
-  /// The child widget to pass to [builder].
-  final Widget child;
+        super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
   final Widget Function(BuildContext context, A value, B value2, C value3,
       D value4, E value5, F value6, Widget child) builder;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
       Provider.of<A>(context),
@@ -380,15 +312,6 @@ class Consumer6<A, B, C, D, E, F> extends StatelessWidget
       Provider.of<E>(context),
       Provider.of<F>(context),
       child,
-    );
-  }
-
-  @override
-  Consumer6<A, B, C, D, E, F> cloneWithChild(Widget child) {
-    return Consumer6(
-      key: key,
-      builder: builder,
-      child: child,
     );
   }
 }

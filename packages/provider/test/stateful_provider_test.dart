@@ -15,21 +15,6 @@ class Dispose extends Mock {
 }
 
 void main() {
-  test('cloneWithChild works', () {
-    final provider = Provider(
-      create: (_) => 42,
-      child: Container(),
-      key: const ValueKey(42),
-    );
-
-    final newChild = Container();
-    final clone = provider.cloneWithChild(newChild);
-    expect(clone.child, equals(newChild));
-    // ignore: invalid_use_of_protected_member
-    // expect(clone.delegate, equals(provider.delegate));
-    expect(clone.key, equals(provider.key));
-    expect(provider.updateShouldNotify, equals(clone.updateShouldNotify));
-  }, skip: true);
   test('asserts', () {
     expect(
       () => Provider<dynamic>(create: null, child: null),

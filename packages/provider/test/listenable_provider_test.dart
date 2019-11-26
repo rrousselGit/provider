@@ -35,33 +35,6 @@ void main() {
         expect(tester.takeException(), isAssertionError);
       },
     );
-    test('works with MultiProvider #2', () {
-      final provider = ListenableProvider.value(
-        key: const Key('42'),
-        value: ChangeNotifier(),
-        child: Container(),
-      );
-      var child2 = Container();
-      final clone = provider.cloneWithChild(child2);
-
-      expect(clone.child, equals(child2));
-      expect(clone.key, equals(provider.key));
-      // expect(clone.delegate, equals(provider.delegate));
-    }, skip: true);
-    test('works with MultiProvider #3', () {
-      final provider = ListenableProvider<ChangeNotifier>(
-        create: (_) => ChangeNotifier(),
-        dispose: (_, n) {},
-        child: Container(),
-        key: const Key('42'),
-      );
-      var child2 = Container();
-      final clone = provider.cloneWithChild(child2);
-
-      expect(clone.child, equals(child2));
-      expect(clone.key, equals(provider.key));
-      // expect(clone.delegate, equals(provider.delegate));
-    }, skip: true);
 
     group('value constructor', () {
       testWidgets('pass down key', (tester) async {
