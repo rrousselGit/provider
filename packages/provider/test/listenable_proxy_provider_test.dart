@@ -27,7 +27,7 @@ void main() {
   );
 
   group('ListenableProxyProvider', () {
-    test('throws if builder is missing', () {
+    test('throws if update is missing', () {
       expect(
         () => ListenableProxyProvider0<_ListenableCombined>(
           create: null,
@@ -160,7 +160,7 @@ void main() {
       expect(find.text('0'), findsNothing);
     });
     testWidgets(
-      'builder returning a new Listenable disposes the previously created value'
+      'update returning a new Listenable disposes the previously created value'
       ' and update dependents',
       (tester) async {
         final builder = MockConsumerBuilder<MockNotifier>();

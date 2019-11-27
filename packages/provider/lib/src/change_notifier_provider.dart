@@ -13,14 +13,14 @@ import 'proxy_provider.dart';
 /// ## Creating a [ChangeNotifier]:
 ///
 /// To create a value, use the default constructor. Creating the instance
-/// inside `build` using [ChangeNotifierProvider.value] will lead to memory
+/// inside `build` using `ChangeNotifierProvider.value` will lead to memory
 /// leaks and potentially undesired side-effects.
 ///
 /// See [this stackoverflow answer](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)
 /// which explains in further details why using the `.value` constructor to
 /// create values is undesired.
 ///
-/// - **DO** create a new [ChangeNotifier] inside `update`.
+/// - **DO** create a new [ChangeNotifier] inside `create`.
 ///
 /// ```dart
 /// ChangeNotifierProvider(
@@ -29,7 +29,7 @@ import 'proxy_provider.dart';
 /// )
 /// ```
 ///
-/// - **DON'T** use [ChangeNotifierProvider.value] to create your
+/// - **DON'T** use `ChangeNotifierProvider.value` to create your
 ///   [ChangeNotifier].
 ///
 /// ```dart

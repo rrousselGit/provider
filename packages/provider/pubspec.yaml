@@ -16,7 +16,6 @@ dependencies:
   nested: '>= 0.0.1 < 2.0.0'
 
 dev_dependencies:
-  pedantic: ^1.4.0
   mockito: ^4.0.0
   flutter_test:
     sdk: flutter

@@ -107,7 +107,7 @@ void main() {
 
       expect(Provider.of<ChangeNotifier>(key.currentContext), null);
     });
-    testWidgets('works with null (builder)', (tester) async {
+    testWidgets('works with null (create)', (tester) async {
       final key = GlobalKey();
       await tester.pumpWidget(ListenableProvider<ChangeNotifier>(
         create: (_) => null,
@@ -126,7 +126,7 @@ void main() {
         ));
         verify(builder(argThat(isNotNull))).called(1);
       });
-      test('throws if builder is null', () {
+      test('throws if create is null', () {
         expect(
           () => ListenableProvider(create: null),
           throwsAssertionError,
@@ -146,46 +146,46 @@ void main() {
         );
       });
     });
-    testWidgets('stateful builder called once', (tester) async {
+    testWidgets('stateful create called once', (tester) async {
       final listenable = MockNotifier();
       when(listenable.hasListeners).thenReturn(false);
-      final builder = InitialValueBuilderMock<Listenable>();
-      when(builder(any)).thenReturn(listenable);
+      final create = InitialValueBuilderMock<Listenable>();
+      when(create(any)).thenReturn(listenable);
 
       await tester.pumpWidget(ListenableProvider(
-        create: builder,
+        create: create,
         child: const TextOf<Listenable>(),
       ));
 
-      verify(builder(argThat(isNotNull))).called(1);
-      verifyNoMoreInteractions(builder);
+      verify(create(argThat(isNotNull))).called(1);
+      verifyNoMoreInteractions(create);
       clearInteractions(listenable);
 
       await tester.pumpWidget(ListenableProvider(
-        create: builder,
+        create: create,
         child: Container(),
       ));
 
-      verifyNoMoreInteractions(builder);
+      verifyNoMoreInteractions(create);
       verifyNoMoreInteractions(listenable);
     });
     testWidgets('dispose called on unmount', (tester) async {
       final listenable = MockNotifier();
       when(listenable.hasListeners).thenReturn(false);
-      final builder = InitialValueBuilderMock<Listenable>();
+      final create = InitialValueBuilderMock<Listenable>();
       final dispose = DisposeMock<Listenable>();
-      when(builder(any)).thenReturn(listenable);
+      when(create(any)).thenReturn(listenable);
 
       await tester.pumpWidget(ListenableProvider(
-        create: builder,
+        create: create,
         dispose: dispose,
         child: const TextOf<Listenable>(),
       ));
 
       final context = findElementOfWidget<InheritedProvider<Listenable>>();
 
-      verify(builder(context)).called(1);
-      verifyNoMoreInteractions(builder);
+      verify(create(context)).called(1);
+      verifyNoMoreInteractions(create);
       final listener = verify(listenable.addListener(captureAny)).captured.first
           as VoidCallback;
       clearInteractions(listenable);
@@ -196,7 +196,7 @@ void main() {
         listenable.removeListener(listener),
         dispose(context, listenable),
       ]);
-      verifyNoMoreInteractions(builder);
+      verifyNoMoreInteractions(create);
       verifyNoMoreInteractions(listenable);
     });
     testWidgets('dispose can be null', (tester) async {

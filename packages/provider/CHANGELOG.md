@@ -14,6 +14,12 @@
 - renamed `builder` of `*Provider` to `create`
 - added a `*ProxyProvider0` variant
 
+# 3.2.0
+
+- Deprecated "builder" of providers in favor to "create"
+- Deprecated "builder"/"initialBuilder" of proxy providers in favor of respectively
+  "create" and "update"
+
 # 3.1.0
 
 - Added `Selector`, similar to `Consumer` but can filter unneeded updates

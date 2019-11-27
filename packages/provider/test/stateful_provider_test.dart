@@ -24,19 +24,19 @@ void main() {
     Provider<dynamic>(create: (_) => null, child: null);
   });
 
-  testWidgets('calls builder only once', (tester) async {
-    final builder = ValueBuilder();
+  testWidgets('calls create only once', (tester) async {
+    final create = ValueBuilder();
     await tester.pumpWidget(Provider<int>(
-      create: builder,
+      create: create,
       child: const TextOf<int>(),
     ));
     await tester.pumpWidget(Provider<int>(
-      create: builder,
+      create: create,
       child: const TextOf<int>(),
     ));
     await tester.pumpWidget(Container());
 
-    verify(builder(any)).called(1);
+    verify(create(any)).called(1);
   });
 
   testWidgets('dispose', (tester) async {
