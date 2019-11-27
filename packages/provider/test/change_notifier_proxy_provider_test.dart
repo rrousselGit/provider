@@ -28,11 +28,11 @@ void main() {
   );
 
   group('ChangeNotifierProxyProvider', () {
-    test('throws if builder is missing', () {
+    test('throws if update is missing', () {
       expect(
         () => ChangeNotifierProxyProvider<A, _ListenableCombined>(
-          initialBuilder: null,
-          builder: null,
+          create: null,
+          update: null,
         ),
         throwsAssertionError,
       );
@@ -44,8 +44,8 @@ void main() {
           providers: [
             Provider.value(value: 0),
             ChangeNotifierProxyProvider<int, ChangeNotifier>(
-              initialBuilder: (_) => null,
-              builder: (_, __, value) => value,
+              create: (_) => null,
+              update: (_, __, value) => value,
             )
           ],
           child: Container(),
@@ -63,8 +63,8 @@ void main() {
           providers: [
             Provider.value(value: 0),
             ChangeNotifierProxyProvider<int, ValueNotifier<int>>(
-              initialBuilder: (_) => notifier,
-              builder: (_, count, value) => value..value = count,
+              create: (_) => notifier,
+              update: (_, count, value) => value..value = count,
             )
           ],
           child: Consumer<ValueNotifier<int>>(builder: (_, value, __) {
@@ -96,8 +96,8 @@ void main() {
             Provider.value(value: 0),
             ChangeNotifierProxyProvider<int, MockNotifier>(
               key: key,
-              initialBuilder: (_) => notifier,
-              builder: (_, count, value) => value,
+              create: (_) => notifier,
+              update: (_, count, value) => value,
             )
           ],
           child: Container(),
@@ -124,8 +124,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ChangeNotifierProxyProvider2<A, B, _ListenableCombined>(
-              initialBuilder: (_) => _ListenableCombined(null, null, null),
-              builder: (context, a, b, previous) =>
+              create: (_) => _ListenableCombined(null, null, null),
+              update: (context, a, b, previous) =>
                   _ListenableCombined(context, previous, a, b),
             )
           ],
@@ -153,8 +153,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ChangeNotifierProxyProvider3<A, B, C, _ListenableCombined>(
-              initialBuilder: (_) => _ListenableCombined(null, null, null),
-              builder: (context, a, b, c, previous) =>
+              create: (_) => _ListenableCombined(null, null, null),
+              update: (context, a, b, c, previous) =>
                   _ListenableCombined(context, previous, a, b, c),
             )
           ],
@@ -182,8 +182,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ChangeNotifierProxyProvider4<A, B, C, D, _ListenableCombined>(
-              initialBuilder: (_) => _ListenableCombined(null, null, null),
-              builder: (context, a, b, c, d, previous) =>
+              create: (_) => _ListenableCombined(null, null, null),
+              update: (context, a, b, c, d, previous) =>
                   _ListenableCombined(context, previous, a, b, c, d),
             )
           ],
@@ -211,8 +211,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ChangeNotifierProxyProvider5<A, B, C, D, E, _ListenableCombined>(
-              initialBuilder: (_) => _ListenableCombined(null, null, null),
-              builder: (context, a, b, c, d, e, previous) =>
+              create: (_) => _ListenableCombined(null, null, null),
+              update: (context, a, b, c, d, e, previous) =>
                   _ListenableCombined(context, previous, a, b, c, d, e),
             )
           ],
@@ -240,8 +240,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ChangeNotifierProxyProvider6<A, B, C, D, E, F, _ListenableCombined>(
-              initialBuilder: (_) => _ListenableCombined(null, null, null),
-              builder: (context, a, b, c, d, e, f, previous) =>
+              create: (_) => _ListenableCombined(null, null, null),
+              update: (context, a, b, c, d, e, f, previous) =>
                   _ListenableCombined(context, previous, a, b, c, d, e, f),
             )
           ],

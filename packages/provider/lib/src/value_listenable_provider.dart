@@ -8,10 +8,10 @@ import 'provider.dart';
 /// Listens to a [ValueListenable] and expose its current value.
 class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
     implements SingleChildCloneableWidget {
-  /// Creates a [ValueNotifier] using [builder] and automatically dispose it
+  /// Creates a [ValueNotifier] using `create` and automatically dispose it
   /// when [ValueListenableProvider] is removed from the tree.
   ///
-  /// [builder] must not be `null`.
+  /// `create` must not be `null`.
   ///
   /// {@macro provider.updateshouldnotify}
   ///
@@ -22,13 +22,16 @@ class ValueListenableProvider<T> extends ValueDelegateWidget<ValueListenable<T>>
   /// kind of [Listenable].
   ValueListenableProvider({
     Key key,
-    @required ValueBuilder<ValueNotifier<T>> builder,
+    @Deprecated('Will be removed as part of 4.0.0, use update instead')
+        ValueBuilder<ValueNotifier<T>> builder,
+    @required ValueBuilder<ValueNotifier<T>> create,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
   }) : this._(
           key: key,
           delegate: BuilderStateDelegate<ValueNotifier<T>>(
-            builder,
+            // ignore: deprecated_member_use_from_same_package
+            create ?? builder,
             dispose: _dispose,
           ),
           updateShouldNotify: updateShouldNotify,

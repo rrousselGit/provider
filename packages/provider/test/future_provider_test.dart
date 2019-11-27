@@ -188,7 +188,7 @@ Exception:
     });
     test('works with MultiProvider #3', () {
       final provider = FutureProvider<int>(
-        builder: (_) => Future<int>.value(),
+        create: (_) => Future<int>.value(),
         initialData: 42,
         child: Container(),
         catchError: (_, __) => 42,
@@ -217,9 +217,9 @@ Exception:
     });
 
     group('stateful constructor', () {
-      test('crashes if builder is null', () {
+      test('crashes if create is null', () {
         expect(
-          () => FutureProvider<int>(builder: null),
+          () => FutureProvider<int>(create: null),
           throwsAssertionError,
         );
       });
@@ -227,7 +227,7 @@ Exception:
       testWidgets('works with null', (tester) async {
         final key = GlobalKey();
         await tester.pumpWidget(FutureProvider<int>(
-          builder: (_) => null,
+          create: (_) => null,
           child: Container(key: key),
         ));
 
@@ -236,30 +236,30 @@ Exception:
         await tester.pumpWidget(Container());
       });
 
-      testWidgets('create future with builder', (tester) async {
+      testWidgets('create future with create', (tester) async {
         final completer = Completer<int>();
 
-        final builder = ValueBuilderMock<Future<int>>();
-        when(builder(any)).thenAnswer((_) => completer.future);
+        final create = ValueBuilderMock<Future<int>>();
+        when(create(any)).thenAnswer((_) => completer.future);
 
         await tester.pumpWidget(FutureProvider<int>(
-          builder: builder,
+          create: create,
           child: Container(),
         ));
 
         final context = findElementOfWidget<FutureProvider<int>>();
 
-        verify(builder(context)).called(1);
+        verify(create(context)).called(1);
 
-        // extra build to see if builder isn't called again
+        // extra build to see if create isn't called again
         await tester.pumpWidget(FutureProvider<int>(
-          builder: builder,
+          create: create,
           child: Container(),
         ));
 
         await tester.pumpWidget(Container());
 
-        verifyNoMoreInteractions(builder);
+        verifyNoMoreInteractions(create);
       });
 
       testWidgets('pass updateShouldNotify', (tester) async {
@@ -268,7 +268,7 @@ Exception:
 
         var completer = Completer<int>();
         await tester.pumpWidget(FutureProvider<int>(
-          builder: (_) => completer.future,
+          create: (_) => completer.future,
           updateShouldNotify: shouldNotify,
           child: Container(),
         ));
@@ -285,7 +285,7 @@ Exception:
 
       testWidgets(
           // ignore: lines_longer_than_80_chars
-          'Changing from default to stateful constructor calls stateful builder',
+          'Changing from default to stateful constructor calls stateful create',
           (tester) async {
         final key = GlobalKey();
         final completer = Completer<int>();
@@ -295,7 +295,7 @@ Exception:
         ));
 
         await tester.pumpWidget(FutureProvider<int>(
-          builder: (_) => Future.value(42),
+          create: (_) => Future.value(42),
           child: Container(key: key),
         ));
 
@@ -308,7 +308,7 @@ Exception:
       testWidgets('Changing from stateful to default constructor',
           (tester) async {
         await tester.pumpWidget(FutureProvider<int>(
-          builder: (_) => Future.value(0),
+          create: (_) => Future.value(0),
           child: Container(),
         ));
 

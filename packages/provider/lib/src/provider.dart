@@ -170,7 +170,7 @@ class MultiProvider extends StatelessWidget
 ///   @override
 ///   Widget build(BuildContext context) {
 ///     return Provider<Model>(
-///       builder: (context) =>  Model(),
+///       create: (context) =>  Model(),
 ///       dispose: (context, value) => value.dispose(),
 ///       child: ...,
 ///     );
@@ -212,12 +212,16 @@ class Provider<T> extends ValueDelegateWidget<T>
   ///
   Provider({
     Key key,
-    @required ValueBuilder<T> builder,
+    @Deprecated('Will be removed as part of 4.0.0, use create instead')
+        ValueBuilder<T> builder,
+    @required ValueBuilder<T> create,
     Disposer<T> dispose,
     Widget child,
   }) : this._(
           key: key,
-          delegate: BuilderStateDelegate<T>(builder, dispose: dispose),
+          delegate:
+              // ignore: deprecated_member_use_from_same_package
+              BuilderStateDelegate<T>(create ?? builder, dispose: dispose),
           updateShouldNotify: null,
           child: child,
         );

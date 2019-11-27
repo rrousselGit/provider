@@ -18,20 +18,24 @@ import 'proxy_provider.dart';
 /// [Listenable] yourself, or use [Animation].
 class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
     implements SingleChildCloneableWidget {
-  /// Creates a [Listenable] using [builder] and subscribes to it.
+  /// Creates a [Listenable] using `create` and subscribes to it.
   ///
   /// [dispose] can optionally passed to free resources
   /// when [ListenableProvider] is removed from the tree.
   ///
-  /// [builder] must not be `null`.
+  /// `create` must not be `null`.
   ListenableProvider({
     Key key,
-    @required ValueBuilder<T> builder,
+    @required ValueBuilder<T> create,
+    @Deprecated('Will be removed as part of 4.0.0, use create instead')
+        ValueBuilder<T> builder,
     Disposer<T> dispose,
     Widget child,
   }) : this._(
           key: key,
-          delegate: _BuilderListenableDelegate(builder, dispose: dispose),
+          delegate:
+              // ignore: deprecated_member_use_from_same_package
+              _BuilderListenableDelegate(create ?? builder, dispose: dispose),
           child: child,
         );
 
@@ -116,8 +120,8 @@ class _ValueListenableDelegate<T extends Listenable>
 
 class _BuilderListenableDelegate<T extends Listenable>
     extends BuilderStateDelegate<T> with _ListenableDelegateMixin<T> {
-  _BuilderListenableDelegate(ValueBuilder<T> builder, {Disposer<T> dispose})
-      : super(builder, dispose: dispose);
+  _BuilderListenableDelegate(ValueBuilder<T> create, {Disposer<T> dispose})
+      : super(create, dispose: dispose);
 
   @override
   void startListening(T listenable, {bool rebuild = false}) {
@@ -151,7 +155,7 @@ ChangeNotifierProvider.value(
 
 MyChangeNotifier variable;
 ChangeNotifierProvider(
-  builder: (_) => variable,
+  create: (_) => variable,
   child: ...
 )
 ''');
@@ -221,7 +225,7 @@ class _NumericProxyProvider<T, T2, T3, T4, T5, T6, R extends Listenable>
   })  : assert(builder != null),
         super(
           key: key,
-          initialBuilder: initialBuilder,
+          create: initialBuilder,
           dispose: dispose,
         );
 
@@ -291,14 +295,20 @@ class ListenableProxyProvider<T, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder<T, R> builder,
+    @required ValueBuilder<R> create,
+    @required ProxyProviderBuilder<T, R> update,
+    @Deprecated('will be removed in 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    @Deprecated('will be removed in 4.0.0, use update instead')
+        ProxyProviderBuilder<T, R> builder,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          initialBuilder: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          builder: update ?? builder,
           dispose: dispose,
           child: child,
         );
@@ -314,14 +324,20 @@ class ListenableProxyProvider2<T, T2, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider2({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder2<T, T2, R> builder,
+    @required ValueBuilder<R> create,
+    @required ProxyProviderBuilder2<T, T2, R> update,
+    @Deprecated('will be removed in 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    @Deprecated('will be removed in 4.0.0, use update instead')
+        ProxyProviderBuilder2<T, T2, R> builder,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          initialBuilder: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          builder: update ?? builder,
           dispose: dispose,
           child: child,
         );
@@ -337,14 +353,20 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider3({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder3<T, T2, T3, R> builder,
+    @required ValueBuilder<R> create,
+    @required ProxyProviderBuilder3<T, T2, T3, R> update,
+    @Deprecated('will be removed in 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    @Deprecated('will be removed in 4.0.0, use update instead')
+        ProxyProviderBuilder3<T, T2, T3, R> builder,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          initialBuilder: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          builder: update ?? builder,
           dispose: dispose,
           child: child,
         );
@@ -360,14 +382,20 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider4({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
+    @required ValueBuilder<R> create,
+    @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
+    @Deprecated('will be removed in 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    @Deprecated('will be removed in 4.0.0, use update instead')
+        ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          initialBuilder: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          builder: update ?? builder,
           dispose: dispose,
           child: child,
         );
@@ -383,14 +411,20 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider5({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
+    @required ValueBuilder<R> create,
+    @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
+    @Deprecated('will be removed in 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    @Deprecated('will be removed in 4.0.0, use update instead')
+        ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          initialBuilder: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          builder: update ?? builder,
           dispose: dispose,
           child: child,
         );
@@ -406,14 +440,20 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider6({
     Key key,
-    @required ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
+    @required ValueBuilder<R> create,
+    @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
+    @Deprecated('will be removed in 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    @Deprecated('will be removed in 4.0.0, use update instead')
+        ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          initialBuilder: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          builder: update ?? builder,
           dispose: dispose,
           child: child,
         );

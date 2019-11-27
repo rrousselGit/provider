@@ -55,13 +55,13 @@ ChangeNotifierProvider.value(value: myNotifier),
 Before:
 
 ```dart
-StreamProvider(builder: (_) => StreamController<int>()),
+StreamProvider(create: (_) => StreamController<int>()),
 ```
 
 After:
 
 ```dart
-StreamProvider.controller(builder: (_) => StreamController<int>()),
+StreamProvider.controller(create: (_) => StreamController<int>()),
 ```
 
 ## Usage
@@ -96,7 +96,7 @@ will be disposed.
 
 ```dart
 Provider<MyComplexClass>(
-  builder: (context) => MyComplexClass(),
+  create: (context) => MyComplexClass(),
   dispose: (context, value) => value.dispose()
   child: SomeWidget(),
 )
@@ -141,12 +141,12 @@ When injecting many values in big applications, `Provider` can rapidly become
 pretty nested:
 
 ```dart
-Provider<Foo>.value(
-  value: foo,
-  child: Provider<Bar>.value(
-    value: bar,
-    child: Provider<Baz>.value(
-      value: baz,
+Provider<Foo>(
+  create: (_) => Foo(),
+  child: Provider<Bar>(
+    create: (_) => Bar(),
+    child: Provider<Baz>(
+      create: (_) => Baz(),
       child: someWidget,
     )
   )
@@ -158,9 +158,9 @@ In that situation, we can use `MultiProvider` to improve the readability:
 ```dart
 MultiProvider(
   providers: [
-    Provider<Foo>.value(value: foo),
-    Provider<Bar>.value(value: bar),
-    Provider<Baz>.value(value: baz),
+    Provider<Foo>(create: (_) => Foo()),
+    Provider<Bar>(create: (_) => Bar()),
+    Provider<Baz>(create: (_) => Baz()),
   ],
   child: someWidget,
 )
@@ -186,9 +186,9 @@ counter coming from another provider.
 Widget build(BuildContext context) {
   return MultiProvider(
     providers: [
-      ChangeNotifierProvider(builder: (_) => Counter()),
+      ChangeNotifierProvider(create: (_) => Counter()),
       ProxyProvider<Counter, Translations>(
-        builder: (_, counter, __) => Translations(counter.value),
+        create: (_, counter, __) => Translations(counter.value),
       ),
     ],
     child: Foo(),
@@ -288,7 +288,7 @@ This could cause inconsistencies in your UI and is therefore not allowed.
 Instead, you should perform that mutation in a place that would affect the
 entire tree equally:
 
-- directly inside the `builder` of your provider/constructor of your model:
+- directly inside the `create` of your provider/constructor of your model:
   ```dart
   class MyNotifier with ChangeNotifier {
     MyNotifier() {
@@ -428,9 +428,9 @@ Instead of:
 
 ```dart
 Provider<String>(
-  builder: (_) => 'England',
+  create: (_) => 'England',
   child: Provider<String>(
-    builder: (_) => 'London',
+    create: (_) => 'London',
     child: ...,
   ),
 ),
@@ -440,9 +440,9 @@ Prefer:
 
 ```dart
 Provider<Country>(
-  builder: (_) => Country('England'),
+  create: (_) => Country('England'),
   child: Provider<City>(
-    builder: (_) => City('London'),
+    create: (_) => City('London'),
     child: ...,
   ),
 ),
