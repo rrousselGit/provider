@@ -1,6 +1,6 @@
 name: provider
 description: A mixture between dependency injection and state management, built with widgets for widgets.
-version: 3.1.0+1
+version: 3.2.0
 homepage: https://github.com/rrousselGit/provider
 authors:
   - Remi Rousselet <darky12s@gmail.com>
@@ -14,7 +14,6 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
-  pedantic: ^1.4.0
   mockito: ^4.0.0
   flutter_test:
     sdk: flutter

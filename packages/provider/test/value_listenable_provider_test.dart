@@ -10,11 +10,11 @@ class ValueNotifierMock<T> extends Mock implements ValueNotifier<T> {}
 void main() {
   group('valueListenableProvider', () {
     testWidgets(
-        'disposing ValueListenableProvider on a builder constructor disposes of'
+        'disposing ValueListenableProvider on a create constructor disposes of'
         'the ValueNotifier', (tester) async {
       final mock = ValueNotifierMock<int>();
       await tester.pumpWidget(ValueListenableProvider<int>(
-        builder: (_) => mock,
+        create: (_) => mock,
         child: Container(),
       ));
 
@@ -145,7 +145,7 @@ void main() {
     });
     test('works with MultiProvider #3', () {
       final provider = ValueListenableProvider<int>(
-        builder: (_) => ValueNotifier<int>(42),
+        create: (_) => ValueNotifier<int>(42),
         child: Container(),
         key: const Key('42'),
       );

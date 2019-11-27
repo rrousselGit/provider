@@ -56,7 +56,7 @@ void main() {
           providers: [
             Provider.value(value: a),
             ProxyProvider<A, MyListenable>(
-              builder: (_, __, ___) => MyListenable(),
+              update: (_, __, ___) => MyListenable(),
             )
           ],
           child: Container(),
@@ -70,7 +70,7 @@ void main() {
           providers: [
             Provider.value(value: a),
             ProxyProvider<A, MyStream>(
-              builder: (_, __, ___) => MyStream(),
+              update: (_, __, ___) => MyStream(),
             )
           ],
           child: Container(),
@@ -89,7 +89,7 @@ void main() {
           providers: [
             Provider.value(value: a),
             ProxyProvider<A, MyListenable>(
-              builder: (_, __, ___) => MyListenable(),
+              update: (_, __, ___) => MyListenable(),
             )
           ],
           child: Container(),
@@ -101,7 +101,7 @@ void main() {
           providers: [
             Provider.value(value: a),
             ProxyProvider<A, MyStream>(
-              builder: (_, __, ___) => MyStream(),
+              update: (_, __, ___) => MyStream(),
             )
           ],
           child: Container(),
@@ -109,11 +109,11 @@ void main() {
       );
     });
 
-    testWidgets('initialBuilder creates initial value', (tester) async {
-      final initialBuilder = ValueBuilderMock<Combined>();
+    testWidgets('create creates initial value', (tester) async {
+      final create = ValueBuilderMock<Combined>();
       final key = GlobalKey();
 
-      when(initialBuilder(any)).thenReturn(Combined(null, null, null));
+      when(create(any)).thenReturn(Combined(null, null, null));
 
       await tester.pumpWidget(
         MultiProvider(
@@ -121,15 +121,15 @@ void main() {
             Provider.value(value: a),
             ProxyProvider<A, Combined>(
               key: key,
-              initialBuilder: initialBuilder,
-              builder: combiner,
+              create: create,
+              update: combiner,
             )
           ],
           child: mockConsumer,
         ),
       );
 
-      final details = verify(initialBuilder(captureAny))..called(1);
+      final details = verify(create(captureAny))..called(1);
       expect(details.captured.first, equals(key.currentContext));
 
       verify(combiner(key.currentContext, a, Combined(null, null, null)));
@@ -140,7 +140,7 @@ void main() {
           providers: [
             Provider.value(value: a),
             ProxyProvider<A, Combined>(
-              builder: combiner,
+              update: combiner,
             )
           ],
           child: mockConsumer,
@@ -156,10 +156,10 @@ void main() {
       verifyNoMoreInteractions(combiner);
     });
 
-    test('throws if builder is null', () {
+    test('throws if update is null', () {
       // ignore: prefer_const_constructors
-      expect(() => ProxyProvider<A, Combined>(builder: null),
-          throwsAssertionError);
+      expect(
+          () => ProxyProvider<A, Combined>(update: null), throwsAssertionError);
     });
 
     testWidgets('rebuild descendants if value change', (tester) async {
@@ -168,7 +168,7 @@ void main() {
           providers: [
             Provider.value(value: a),
             ProxyProvider<A, Combined>(
-              builder: combiner,
+              update: combiner,
             )
           ],
           child: mockConsumer,
@@ -182,7 +182,7 @@ void main() {
           providers: [
             Provider.value(value: a2),
             ProxyProvider<A, Combined>(
-              builder: combiner,
+              update: combiner,
             )
           ],
           child: mockConsumer,
@@ -209,7 +209,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: a),
-            ProxyProvider<A, Combined>(builder: combiner, dispose: dispose)
+            ProxyProvider<A, Combined>(update: combiner, dispose: dispose)
           ],
           child: mockConsumer,
         ),
@@ -222,7 +222,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: a2),
-            ProxyProvider<A, Combined>(builder: combiner, dispose: dispose2)
+            ProxyProvider<A, Combined>(update: combiner, dispose: dispose2)
           ],
           child: mockConsumer,
         ),
@@ -243,7 +243,7 @@ void main() {
           providers: [
             Provider.value(value: a),
             ProxyProvider<A, Combined>(
-              builder: (c, a, p) => combiner(c, a, null),
+              update: (c, a, p) => combiner(c, a, null),
             )
           ],
           child: mockConsumer,
@@ -258,7 +258,7 @@ void main() {
               updateShouldNotify: (A _, A __) => true,
             ),
             ProxyProvider<A, Combined>(
-              builder: (c, a, p) {
+              update: (c, a, p) {
                 combiner(c, a, p);
                 return p;
               },
@@ -298,7 +298,7 @@ void main() {
           Provider<String>.value(
               value: 'Hello', updateShouldNotify: (_, __) => true),
           ProxyProvider<String, String>(
-            builder: (_, value, __) => value,
+            update: (_, value, __) => value,
             updateShouldNotify: shouldNotify,
           ),
         ],
@@ -310,7 +310,7 @@ void main() {
           Provider<String>.value(
               value: 'Hello', updateShouldNotify: (_, __) => true),
           ProxyProvider<String, String>(
-            builder: (_, value, __) => value,
+            update: (_, value, __) => value,
             updateShouldNotify: shouldNotify,
           ),
         ],
@@ -329,7 +329,7 @@ void main() {
       await tester.pumpWidget(MultiProvider(
         providers: [
           Provider.value(value: a),
-          ProxyProvider<A, Combined>(builder: (c, a, p) => Combined(c, p, a)),
+          ProxyProvider<A, Combined>(update: (c, a, p) => Combined(c, p, a)),
         ],
         child: Container(key: key),
       ));
@@ -343,8 +343,8 @@ void main() {
     test('works with MultiProvider #2', () {
       final provider = ProxyProvider<A, B>(
         key: const Key('42'),
-        initialBuilder: (_) => null,
-        builder: (_, __, ___) => null,
+        create: (_) => null,
+        update: (_, __, ___) => null,
         updateShouldNotify: (_, __) => null,
         dispose: (_, __) {},
         child: Container(),
@@ -364,7 +364,7 @@ void main() {
     // useful for libraries such as Mobx where events are synchronously
     // dispatched
     testWidgets(
-        'builder callback can trigger descendants setState synchronously',
+        'update callback can trigger descendants setState synchronously',
         (tester) async {
       var statefulBuildCount = 0;
       void Function(VoidCallback) setState;
@@ -378,7 +378,7 @@ void main() {
       await tester.pumpWidget(MultiProvider(
         providers: [
           Provider.value(value: a),
-          ProxyProvider<A, Combined>(builder: (c, a, p) => Combined(c, p, a)),
+          ProxyProvider<A, Combined>(update: (c, a, p) => Combined(c, p, a)),
         ],
         child: statefulBuilder,
       ));
@@ -386,7 +386,7 @@ void main() {
       await tester.pumpWidget(MultiProvider(
         providers: [
           Provider.value(value: A()),
-          ProxyProvider<A, Combined>(builder: (c, a, p) {
+          ProxyProvider<A, Combined>(update: (c, a, p) {
             setState(() {});
             return Combined(c, p, a);
           }),
@@ -397,7 +397,7 @@ void main() {
       expect(
         statefulBuildCount,
         2,
-        reason: 'builder must not be called asynchronously',
+        reason: 'update must not be called asynchronously',
       );
     });
   });
@@ -418,8 +418,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider2<A, B, Combined>(
-              initialBuilder: (_) => Combined(null, null, null),
-              builder: (context, a, b, previous) =>
+              create: (_) => Combined(null, null, null),
+              update: (context, a, b, previous) =>
                   Combined(context, previous, a, b),
             )
           ],
@@ -447,8 +447,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider3<A, B, C, Combined>(
-              initialBuilder: (_) => Combined(null, null, null),
-              builder: (context, a, b, c, previous) =>
+              create: (_) => Combined(null, null, null),
+              update: (context, a, b, c, previous) =>
                   Combined(context, previous, a, b, c),
             )
           ],
@@ -476,8 +476,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider4<A, B, C, D, Combined>(
-              initialBuilder: (_) => Combined(null, null, null),
-              builder: (context, a, b, c, d, previous) =>
+              create: (_) => Combined(null, null, null),
+              update: (context, a, b, c, d, previous) =>
                   Combined(context, previous, a, b, c, d),
             )
           ],
@@ -505,8 +505,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider5<A, B, C, D, E, Combined>(
-              initialBuilder: (_) => Combined(null, null, null),
-              builder: (context, a, b, c, d, e, previous) =>
+              create: (_) => Combined(null, null, null),
+              update: (context, a, b, c, d, e, previous) =>
                   Combined(context, previous, a, b, c, d, e),
             )
           ],
@@ -533,8 +533,8 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider6<A, B, C, D, E, F, Combined>(
-              initialBuilder: (_) => Combined(null, null, null),
-              builder: (context, a, b, c, d, e, f, previous) =>
+              create: (_) => Combined(null, null, null),
+              update: (context, a, b, c, d, e, f, previous) =>
                   Combined(context, previous, a, b, c, d, e, f),
             )
           ],

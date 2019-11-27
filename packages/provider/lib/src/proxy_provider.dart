@@ -110,12 +110,17 @@ abstract class Void {}
 ///
 /// See [ProxyProvider] for a concrete implementation.
 abstract class ProxyProviderBase<R> extends ProxyProviderWidget {
-  /// Initializes [key], [initialBuilder] and [dispose] for subclasses.
+  /// Initializes [key], [create] and [dispose] for subclasses.
   ProxyProviderBase({
     Key key,
-    this.initialBuilder,
+    @Deprecated('Will be removed as part of 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    @required ValueBuilder<R> create,
     this.dispose,
-  }) : super(key: key);
+  })  : initialBuilder = create ??
+            // ignore: deprecated_member_use_from_same_package
+            initialBuilder,
+        super(key: key);
 
   /// Builds the initial value passed as `previous` to [didChangeDependencies].
   ///
@@ -181,15 +186,23 @@ class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
   // ignore: public_member_api_docs
   NumericProxyProvider({
     Key key,
-    ValueBuilder<R> initialBuilder,
-    @required this.builder,
+    @Deprecated('Will be removed as part of 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    ValueBuilder<R> create,
+    @Deprecated('Will be removed as part of 4.0.0, use update instead')
+        Function builder,
+    @required Function update,
     this.updateShouldNotify,
     Disposer<R> dispose,
     this.child,
-  })  : assert(builder != null),
+    // ignore: deprecated_member_use_from_same_package
+  })  : assert(builder != null || update != null),
+        // ignore: deprecated_member_use_from_same_package
+        builder = update ?? builder,
         super(
           key: key,
-          initialBuilder: initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          create: create ?? initialBuilder,
           dispose: dispose,
         );
 
@@ -218,8 +231,8 @@ class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
   NumericProxyProvider<T, T2, T3, T4, T5, T6, R> cloneWithChild(Widget child) {
     return NumericProxyProvider(
       key: key,
-      initialBuilder: initialBuilder,
-      builder: builder,
+      create: initialBuilder,
+      update: builder,
       updateShouldNotify: updateShouldNotify,
       dispose: dispose,
       child: child,
@@ -260,27 +273,27 @@ class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
 /// {@template provider.proxyprovider}
 /// A provider that builds a value based on other providers.
 ///
-/// The exposed value is built through [builder], and then passed to
+/// The exposed value is built through `create`/`update`, and then passed to
 /// [InheritedProvider].
 ///
-/// As opposed to the `builder` parameter of [Provider], [builder] may be called
+/// As opposed to the `create` parameter of [Provider], `update` may be called
 /// more than once. It will be called once when the widget is mounted, then once
 /// whenever any of the [InheritedWidget] which [ProxyProvider] depends emits an
 /// update.
 ///
 /// [ProxyProvider] comes in different variants such as [ProxyProvider2].  This
-/// only changes the [builder] function, such that it takes a different number
-/// of arguments.  The `2` in [ProxyProvider2] means that [builder] builds its
+/// only changes the `update` function, such that it takes a different number
+/// of arguments.  The `2` in [ProxyProvider2] means that `update` builds its
 /// value from **2** other providers.
 ///
-/// All variations of [builder] will receive the [BuildContext] as first
+/// All variations of `update` will receive the [BuildContext] as first
 /// parameter, and the previously built value as last parameter.
 ///
 /// This previously built value will be `null` by default, unless
-/// [initialBuilder] is specified – in which case, it will be the value returned
-/// by [initialBuilder].
+/// `create` is specified – in which case, it will be the value returned
+/// by `create`.
 ///
-/// [builder] must not be `null`.
+/// `update` must not be `null`.
 ///
 /// ## Note:
 ///
@@ -291,7 +304,7 @@ class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
 ///
 /// ```dart
 /// ProxyProvider<Foo, Baz>(
-///   builder: (context, foo, baz) {
+///   update: (context, foo, baz) {
 ///     final bar = Provider.of<Bar>(context);
 ///   },
 ///   child: ...,
@@ -303,7 +316,7 @@ class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
 ///
 /// ```dart
 /// ProxyProvider<Foo, Baz>(
-///   builder: (context, foo, _) {
+///   update: (context, foo, _) {
 ///     final mediaQuery = MediaQuery.of(context);
 ///     return Baz(mediaQuery.size);
 ///   },
@@ -324,15 +337,21 @@ class ProxyProvider<T, R>
   /// Initializes [key] for subclasses.
   ProxyProvider({
     Key key,
-    ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder<T, R> builder,
+    @Deprecated('Will be removed as part of 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    ValueBuilder<R> create,
+    @Deprecated('Will be removed as part of 4.0.0, use update instead')
+        ProxyProviderBuilder<T, R> builder,
+    @required ProxyProviderBuilder<T, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          create: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          update: update ?? builder,
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
@@ -349,15 +368,21 @@ class ProxyProvider2<T, T2, R>
   /// Initializes [key] for subclasses.
   ProxyProvider2({
     Key key,
-    ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder2<T, T2, R> builder,
+    @Deprecated('Will be removed as part of 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    ValueBuilder<R> create,
+    @Deprecated('Will be removed as part of 4.0.0, use update instead')
+        ProxyProviderBuilder2<T, T2, R> builder,
+    @required ProxyProviderBuilder2<T, T2, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          create: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          update: update ?? builder,
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
@@ -374,15 +399,21 @@ class ProxyProvider3<T, T2, T3, R>
   /// Initializes [key] for subclasses.
   ProxyProvider3({
     Key key,
-    ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder3<T, T2, T3, R> builder,
+    @Deprecated('Will be removed as part of 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    ValueBuilder<R> create,
+    @Deprecated('Will be removed as part of 4.0.0, use update instead')
+        ProxyProviderBuilder3<T, T2, T3, R> builder,
+    @required ProxyProviderBuilder3<T, T2, T3, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          create: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          update: update ?? builder,
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
@@ -399,15 +430,21 @@ class ProxyProvider4<T, T2, T3, T4, R>
   /// Initializes [key] for subclasses.
   ProxyProvider4({
     Key key,
-    ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
+    @Deprecated('Will be removed as part of 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    ValueBuilder<R> create,
+    @Deprecated('Will be removed as part of 4.0.0, use update instead')
+        ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
+    @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          create: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          update: update ?? builder,
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
@@ -424,15 +461,21 @@ class ProxyProvider5<T, T2, T3, T4, T5, R>
   /// Initializes [key] for subclasses.
   ProxyProvider5({
     Key key,
-    ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
+    @Deprecated('Will be removed as part of 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    ValueBuilder<R> create,
+    @Deprecated('Will be removed as part of 4.0.0, use update instead')
+        ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
+    @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          create: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          update: update ?? builder,
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
@@ -449,15 +492,21 @@ class ProxyProvider6<T, T2, T3, T4, T5, T6, R>
   /// Initializes [key] for subclasses.
   ProxyProvider6({
     Key key,
-    ValueBuilder<R> initialBuilder,
-    @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
+    @Deprecated('Will be removed as part of 4.0.0, use create instead')
+        ValueBuilder<R> initialBuilder,
+    ValueBuilder<R> create,
+    @Deprecated('Will be removed as part of 4.0.0, use update instead')
+        ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
+    @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Disposer<R> dispose,
     Widget child,
   }) : super(
           key: key,
-          initialBuilder: initialBuilder,
-          builder: builder,
+          // ignore: deprecated_member_use_from_same_package
+          create: create ?? initialBuilder,
+          // ignore: deprecated_member_use_from_same_package
+          update: update ?? builder,
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,

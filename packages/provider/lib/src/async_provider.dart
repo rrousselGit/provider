@@ -40,41 +40,47 @@ typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 ///   * [StreamController], to create a [Stream]
 class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
     implements SingleChildCloneableWidget {
-  /// Creates a [Stream] from [builder] and subscribes to it.
+  /// Creates a [Stream] from [create] and subscribes to it.
   ///
-  /// The parameter [builder] must not be `null`.
+  /// The parameter [create] must not be `null`.
   StreamProvider({
     Key key,
-    @required ValueBuilder<Stream<T>> builder,
+    @required ValueBuilder<Stream<T>> create,
+    @Deprecated('will be removed in 4.0.0, use create instead')
+        ValueBuilder<Stream<T>> builder,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
   }) : this._(
           key: key,
-          delegate: BuilderStateDelegate<Stream<T>>(builder),
+          // ignore: deprecated_member_use_from_same_package
+          delegate: BuilderStateDelegate<Stream<T>>(create ?? builder),
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
           child: child,
         );
 
-  /// Creates a [StreamController] from [builder] and subscribes to its stream.
+  /// Creates a [StreamController] from [create] and subscribes to its stream.
   ///
   /// [StreamProvider] will automatically call [StreamController.close] when the
   /// widget is removed from the tree.
   ///
-  /// The parameter [builder] must not be `null`.
+  /// The parameter [create] must not be `null`.
   StreamProvider.controller({
     Key key,
-    @required ValueBuilder<StreamController<T>> builder,
+    @required ValueBuilder<StreamController<T>> create,
+    @Deprecated('will be removed in 4.0.0, use create instead')
+        ValueBuilder<StreamController<T>> builder,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
   }) : this._(
           key: key,
-          delegate: _StreamControllerBuilderDelegate(builder),
+          // ignore: deprecated_member_use_from_same_package
+          delegate: _StreamControllerBuilderDelegate(create ?? builder),
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
@@ -176,10 +182,10 @@ ${snapshot.error}
 
 class _StreamControllerBuilderDelegate<T>
     extends ValueStateDelegate<Stream<T>> {
-  _StreamControllerBuilderDelegate(this._builder) : assert(_builder != null);
+  _StreamControllerBuilderDelegate(this._create) : assert(_create != null);
 
   StreamController<T> _controller;
-  final ValueBuilder<StreamController<T>> _builder;
+  final ValueBuilder<StreamController<T>> _create;
 
   @override
   Stream<T> value;
@@ -187,7 +193,7 @@ class _StreamControllerBuilderDelegate<T>
   @override
   void initDelegate() {
     super.initDelegate();
-    _controller = _builder(context);
+    _controller = _create(context);
     value = _controller?.stream;
   }
 
@@ -217,12 +223,14 @@ class _StreamControllerBuilderDelegate<T>
 ///   * [Future], which is listened by [FutureProvider].
 class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
     implements SingleChildCloneableWidget {
-  /// Creates a [Future] from [builder] and subscribes to it.
+  /// Creates a [Future] from [create] and subscribes to it.
   ///
-  /// [builder] must not be `null`.
+  /// [create] must not be `null`.
   FutureProvider({
     Key key,
-    @required ValueBuilder<Future<T>> builder,
+    @required ValueBuilder<Future<T>> create,
+    @Deprecated('will be removed in 4.0.0, use create instead')
+        ValueBuilder<Future<T>> builder,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
@@ -232,7 +240,8 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
           initialData: initialData,
           catchError: catchError,
           updateShouldNotify: updateShouldNotify,
-          delegate: BuilderStateDelegate(builder),
+          // ignore: deprecated_member_use_from_same_package
+          delegate: BuilderStateDelegate(create ?? builder),
           child: child,
         );
 

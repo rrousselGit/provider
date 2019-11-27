@@ -24,7 +24,7 @@ import 'selector.dart' show Selector;
 /// @override
 /// Widget build(BuildContext context) {
 ///   return ChangeNotifierProvider(
-///     builder: (_) => Foo(),
+///     create: (_) => Foo(),
 ///     child: Text(Provider.of<Foo>(context).value),
 ///   );
 /// }
@@ -42,7 +42,7 @@ import 'selector.dart' show Selector;
 /// @override
 /// Widget build(BuildContext context) {
 ///   return ChangeNotifierProvider(
-///     builder: (_) => Foo(),
+///     create: (_) => Foo(),
 ///     child: Consumer<Foo>(
 ///       builder: (_, foo, __) => Text(foo.value),
 ///     },
@@ -141,7 +141,7 @@ import 'selector.dart' show Selector;
 /// ```dart
 /// MultiProvider(
 ///   providers: [
-///     Provider(builder: (_) => Foo()),
+///     Provider(create: (_) => Foo()),
 ///     Consumer<Foo>(
 ///       builder: (context, foo, child) =>
 ///         Provider.value(value: foo.bar, child: child),

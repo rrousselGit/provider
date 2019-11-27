@@ -25,7 +25,7 @@ void main() {
 
       await tester.pumpWidget(StreamProvider(
         key: providerKey,
-        builder: (c) {
+        create: (c) {
           context = c;
           return controller.stream;
         },
@@ -218,7 +218,7 @@ Exception:
     });
     test('works with MultiProvider #3', () {
       final provider = StreamProvider<int>.controller(
-        builder: (_) => StreamController<int>(),
+        create: (_) => StreamController<int>(),
         initialData: 42,
         child: Container(),
         catchError: (_, __) => 42,
@@ -247,9 +247,9 @@ Exception:
     });
 
     group('stateful constructor', () {
-      test('crashes if builder is null', () {
+      test('crashes if create is null', () {
         expect(
-          () => StreamProvider<int>.controller(builder: null),
+          () => StreamProvider<int>.controller(create: null),
           throwsAssertionError,
         );
       });
@@ -257,7 +257,7 @@ Exception:
       testWidgets('works with null', (tester) async {
         final key = GlobalKey();
         await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: (_) => null,
+          create: (_) => null,
           child: Container(key: key),
         ));
 
@@ -266,33 +266,33 @@ Exception:
         await tester.pumpWidget(Container());
       });
 
-      testWidgets('create and dispose stream with builder', (tester) async {
+      testWidgets('create and dispose stream with create', (tester) async {
         final realController = StreamController<int>();
         final controller = MockStreamController<int>();
         when(controller.stream).thenAnswer((_) => realController.stream);
 
-        final builder = ValueBuilderMock<StreamController<int>>();
-        when(builder(any)).thenReturn(controller);
+        final create = ValueBuilderMock<StreamController<int>>();
+        when(create(any)).thenReturn(controller);
 
         await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: builder,
+          create: create,
           child: Container(),
         ));
 
         final context = findElementOfWidget<StreamProvider<int>>();
 
-        verify(builder(context)).called(1);
+        verify(create(context)).called(1);
         clearInteractions(controller);
 
-        // extra build to see if builder isn't called again
+        // extra build to see if create isn't called again
         await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: builder,
+          create: create,
           child: Container(),
         ));
 
         await tester.pumpWidget(Container());
 
-        verifyNoMoreInteractions(builder);
+        verifyNoMoreInteractions(create);
         verify(controller.close());
       });
 
@@ -302,7 +302,7 @@ Exception:
 
         var controller = StreamController<int>();
         await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: (_) => controller,
+          create: (_) => controller,
           updateShouldNotify: shouldNotify,
           child: Container(),
         ));
@@ -319,7 +319,7 @@ Exception:
 
       testWidgets(
           // ignore: lines_longer_than_80_chars
-          'Changing from default to stateful constructor calls stateful builder',
+          'Changing from default to stateful constructor calls stateful create',
           (tester) async {
         final key = GlobalKey();
         final controller = StreamController<int>();
@@ -335,7 +335,7 @@ Exception:
         realController2.add(42);
 
         await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: (_) => controller2,
+          create: (_) => controller2,
           child: Container(key: key),
         ));
 
@@ -358,7 +358,7 @@ Exception:
         final key = GlobalKey();
 
         await tester.pumpWidget(StreamProvider<int>.controller(
-          builder: (_) => controller,
+          create: (_) => controller,
           child: Container(),
         ));
 
