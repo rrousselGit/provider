@@ -12,6 +12,25 @@ class ErrorBuilderMock<T> extends Mock {
 }
 
 void main() {
+  testWidgets('works with MultiProvider', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          FutureProvider.value(
+            initialData: 0,
+            value: Future.value(42),
+          ),
+        ],
+        child: const TextOf<int>(),
+      ),
+    );
+
+    expect(find.text('0'), findsOneWidget);
+
+    await Future.microtask(tester.pump);
+
+    expect(find.text('42'), findsOneWidget);
+  });
   testWidgets(
     '(catchError) previous future completes after transition is no-op',
     (tester) async {
@@ -130,10 +149,12 @@ void main() {
       (tester) async {
     final controller = Completer<int>();
 
-    await tester.pumpWidget(FutureProvider.value(
-      value: controller.future,
-      child: const TextOf<int>(),
-    ));
+    await tester.pumpWidget(
+      FutureProvider.value(
+        value: controller.future,
+        child: const TextOf<int>(),
+      ),
+    );
 
     controller.completeError(42);
     await Future.microtask(tester.pump);
@@ -154,11 +175,13 @@ Exception:
     final catchError = ErrorBuilderMock<int>();
     when(catchError(any, 42)).thenReturn(42);
 
-    await tester.pumpWidget(FutureProvider.value(
-      value: controller.future,
-      catchError: catchError,
-      child: const TextOf<int>(),
-    ));
+    await tester.pumpWidget(
+      FutureProvider.value(
+        value: controller.future,
+        catchError: catchError,
+        child: const TextOf<int>(),
+      ),
+    );
 
     expect(find.text('null'), findsOneWidget);
 

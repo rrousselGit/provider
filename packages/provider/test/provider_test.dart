@@ -8,6 +8,20 @@ import 'common.dart';
 
 void main() {
   group('Provider.of', () {
+    testWidgets('works with MultiProvider', (tester) async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(
+              value: 42,
+            ),
+          ],
+          child: const TextOf<int>(),
+        ),
+      );
+
+      expect(find.text('42'), findsOneWidget);
+    });
     testWidgets(
       'listen defaults to true when building widgets',
       (tester) async {

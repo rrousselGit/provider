@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nested/nested.dart';
 
 import 'inherited_provider.dart';
 import 'listenable_provider.dart' show ListenableProvider;
 
 /// Listens to a [ValueListenable] and expose its current value.
-class ValueListenableProvider<T> extends StatelessWidget {
+class ValueListenableProvider<T> extends SingleChildStatelessWidget {
   /// Creates a [ValueNotifier] using [create] and automatically dispose it
   /// when [ValueListenableProvider] is removed from the tree.
   ///
@@ -23,11 +24,10 @@ class ValueListenableProvider<T> extends StatelessWidget {
     @required Create<ValueNotifier<T>> create,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
-  })  : _child = child,
-        _updateShouldNotify = updateShouldNotify,
+  })  : _updateShouldNotify = updateShouldNotify,
         _create = create,
         _value = null,
-        super(key: key);
+        super(key: key, child: child);
 
   /// Listens to [value] and exposes its current value.
   ///
@@ -51,8 +51,7 @@ class ValueListenableProvider<T> extends StatelessWidget {
   })  : _value = value,
         _updateShouldNotify = updateShouldNotify,
         _create = null,
-        _child = child,
-        super(key: key);
+        super(key: key, child: child);
 
   static void _dispose(BuildContext context, ValueListenable<Object> notifier) {
     if (notifier is ValueNotifier) {
@@ -60,13 +59,12 @@ class ValueListenableProvider<T> extends StatelessWidget {
     }
   }
 
-  final Widget _child;
   final UpdateShouldNotify<T> _updateShouldNotify;
   final ValueListenable<T> _value;
   final Create<ValueListenable<T>> _create;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return autoDeferred<ValueListenable<T>, T>(
       // TODO: conisider a ValueDelegate & CreateDelegate.
       // The issue being, InheritedProvider wouldn't have these delegates
@@ -84,7 +82,7 @@ class ValueListenableProvider<T> extends StatelessWidget {
         return () => controller.removeListener(listener);
       },
       updateShouldNotify: _updateShouldNotify,
-      child: _child,
+      child: child,
     );
   }
 }

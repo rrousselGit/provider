@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:nested/nested.dart';
 
 import 'inherited_provider.dart';
 
@@ -36,7 +37,7 @@ typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 ///
 ///   * [Stream], which is listened by [StreamProvider].
 ///   * [StreamController], to create a [Stream].
-class StreamProvider<T> extends StatelessWidget {
+class StreamProvider<T> extends SingleChildStatelessWidget {
   /// Creates a [Stream] using `create` and subscribes to it.
   ///
   /// The parameter `create` must not be `null`.
@@ -52,9 +53,8 @@ class StreamProvider<T> extends StatelessWidget {
         _value = null,
         _catchError = catchError,
         _updateShouldNotify = updateShouldNotify,
-        _child = child,
         _create = create,
-        super(key: key);
+        super(key: key, child: child);
 
   /// Listens to `value` and expose it to all of [StreamProvider] descendants.
   StreamProvider.value({
@@ -68,11 +68,12 @@ class StreamProvider<T> extends StatelessWidget {
         _value = value,
         _catchError = catchError,
         _updateShouldNotify = updateShouldNotify,
-        _child = child,
         _create = null,
-        super(key: key);
+        super(key: key, child: child);
 
-  final Widget _child;
+  // TODO: .controller
+  // TODO: add builder parameter
+
   final UpdateShouldNotify<T> _updateShouldNotify;
   final Stream<T> _value;
   final Create<Stream<T>> _create;
@@ -88,7 +89,7 @@ class StreamProvider<T> extends StatelessWidget {
   final ErrorBuilder<T> _catchError;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return autoDeferred<Stream<T>, T>(
       // valid because _value and _create will never be both not null together
       value: _value,
@@ -125,7 +126,7 @@ $error
         return sub.cancel;
       },
       updateShouldNotify: _updateShouldNotify,
-      child: _child,
+      child: child,
     );
   }
 }
@@ -140,7 +141,7 @@ $error
 /// See also:
 ///
 ///   * [Future], which is listened by [FutureProvider].
-class FutureProvider<T> extends StatelessWidget {
+class FutureProvider<T> extends SingleChildStatelessWidget {
   /// Creates a [Future] from `create` and subscribes to it.
   ///
   /// `create` must not be `null`.
@@ -156,9 +157,8 @@ class FutureProvider<T> extends StatelessWidget {
         _value = null,
         _catchError = catchError,
         _updateShouldNotify = updateShouldNotify,
-        _child = child,
         _create = create,
-        super(key: key);
+        super(key: key, child: child);
 
   /// Listens to `value` and expose it to all of [FutureProvider] descendants.
   FutureProvider.value({
@@ -172,11 +172,9 @@ class FutureProvider<T> extends StatelessWidget {
         _value = value,
         _catchError = catchError,
         _updateShouldNotify = updateShouldNotify,
-        _child = child,
         _create = null,
-        super(key: key);
+        super(key: key, child: child);
 
-  final Widget _child;
   final UpdateShouldNotify<T> _updateShouldNotify;
   final Future<T> _value;
   final Create<Future<T>> _create;
@@ -192,7 +190,7 @@ class FutureProvider<T> extends StatelessWidget {
   final ErrorBuilder<T> _catchError;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     return autoDeferred<Future<T>, T>(
       // valid because _value and _create will never be both not null together
       value: _value,
@@ -232,7 +230,7 @@ $error
         return () => canceled = true;
       },
       updateShouldNotify: _updateShouldNotify,
-      child: _child,
+      child: child,
     );
   }
 }

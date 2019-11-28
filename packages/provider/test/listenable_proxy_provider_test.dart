@@ -83,17 +83,19 @@ void main() {
       (tester) async {
         final notifier = ValueNotifier(0)..addListener(() {});
 
-        await tester.pumpWidget(MultiProvider(
-          providers: [
-            Provider.value(value: 0),
-            ListenableProxyProvider<int, ValueNotifier<int>>(
-              create: null,
-              update: (_, __, ___) => notifier,
-              dispose: (_, __) {},
-            )
-          ],
-          child: const TextOf<ValueNotifier<int>>(),
-        ));
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              Provider.value(value: 0),
+              ListenableProxyProvider<int, ValueNotifier<int>>(
+                create: null,
+                update: (_, __, ___) => notifier,
+                dispose: (_, __) {},
+              )
+            ],
+            child: const TextOf<ValueNotifier<int>>(),
+          ),
+        );
 
         expect(tester.takeException(), isAssertionError);
       },
@@ -101,30 +103,34 @@ void main() {
     testWidgets(
       'asserts that the created notifier has no listener after rebuild',
       (tester) async {
-        await tester.pumpWidget(MultiProvider(
-          providers: [
-            Provider.value(value: 0),
-            ListenableProxyProvider<int, ValueNotifier<int>>(
-              create: null,
-              update: (_, __, ___) => ValueNotifier(0),
-              dispose: (_, __) {},
-            )
-          ],
-          child: const TextOf<ValueNotifier<int>>(),
-        ));
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              Provider.value(value: 0),
+              ListenableProxyProvider<int, ValueNotifier<int>>(
+                create: null,
+                update: (_, __, ___) => ValueNotifier(0),
+                dispose: (_, __) {},
+              )
+            ],
+            child: const TextOf<ValueNotifier<int>>(),
+          ),
+        );
 
         final notifier = ValueNotifier(0)..addListener(() {});
-        await tester.pumpWidget(MultiProvider(
-          providers: [
-            Provider.value(value: 1),
-            ListenableProxyProvider<int, ValueNotifier<int>>(
-              create: null,
-              update: (_, __, ___) => notifier,
-              dispose: (_, __) {},
-            )
-          ],
-          child: const TextOf<ValueNotifier<int>>(),
-        ));
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              Provider.value(value: 1),
+              ListenableProxyProvider<int, ValueNotifier<int>>(
+                create: null,
+                update: (_, __, ___) => notifier,
+                dispose: (_, __) {},
+              )
+            ],
+            child: const TextOf<ValueNotifier<int>>(),
+          ),
+        );
 
         expect(tester.takeException(), isAssertionError);
       },

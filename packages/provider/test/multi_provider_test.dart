@@ -41,17 +41,23 @@ void main() {
       expect(
         () => Provider.of<int>(k1.currentContext),
         throwsProviderNotFound(
-            valueType: int, widgetType: _typeOf<Provider<int>>()),
+          valueType: int,
+          widgetType: _typeOf<Provider<int>>(),
+        ),
       );
       expect(
         () => Provider.of<String>(k1.currentContext),
         throwsProviderNotFound(
-            valueType: String, widgetType: _typeOf<Provider<int>>()),
+          valueType: String,
+          widgetType: _typeOf<Provider<int>>(),
+        ),
       );
       expect(
         () => Provider.of<double>(k1.currentContext),
         throwsProviderNotFound(
-            valueType: double, widgetType: _typeOf<Provider<int>>()),
+          valueType: double,
+          widgetType: _typeOf<Provider<int>>(),
+        ),
       );
 
       // p2 can access only p1
@@ -59,12 +65,16 @@ void main() {
       expect(
         () => Provider.of<String>(k2.currentContext),
         throwsProviderNotFound(
-            valueType: String, widgetType: _typeOf<Provider<String>>()),
+          valueType: String,
+          widgetType: _typeOf<Provider<String>>(),
+        ),
       );
       expect(
         () => Provider.of<double>(k2.currentContext),
         throwsProviderNotFound(
-            valueType: double, widgetType: _typeOf<Provider<String>>()),
+          valueType: double,
+          widgetType: _typeOf<Provider<String>>(),
+        ),
       );
 
       // p3 can access both p1 and p2
@@ -73,7 +83,9 @@ void main() {
       expect(
         () => Provider.of<double>(k3.currentContext),
         throwsProviderNotFound(
-            valueType: double, widgetType: _typeOf<Provider<double>>()),
+          valueType: double,
+          widgetType: _typeOf<Provider<double>>(),
+        ),
       );
 
       // the child can access them all

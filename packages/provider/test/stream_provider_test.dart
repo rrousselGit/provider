@@ -12,6 +12,26 @@ class ErrorBuilderMock<T> extends Mock {
 }
 
 void main() {
+  testWidgets('works with MultiProvider', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          StreamProvider(
+            initialData: 0,
+            create: (_) => Stream.value(42),
+          ),
+        ],
+        child: const TextOf<int>(),
+      ),
+    );
+
+    expect(find.text('0'), findsOneWidget);
+
+    await Future.microtask(tester.pump);
+
+    expect(find.text('42'), findsOneWidget);
+  });
+
   testWidgets(
     'transition from stream to stream preserve state',
     (tester) async {

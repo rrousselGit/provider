@@ -89,16 +89,18 @@ void main() {
     testWidgets('can be used inside MultiProvider', (tester) async {
       final key = GlobalKey();
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ...multiProviderNodes,
-          Consumer<A>(
-            key: key,
-            builder: (_, a, child) => Container(child: child),
-          )
-        ],
-        child: const Text('foo', textDirection: TextDirection.ltr),
-      ));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ...multiProviderNodes,
+            Consumer<A>(
+              key: key,
+              builder: (_, a, child) => Container(child: child),
+            )
+          ],
+          child: const Text('foo', textDirection: TextDirection.ltr),
+        ),
+      );
 
       expect(find.text('foo'), findsOneWidget);
       expect(find.byType(Container), findsOneWidget);
@@ -135,16 +137,18 @@ void main() {
     testWidgets('can be used inside MultiProvider', (tester) async {
       final key = GlobalKey();
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ...multiProviderNodes,
-          Consumer2<A, B>(
-            key: key,
-            builder: (_, a, b, child) => Container(child: child),
-          )
-        ],
-        child: const Text('foo', textDirection: TextDirection.ltr),
-      ));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ...multiProviderNodes,
+            Consumer2<A, B>(
+              key: key,
+              builder: (_, a, b, child) => Container(child: child),
+            )
+          ],
+          child: const Text('foo', textDirection: TextDirection.ltr),
+        ),
+      );
 
       expect(find.text('foo'), findsOneWidget);
       expect(find.byType(Container), findsOneWidget);
@@ -180,16 +184,18 @@ void main() {
     testWidgets('can be used inside MultiProvider', (tester) async {
       final key = GlobalKey();
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ...multiProviderNodes,
-          Consumer3<A, B, C>(
-            key: key,
-            builder: (_, a, b, c, child) => Container(child: child),
-          )
-        ],
-        child: const Text('foo', textDirection: TextDirection.ltr),
-      ));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ...multiProviderNodes,
+            Consumer3<A, B, C>(
+              key: key,
+              builder: (_, a, b, c, child) => Container(child: child),
+            )
+          ],
+          child: const Text('foo', textDirection: TextDirection.ltr),
+        ),
+      );
 
       expect(find.text('foo'), findsOneWidget);
       expect(find.byType(Container), findsOneWidget);
@@ -225,16 +231,18 @@ void main() {
     testWidgets('can be used inside MultiProvider', (tester) async {
       final key = GlobalKey();
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ...multiProviderNodes,
-          Consumer4<A, B, C, D>(
-            key: key,
-            builder: (_, a, b, c, d, child) => Container(child: child),
-          )
-        ],
-        child: const Text('foo', textDirection: TextDirection.ltr),
-      ));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ...multiProviderNodes,
+            Consumer4<A, B, C, D>(
+              key: key,
+              builder: (_, a, b, c, d, child) => Container(child: child),
+            )
+          ],
+          child: const Text('foo', textDirection: TextDirection.ltr),
+        ),
+      );
 
       expect(find.text('foo'), findsOneWidget);
       expect(find.byType(Container), findsOneWidget);
@@ -270,16 +278,18 @@ void main() {
     testWidgets('can be used inside MultiProvider', (tester) async {
       final key = GlobalKey();
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ...multiProviderNodes,
-          Consumer5<A, B, C, D, E>(
-            key: key,
-            builder: (_, a, b, c, d, e, child) => Container(child: child),
-          )
-        ],
-        child: const Text('foo', textDirection: TextDirection.ltr),
-      ));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ...multiProviderNodes,
+            Consumer5<A, B, C, D, E>(
+              key: key,
+              builder: (_, a, b, c, d, e, child) => Container(child: child),
+            )
+          ],
+          child: const Text('foo', textDirection: TextDirection.ltr),
+        ),
+      );
 
       expect(find.text('foo'), findsOneWidget);
       expect(find.byType(Container), findsOneWidget);
@@ -315,16 +325,18 @@ void main() {
     testWidgets('can be used inside MultiProvider', (tester) async {
       final key = GlobalKey();
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ...multiProviderNodes,
-          Consumer6<A, B, C, D, E, F>(
-            key: key,
-            builder: (_, a, b, c, d, e, f, child) => Container(child: child),
-          )
-        ],
-        child: const Text('foo', textDirection: TextDirection.ltr),
-      ));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ...multiProviderNodes,
+            Consumer6<A, B, C, D, E, F>(
+              key: key,
+              builder: (_, a, b, c, d, e, f, child) => Container(child: child),
+            )
+          ],
+          child: const Text('foo', textDirection: TextDirection.ltr),
+        ),
+      );
 
       expect(find.text('foo'), findsOneWidget);
       expect(find.byType(Container), findsOneWidget);

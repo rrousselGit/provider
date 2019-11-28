@@ -15,6 +15,20 @@ class Dispose extends Mock {
 }
 
 void main() {
+  testWidgets('works with MultiProvider', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider(
+            create: (_) => 42,
+          ),
+        ],
+        child: const TextOf<int>(),
+      ),
+    );
+
+    expect(find.text('42'), findsOneWidget);
+  });
   test('asserts', () {
     expect(
       () => Provider<dynamic>(create: null, child: null),
