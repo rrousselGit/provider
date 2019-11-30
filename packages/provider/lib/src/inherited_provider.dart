@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
@@ -370,6 +371,32 @@ class _CreateInheritedProviderElement<T> extends InheritedProviderElement<T> {
     _previousWidget = widget;
     return super.build();
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    if (_didInitValue) {
+      properties
+        ..add(DiagnosticsProperty('value', value))
+        ..add(
+          FlagProperty(
+            null,
+            value: _removeListener != null,
+            defaultValue: false,
+            ifTrue: 'listening to value',
+          ),
+        );
+    } else {
+      properties.add(
+        FlagProperty(
+          'value',
+          value: true,
+          showName: true,
+          ifTrue: '<not yet loaded>',
+        ),
+      );
+    }
+  }
 }
 
 class _ValueInheritedProvider<T> extends InheritedProvider<T> {
@@ -396,6 +423,12 @@ class _ValueInheritedProvider<T> extends InheritedProvider<T> {
   @override
   _ValueInheritedProviderElement<T> createElement() =>
       _ValueInheritedProviderElement<T>(this);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('value', value));
+  }
 }
 
 class _ValueInheritedProviderElement<T> extends InheritedProviderElement<T> {
@@ -438,6 +471,19 @@ class _ValueInheritedProviderElement<T> extends InheritedProviderElement<T> {
   void unmount() {
     super.unmount();
     _removeListener?.call();
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(
+      FlagProperty(
+        null,
+        value: _removeListener != null,
+        defaultValue: false,
+        ifTrue: 'listening to value',
+      ),
+    );
   }
 }
 
@@ -668,6 +714,34 @@ class _CreateDeferredInheritedProviderElement<T, R>
       widget.dispose?.call(this, _controller);
     }
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    if (_removeListener != null) {
+      properties
+        ..add(DiagnosticsProperty('controller', controller))
+        ..add(DiagnosticsProperty('value', value));
+    } else {
+      properties
+        ..add(
+          FlagProperty(
+            'controller',
+            value: true,
+            showName: true,
+            ifTrue: '<not yet loaded>',
+          ),
+        )
+        ..add(
+          FlagProperty(
+            'value',
+            value: true,
+            showName: true,
+            ifTrue: '<not yet loaded>',
+          ),
+        );
+    }
+  }
 }
 
 class _ValueDeferredInheritedProvider<T, R>
@@ -690,6 +764,12 @@ class _ValueDeferredInheritedProvider<T, R>
   @override
   _ValueDeferredInheritedProviderElement<T, R> createElement() =>
       _ValueDeferredInheritedProviderElement(this);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('controller', value));
+  }
 }
 
 class _ValueDeferredInheritedProviderElement<T, R>
@@ -715,4 +795,21 @@ class _ValueDeferredInheritedProviderElement<T, R>
 
   @override
   T get controller => widget.value;
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    if (_removeListener != null) {
+      properties.add(DiagnosticsProperty('value', value));
+    } else {
+      properties.add(
+        FlagProperty(
+          'value',
+          value: true,
+          showName: true,
+          ifTrue: '<not yet loaded>',
+        ),
+      );
+    }
+  }
 }

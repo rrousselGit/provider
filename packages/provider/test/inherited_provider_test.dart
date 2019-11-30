@@ -18,6 +18,139 @@ BuildContext get context => find.byType(Context).evaluate().single;
 T of<T>([BuildContext c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
+  group('diagnostics', () {
+    testWidgets('InheritedProvider.value', (tester) async {
+      await tester.pumpWidget(
+        InheritedProvider<int>.value(
+          value: 42,
+          startListening: (_, __) => throw Error(),
+          child: Container(),
+        ),
+      );
+
+      final rootElement = tester.allElements.first;
+
+      expect(
+        rootElement.toString(),
+        contains('InheritedProvider<int>(value: 42)'),
+      );
+
+      await tester.pumpWidget(
+        InheritedProvider<int>.value(
+          value: 42,
+          startListening: (_, __) => () {},
+          child: const TextOf<int>(),
+        ),
+      );
+
+      expect(
+        rootElement.toString(),
+        contains('InheritedProvider<int>(value: 42, listening to value)'),
+      );
+    });
+    testWidgets("InheritedProvider doesn't break lazy loading", (tester) async {
+      await tester.pumpWidget(
+        InheritedProvider<int>(
+          create: (_) => 42,
+          child: Container(),
+        ),
+      );
+
+      final rootElement = tester.allElements.first;
+
+      expect(
+        rootElement.toString(),
+        contains('InheritedProvider<int>(value: <not yet loaded>)'),
+      );
+
+      Provider.of<int>(tester.element(find.byType(Container)));
+
+      expect(
+        rootElement.toString(),
+        contains('InheritedProvider<int>(value: 42)'),
+      );
+    });
+    testWidgets('InheritedProvider show if listening', (tester) async {
+      await tester.pumpWidget(
+        InheritedProvider<int>(
+          create: (_) => 24,
+          startListening: (_, __) => () {},
+          child: Container(),
+        ),
+      );
+
+      final rootElement = tester.allElements.first;
+
+      expect(
+        rootElement.toString(),
+        contains('InheritedProvider<int>(value: <not yet loaded>)'),
+      );
+
+      Provider.of<int>(tester.element(find.byType(Container)));
+
+      expect(
+        rootElement.toString(),
+        contains('InheritedProvider<int>(value: 24, listening to value)'),
+      );
+    });
+    testWidgets('DeferredInheritedProvider.value', (tester) async {
+      await tester.pumpWidget(
+        DeferredInheritedProvider<int, int>.value(
+          value: 42,
+          startListening: (_, setState, __, ___) {
+            setState(24);
+            return () {};
+          },
+          child: Container(),
+        ),
+      );
+
+      final rootElement = tester.allElements.first;
+
+      expect(
+        rootElement.toString(),
+        contains(
+          'InheritedProvider<int>(controller: 42, value: <not yet loaded>)',
+        ),
+      );
+
+      Provider.of<int>(tester.element(find.byType(Container)));
+
+      expect(
+        rootElement.toString(),
+        contains('InheritedProvider<int>(controller: 42, value: 24)'),
+      );
+    });
+    testWidgets('DeferredInheritedProvider', (tester) async {
+      await tester.pumpWidget(
+        DeferredInheritedProvider<int, int>(
+          create: (_) => 42,
+          startListening: (_, setState, __, ___) {
+            setState(24);
+            return () {};
+          },
+          child: Container(),
+        ),
+      );
+
+      final rootElement = tester.allElements.first;
+
+      expect(
+        rootElement.toString(),
+        contains(
+          '''
+InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)''',
+        ),
+      );
+
+      Provider.of<int>(tester.element(find.byType(Container)));
+
+      expect(
+        rootElement.toString(),
+        contains('InheritedProvider<int>(controller: 42, value: 24)'),
+      );
+    });
+  });
   testWidgets('isBuilding', (tester) async {
     expect(isWidgetTreeBuilding, isFalse);
 
