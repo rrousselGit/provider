@@ -282,7 +282,6 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
 }
 
 /// {@macro provider.changenotifierproxyprovider}
-
 class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
     extends ListenableProxyProvider5<T, T2, T3, T4, T5, R> {
   /// Initializes [key] for subclasses.

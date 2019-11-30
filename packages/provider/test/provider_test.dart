@@ -7,20 +7,33 @@ import 'package:test_api/test_api.dart' show TypeMatcher;
 import 'common.dart';
 
 void main() {
+  testWidgets('works with MultiProvider', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider.value(
+            value: 42,
+          ),
+        ],
+        child: const TextOf<int>(),
+      ),
+    );
+
+    expect(find.text('42'), findsOneWidget);
+  });
   group('Provider.of', () {
-    testWidgets('works with MultiProvider', (tester) async {
+    testWidgets('throws if T is dynamic', (tester) async {
       await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            Provider.value(
-              value: 42,
-            ),
-          ],
-          child: const TextOf<int>(),
+        Provider<dynamic>.value(
+          value: 42,
+          child: Container(),
         ),
       );
 
-      expect(find.text('42'), findsOneWidget);
+      expect(
+        () => Provider.of<dynamic>(tester.element(find.byType(Container))),
+        throwsAssertionError,
+      );
     });
     testWidgets(
       'listen defaults to true when building widgets',

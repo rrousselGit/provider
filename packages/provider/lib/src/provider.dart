@@ -178,6 +178,16 @@ class Provider<T> extends SingleChildStatelessWidget {
   /// )
   /// ```
   static T of<T>(BuildContext context, {bool listen}) {
+    assert(
+      T != dynamic,
+      '''
+Tried to call Provider.of<dynamic>. This is likely a mistake and is therefore
+unsupported.
+
+If you want to expose a variable that can be anything, consider changing
+`dynamic` to `Object` instead.
+''',
+    );
     assert(listen == false || listen == null || isWidgetTreeBuilding, '''
 It is likely caused by an event handler that wanted to obtain <T>, and forgot
 to specify `listen: false`.
