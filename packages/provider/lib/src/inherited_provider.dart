@@ -161,6 +161,7 @@ abstract class InheritedProviderElement<T> extends InheritedElement {
 
   bool _shouldNotifyDependents = false;
   bool _debugInheritLocked = false;
+  bool _isNotifyDependentsEnabled = true;
 
   @override
   void mount(Element parent, dynamic newSlot) {
@@ -182,6 +183,8 @@ abstract class InheritedProviderElement<T> extends InheritedElement {
   /// This bypass [InheritedWidget.updateShouldNotify] and will force widgets
   /// that depends on [T] to rebuild.
   void markNeedsNotifyDependents() {
+    if (!_isNotifyDependentsEnabled) return;
+
     markNeedsBuild();
     _shouldNotifyDependents = true;
   }
@@ -327,7 +330,9 @@ class _CreateInheritedProviderElement<T> extends InheritedProviderElement<T> {
       }
     }
 
+    _isNotifyDependentsEnabled = false;
     _removeListener ??= widget.startListening?.call(this, _value);
+    _isNotifyDependentsEnabled = true;
     assert(widget.startListening == null || _removeListener != null);
     return _value;
   }
@@ -443,7 +448,9 @@ class _ValueInheritedProviderElement<T> extends InheritedProviderElement<T> {
 
   @override
   T get value {
+    _isNotifyDependentsEnabled = false;
     _removeListener ??= widget.startListening?.call(this, widget.value);
+    _isNotifyDependentsEnabled = true;
     assert(widget.startListening == null || _removeListener != null);
     return widget.value;
   }
@@ -594,10 +601,10 @@ abstract class DeferredInheritedProviderElement<T, R>
   R get value {
     // setState should be no-op inside startListening, as it's lazy-loaded
     // otherwise Flutter will throw an exception for no reason.
-    _setStateShouldNotify = false;
+    _isNotifyDependentsEnabled = false;
     _removeListener ??=
         widget._startListening(this, setState, controller, _value);
-    _setStateShouldNotify = true;
+    _isNotifyDependentsEnabled = true;
     assert(hasValue, '''
 The callback "startListening" was called, but it left DeferredInhertitedProviderElement<$T, $R>
 in an unitialized state.
@@ -633,15 +640,13 @@ DeferredInheritedProvider(
   /// very first listening, and a rebuild after [controller] changed.
   bool get hasValue => _hasValue;
 
-  var _setStateShouldNotify = true;
-
   /// Update [value] and mark dependents as needing build.
   ///
   /// Contrarily to [markNeedsNotifyDependents], this method follows
   /// `InheritedProvider.updateShouldNotify` and will not rebuild dependents if
   /// the new value is the same as the previous one.
   void setState(R value) {
-    if (_setStateShouldNotify && _hasValue) {
+    if (_hasValue) {
       final shouldNotify = widget._updateShouldNotify != null
           ? widget._updateShouldNotify(_value, value)
           : _value != value;

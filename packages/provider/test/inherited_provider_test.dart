@@ -217,6 +217,19 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
     );
   });
   group('InheritedProvider.value()', () {
+    testWidgets('markNeedsNotifyDependents during startListening is noop',
+        (tester) async {
+      await tester.pumpWidget(
+        InheritedProvider<int>.value(
+          value: 42,
+          startListening: (e, value) {
+            e.markNeedsNotifyDependents();
+            return () {};
+          },
+          child: const TextOf<int>(),
+        ),
+      );
+    });
     testWidgets('startListening called again when create returns new value',
         (tester) async {
       final stopListening = StopListeningMock();
@@ -454,6 +467,19 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
     });
   });
   group('InheritedProvider()', () {
+    testWidgets('markNeedsNotifyDependents during startListening is noop',
+        (tester) async {
+      await tester.pumpWidget(
+        InheritedProvider<int>(
+          update: (_, __) => 24,
+          startListening: (e, value) {
+            e.markNeedsNotifyDependents();
+            return () {};
+          },
+          child: const TextOf<int>(),
+        ),
+      );
+    });
     testWidgets(
       'update can obtain parent of the same type than self',
       (tester) async {
