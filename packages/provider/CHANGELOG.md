@@ -1,7 +1,7 @@
 # 3.2.0
 
 - Deprecated "builder" of providers in favor to "create"
-- Deprecated "builder"/"initialBuilder" of proxy providers in favor of respectively
+- Deprecated "initialBuilder"/"builder" of proxy providers in favor of respectively
   "create" and "update"
 
 # 3.1.0
