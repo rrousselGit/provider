@@ -1594,6 +1594,83 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
 
     expect(tester.takeException(), isStateError);
   });
+
+  testWidgets('InheritedProvider lazy loading can be disabled', (tester) async {
+    final startListening = StartListeningMock<int>(() {});
+
+    await tester.pumpWidget(
+      InheritedProvider(
+        key: UniqueKey(),
+        create: (_) => 42,
+        startListening: startListening,
+        lazy: false,
+        child: Container(),
+      ),
+    );
+    verify(startListening(argThat(isNotNull), 42)).called(1);
+  });
+
+  testWidgets('InheritedProvider.value lazy loading can be disabled',
+      (tester) async {
+    final startListening = StartListeningMock<int>(() {});
+
+    await tester.pumpWidget(
+      InheritedProvider.value(
+        key: UniqueKey(),
+        value: 42,
+        startListening: startListening,
+        lazy: false,
+        child: Container(),
+      ),
+    );
+
+    verify(startListening(argThat(isNotNull), 42)).called(1);
+    verifyNoMoreInteractions(startListening);
+  });
+  testWidgets('DeferredInheritedProvider lazy loading can be disabled',
+      (tester) async {
+    final startListening =
+        DeferredStartListeningMock<int, int>((a, setState, c, d) {
+      setState(0);
+      return () {};
+    });
+
+    await tester.pumpWidget(
+      DeferredInheritedProvider<int, int>(
+        key: UniqueKey(),
+        create: (_) => 42,
+        startListening: startListening,
+        lazy: false,
+        child: Container(),
+      ),
+    );
+
+    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null))
+        .called(1);
+    verifyNoMoreInteractions(startListening);
+  });
+  testWidgets('DeferredInheritedProvider.value lazy loading can be disabled',
+      (tester) async {
+    final startListening =
+        DeferredStartListeningMock<int, int>((a, setState, c, d) {
+      setState(0);
+      return () {};
+    });
+
+    await tester.pumpWidget(
+      DeferredInheritedProvider<int, int>.value(
+        key: UniqueKey(),
+        value: 42,
+        startListening: startListening,
+        lazy: false,
+        child: Container(),
+      ),
+    );
+
+    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null))
+        .called(1);
+    verifyNoMoreInteractions(startListening);
+  });
 }
 
 class SubclassProvider extends InheritedProvider<int> {
