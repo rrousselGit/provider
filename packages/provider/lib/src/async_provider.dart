@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:nested/nested.dart';
 
 import 'inherited_provider.dart';
 
@@ -12,6 +11,41 @@ import 'inherited_provider.dart';
 ///   * [StreamProvider] and [FutureProvider], which both uses [ErrorBuilder] to
 ///     handle respectively [Stream.catchError] and [Future.catch].
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
+
+DeferredStartListening<Stream<T>, T> _streamStartListening<T>(
+    {T initialData, ErrorBuilder<T> catchError}) {
+  return (e, setState, controller, __) {
+    if (!e.hasValue) {
+      setState(initialData);
+    }
+    if (controller == null) {
+      return () {};
+    }
+    final sub = controller.listen(
+      setState,
+      onError: (dynamic error) {
+        if (catchError != null) {
+          setState(catchError(e, error));
+        } else {
+          FlutterError.reportError(
+            FlutterErrorDetails(
+              library: 'provider',
+              exception: FlutterError('''
+An exception was throw by ${controller.runtimeType} listened by
+StreamProvider<$T>, but no `catchError` was provided.
+
+Exception:
+$error
+'''),
+            ),
+          );
+        }
+      },
+    );
+
+    return sub.cancel;
+  };
+}
 
 /// Listens to a [Stream] and exposes its content to `child` and descendants.
 ///
@@ -37,7 +71,7 @@ typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 ///
 ///   * [Stream], which is listened by [StreamProvider].
 ///   * [StreamController], to create a [Stream].
-class StreamProvider<T> extends SingleChildStatelessWidget {
+class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
   /// Creates a [Stream] using `create` and subscribes to it.
   ///
   /// The parameter `create` must not be `null`.
@@ -49,12 +83,16 @@ class StreamProvider<T> extends SingleChildStatelessWidget {
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
   })  : assert(create != null),
-        _initialData = initialData,
-        _value = null,
-        _catchError = catchError,
-        _updateShouldNotify = updateShouldNotify,
-        _create = create,
-        super(key: key, child: child);
+        super(
+          key: key,
+          create: create,
+          updateShouldNotify: updateShouldNotify,
+          startListening: _streamStartListening(
+            catchError: catchError,
+            initialData: initialData,
+          ),
+          child: child,
+        );
 
   /// Listens to `value` and expose it to all of [StreamProvider] descendants.
   StreamProvider.value({
@@ -64,71 +102,59 @@ class StreamProvider<T> extends SingleChildStatelessWidget {
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
-  })  : _initialData = initialData,
-        _value = value,
-        _catchError = catchError,
-        _updateShouldNotify = updateShouldNotify,
-        _create = null,
-        super(key: key, child: child);
+  }) : super.value(
+          key: key,
+          value: value,
+          updateShouldNotify: updateShouldNotify,
+          startListening: _streamStartListening(
+            catchError: catchError,
+            initialData: initialData,
+          ),
+          child: child,
+        );
 
   // TODO: .controller
   // TODO: add builder parameter
+}
 
-  final UpdateShouldNotify<T> _updateShouldNotify;
-  final Stream<T> _value;
-  final Create<Stream<T>> _create;
-  final T _initialData;
+DeferredStartListening<Future<T>, T> _futureStartListening<T>({
+  T initialData,
+  ErrorBuilder<T> catchError,
+}) {
+  return (e, setState, controller, __) {
+    if (!e.hasValue) {
+      setState(initialData);
+    }
 
-  /// An optional function used whenever the [Stream] emits an error.
-  ///
-  /// [_catchError] will be called with the emitted error and is expected to
-  /// return a fallback value without throwing.
-  ///
-  /// The returned value will then be exposed to the descendants of
-  /// [StreamProvider] like any valid value.
-  final ErrorBuilder<T> _catchError;
-
-  @override
-  Widget buildWithChild(BuildContext context, Widget child) {
-    return autoDeferred<Stream<T>, T>(
-      // valid because _value and _create will never be both not null together
-      value: _value,
-      create: _create,
-      startListening: (e, setState, controller, __) {
-        if (!e.hasValue) {
-          setState(_initialData);
-        }
-        if (controller == null) {
-          return () {};
-        }
-        final sub = controller.listen(
-          setState,
-          onError: (dynamic error) {
-            if (_catchError != null) {
-              setState(_catchError(e, error));
-            } else {
-              FlutterError.reportError(
-                FlutterErrorDetails(
-                  library: 'provider',
-                  exception: FlutterError('''
+    var canceled = false;
+    controller?.then(
+      (value) {
+        if (canceled) return;
+        setState(value);
+      },
+      onError: (dynamic error) {
+        if (canceled) return;
+        if (catchError != null) {
+          setState(catchError(e, error));
+        } else {
+          FlutterError.reportError(
+            FlutterErrorDetails(
+              library: 'provider',
+              exception: FlutterError('''
 An exception was throw by ${controller.runtimeType} listened by
-$runtimeType, but no `catchError` was provided.
+FutureProvider<$T>, but no `catchError` was provided.
 
 Exception:
 $error
 '''),
-                ),
-              );
-            }
-          },
-        );
-
-        return sub.cancel;
+            ),
+          );
+        }
       },
-      updateShouldNotify: _updateShouldNotify,
-      child: child,
     );
-  }
+
+    return () => canceled = true;
+  };
 }
 
 /// Listens to a [Future] and exposes its result to `child` and its descendants.
@@ -141,7 +167,7 @@ $error
 /// See also:
 ///
 ///   * [Future], which is listened by [FutureProvider].
-class FutureProvider<T> extends SingleChildStatelessWidget {
+class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
   /// Creates a [Future] from `create` and subscribes to it.
   ///
   /// `create` must not be `null`.
@@ -153,12 +179,16 @@ class FutureProvider<T> extends SingleChildStatelessWidget {
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
   })  : assert(create != null),
-        _initialData = initialData,
-        _value = null,
-        _catchError = catchError,
-        _updateShouldNotify = updateShouldNotify,
-        _create = create,
-        super(key: key, child: child);
+        super(
+          key: key,
+          create: create,
+          updateShouldNotify: updateShouldNotify,
+          startListening: _futureStartListening(
+            catchError: catchError,
+            initialData: initialData,
+          ),
+          child: child,
+        );
 
   /// Listens to `value` and expose it to all of [FutureProvider] descendants.
   FutureProvider.value({
@@ -168,69 +198,14 @@ class FutureProvider<T> extends SingleChildStatelessWidget {
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
-  })  : _initialData = initialData,
-        _value = value,
-        _catchError = catchError,
-        _updateShouldNotify = updateShouldNotify,
-        _create = null,
-        super(key: key, child: child);
-
-  final UpdateShouldNotify<T> _updateShouldNotify;
-  final Future<T> _value;
-  final Create<Future<T>> _create;
-  final T _initialData;
-
-  /// An optional function used whenever the [Future] emits an error.
-  ///
-  /// [_catchError] will be called with the emitted error and is expected to
-  /// return a fallback value without throwing.
-  ///
-  /// The returned value will then be exposed to the descendants of
-  /// [FutureProvider] like any valid value.
-  final ErrorBuilder<T> _catchError;
-
-  @override
-  Widget buildWithChild(BuildContext context, Widget child) {
-    return autoDeferred<Future<T>, T>(
-      // valid because _value and _create will never be both not null together
-      value: _value,
-      create: _create,
-      startListening: (e, setState, controller, __) {
-        if (!e.hasValue) {
-          setState(_initialData);
-        }
-
-        var canceled = false;
-        controller?.then(
-          (value) {
-            if (canceled) return;
-            setState(value);
-          },
-          onError: (dynamic error) {
-            if (canceled) return;
-            if (_catchError != null) {
-              setState(_catchError(e, error));
-            } else {
-              FlutterError.reportError(
-                FlutterErrorDetails(
-                  library: 'provider',
-                  exception: FlutterError('''
-An exception was throw by ${controller.runtimeType} listened by
-$runtimeType, but no `catchError` was provided.
-
-Exception:
-$error
-'''),
-                ),
-              );
-            }
-          },
+  }) : super.value(
+          key: key,
+          value: value,
+          updateShouldNotify: updateShouldNotify,
+          startListening: _futureStartListening(
+            catchError: catchError,
+            initialData: initialData,
+          ),
+          child: child,
         );
-
-        return () => canceled = true;
-      },
-      updateShouldNotify: _updateShouldNotify,
-      child: child,
-    );
-  }
 }

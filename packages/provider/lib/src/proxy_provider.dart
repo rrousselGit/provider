@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import 'inherited_provider.dart';
@@ -42,8 +42,7 @@ typedef ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> = R Function(
 );
 
 /// {@macro provider.proxyprovider}
-@visibleForTesting
-class ProxyProvider0<R> extends SingleChildStatelessWidget {
+class ProxyProvider0<R> extends InheritedProvider<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider0({
     Key key,
@@ -53,34 +52,18 @@ class ProxyProvider0<R> extends SingleChildStatelessWidget {
     Dispose<R> dispose,
     Widget child,
   })  : assert(update != null),
-        _update = update,
-        _create = create,
-        _updateShouldNotify = updateShouldNotify,
-        _dispose = dispose,
-        super(key: key, child: child);
-
-  final R Function(BuildContext context, R value) _update;
-  final UpdateShouldNotify<R> _updateShouldNotify;
-  final Create<R> _create;
-  final Dispose<R> _dispose;
-
-  @override
-  Widget buildWithChild(BuildContext context, Widget child) {
-    void Function(R value) checkValue;
-    assert(() {
-      checkValue =
-          (R value) => Provider.debugCheckInvalidValueType?.call<R>(value);
-      return true;
-    }());
-    return InheritedProvider<R>(
-      create: _create,
-      update: _update,
-      dispose: _dispose,
-      updateShouldNotify: _updateShouldNotify,
-      debugCheckInvalidValueType: checkValue,
-      child: child,
-    );
-  }
+        super(
+          key: key,
+          create: create,
+          update: update,
+          dispose: dispose,
+          updateShouldNotify: updateShouldNotify,
+          debugCheckInvalidValueType: kReleaseMode
+              ? null
+              : (R value) =>
+                  Provider.debugCheckInvalidValueType?.call<R>(value),
+          child: child,
+        );
 }
 
 /// {@template provider.proxyprovider}

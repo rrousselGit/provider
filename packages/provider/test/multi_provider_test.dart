@@ -1,14 +1,10 @@
-import 'package:flutter/widgets.dart' hide TypeMatcher;
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:matcher/matcher.dart';
 import 'package:provider/provider.dart';
 
-Type _typeOf<T>() => T;
-
-Matcher throwsProviderNotFound({Type widgetType, Type valueType}) {
-  return throwsA(const TypeMatcher<ProviderNotFoundException>()
-      .having((err) => err.valueType, 'valueType', valueType)
-      .having((err) => err.widgetType, 'widgetType', widgetType));
+Matcher throwsProviderNotFound<T>() {
+  return throwsA(isA<ProviderNotFoundException>()
+      .having((err) => err.valueType, 'valueType', T));
 }
 
 void main() {
@@ -40,41 +36,26 @@ void main() {
       // p1 cannot access to p1/p2/p3
       expect(
         () => Provider.of<int>(k1.currentContext),
-        throwsProviderNotFound(
-          valueType: int,
-          widgetType: _typeOf<Provider<int>>(),
-        ),
+        throwsProviderNotFound<int>(),
       );
       expect(
         () => Provider.of<String>(k1.currentContext),
-        throwsProviderNotFound(
-          valueType: String,
-          widgetType: _typeOf<Provider<int>>(),
-        ),
+        throwsProviderNotFound<String>(),
       );
       expect(
         () => Provider.of<double>(k1.currentContext),
-        throwsProviderNotFound(
-          valueType: double,
-          widgetType: _typeOf<Provider<int>>(),
-        ),
+        throwsProviderNotFound<double>(),
       );
 
       // p2 can access only p1
       expect(Provider.of<int>(k2.currentContext), 42);
       expect(
         () => Provider.of<String>(k2.currentContext),
-        throwsProviderNotFound(
-          valueType: String,
-          widgetType: _typeOf<Provider<String>>(),
-        ),
+        throwsProviderNotFound<String>(),
       );
       expect(
         () => Provider.of<double>(k2.currentContext),
-        throwsProviderNotFound(
-          valueType: double,
-          widgetType: _typeOf<Provider<String>>(),
-        ),
+        throwsProviderNotFound<double>(),
       );
 
       // p3 can access both p1 and p2
@@ -82,10 +63,7 @@ void main() {
       expect(Provider.of<String>(k3.currentContext), 'foo');
       expect(
         () => Provider.of<double>(k3.currentContext),
-        throwsProviderNotFound(
-          valueType: double,
-          widgetType: _typeOf<Provider<double>>(),
-        ),
+        throwsProviderNotFound<double>(),
       );
 
       // the child can access them all
