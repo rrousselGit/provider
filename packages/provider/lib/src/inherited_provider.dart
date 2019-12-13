@@ -125,8 +125,10 @@ class InheritedProvider<T> extends InheritedWidget
     void Function(T value) debugCheckInvalidValueType,
     StartListening<T> startListening,
     Dispose<T> dispose,
+    bool lazy = true,
     Widget child,
-  })  : _delegate = _CreateInheritedProvider(
+  })  : _lazy = lazy,
+        _delegate = _CreateInheritedProvider(
           create: create,
           update: update,
           updateShouldNotify: updateShouldNotify,
@@ -142,8 +144,10 @@ class InheritedProvider<T> extends InheritedWidget
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
     StartListening<T> startListening,
+    bool lazy = true,
     Widget child,
-  })  : _delegate = _ValueInheritedProvider(
+  })  : _lazy = lazy,
+        _delegate = _ValueInheritedProvider(
           value: value,
           updateShouldNotify: updateShouldNotify,
           startListening: startListening,
@@ -153,11 +157,14 @@ class InheritedProvider<T> extends InheritedWidget
   InheritedProvider._constructor({
     Key key,
     _Delegate<T> delegate,
+    bool lazy,
     Widget child,
-  })  : _delegate = delegate,
+  })  : _lazy = lazy,
+        _delegate = delegate,
         super(key: key, child: child);
 
   final _Delegate<T> _delegate;
+  final bool _lazy;
 
   @override
   InheritedProviderElement<T> createElement() {
@@ -267,6 +274,9 @@ If you're in this situation, consider passing a `key` unique to each individual 
 
   @override
   Widget build() {
+    if (!widget._lazy) {
+      value; // this will force the value to be computed.
+    }
     _delegateState.build();
     if (_shouldNotifyDependents) {
       _shouldNotifyDependents = false;
@@ -454,7 +464,6 @@ class _CreateInheritedProviderState<T>
 
   @override
   void build() {
-    @override
     var shouldNotify = false;
     if (_didInitValue && delegate.update != null) {
       final previousValue = _value;
@@ -676,12 +685,14 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     Dispose<T> dispose,
     @required DeferredStartListening<T, R> startListening,
     UpdateShouldNotify<R> updateShouldNotify,
+    bool lazy = true,
     Widget child,
   })  : _startListening = startListening,
         _updateShouldNotify = updateShouldNotify,
         super._constructor(
           key: key,
           child: child,
+          lazy: lazy,
           delegate: _CreateDeferredInheritedProvider(
             create: create,
             dispose: dispose,
@@ -694,11 +705,13 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     @required T value,
     @required DeferredStartListening<T, R> startListening,
     UpdateShouldNotify<R> updateShouldNotify,
+    bool lazy = true,
     Widget child,
   })  : _startListening = startListening,
         _updateShouldNotify = updateShouldNotify,
         super._constructor(
           key: key,
+          lazy: lazy,
           delegate: _ValueDeferredInheritedProvider<T, R>(value),
           child: child,
         );
