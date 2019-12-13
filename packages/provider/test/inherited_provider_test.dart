@@ -370,14 +370,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
 
       expect(tester.takeException(), isAssertionError);
     });
-    test('updateShouldNotify throws', () {
-      expect(
-        () => InheritedProvider<int>.value(value: 42, child: Container())
-            // ignore: invalid_use_of_protected_member
-            .updateShouldNotify(null),
-        throwsStateError,
-      );
-    });
+
     testWidgets('pass down current value', (tester) async {
       int value;
       final child = Consumer<int>(
@@ -1082,40 +1075,8 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
     });
   });
 
-  group('DeferredInheritedProvider base', () {
-    test('throws if child is missing', () {
-      expect(
-          () => DeferredInheritedProvider<int, int>(
-                create: (_) => 42,
-                startListening: (_, __, ___, ____) => () {},
-                child: null,
-              ),
-          throwsAssertionError);
-    });
-    test('throws if startListening is missing', () {
-      expect(
-          () => DeferredInheritedProvider<int, int>(
-                create: (_) => 42,
-                startListening: null,
-                child: Container(),
-              ),
-          throwsAssertionError);
-    });
-  });
   group('DeferredInheritedProvider.value()', () {
     // TODO: stopListening cannot be null
-    test('updateShouldNotify throws', () {
-      expect(
-        () => DeferredInheritedProvider<ValueNotifier<int>, int>.value(
-          value: ValueNotifier(0),
-          startListening: (_, __, ___, ____) => () {},
-          child: Container(),
-        )
-            // ignore: invalid_use_of_protected_member
-            .updateShouldNotify(null),
-        throwsStateError,
-      );
-    });
     testWidgets('startListening', (tester) async {
       final stopListening = StopListeningMock();
       final startListening =
@@ -1421,18 +1382,6 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
     });
   });
   group('DeferredInheritedProvider()', () {
-    test('updateShouldNotify throws', () {
-      expect(
-        () => DeferredInheritedProvider<ValueNotifier<int>, int>(
-          create: (_) => ValueNotifier(0),
-          startListening: (_, __, ___, ____) => () {},
-          child: Container(),
-        )
-            // ignore: invalid_use_of_protected_member
-            .updateShouldNotify(null),
-        throwsStateError,
-      );
-    });
     testWidgets("create can't call inherited widgets", (tester) async {
       await tester.pumpWidget(
         InheritedProvider<String>.value(
@@ -1570,6 +1519,62 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
     expect(buildCount, equals(2));
   });
 
+  testWidgets('InheritedProvider can be subclassed', (tester) async {
+    await tester.pumpWidget(
+      SubclassProvider(
+        key: UniqueKey(),
+        value: 42,
+        child: Context(),
+      ),
+    );
+
+    expect(of<int>(), equals(42));
+
+    await tester.pumpWidget(
+      SubclassProvider.value(
+        key: UniqueKey(),
+        value: 24,
+        child: Context(),
+      ),
+    );
+
+    expect(of<int>(), equals(24));
+  });
+  testWidgets('DeferredInheritedProvider can be subclassed', (tester) async {
+    await tester.pumpWidget(
+      DeferredSubclassProvider(
+        key: UniqueKey(),
+        value: 42,
+        child: Context(),
+      ),
+    );
+
+    expect(of<int>(), equals(42));
+
+    await tester.pumpWidget(
+      DeferredSubclassProvider.value(
+        key: UniqueKey(),
+        value: 24,
+        child: Context(),
+      ),
+    );
+
+    expect(of<int>(), equals(24));
+  });
+
+  testWidgets('can be used with MultiProvider', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          InheritedProvider.value(value: 42),
+        ],
+        child: Context(),
+      ),
+    );
+
+    expect(of<int>(), equals(42));
+  });
+
   testWidgets('throw if the widget ctor changes', (tester) async {
     await tester.pumpWidget(
       InheritedProvider<int>(
@@ -1589,4 +1594,36 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
 
     expect(tester.takeException(), isStateError);
   });
+}
+
+class SubclassProvider extends InheritedProvider<int> {
+  SubclassProvider({Key key, int value, Widget child})
+      : super(key: key, create: (_) => value, child: child);
+
+  SubclassProvider.value({Key key, int value, Widget child})
+      : super.value(key: key, value: value, child: child);
+}
+
+class DeferredSubclassProvider extends DeferredInheritedProvider<int, int> {
+  DeferredSubclassProvider({Key key, int value, Widget child})
+      : super(
+          key: key,
+          create: (_) => value,
+          startListening: (_, setState, ___, ____) {
+            setState(value);
+            return () {};
+          },
+          child: child,
+        );
+
+  DeferredSubclassProvider.value({Key key, int value, Widget child})
+      : super.value(
+          key: key,
+          value: value,
+          startListening: (_, setState, ___, ____) {
+            setState(value);
+            return () {};
+          },
+          child: child,
+        );
 }
