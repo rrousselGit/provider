@@ -111,7 +111,7 @@ class MultiProvider extends Nested {
 /// downcast the mock to the type of the mocked class.
 /// Otherwise, the type inference will resolve to `Provider<MockFoo>` instead of
 /// `Provider<Foo>`, which will cause `Provider.of<Foo>` to fail.
-class Provider<T> extends SingleChildStatelessWidget {
+class Provider<T> extends InheritedProvider<T> {
   /// Creates a value, store it, and expose it to its descendants.
   ///
   /// The value can be optionally disposed using [dispose] callback. This
@@ -124,22 +124,33 @@ class Provider<T> extends SingleChildStatelessWidget {
     Dispose<T> dispose,
     Widget child,
   })  : assert(create != null),
-        _value = null,
-        _create = create,
-        _dispose = dispose,
-        updateShouldNotify = null,
-        super(key: key, child: child);
+        super(
+          key: key,
+          create: create,
+          dispose: dispose,
+          debugCheckInvalidValueType: kReleaseMode
+              ? null
+              : (T value) =>
+                  Provider.debugCheckInvalidValueType?.call<T>(value),
+          child: child,
+        );
 
   /// Allows to specify parameters to [Provider].
   Provider.value({
     Key key,
     @required T value,
-    this.updateShouldNotify,
+    UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
-  })  : _value = value,
-        _create = null,
-        _dispose = null,
-        super(key: key, child: child);
+  })  : assert(() {
+          Provider.debugCheckInvalidValueType?.call<T>(value);
+          return true;
+        }()),
+        super.value(
+          key: key,
+          value: value,
+          updateShouldNotify: updateShouldNotify,
+          child: child,
+        );
 
   /// Obtains the nearest [Provider<T>] up its widget tree and returns its
   /// value.
@@ -283,41 +294,6 @@ void main() {
       return true;
     }());
   };
-
-  /// User-provided custom logic for [InheritedWidget.updateShouldNotify].
-  final UpdateShouldNotify<T> updateShouldNotify;
-  final Create<T> _create;
-  final Dispose<T> _dispose;
-  final T _value;
-
-  @override
-  Widget buildWithChild(BuildContext context, Widget child) {
-    if (_create != null) {
-      void Function(T value) checkValue;
-
-      assert(() {
-        checkValue =
-            (T value) => Provider.debugCheckInvalidValueType?.call<T>(value);
-        return true;
-      }());
-      return InheritedProvider(
-        create: _create,
-        dispose: _dispose,
-        debugCheckInvalidValueType: checkValue,
-        child: child,
-      );
-    }
-
-    assert(() {
-      Provider.debugCheckInvalidValueType?.call<T>(_value);
-      return true;
-    }());
-    return InheritedProvider.value(
-      value: _value,
-      updateShouldNotify: updateShouldNotify,
-      child: child,
-    );
-  }
 }
 
 /// The error that will be thrown if [Provider.of<T>] fails to find a

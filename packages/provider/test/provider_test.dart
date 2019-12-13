@@ -157,31 +157,27 @@ void main() {
   group('Provider', () {
     testWidgets('throws if the provided value is a Listenable/Stream',
         (tester) async {
-      await tester.pumpWidget(
-        Provider.value(
-          key: UniqueKey(),
+      expect(
+        () => Provider.value(
           value: MyListenable(),
           child: const TextOf<MyListenable>(),
         ),
+        throwsFlutterError,
       );
 
-      expect(tester.takeException(), isFlutterError);
+      expect(
+        () => Provider.value(
+          value: MyStream(),
+          child: const TextOf<MyListenable>(),
+        ),
+        throwsFlutterError,
+      );
 
       await tester.pumpWidget(
         Provider(
           key: UniqueKey(),
           create: (_) => MyListenable(),
           child: const TextOf<MyListenable>(),
-        ),
-      );
-
-      expect(tester.takeException(), isFlutterError);
-
-      await tester.pumpWidget(
-        Provider.value(
-          key: UniqueKey(),
-          value: MyStream(),
-          child: const TextOf<MyStream>(),
         ),
       );
 

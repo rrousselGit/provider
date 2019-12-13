@@ -262,7 +262,6 @@ void main() {
       var previousNotifier = listenable;
       listenable = ChangeNotifier();
 
-
       await tester.pumpWidget(build());
 
       expect(listenable.hasListeners, true);

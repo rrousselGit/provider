@@ -1,11 +1,5 @@
 library provider;
 
-export 'package:nested/nested.dart'
-    show
-        SingleChildWidget,
-        SingleChildStatelessWidget,
-        SingleChildStatefulWidget;
-
 export 'src/async_provider.dart';
 export 'src/change_notifier_provider.dart';
 export 'src/consumer.dart';

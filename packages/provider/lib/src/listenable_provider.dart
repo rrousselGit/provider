@@ -118,7 +118,7 @@ ChangeNotifierProvider(
 
 /// {@macro provider.listenableproxyprovider}
 class ListenableProxyProvider0<R extends Listenable>
-    extends SingleChildStatelessWidget {
+    extends InheritedProvider<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider0({
     Key key,
@@ -128,39 +128,23 @@ class ListenableProxyProvider0<R extends Listenable>
     UpdateShouldNotify<R> updateShouldNotify,
     Widget child,
   })  : assert(create != null || update != null),
-        _create = create,
-        _update = update,
-        _dispose = dispose,
-        _updateShouldNotify = updateShouldNotify,
-        super(key: key, child: child);
-
-  final R Function(BuildContext context, R previous) _update;
-  final UpdateShouldNotify<R> _updateShouldNotify;
-  final Dispose<R> _dispose;
-  final Create<R> _create;
-
-  @override
-  Widget buildWithChild(BuildContext context, Widget child) {
-    void Function(R value) checkType;
-    assert(() {
-      checkType = (value) {
-        if (value is ChangeNotifier) {
-          // ignore: invalid_use_of_protected_member
-          assert(value.hasListeners != true);
-        }
-      };
-      return true;
-    }());
-    return InheritedProvider<R>(
-      create: _create,
-      update: _update,
-      dispose: _dispose,
-      startListening: ListenableProvider._startListening,
-      debugCheckInvalidValueType: checkType,
-      updateShouldNotify: _updateShouldNotify,
-      child: child,
-    );
-  }
+        super(
+          key: key,
+          create: create,
+          update: update,
+          dispose: dispose,
+          updateShouldNotify: updateShouldNotify,
+          startListening: ListenableProvider._startListening,
+          debugCheckInvalidValueType: kReleaseMode
+              ? null
+              : (value) {
+                  if (value is ChangeNotifier) {
+                    // ignore: invalid_use_of_protected_member
+                    assert(value.hasListeners != true);
+                  }
+                },
+          child: child,
+        );
 }
 
 /// {@template provider.listenableproxyprovider}
