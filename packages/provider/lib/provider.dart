@@ -1,5 +1,7 @@
 library provider;
 
+export 'package:nested/nested.dart' hide Nested;
+
 export 'src/async_provider.dart';
 export 'src/change_notifier_provider.dart';
 export 'src/consumer.dart';
