@@ -300,16 +300,26 @@ entire tree equally:
   ```
   This is useful when there's no "external parameter".
 
-- asynchronously at the end of the frame:
+- asynchronously at the end of the frame. Alternative 1:
   ```dart
   initState() {
     super.initState();
     Future.microtask(() =>
-      Provider.of<Foo>(context).fetchSomething(someValue);
+      Provider.of<Foo>(context, listen: false).fetchSomething(someValue);
     );
   }
   ```
   It is slightly less ideal, but allows passing parameters to the mutation.
+
+  - asynchronously at the end of the frame. Alternative 2:
+  ```dart
+  initState() {
+    SchedulerBinding.instance.addPostFrameCallback(
+        (_) => Provider.of<ReviewBloc>(context, listen: false).getReviews());
+    super.initState();
+  }
+  ```
+  Whatever you choose, prefer to use with `listen: false` to prevent build unnecessary. 
 
 #### Do I have to use `ChangeNotifier` for complex states?
 
