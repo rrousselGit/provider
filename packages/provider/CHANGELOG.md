@@ -1,5 +1,7 @@
 # 4.0.0
 
+- `Selector` now deeply compares collections by default, and offers a `shouldRebuild`
+  to customize the rebuild behavior.
 - renamed `ProviderNotFoundError` to `ProviderNotFoundException`.
   This allows calling `Provider.of` inside a `try/catch` without triggering a
   warning.

@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/src/provider.dart';
+import 'package:collection/collection.dart';
 
 import 'consumer.dart';
-import 'inherited_provider.dart';
 
 /// A base class for custom [Selector].
 ///
@@ -31,9 +31,11 @@ class Selector0<T> extends SingleChildStatefulWidget {
     Key key,
     @required this.builder,
     @required this.selector,
+    bool Function(T previous, T next) shouldRebuild,
     Widget child,
   })  : assert(builder != null),
         assert(selector != null),
+        _shouldRebuild = shouldRebuild,
         super(key: key, child: child);
 
   /// A function that builds a widget tree from `child` and the last result of
@@ -52,7 +54,9 @@ class Selector0<T> extends SingleChildStatefulWidget {
   /// The returned object must implement [operator==].
   ///
   /// Must not be `null`
-  final Create<T> selector;
+  final T Function(BuildContext) selector;
+
+  final bool Function(T previous, T next) _shouldRebuild;
 
   @override
   _Selector0State<T> createState() => _Selector0State<T>();
@@ -67,7 +71,12 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
   Widget buildWithChild(BuildContext context, Widget child) {
     final selected = widget.selector(context);
 
-    if (oldWidget != widget || selected != value) {
+    var shouldInvalidateCache = oldWidget != widget ||
+        (widget._shouldRebuild != null &&
+            widget._shouldRebuild.call(value, selected)) ||
+        (widget._shouldRebuild == null &&
+            !const DeepCollectionEquality().equals(value, selected));
+    if (shouldInvalidateCache) {
       value = selected;
       oldWidget = widget;
       cache = widget.builder(
@@ -88,9 +97,11 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
 /// to `selector`. That `selector` callback is then tasked to return an object
 /// that contains only the informations needed for `builder` to complete.
 ///
-/// The object returned by `selector` should be immutable and override
-/// [operator==] such that two objects with the same content are equal, even
-/// if they are not [identical].
+/// By default, [Selector] determines if `builder` needs to be called again
+/// by comparing the previous and new result of `selector` using
+/// [DeepCollectionEquality] from the package `collecton`.
+///
+/// This behavior can be overriden by passing a custom `shouldRebuild` callback.
 ///
 /// As such, to select multiple values, the easiest solution is to use a "Tuple"
 /// from [tuple](https://pub.dev/packages/tuple):
