@@ -188,7 +188,7 @@ Widget build(BuildContext context) {
     providers: [
       ChangeNotifierProvider(create: (_) => Counter()),
       ProxyProvider<Counter, Translations>(
-        create: (_, counter, __) => Translations(counter.value),
+        update: (_, counter, __) => Translations(counter.value),
       ),
     ],
     child: Foo(),
