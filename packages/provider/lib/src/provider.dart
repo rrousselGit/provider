@@ -253,12 +253,11 @@ class Provider<T> extends ValueDelegateWidget<T>
   /// [State.build] to widgets, and [State.didChangeDependencies] for
   /// [StatefulWidget].
   static T of<T>(BuildContext context, {bool listen = true}) {
-    // this is required to get generic Type
-    final type = _typeOf<InheritedProvider<T>>();
     final provider = listen
-        ? context.inheritFromWidgetOfExactType(type) as InheritedProvider<T>
-        : context.ancestorInheritedElementForWidgetOfExactType(type)?.widget
-            as InheritedProvider<T>;
+        ? context.dependOnInheritedWidgetOfExactType<InheritedProvider<T>>()
+        : context
+            .getElementForInheritedWidgetOfExactType<InheritedProvider<T>>()
+            ?.widget as InheritedProvider<T>;
 
     if (provider == null) {
       throw ProviderNotFoundError(T, context.widget.runtimeType);

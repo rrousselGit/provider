@@ -168,15 +168,24 @@ class _DelegateElement extends StatefulElement {
   @override
   DelegateWidget get widget => super.widget as DelegateWidget;
 
+  @Deprecated(
+    'Use dependOnInheritedWidgetOfExactType instead. '
+    'This feature was deprecated after v1.12.1.',
+  )
   @override
   InheritedWidget inheritFromElement(Element ancestor, {Object aspect}) {
+    return dependOnInheritedElement(ancestor, aspect: aspect);
+  }
+
+  @override
+  InheritedWidget dependOnInheritedElement(Element ancestor, {Object aspect}) {
     assert(() {
       if (_debugIsInitDelegate) {
         final targetType = ancestor.widget.runtimeType;
         // error copied from StatefulElement
         throw FlutterError('''
-inheritFromWidgetOfExactType($targetType) or inheritFromElement() was called
-before ${widget.delegate.runtimeType}.initDelegate() completed.
+dependOnInheritedWidgetOfExactType<$targetType>() or dependOnInheritedElement()
+was called before ${widget.delegate.runtimeType}.initDelegate() completed.
 
 When an inherited widget changes, for example if the value of Theme.of()
 changes, its dependent widgets are rebuilt. If the dependent widget's reference
@@ -191,7 +200,7 @@ whenever the dependencies change thereafter.''');
       }
       return true;
     }());
-    return super.inheritFromElement(ancestor, aspect: aspect);
+    return super.dependOnInheritedElement(ancestor, aspect: aspect);
   }
 }
 

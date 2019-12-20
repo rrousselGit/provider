@@ -12,7 +12,7 @@ void main() {
   group('DelegateWidget', () {
     testWidgets(
         // ignore: lines_longer_than_80_chars
-        "can't call context.inheritFromWidgetOfExactType from first initDelegate",
+        "can't call context.dependOnInheritedWidgetOfExactType from first initDelegate",
         (tester) async {
       await tester.pumpWidget(Provider.value(
         value: 42,
@@ -26,7 +26,7 @@ void main() {
     });
     testWidgets(
         // ignore: lines_longer_than_80_chars
-        "can't call context.inheritFromWidgetOfExactType from initDelegate after an update",
+        "can't call context.dependOnInheritedWidgetOfExactType from initDelegate after an update",
         (tester) async {
       await tester.pumpWidget(Provider.value(
         value: 42,
