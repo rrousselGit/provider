@@ -155,8 +155,7 @@ void main() {
     );
   });
   group('Provider', () {
-    testWidgets('throws if the provided value is a Listenable/Stream',
-        (tester) async {
+    testWidgets('throws if the provided value is a Listenable/Stream', (tester) async {
       expect(
         () => Provider.value(
           value: MyListenable(),

@@ -64,8 +64,7 @@ void main() {
       ),
     );
 
-    final context = tester
-        .element(find.byWidgetPredicate((w) => w is InheritedProvider<int>));
+    final context = findInheritedContext<int>();
 
     verifyZeroInteractions(dispose);
     await tester.pumpWidget(Container());

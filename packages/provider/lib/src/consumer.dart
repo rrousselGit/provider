@@ -193,8 +193,7 @@ class Consumer2<A, B> extends SingleChildStatelessWidget {
         super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(BuildContext context, A value, B value2, Widget child)
-      builder;
+  final Widget Function(BuildContext context, A value, B value2, Widget child) builder;
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
@@ -218,8 +217,7 @@ class Consumer3<A, B, C> extends SingleChildStatelessWidget {
         super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(
-      BuildContext context, A value, B value2, C value3, Widget child) builder;
+  final Widget Function(BuildContext context, A value, B value2, C value3, Widget child) builder;
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
@@ -244,8 +242,14 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
         super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(BuildContext context, A value, B value2, C value3,
-      D value4, Widget child) builder;
+  final Widget Function(
+    BuildContext context,
+    A value,
+    B value2,
+    C value3,
+    D value4,
+    Widget child,
+  ) builder;
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
@@ -270,8 +274,15 @@ class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
         super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(BuildContext context, A value, B value2, C value3,
-      D value4, E value5, Widget child) builder;
+  final Widget Function(
+    BuildContext context,
+    A value,
+    B value2,
+    C value3,
+    D value4,
+    E value5,
+    Widget child,
+  ) builder;
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
@@ -298,8 +309,16 @@ class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
         super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(BuildContext context, A value, B value2, C value3,
-      D value4, E value5, F value6, Widget child) builder;
+  final Widget Function(
+    BuildContext context,
+    A value,
+    B value2,
+    C value3,
+    D value4,
+    E value5,
+    F value6,
+    Widget child,
+  ) builder;
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {

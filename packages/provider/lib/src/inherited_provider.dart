@@ -1,12 +1,4 @@
-import 'dart:async';
-
-import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:nested/nested.dart';
-
-import 'provider.dart' show Provider;
+part of 'provider.dart';
 
 /// A function that returns true when the update from [previous] to [current]
 /// should notify listeners, if any.
@@ -34,7 +26,7 @@ typedef Dispose<T> = void Function(BuildContext context, T value);
 /// that cancels the subscription.
 ///
 /// It is called the first time the value is obtained (through
-/// [InheritedProviderElement.value]). And the returned callback will be called
+/// [InheritedContext.value]). And the returned callback will be called
 /// when [InheritedProvider] is unmounted or when the it is rebuilt with a new
 /// value.
 ///
@@ -43,26 +35,7 @@ typedef Dispose<T> = void Function(BuildContext context, T value);
 /// - [InheritedProvider]
 /// - [DeferredStartListening], a variant of this typedef for more advanced
 ///   listening.
-typedef StartListening<T> = VoidCallback Function(
-    InheritedProviderElement<T> element, T value);
-
-/// A callback used to handle the subscription of `controller`.
-///
-/// It is expected to start the listening process and return a callback
-/// that will later be used to stop that listening.
-///
-/// See also:
-///
-/// - [DeferredInheritedProvider]
-/// - [StartListening], a simpler version of this typedef.
-typedef DeferredStartListening<T, R> = VoidCallback Function(
-  DeferredInheritedProviderElement<T, R> context,
-  void Function(R value) setState,
-  T controller,
-  R value,
-);
-
-Type _typeOf<T>() => T;
+typedef StartListening<T> = VoidCallback Function(InheritedContext<T> element, T value);
 
 /// Express if the widget tree is currently being updated.
 bool get isWidgetTreeBuilding => _isWidgetTreeBuilding;
@@ -111,8 +84,7 @@ void _startWatchingScheduler() {
 ///
 /// Do not use this class directly unless you are creating a custom "Provider".
 /// Instead use [Provider] class, which wraps [InheritedProvider].
-class InheritedProvider<T> extends InheritedWidget
-    implements SingleChildWidget {
+class InheritedProvider<T> extends SingleChildStatelessWidget {
   /// Creates a value, then expose it to its descendants.
   ///
   /// The value will be disposed of when [InheritedProvider] is removed from
@@ -125,7 +97,7 @@ class InheritedProvider<T> extends InheritedWidget
     void Function(T value) debugCheckInvalidValueType,
     StartListening<T> startListening,
     Dispose<T> dispose,
-    bool lazy = true,
+    bool lazy,
     Widget child,
   })  : _lazy = lazy,
         _delegate = _CreateInheritedProvider(
@@ -144,7 +116,7 @@ class InheritedProvider<T> extends InheritedWidget
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
     StartListening<T> startListening,
-    bool lazy = true,
+    bool lazy,
     Widget child,
   })  : _lazy = lazy,
         _delegate = _ValueInheritedProvider(
@@ -167,13 +139,67 @@ class InheritedProvider<T> extends InheritedWidget
   final bool _lazy;
 
   @override
-  InheritedProviderElement<T> createElement() {
-    return InheritedProviderElement(this);
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    _delegate.debugFillProperties(properties);
   }
 
-  // Necessary override so that subclasses can work with Provider.of.
   @override
-  Type get runtimeType => _typeOf<InheritedProvider<T>>();
+  _InheritedProvderElement<T> createElement() {
+    return _InheritedProvderElement<T>(this);
+  }
+
+  @override
+  Widget buildWithChild(BuildContext context, Widget child) {
+    return _DefaultInheritedProviderScope<T>(
+      owner: this,
+      child: child,
+    );
+  }
+}
+
+class _InheritedProvderElement<T> extends SingleChildStatelessElement {
+  _InheritedProvderElement(InheritedProvider<T> widget) : super(widget);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    visitChildren((e) {
+      e.debugFillProperties(properties);
+    });
+  }
+}
+
+/// A [BuildContext] associated to an [InheritedProvider].
+///
+/// It an extra [markNeedsNotifyDependents] method and the exposed value.
+abstract class InheritedContext<T> extends BuildContext {
+  /// The current value exposed by [InheritedProvider].
+  ///
+  /// This property is lazy loaded, and reading it the first time may trigger
+  /// some side-effects such as creating a [T] instance or start a subscription.
+  T get value;
+
+  /// Marks the [InheritedProvider] as needing to update dependents.
+  ///
+  /// This bypass [InheritedWidget.updateShouldNotify] and will force widgets
+  /// that depends on [T] to rebuild.
+  void markNeedsNotifyDependents();
+
+  /// Wether `setState` was called at least once or not.
+  ///
+  /// It can be used by [DeferredStartListening] to differentiate between the
+  /// very first listening, and a rebuild after `controller` changed.
+  bool get hasValue;
+}
+
+class _DefaultInheritedProviderScope<T> extends InheritedWidget {
+  _DefaultInheritedProviderScope({
+    this.owner,
+    @required Widget child,
+  }) : super(child: child);
+
+  final InheritedProvider<T> owner;
 
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) {
@@ -181,36 +207,53 @@ class InheritedProvider<T> extends InheritedWidget
   }
 
   @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    _delegate.debugFillProperties(properties);
+  _DefaultInheritedProviderScopeElement<T> createElement() {
+    return _DefaultInheritedProviderScopeElement<T>(this);
   }
 }
 
-/// An [Element] that uses an [InheritedProvider] as its configuration.
-class InheritedProviderElement<T> extends InheritedElement
-    with SingleChildWidgetElement, SingleChildInheritedElementMixin {
-  /// Creates an element that uses the given widget as its configuration.
-  InheritedProviderElement(InheritedProvider<T> widget) : super(widget);
+class _DefaultInheritedProviderScopeElement<T> extends InheritedElement with _InheritedProviderScopeMixin<T> {
+  _DefaultInheritedProviderScopeElement(_DefaultInheritedProviderScope<T> widget) : super(widget);
 
   @override
-  InheritedProvider<T> get widget => super.widget as InheritedProvider<T>;
+  _DefaultInheritedProviderScope<T> get widget => super.widget as _DefaultInheritedProviderScope<T>;
 
-  /// The current value exposed by [InheritedProvider].
-  ///
-  /// This property is lazy loaded, and reading it the first time may trigger
-  /// some side-effects such as creating a [T] instance or start a subscription.
-  T get value => _delegateState.value;
+  @override
+  bool _isLazy(_DefaultInheritedProviderScope<T> widget) => widget.owner._lazy;
 
-  bool _shouldNotifyDependents = false;
-  bool _debugInheritLocked = false;
-  bool _isNotifyDependentsEnabled = true;
-
+  @override
   _DelegateState<T, _Delegate<T>> _delegateState;
 
   @override
+  _Delegate<T> _widgetToDelegate(_DefaultInheritedProviderScope<T> widget) {
+    return widget.owner._delegate;
+  }
+
+  @override
+  void _mountDelegate() {
+    _delegateState = widget.owner._delegate.createState()..element = this;
+  }
+}
+
+mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedContext<T> {
+  bool _shouldNotifyDependents = false;
+  bool _debugInheritLocked = false;
+  bool _isNotifyDependentsEnabled = true;
+  bool _firstBuild = true;
+
+  void _mountDelegate();
+
+  _Delegate<T> _widgetToDelegate(covariant InheritedWidget widget);
+
+  _DelegateState<T, _Delegate<T>> get _delegateState;
+
+  bool _isLazy(covariant InheritedWidget widget);
+
+  @override
+  bool get hasValue => _delegateState.hasValue;
+
+  @override
   void mount(Element parent, dynamic newSlot) {
-    _mountDelegate();
     _providerCount++;
     if (_providerCount == 1) {
       _startWatchingScheduler();
@@ -218,37 +261,31 @@ class InheritedProviderElement<T> extends InheritedElement
     super.mount(parent, newSlot);
   }
 
-  void _mountDelegate() {
-    _delegateState = widget._delegate.createState()..element = this;
+  @override
+  void performRebuild() {
+    if (_firstBuild) {
+      _firstBuild = false;
+      _mountDelegate();
+    }
+    super.performRebuild();
   }
 
   @override
-  void update(InheritedProvider<T> newWidget) {
+  void update(InheritedWidget newWidget) {
     assert(() {
-      if (widget.createElement.runtimeType !=
-          newWidget.createElement.runtimeType) {
+      if (_widgetToDelegate(widget).runtimeType != _widgetToDelegate(newWidget).runtimeType) {
         _providerCount--;
-
-        throw StateError('''
-InheritedProvider was rebuilt with a different kind of provider.
-
-This is unsupported. If you need to switch between types of providers consider
-passing a different "key" to each type of provider.
+        throw StateError('''Rebuilt $widget using a different constructor.
+      
+This is likely a mistake and is unsupported.
+If you're in this situation, consider passing a `key` unique to each individual constructor.
 ''');
       }
       return true;
     }());
 
-    if (widget._delegate.runtimeType != newWidget._delegate.runtimeType) {
-      _providerCount--;
-      throw StateError('''Rebuilt $widget using a different constructor.
-      
-This is likely a mistake and is unsupported.
-If you're in this situation, consider passing a `key` unique to each individual constructor.
-''');
-    }
     _delegateState.willUpdateDelegate(
-      newWidget._delegate,
+      _widgetToDelegate(newWidget),
       newWidget,
     );
     super.update(newWidget);
@@ -261,10 +298,7 @@ If you're in this situation, consider passing a `key` unique to each individual 
     super.unmount();
   }
 
-  /// Marks the [InheritedProvider] as needing to update dependents.
-  ///
-  /// This bypass [InheritedWidget.updateShouldNotify] and will force widgets
-  /// that depends on [T] to rebuild.
+  @override
   void markNeedsNotifyDependents() {
     if (!_isNotifyDependentsEnabled) return;
 
@@ -274,7 +308,7 @@ If you're in this situation, consider passing a `key` unique to each individual 
 
   @override
   Widget build() {
-    if (!widget._lazy) {
+    if (_isLazy(widget) == false) {
       value; // this will force the value to be computed.
     }
     _delegateState.build();
@@ -292,6 +326,9 @@ If you're in this situation, consider passing a `key` unique to each individual 
     }());
     return true;
   }
+
+  @override
+  T get value => _delegateState.value;
 
   @override
   InheritedWidget dependOnInheritedElement(
@@ -344,11 +381,13 @@ abstract class _Delegate<T> {
 }
 
 abstract class _DelegateState<T, D extends _Delegate<T>> {
-  InheritedProviderElement<T> element;
+  _InheritedProviderScopeMixin<T> element;
 
   T get value;
 
-  D get delegate => element.widget._delegate as D;
+  D get delegate => element._widgetToDelegate(element.widget) as D;
+
+  bool get hasValue;
 
   bool debugSetInheritedLock(bool value) {
     return element._debugSetInheritedLock(value);
@@ -356,7 +395,7 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
 
   void willUpdateDelegate(
     D newDelegate,
-    InheritedProvider<T> newWidget,
+    InheritedWidget newWidget,
   ) {}
 
   void dispose() {}
@@ -385,12 +424,10 @@ class _CreateInheritedProvider<T> extends _Delegate<T> {
   final Dispose<T> dispose;
 
   @override
-  _CreateInheritedProviderState<T> createState() =>
-      _CreateInheritedProviderState();
+  _CreateInheritedProviderState<T> createState() => _CreateInheritedProviderState();
 }
 
-class _CreateInheritedProviderState<T>
-    extends _DelegateState<T, _CreateInheritedProvider<T>> {
+class _CreateInheritedProviderState<T> extends _DelegateState<T, _CreateInheritedProvider<T>> {
   VoidCallback _removeListener;
   bool _didInitValue = false;
   T _value;
@@ -469,9 +506,11 @@ class _CreateInheritedProviderState<T>
       final previousValue = _value;
       _value = delegate.update(element, _value);
 
-      shouldNotify = delegate._updateShouldNotify != null
-          ? delegate._updateShouldNotify(previousValue, _value)
-          : _value != previousValue;
+      if (delegate._updateShouldNotify != null) {
+        shouldNotify = delegate._updateShouldNotify(previousValue, _value);
+      } else {
+        shouldNotify = _value != previousValue;
+      }
 
       if (shouldNotify) {
         assert(() {
@@ -492,6 +531,9 @@ class _CreateInheritedProviderState<T>
     _previousWidget = delegate;
     return super.build();
   }
+
+  @override
+  bool get hasValue => _didInitValue != null;
 }
 
 class _ValueInheritedProvider<T> extends _Delegate<T> {
@@ -517,8 +559,7 @@ class _ValueInheritedProvider<T> extends _Delegate<T> {
   }
 }
 
-class _ValueInheritedProviderState<T>
-    extends _DelegateState<T, _ValueInheritedProvider<T>> {
+class _ValueInheritedProviderState<T> extends _DelegateState<T, _ValueInheritedProvider<T>> {
   VoidCallback _removeListener;
 
   @override
@@ -533,7 +574,7 @@ class _ValueInheritedProviderState<T>
   @override
   void willUpdateDelegate(
     _ValueInheritedProvider<T> newDelegate,
-    InheritedProvider<T> newWidget,
+    InheritedWidget newWidget,
   ) {
     bool shouldNotify;
     if (delegate._updateShouldNotify != null) {
@@ -573,324 +614,7 @@ class _ValueInheritedProviderState<T>
       ),
     );
   }
-}
-
-/// Listens to an object and expose its internal state to `child`.
-DeferredInheritedProvider<T, R> autoDeferred<T, R>({
-  Key key,
-  @required Create<T> create,
-  Dispose<T> dispose,
-  @required T value,
-  @required DeferredStartListening<T, R> startListening,
-  UpdateShouldNotify<R> updateShouldNotify,
-  Widget child,
-}) {
-  assert(dispose == null || create != null);
-  assert(value == null || create == null);
-
-  if (create != null) {
-    return DeferredInheritedProvider<T, R>(
-      key: key,
-      create: create,
-      dispose: dispose,
-      startListening: startListening,
-      updateShouldNotify: updateShouldNotify,
-      child: child,
-    );
-  }
-  return DeferredInheritedProvider.value(
-    key: key,
-    value: value,
-    startListening: startListening,
-    updateShouldNotify: updateShouldNotify,
-    child: child,
-  );
-}
-
-abstract class _DeferredDelegate<T, R> extends _Delegate<R> {
-  @override
-  _DeferredDelegateState<T, R, _DeferredDelegate<T, R>> createState();
-}
-
-abstract class _DeferredDelegateState<T, R, W extends _DeferredDelegate<T, R>>
-    extends _DelegateState<R, W> {
-  @override
-  DeferredInheritedProviderElement<T, R> get element =>
-      super.element as DeferredInheritedProviderElement<T, R>;
-
-  VoidCallback _removeListener;
-
-  T get controller;
-
-  R _value;
-  @override
-  R get value {
-    // setState should be no-op inside startListening, as it's lazy-loaded
-    // otherwise Flutter will throw an exception for no reason.
-    element._isNotifyDependentsEnabled = false;
-    _removeListener ??= element.widget._startListening(
-      element,
-      element.setState,
-      controller,
-      _value,
-    );
-    element._isNotifyDependentsEnabled = true;
-    assert(element.hasValue, '''
-The callback "startListening" was called, but it left DeferredInhertitedProviderElement<$T, $R>
-in an unitialized state.
-
-It is necessary for "startListening" to call "setState" at least once the very
-first time "value" is requested.
-
-To fix, consider:
-
-DeferredInheritedProvider(
-  ...,
-  startListening: (element, setState, controller, value) {
-    if (!element.hasValue) {
-      setState(myInitialValue); // TODO replace myInitialValue with your own
-    }
-    ...
-  }
-)
-    ''');
-    assert(_removeListener != null);
-    return _value;
-  }
 
   @override
-  void dispose() {
-    super.dispose();
-    _removeListener?.call();
-  }
-
-  bool get isLoaded => _removeListener != null;
-}
-
-/// An [InheritedProvider] where the object listened is _not_ the object
-/// emitted.
-///
-/// For example, for a stream provider, we'll want to listen to `Stream<T>`,
-/// but expose `T` not the [Stream].
-
-class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
-  /// Lazily create an object automatically disposed when
-  /// [DeferredInheritedProvider] is removed from the tree.
-  ///
-  /// The object create will be listened using `startListening`, and its content
-  /// will be exposed to `child` and its descendants.
-  DeferredInheritedProvider({
-    Key key,
-    @required Create<T> create,
-    Dispose<T> dispose,
-    @required DeferredStartListening<T, R> startListening,
-    UpdateShouldNotify<R> updateShouldNotify,
-    bool lazy = true,
-    Widget child,
-  })  : _startListening = startListening,
-        _updateShouldNotify = updateShouldNotify,
-        super._constructor(
-          key: key,
-          child: child,
-          lazy: lazy,
-          delegate: _CreateDeferredInheritedProvider(
-            create: create,
-            dispose: dispose,
-          ),
-        );
-
-  /// Listens to `value` and expose its content to `child` and its descendants.
-  DeferredInheritedProvider.value({
-    Key key,
-    @required T value,
-    @required DeferredStartListening<T, R> startListening,
-    UpdateShouldNotify<R> updateShouldNotify,
-    bool lazy = true,
-    Widget child,
-  })  : _startListening = startListening,
-        _updateShouldNotify = updateShouldNotify,
-        super._constructor(
-          key: key,
-          lazy: lazy,
-          delegate: _ValueDeferredInheritedProvider<T, R>(value),
-          child: child,
-        );
-
-  final DeferredStartListening<T, R> _startListening;
-  final UpdateShouldNotify<R> _updateShouldNotify;
-
-  @override
-  DeferredInheritedProviderElement<T, R> createElement() {
-    return DeferredInheritedProviderElement<T, R>(this);
-  }
-}
-
-/// The element associated to [DeferredInheritedProvider].
-///
-/// It is responsible for updating dependents, managing subscriptions,
-/// and creating/disposing [T].
-class DeferredInheritedProviderElement<T, R>
-    extends InheritedProviderElement<R> {
-  /// Creates an element that uses the given widget as its configuration.
-  DeferredInheritedProviderElement(DeferredInheritedProvider<T, R> widget)
-      : super(widget);
-
-  @override
-  DeferredInheritedProvider<T, R> get widget =>
-      super.widget as DeferredInheritedProvider<T, R>;
-
-  /// The object listened (and potentially created/disposed) by
-  /// [DeferredInheritedProvider], which will be used to control [value].
-  T get controller => _delegateState.controller;
-
-  bool _hasValue = false;
-
-  @override
-  _DeferredDelegateState<T, R, _DeferredDelegate<T, R>> get _delegateState {
-    return super._delegateState
-        as _DeferredDelegateState<T, R, _DeferredDelegate<T, R>>;
-  }
-
-  /// Wether [setState] was called at least once or not.
-  ///
-  /// It can be used by [DeferredStartListening] to differentiate between the
-  /// very first listening, and a rebuild after [controller] changed.
-  bool get hasValue => _hasValue;
-
-  /// Update [value] and mark dependents as needing build.
-  ///
-  /// Contrarily to [markNeedsNotifyDependents], this method follows
-  /// `InheritedProvider.updateShouldNotify` and will not rebuild dependents if
-  /// the new value is the same as the previous one.
-  void setState(R value) {
-    if (_hasValue) {
-      final shouldNotify = widget._updateShouldNotify != null
-          ? widget._updateShouldNotify(_delegateState._value, value)
-          : _delegateState._value != value;
-      if (shouldNotify) {
-        markNeedsNotifyDependents();
-      }
-    }
-    _hasValue = true;
-    _delegateState._value = value;
-  }
-}
-
-class _CreateDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
-  _CreateDeferredInheritedProvider({@required this.create, this.dispose});
-
-  final Create<T> create;
-  final Dispose<T> dispose;
-
-  @override
-  _CreateDeferredInheritedProviderElement<T, R> createState() {
-    return _CreateDeferredInheritedProviderElement<T, R>();
-  }
-}
-
-class _CreateDeferredInheritedProviderElement<T, R>
-    extends _DeferredDelegateState<T, R,
-        _CreateDeferredInheritedProvider<T, R>> {
-  bool _didBuild = false;
-
-  T _controller;
-  @override
-  T get controller {
-    if (!_didBuild) {
-      assert(debugSetInheritedLock(true));
-      _controller = delegate.create(element);
-      _didBuild = true;
-    }
-    return _controller;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    if (_didBuild) {
-      delegate.dispose?.call(element, _controller);
-    }
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    if (isLoaded) {
-      properties
-        ..add(DiagnosticsProperty('controller', controller))
-        ..add(DiagnosticsProperty('value', value));
-    } else {
-      properties
-        ..add(
-          FlagProperty(
-            'controller',
-            value: true,
-            showName: true,
-            ifTrue: '<not yet loaded>',
-          ),
-        )
-        ..add(
-          FlagProperty(
-            'value',
-            value: true,
-            showName: true,
-            ifTrue: '<not yet loaded>',
-          ),
-        );
-    }
-  }
-}
-
-class _ValueDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
-  _ValueDeferredInheritedProvider(this.value);
-
-  final T value;
-
-  @override
-  _ValueDeferredInheritedProviderState<T, R> createState() {
-    return _ValueDeferredInheritedProviderState();
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('controller', value));
-  }
-}
-
-class _ValueDeferredInheritedProviderState<T, R> extends _DeferredDelegateState<
-    T, R, _ValueDeferredInheritedProvider<T, R>> {
-  @override
-  void willUpdateDelegate(
-    _ValueDeferredInheritedProvider<T, R> oldDelegate,
-    InheritedWidget oldWidget,
-  ) {
-    if (delegate.value != oldDelegate.value) {
-      if (_removeListener != null) {
-        _removeListener();
-        _removeListener = null;
-      }
-      element.notifyClients(oldWidget);
-    }
-  }
-
-  @override
-  T get controller => delegate.value;
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    if (_removeListener != null) {
-      properties.add(DiagnosticsProperty('value', value));
-    } else {
-      properties.add(
-        FlagProperty(
-          'value',
-          value: true,
-          showName: true,
-          ifTrue: '<not yet loaded>',
-        ),
-      );
-    }
-  }
+  bool get hasValue => true;
 }

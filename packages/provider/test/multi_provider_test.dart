@@ -2,10 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-Matcher throwsProviderNotFound<T>() {
-  return throwsA(isA<ProviderNotFoundException>()
-      .having((err) => err.valueType, 'valueType', T));
-}
+import 'common.dart';
 
 void main() {
   group('MultiProvider', () {
@@ -16,8 +13,7 @@ void main() {
       );
     });
 
-    testWidgets('MultiProvider children can only access parent providers',
-        (tester) async {
+    testWidgets('MultiProvider children can only access parent providers', (tester) async {
       final k1 = GlobalKey();
       final k2 = GlobalKey();
       final k3 = GlobalKey();

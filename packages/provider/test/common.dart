@@ -10,6 +10,10 @@ Element findElementOfWidget<T extends Widget>() {
   return find.byType(T).first.evaluate().first;
 }
 
+InheritedContext<T> findInheritedContext<T>() {
+  return find.byElementPredicate((e) => e is InheritedContext<T>).first.evaluate().first as InheritedContext<T>;
+}
+
 Type typeOf<T>() => T;
 
 class InitialValueBuilderMock<T> extends Mock {
@@ -32,7 +36,7 @@ class StartListeningMock<T> extends Mock {
     when(this(any, any)).thenReturn(value);
   }
 
-  VoidCallback call(InheritedProviderElement<T> context, T value);
+  VoidCallback call(InheritedContext<T> context, T value);
 }
 
 class StopListeningMock extends Mock {
@@ -78,7 +82,7 @@ class TextOf<T> extends StatelessWidget {
 class DeferredStartListeningMock<T, R> extends Mock {
   DeferredStartListeningMock(
       [VoidCallback call(
-        DeferredInheritedProviderElement<T, R> context,
+        InheritedContext<R> context,
         void Function(R value) setState,
         T controller,
         R value,
@@ -95,7 +99,7 @@ class DeferredStartListeningMock<T, R> extends Mock {
   }
 
   VoidCallback call(
-    DeferredInheritedProviderElement<T, R> context,
+    InheritedContext<R> context,
     void Function(R value) setState,
     T controller,
     R value,
@@ -140,8 +144,7 @@ class Combined extends DiagnosticableTree {
   final Combined previous;
   final BuildContext context;
 
-  Combined(this.context, this.previous, this.a,
-      [this.b, this.c, this.d, this.e, this.f]);
+  Combined(this.context, this.previous, this.a, [this.b, this.c, this.d, this.e, this.f]);
 
   @override
   // ignore: hash_and_equals
@@ -180,4 +183,36 @@ class MyStream extends Stream<void> {
       {Function onError, void Function() onDone, bool cancelOnError}) {
     return null;
   }
+}
+
+int buildCountOf(BuildCount widget) {
+  return ((find.byWidget(widget).evaluate().single as StatefulElement).state as _BuildCountState).buildCount;
+}
+
+class BuildCount extends StatefulWidget {
+  const BuildCount(this.builder, {Key key}) : super(key: key);
+
+  final WidgetBuilder builder;
+
+  @override
+  _BuildCountState createState() => _BuildCountState();
+}
+
+class _BuildCountState extends State<BuildCount> {
+  int buildCount = 0;
+  @override
+  Widget build(BuildContext context) {
+    buildCount++;
+    return widget.builder(context);
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IntProperty('buildCount', buildCount));
+  }
+}
+
+Matcher throwsProviderNotFound<T>() {
+  return throwsA(isA<ProviderNotFoundException>().having((err) => err.valueType, 'valueType', T));
 }

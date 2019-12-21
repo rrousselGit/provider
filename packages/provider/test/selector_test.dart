@@ -252,8 +252,7 @@ void main() {
     await tester.pumpWidget(
       Selector0<int>(
         selector: (_) => 42,
-        builder: (_, __, ___) =>
-            const Text('foo', textDirection: TextDirection.ltr),
+        builder: (_, __, ___) => const Text('foo', textDirection: TextDirection.ltr),
       ),
     );
 
@@ -262,8 +261,7 @@ void main() {
     await tester.pumpWidget(
       Selector0<int>(
         selector: (_) => 42,
-        builder: (_, __, ___) =>
-            const Text('bar', textDirection: TextDirection.ltr),
+        builder: (_, __, ___) => const Text('bar', textDirection: TextDirection.ltr),
       ),
     );
 
@@ -327,9 +325,7 @@ void main() {
 
     expect(find.text('42'), findsOneWidget);
 
-    tester
-        .element(find.byWidgetPredicate((w) => w is Selector0))
-        .markNeedsBuild();
+    tester.element(find.byWidgetPredicate((w) => w is Selector0)).markNeedsBuild();
 
     await tester.pump();
 
@@ -362,9 +358,7 @@ void main() {
 
     expect(find.text('42'), findsOneWidget);
 
-    tester
-        .element(find.byWidgetPredicate((w) => w is Selector0))
-        .markNeedsBuild();
+    tester.element(find.byWidgetPredicate((w) => w is Selector0)).markNeedsBuild();
 
     when(selector(any)).thenReturn(24);
 
@@ -385,8 +379,7 @@ void main() {
         ],
         child: Selector<A, String>(
           selector: (_, a) => '$a',
-          builder: (_, value, __) =>
-              Text(value, textDirection: TextDirection.ltr),
+          builder: (_, value, __) => Text(value, textDirection: TextDirection.ltr),
         ),
       ),
     );
@@ -402,8 +395,7 @@ void main() {
         ],
         child: Selector2<A, B, String>(
           selector: (_, a, b) => '$a $b',
-          builder: (_, value, __) =>
-              Text(value, textDirection: TextDirection.ltr),
+          builder: (_, value, __) => Text(value, textDirection: TextDirection.ltr),
         ),
       ),
     );
@@ -420,8 +412,7 @@ void main() {
         ],
         child: Selector3<A, B, C, String>(
           selector: (_, a, b, c) => '$a $b $c',
-          builder: (_, value, __) =>
-              Text(value, textDirection: TextDirection.ltr),
+          builder: (_, value, __) => Text(value, textDirection: TextDirection.ltr),
         ),
       ),
     );
@@ -439,8 +430,7 @@ void main() {
         ],
         child: Selector4<A, B, C, D, String>(
           selector: (_, a, b, c, d) => '$a $b $c $d',
-          builder: (_, value, __) =>
-              Text(value, textDirection: TextDirection.ltr),
+          builder: (_, value, __) => Text(value, textDirection: TextDirection.ltr),
         ),
       ),
     );
@@ -459,8 +449,7 @@ void main() {
         ],
         child: Selector5<A, B, C, D, E, String>(
           selector: (_, a, b, c, d, e) => '$a $b $c $d $e',
-          builder: (_, value, __) =>
-              Text(value, textDirection: TextDirection.ltr),
+          builder: (_, value, __) => Text(value, textDirection: TextDirection.ltr),
         ),
       ),
     );
@@ -480,8 +469,7 @@ void main() {
         ],
         child: Selector6<A, B, C, D, E, F, String>(
           selector: (_, a, b, c, d, e, f) => '$a $b $c $d $e $f',
-          builder: (_, value, __) =>
-              Text(value, textDirection: TextDirection.ltr),
+          builder: (_, value, __) => Text(value, textDirection: TextDirection.ltr),
         ),
       ),
     );

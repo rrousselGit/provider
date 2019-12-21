@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-import 'inherited_provider.dart';
+import 'provider.dart';
 
 /// A callback used to build a valid value from an error.
 ///
@@ -12,8 +12,10 @@ import 'inherited_provider.dart';
 ///     handle respectively [Stream.catchError] and [Future.catch].
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 
-DeferredStartListening<Stream<T>, T> _streamStartListening<T>(
-    {T initialData, ErrorBuilder<T> catchError}) {
+DeferredStartListening<Stream<T>, T> _streamStartListening<T>({
+  T initialData,
+  ErrorBuilder<T> catchError,
+}) {
   return (e, setState, controller, __) {
     if (!e.hasValue) {
       setState(initialData);
@@ -81,10 +83,12 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
+    bool lazy,
     Widget child,
   })  : assert(create != null),
         super(
           key: key,
+          lazy: lazy,
           create: create,
           updateShouldNotify: updateShouldNotify,
           startListening: _streamStartListening(
@@ -101,9 +105,11 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
+    bool lazy,
     Widget child,
   }) : super.value(
           key: key,
+          lazy: lazy,
           value: value,
           updateShouldNotify: updateShouldNotify,
           startListening: _streamStartListening(
@@ -177,10 +183,12 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
+    bool lazy,
     Widget child,
   })  : assert(create != null),
         super(
           key: key,
+          lazy: lazy,
           create: create,
           updateShouldNotify: updateShouldNotify,
           startListening: _futureStartListening(
@@ -200,6 +208,7 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
     Widget child,
   }) : super.value(
           key: key,
+          lazy: false,
           value: value,
           updateShouldNotify: updateShouldNotify,
           startListening: _futureStartListening(

@@ -1,22 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'inherited_provider.dart';
 import 'listenable_provider.dart' show ListenableProvider;
-
-DeferredStartListening<ValueListenable<T>, T> _startListening<T>() {
-  return (_, setState, controller, __) {
-    setState(controller.value);
-
-    final listener = () => setState(controller.value);
-    controller.addListener(listener);
-    return () => controller.removeListener(listener);
-  };
-}
+import 'provider.dart';
 
 /// Listens to a [ValueListenable] and expose its current value.
-class ValueListenableProvider<T>
-    extends DeferredInheritedProvider<ValueListenable<T>, T> {
+class ValueListenableProvider<T> extends DeferredInheritedProvider<ValueListenable<T>, T> {
   /// Creates a [ValueNotifier] using [create] and automatically dispose it
   /// when [ValueListenableProvider] is removed from the tree.
   ///
@@ -33,10 +22,12 @@ class ValueListenableProvider<T>
     Key key,
     @required Create<ValueNotifier<T>> create,
     UpdateShouldNotify<T> updateShouldNotify,
+    bool lazy,
     Widget child,
   }) : super(
           key: key,
           create: create,
+          lazy: lazy,
           updateShouldNotify: updateShouldNotify,
           startListening: _startListening(),
           dispose: _dispose,
@@ -74,5 +65,15 @@ class ValueListenableProvider<T>
     if (notifier is ValueNotifier) {
       notifier.dispose();
     }
+  }
+
+  static DeferredStartListening<ValueListenable<T>, T> _startListening<T>() {
+    return (_, setState, controller, __) {
+      setState(controller.value);
+
+      final listener = () => setState(controller.value);
+      controller.addListener(listener);
+      return () => controller.removeListener(listener);
+    };
   }
 }

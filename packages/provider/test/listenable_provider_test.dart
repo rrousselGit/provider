@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
+import 'package:provider/src/provider.dart';
 
 import 'common.dart';
 
@@ -93,8 +94,7 @@ void main() {
         },
       );
     }, skip: true);
-    testWidgets("don't listen again if listenable instance doesn't change",
-        (tester) async {
+    testWidgets("don't listen again if listenable instance doesn't change", (tester) async {
       final listenable = MockNotifier();
       await tester.pumpWidget(
         ListenableProvider<ChangeNotifier>.value(
@@ -210,12 +210,11 @@ void main() {
         ),
       );
 
-      final context = findElementOfWidget<InheritedProvider<Listenable>>();
+      final context = findInheritedContext<Listenable>();
 
       verify(create(context)).called(1);
       verifyNoMoreInteractions(create);
-      final listener = verify(listenable.addListener(captureAny)).captured.first
-          as VoidCallback;
+      final listener = verify(listenable.addListener(captureAny)).captured.first as VoidCallback;
       clearInteractions(listenable);
 
       await tester.pumpWidget(Container());
@@ -273,8 +272,7 @@ void main() {
 
       expect(listenable.hasListeners, false);
     });
-    testWidgets("rebuilding with the same provider don't rebuilds descendants",
-        (tester) async {
+    testWidgets("rebuilding with the same provider don't rebuilds descendants", (tester) async {
       final listenable = ChangeNotifier();
 
       var buildCount = 0;

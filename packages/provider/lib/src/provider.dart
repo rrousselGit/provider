@@ -3,8 +3,12 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:provider/provider.dart';
 
-import 'inherited_provider.dart';
+part 'inherited_provider.dart';
+part 'deferred_inherited_provider.dart';
 
 /// A provider that merges multiple providers into a single linear widget tree.
 /// It is used to improve readability and reduce boilerplate code of having to
@@ -64,7 +68,7 @@ class MultiProvider extends Nested {
 /// [Provider] is removed from the tree.
 ///
 /// {@template provider.updateshouldnotify}
-/// [updateShouldNotify] can optionally be passed to avoid unnecessarily
+/// `updateShouldNotify` can optionally be passed to avoid unnecessarily
 /// rebuilding dependents when nothing changed. Defaults to
 /// `(previous, next) => previous != next`. See
 /// [InheritedWidget.updateShouldNotify] for more information.
@@ -122,16 +126,16 @@ class Provider<T> extends InheritedProvider<T> {
     Key key,
     @required Create<T> create,
     Dispose<T> dispose,
+    bool lazy,
     Widget child,
   })  : assert(create != null),
         super(
           key: key,
+          lazy: lazy,
           create: create,
           dispose: dispose,
-          debugCheckInvalidValueType: kReleaseMode
-              ? null
-              : (T value) =>
-                  Provider.debugCheckInvalidValueType?.call<T>(value),
+          debugCheckInvalidValueType:
+              kReleaseMode ? null : (T value) => Provider.debugCheckInvalidValueType?.call<T>(value),
           child: child,
         );
 
@@ -199,40 +203,23 @@ If you want to expose a variable that can be anything, consider changing
 `dynamic` to `Object` instead.
 ''',
     );
-    assert(listen == false || listen == null || isWidgetTreeBuilding, '''
-It is likely caused by an event handler that wanted to obtain <T>, and forgot
-to specify `listen: false`.
-This is unsupported because the event handler would cause the widget tree to
-build more often, when the value isn't actually used by the widget tree.
-
-To fix, simply pass `listen: false` to [Provider.of]:
-
-```
-RaisedButton(
-  onPressed: () {
-    // we voluntarily added `listen: false` here
-    Provider.of<MyObject>(context, listen: false);
-  },
-  child: Text('example'),
-)
-```
+    assert(!(listen == true && !isWidgetTreeBuilding), '''
+Tried to listen to a value exposed with provider, from outside of the widget tree.
 ''');
 
-    InheritedProviderElement<T> inheritedElement;
+    InheritedContext<T> inheritedElement;
 
-    if (context.widget is InheritedProvider<T>) {
+    if (context.widget is _DefaultInheritedProviderScope<T>) {
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
       // the same type.
       context.visitAncestorElements((parent) {
-        inheritedElement = parent
-                .getElementForInheritedWidgetOfExactType<InheritedProvider<T>>()
-            as InheritedProviderElement<T>;
+        inheritedElement = parent.getElementForInheritedWidgetOfExactType<_DefaultInheritedProviderScope<T>>()
+            as _DefaultInheritedProviderScopeElement<T>;
         return false;
       });
     } else {
-      inheritedElement = context
-              .getElementForInheritedWidgetOfExactType<InheritedProvider<T>>()
-          as InheritedProviderElement<T>;
+      inheritedElement = context.getElementForInheritedWidgetOfExactType<_DefaultInheritedProviderScope<T>>()
+          as _DefaultInheritedProviderScopeElement<T>;
     }
 
     if (inheritedElement == null) {
@@ -240,7 +227,7 @@ RaisedButton(
     }
 
     if (listen ?? isWidgetTreeBuilding) {
-      context.dependOnInheritedElement(inheritedElement);
+      context.dependOnInheritedElement(inheritedElement as InheritedElement);
     }
 
     return inheritedElement.value;

@@ -34,8 +34,7 @@ void main() {
         ),
       );
 
-      final listener =
-          verify(mock.addListener(captureAny)).captured.first as VoidCallback;
+      final listener = verify(mock.addListener(captureAny)).captured.first as VoidCallback;
 
       clearInteractions(mock);
       await tester.pumpWidget(Container());
@@ -48,9 +47,8 @@ void main() {
     testWidgets('rebuilds when value change', (tester) async {
       final listenable = ValueNotifier(0);
 
-      final child = Builder(
-          builder: (context) => Text(Provider.of<int>(context).toString(),
-              textDirection: TextDirection.ltr));
+      final child =
+          Builder(builder: (context) => Text(Provider.of<int>(context).toString(), textDirection: TextDirection.ltr));
 
       await tester.pumpWidget(
         ValueListenableProvider.value(
@@ -106,8 +104,7 @@ void main() {
       expect(key.currentWidget, isInstanceOf<ValueListenableProvider<int>>());
     });
 
-    testWidgets("don't listen again if stream instance doesn't change",
-        (tester) async {
+    testWidgets("don't listen again if stream instance doesn't change", (tester) async {
       final valueNotifier = ValueNotifierMock<int>();
       await tester.pumpWidget(
         ValueListenableProvider.value(

@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/src/inherited_provider.dart';
+import 'package:provider/src/provider.dart';
 
 import 'common.dart';
 
@@ -110,7 +110,8 @@ void main() {
       expect(
         rootElement.toString(),
         contains(
-          'InheritedProvider<int>(controller: 42, value: <not yet loaded>)',
+          '''
+DeferredInheritedProvider<int, int>(controller: 42, value: <not yet loaded>)''',
         ),
       );
 
@@ -118,7 +119,8 @@ void main() {
 
       expect(
         rootElement.toString(),
-        contains('InheritedProvider<int>(controller: 42, value: 24)'),
+        contains('''
+DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       );
     });
     testWidgets('DeferredInheritedProvider', (tester) async {
@@ -139,7 +141,7 @@ void main() {
         rootElement.toString(),
         contains(
           '''
-InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)''',
+DeferredInheritedProvider<int, int>(controller: <not yet loaded>, value: <not yet loaded>)''',
         ),
       );
 
@@ -147,7 +149,8 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
 
       expect(
         rootElement.toString(),
-        contains('InheritedProvider<int>(controller: 42, value: 24)'),
+        contains('''
+DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       );
     });
   });
@@ -195,30 +198,8 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
     expect(valueDuringBuild, isFalse);
     expect(isWidgetTreeBuilding, isFalse);
   });
-  test('autoDeferred crash', () {
-    expect(
-      () => autoDeferred<int, int>(
-        create: (_) => 42,
-        value: 42,
-        startListening: (_, __, ___, ____) => () {},
-        child: Container(),
-      ),
-      throwsAssertionError,
-    );
-    expect(
-      () => autoDeferred<int, int>(
-        create: null,
-        value: 42,
-        dispose: (_, __) {},
-        startListening: (_, __, ___, ____) => () {},
-        child: Container(),
-      ),
-      throwsAssertionError,
-    );
-  });
   group('InheritedProvider.value()', () {
-    testWidgets('markNeedsNotifyDependents during startListening is noop',
-        (tester) async {
+    testWidgets('markNeedsNotifyDependents during startListening is noop', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>.value(
           value: 42,
@@ -230,8 +211,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
         ),
       );
     });
-    testWidgets('startListening called again when create returns new value',
-        (tester) async {
+    testWidgets('startListening called again when create returns new value', (tester) async {
       final stopListening = StopListeningMock();
       final startListening = StartListeningMock<int>(stopListening);
 
@@ -243,8 +223,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
         ),
       );
 
-      final element = tester.element<InheritedProviderElement<int>>(
-          find.byWidgetPredicate((w) => w is InheritedProvider<int>));
+      final element = findInheritedContext<int>();
 
       verify(startListening(element, 42)).called(1);
       verifyNoMoreInteractions(startListening);
@@ -296,8 +275,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
         ),
       );
 
-      final element = tester.element<InheritedProviderElement<int>>(
-          find.byWidgetPredicate((w) => w is InheritedProvider<int>));
+      final element = findInheritedContext<int>();
 
       verify(startListening(element, 42)).called(1);
       verifyNoMoreInteractions(startListening);
@@ -460,8 +438,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
     });
   });
   group('InheritedProvider()', () {
-    testWidgets('markNeedsNotifyDependents during startListening is noop',
-        (tester) async {
+    testWidgets('markNeedsNotifyDependents during startListening is noop', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>(
           update: (_, __) => 24,
@@ -546,8 +523,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
         ),
       );
 
-      final element = tester.element<InheritedProviderElement<int>>(
-          find.byWidgetPredicate((w) => w is InheritedProvider<int>));
+      final element = findInheritedContext<int>();
 
       verify(startListening(element, 42)).called(1);
       verifyNoMoreInteractions(startListening);
@@ -578,8 +554,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
       verifyNoMoreInteractions(stopListening);
     });
 
-    testWidgets('startListening called again when create returns new value',
-        (tester) async {
+    testWidgets('startListening called again when create returns new value', (tester) async {
       final stopListening = StopListeningMock();
       final startListening = StartListeningMock<int>(stopListening);
 
@@ -591,8 +566,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
         ),
       );
 
-      final element = tester.element<InheritedProviderElement<int>>(
-          find.byWidgetPredicate((w) => w is InheritedProvider<int>));
+      final element = findInheritedContext<int>();
 
       verify(startListening(element, 42)).called(1);
       verifyNoMoreInteractions(startListening);
@@ -704,8 +678,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
           },
         );
         final update = ValueBuilderMock<int>();
-        when(update(any, any))
-            .thenAnswer((i) => (i.positionalArguments[1] as int) * 2);
+        when(update(any, any)).thenAnswer((i) => (i.positionalArguments[1] as int) * 2);
 
         await tester.pumpWidget(
           InheritedProvider<int>(
@@ -715,9 +688,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
           ),
         );
 
-        final inheritedElement = tester.element(
-          find.byWidgetPredicate((w) => w is InheritedProvider<int>),
-        );
+        final inheritedElement = findInheritedContext<int>();
         verifyZeroInteractions(update);
 
         await tester.pumpWidget(
@@ -943,16 +914,14 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
 
       verifyZeroInteractions(dispose);
 
-      BuildContext context = tester
-          .element(find.byWidgetPredicate((w) => w is InheritedProvider<int>));
+      final context = findInheritedContext<int>();
 
       await tester.pumpWidget(Container());
 
       verify(dispose(context, 42)).called(1);
       verifyNoMoreInteractions(dispose);
     });
-    testWidgets('builder unmount, dispose not called if value never read',
-        (tester) async {
+    testWidgets('builder unmount, dispose not called if value never read', (tester) async {
       final dispose = DisposeMock<int>();
 
       await tester.pumpWidget(
@@ -991,8 +960,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
       verifyZeroInteractions(dispose);
       verifyZeroInteractions(dispose2);
 
-      BuildContext context = tester
-          .element(find.byWidgetPredicate((w) => w is InheritedProvider<int>));
+      final context = findInheritedContext<int>();
 
       final dispose3 = DisposeMock<int>();
       await tester.pumpWidget(
@@ -1056,9 +1024,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
 
       verifyZeroInteractions(initialValueBuilder);
 
-      final inheritedProviderElement = tester.element(
-        find.byWidgetPredicate((w) => w is InheritedProvider<int>),
-      );
+      final inheritedProviderElement = findInheritedContext<int>();
 
       expect(of<int>(), equals(42));
       verify(initialValueBuilder(inheritedProviderElement)).called(1);
@@ -1079,8 +1045,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
     // TODO: stopListening cannot be null
     testWidgets('startListening', (tester) async {
       final stopListening = StopListeningMock();
-      final startListening =
-          DeferredStartListeningMock<ValueNotifier<int>, int>(
+      final startListening = DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
           setState(controller.value);
           return stopListening;
@@ -1156,10 +1121,8 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
 
       expect(tester.takeException(), isAssertionError);
     });
-    testWidgets("startListening doesn't need setState if already initialized",
-        (tester) async {
-      final startListening =
-          DeferredStartListeningMock<ValueNotifier<int>, int>(
+    testWidgets("startListening doesn't need setState if already initialized", (tester) async {
+      final startListening = DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
           setState(controller.value);
           return () {};
@@ -1177,8 +1140,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
 
       expect(find.text('0'), findsOneWidget);
 
-      final startListening2 =
-          DeferredStartListeningMock<ValueNotifier<int>, int>();
+      final startListening2 = DeferredStartListeningMock<ValueNotifier<int>, int>();
       when(startListening2(any, any, any, any)).thenReturn(() {});
       final controller2 = ValueNotifier<int>(0);
 
@@ -1292,10 +1254,8 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
       expect(find.text('1'), findsOneWidget);
       expect(buildCount, equals(2));
     });
-    testWidgets('startListening never leave the widget uninitialized',
-        (tester) async {
-      final startListening =
-          DeferredStartListeningMock<ValueNotifier<int>, int>();
+    testWidgets('startListening never leave the widget uninitialized', (tester) async {
+      final startListening = DeferredStartListeningMock<ValueNotifier<int>, int>();
       when(startListening(any, any, any, any)).thenReturn(() {});
       final controller = ValueNotifier<int>(0);
 
@@ -1314,8 +1274,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
       );
     });
 
-    testWidgets('startListening called again on controller change',
-        (tester) async {
+    testWidgets('startListening called again on controller change', (tester) async {
       var buildCount = 0;
       final child = Consumer<int>(builder: (_, value, __) {
         buildCount++;
@@ -1323,8 +1282,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
       });
 
       final stopListening = StopListeningMock();
-      final startListening =
-          DeferredStartListeningMock<ValueNotifier<int>, int>(
+      final startListening = DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
           setState(controller.value);
           return stopListening;
@@ -1346,8 +1304,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
       verifyZeroInteractions(stopListening);
 
       final stopListening2 = StopListeningMock();
-      final startListening2 =
-          DeferredStartListeningMock<ValueNotifier<int>, int>(
+      final startListening2 = DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
           setState(controller.value);
           return stopListening2;
@@ -1427,8 +1384,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
       expect(of<int>(), equals(0));
 
       verify(create(argThat(isNotNull))).called(1);
-      verify(startListening(argThat(isNotNull), argThat(isNotNull), '0', null))
-          .called(1);
+      verify(startListening(argThat(isNotNull), argThat(isNotNull), '0', null)).called(1);
 
       expect(of<int>(), equals(0));
 
@@ -1488,7 +1444,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
   });
 
   testWidgets('startListening markNeedsNotifyDependents', (tester) async {
-    InheritedProviderElement<int> element;
+    InheritedContext<int> element;
     var buildCount = 0;
 
     await tester.pumpWidget(
@@ -1523,7 +1479,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
     await tester.pumpWidget(
       SubclassProvider(
         key: UniqueKey(),
-        value: 42,
+        create: (_) => 42,
         child: Context(),
       ),
     );
@@ -1610,8 +1566,7 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
     verify(startListening(argThat(isNotNull), 42)).called(1);
   });
 
-  testWidgets('InheritedProvider.value lazy loading can be disabled',
-      (tester) async {
+  testWidgets('InheritedProvider.value lazy loading can be disabled', (tester) async {
     final startListening = StartListeningMock<int>(() {});
 
     await tester.pumpWidget(
@@ -1627,10 +1582,27 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
     verify(startListening(argThat(isNotNull), 42)).called(1);
     verifyNoMoreInteractions(startListening);
   });
-  testWidgets('DeferredInheritedProvider lazy loading can be disabled',
-      (tester) async {
-    final startListening =
-        DeferredStartListeningMock<int, int>((a, setState, c, d) {
+  testWidgets(
+    "InheritedProvider subclass don't have to specify default lazy value",
+    (tester) async {
+      final create = InitialValueBuilderMock<int>(42);
+
+      await tester.pumpWidget(
+        SubclassProvider(
+          key: UniqueKey(),
+          create: create,
+          child: Context(),
+        ),
+      );
+
+      verifyZeroInteractions(create);
+      expect(of<int>(), equals(42));
+      verify(create(argThat(isNotNull))).called(1);
+      verifyNoMoreInteractions(create);
+    },
+  );
+  testWidgets('DeferredInheritedProvider lazy loading can be disabled', (tester) async {
+    final startListening = DeferredStartListeningMock<int, int>((a, setState, c, d) {
       setState(0);
       return () {};
     });
@@ -1645,14 +1617,11 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
       ),
     );
 
-    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null))
-        .called(1);
+    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null)).called(1);
     verifyNoMoreInteractions(startListening);
   });
-  testWidgets('DeferredInheritedProvider.value lazy loading can be disabled',
-      (tester) async {
-    final startListening =
-        DeferredStartListeningMock<int, int>((a, setState, c, d) {
+  testWidgets('DeferredInheritedProvider.value lazy loading can be disabled', (tester) async {
+    final startListening = DeferredStartListeningMock<int, int>((a, setState, c, d) {
       setState(0);
       return () {};
     });
@@ -1667,18 +1636,24 @@ InheritedProvider<int>(controller: <not yet loaded>, value: <not yet loaded>)'''
       ),
     );
 
-    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null))
-        .called(1);
+    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null)).called(1);
     verifyNoMoreInteractions(startListening);
   });
 }
 
 class SubclassProvider extends InheritedProvider<int> {
-  SubclassProvider({Key key, int value, Widget child})
-      : super(key: key, create: (_) => value, child: child);
+  SubclassProvider({
+    Key key,
+    int create(BuildContext c),
+    bool lazy,
+    Widget child,
+  }) : super(key: key, create: create, lazy: lazy, child: child);
 
-  SubclassProvider.value({Key key, int value, Widget child})
-      : super.value(key: key, value: value, child: child);
+  SubclassProvider.value({
+    Key key,
+    int value,
+    Widget child,
+  }) : super.value(key: key, value: value, child: child);
 }
 
 class DeferredSubclassProvider extends DeferredInheritedProvider<int, int> {

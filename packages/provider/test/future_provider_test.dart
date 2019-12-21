@@ -145,8 +145,7 @@ void main() {
       expect(find.text('2'), findsOneWidget);
     },
   );
-  testWidgets('throws if future has error and catchError is missing',
-      (tester) async {
+  testWidgets('throws if future has error and catchError is missing', (tester) async {
     final controller = Completer<int>();
 
     await tester.pumpWidget(
@@ -169,8 +168,7 @@ Exception:
 42
 '''));
   });
-  testWidgets('calls catchError if present and future has error',
-      (tester) async {
+  testWidgets('calls catchError if present and future has error', (tester) async {
     final controller = Completer<int>();
     final catchError = ErrorBuilderMock<int>();
     when(catchError(any, 42)).thenReturn(42);

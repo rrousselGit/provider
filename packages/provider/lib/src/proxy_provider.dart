@@ -2,23 +2,43 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-import 'inherited_provider.dart';
 import 'provider.dart';
 
 typedef ProviderBuilder<R> = Widget Function(
-    BuildContext context, R value, Widget child);
+  BuildContext context,
+  R value,
+  Widget child,
+);
 
 typedef ProxyProviderBuilder<T, R> = R Function(
-    BuildContext context, T value, R previous);
+  BuildContext context,
+  T value,
+  R previous,
+);
 
 typedef ProxyProviderBuilder2<T, T2, R> = R Function(
-    BuildContext context, T value, T2 value2, R previous);
+  BuildContext context,
+  T value,
+  T2 value2,
+  R previous,
+);
 
 typedef ProxyProviderBuilder3<T, T2, T3, R> = R Function(
-    BuildContext context, T value, T2 value2, T3 value3, R previous);
+  BuildContext context,
+  T value,
+  T2 value2,
+  T3 value3,
+  R previous,
+);
 
 typedef ProxyProviderBuilder4<T, T2, T3, T4, R> = R Function(
-    BuildContext context, T value, T2 value2, T3 value3, T4 value4, R previous);
+  BuildContext context,
+  T value,
+  T2 value2,
+  T3 value3,
+  T4 value4,
+  R previous,
+);
 
 typedef ProxyProviderBuilder5<T, T2, T3, T4, T5, R> = R Function(
   BuildContext context,
@@ -50,18 +70,18 @@ class ProxyProvider0<R> extends InheritedProvider<R> {
     @required R Function(BuildContext context, R value) update,
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
+    bool lazy,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
+          lazy: lazy,
           create: create,
           update: update,
           dispose: dispose,
           updateShouldNotify: updateShouldNotify,
-          debugCheckInvalidValueType: kReleaseMode
-              ? null
-              : (R value) =>
-                  Provider.debugCheckInvalidValueType?.call<R>(value),
+          debugCheckInvalidValueType:
+              kReleaseMode ? null : (R value) => Provider.debugCheckInvalidValueType?.call<R>(value),
           child: child,
         );
 }
@@ -119,10 +139,12 @@ class ProxyProvider<T, R> extends ProxyProvider0<R> {
     @required ProxyProviderBuilder<T, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
+    bool lazy,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
+          lazy: lazy,
           create: create,
           update: (context, value) => update(
             context,
@@ -144,10 +166,12 @@ class ProxyProvider2<T, T2, R> extends ProxyProvider0<R> {
     @required ProxyProviderBuilder2<T, T2, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
+    bool lazy,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
+          lazy: lazy,
           create: create,
           update: (context, value) => update(
             context,
@@ -170,10 +194,12 @@ class ProxyProvider3<T, T2, T3, R> extends ProxyProvider0<R> {
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
+    bool lazy,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
+          lazy: lazy,
           create: create,
           update: (context, value) => update(
             context,
@@ -197,10 +223,12 @@ class ProxyProvider4<T, T2, T3, T4, R> extends ProxyProvider0<R> {
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
+    bool lazy,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
+          lazy: lazy,
           create: create,
           update: (context, value) => update(
             context,
@@ -225,10 +253,12 @@ class ProxyProvider5<T, T2, T3, T4, T5, R> extends ProxyProvider0<R> {
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
+    bool lazy,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
+          lazy: lazy,
           create: create,
           update: (context, value) => update(
             context,
@@ -254,10 +284,12 @@ class ProxyProvider6<T, T2, T3, T4, T5, T6, R> extends ProxyProvider0<R> {
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
+    bool lazy,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
+          lazy: lazy,
           create: create,
           update: (context, value) => update(
             context,

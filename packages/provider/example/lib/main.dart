@@ -47,8 +47,9 @@ class MyApp extends StatelessWidget {
 }
 
 class ExampleLocalizations {
-  static ExampleLocalizations of(BuildContext context) =>
-      Localizations.of<ExampleLocalizations>(context, ExampleLocalizations);
+  static ExampleLocalizations of(BuildContext context) {
+    return Localizations.of<ExampleLocalizations>(context, ExampleLocalizations);
+  }
 
   const ExampleLocalizations(this._count);
 
@@ -57,8 +58,7 @@ class ExampleLocalizations {
   String get title => 'Tapped $_count times';
 }
 
-class _ExampleLocalizationsDelegate
-    extends LocalizationsDelegate<ExampleLocalizations> {
+class _ExampleLocalizationsDelegate extends LocalizationsDelegate<ExampleLocalizations> {
   const _ExampleLocalizationsDelegate(this.count);
 
   final int count;
@@ -67,8 +67,9 @@ class _ExampleLocalizationsDelegate
   bool isSupported(Locale locale) => locale.languageCode == 'en';
 
   @override
-  Future<ExampleLocalizations> load(Locale locale) =>
-      SynchronousFuture(ExampleLocalizations(count));
+  Future<ExampleLocalizations> load(Locale locale) {
+    return SynchronousFuture(ExampleLocalizations(count));
+  }
 
   @override
   bool shouldReload(_ExampleLocalizationsDelegate old) => old.count != count;

@@ -75,8 +75,7 @@ void main() {
       expect(find.text('2'), findsOneWidget);
     },
   );
-  testWidgets('throws if stream has error and catchError is missing',
-      (tester) async {
+  testWidgets('throws if stream has error and catchError is missing', (tester) async {
     final controller = StreamController<int>();
 
     await tester.pumpWidget(StreamProvider.value(
@@ -97,8 +96,7 @@ Exception:
 42
 '''));
   });
-  testWidgets('calls catchError if present and stream has error',
-      (tester) async {
+  testWidgets('calls catchError if present and stream has error', (tester) async {
     final controller = StreamController<int>(sync: true);
     final catchError = ErrorBuilderMock<int>();
     when(catchError(any, 42)).thenReturn(42);
