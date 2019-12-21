@@ -107,12 +107,14 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvide
   ChangeNotifierProvider({
     Key key,
     @required Create<T> create,
+    Object scope,
     bool lazy,
     Widget child,
   }) : super(
           key: key,
           create: create,
           dispose: _dispose,
+          scope: scope,
           lazy: lazy,
           child: child,
         );
@@ -121,10 +123,12 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvide
   ChangeNotifierProvider.value({
     Key key,
     @required T value,
+    Object scope,
     Widget child,
   }) : super.value(
           key: key,
           value: value,
+          scope: scope,
           child: child,
         );
 }
@@ -209,6 +213,7 @@ class ChangeNotifierProxyProvider<T, R extends ChangeNotifier> extends Listenabl
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder<T, R> update,
+    Object scope,
     bool lazy,
     Widget child,
   }) : super(
@@ -216,6 +221,7 @@ class ChangeNotifierProxyProvider<T, R extends ChangeNotifier> extends Listenabl
           create: create,
           update: update,
           dispose: ChangeNotifierProvider._dispose,
+          scope: scope,
           lazy: lazy,
           child: child,
         );
@@ -228,6 +234,7 @@ class ChangeNotifierProxyProvider0<R extends ChangeNotifier> extends ListenableP
     Key key,
     @required Create<R> create,
     @required R Function(BuildContext, R value) update,
+    Object scope,
     bool lazy,
     Widget child,
   }) : super(
@@ -235,6 +242,7 @@ class ChangeNotifierProxyProvider0<R extends ChangeNotifier> extends ListenableP
           create: create,
           update: update,
           dispose: ChangeNotifierProvider._dispose,
+          scope: scope,
           lazy: lazy,
           child: child,
         );
@@ -247,6 +255,7 @@ class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier> extends List
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder2<T, T2, R> update,
+    Object scope,
     bool lazy,
     Widget child,
   }) : super(
@@ -254,6 +263,7 @@ class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier> extends List
           create: create,
           update: update,
           dispose: ChangeNotifierProvider._dispose,
+          scope: scope,
           lazy: lazy,
           child: child,
         );
@@ -266,6 +276,7 @@ class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier> extends 
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
+    Object scope,
     bool lazy,
     Widget child,
   }) : super(
@@ -273,6 +284,7 @@ class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier> extends 
           create: create,
           update: update,
           dispose: ChangeNotifierProvider._dispose,
+          scope: scope,
           lazy: lazy,
           child: child,
         );
@@ -286,6 +298,7 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
+    Object scope,
     bool lazy,
     Widget child,
   }) : super(
@@ -293,6 +306,7 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
           create: create,
           update: update,
           dispose: ChangeNotifierProvider._dispose,
+          scope: scope,
           lazy: lazy,
           child: child,
         );
@@ -306,6 +320,7 @@ class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
+    Object scope,
     bool lazy,
     Widget child,
   }) : super(
@@ -313,6 +328,7 @@ class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
           create: create,
           update: update,
           dispose: ChangeNotifierProvider._dispose,
+          scope: scope,
           lazy: lazy,
           child: child,
         );
@@ -326,6 +342,7 @@ class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6, R extends ChangeNotifi
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
+    Object scope,
     bool lazy,
     Widget child,
   }) : super(
@@ -333,6 +350,7 @@ class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6, R extends ChangeNotifi
           create: create,
           update: update,
           dispose: ChangeNotifierProvider._dispose,
+          scope: scope,
           lazy: lazy,
           child: child,
         );

@@ -98,8 +98,10 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     StartListening<T> startListening,
     Dispose<T> dispose,
     bool lazy,
+    Object scope,
     Widget child,
   })  : _lazy = lazy,
+        _scope = scope,
         _delegate = _CreateInheritedProvider(
           create: create,
           update: update,
@@ -117,8 +119,10 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     UpdateShouldNotify<T> updateShouldNotify,
     StartListening<T> startListening,
     bool lazy,
+    Object scope,
     Widget child,
   })  : _lazy = lazy,
+        _scope = scope,
         _delegate = _ValueInheritedProvider(
           value: value,
           updateShouldNotify: updateShouldNotify,
@@ -130,13 +134,16 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     Key key,
     _Delegate<T> delegate,
     bool lazy,
+    Object scope,
     Widget child,
   })  : _lazy = lazy,
+        _scope = scope,
         _delegate = delegate,
         super(key: key, child: child);
 
   final _Delegate<T> _delegate;
   final bool _lazy;
+  final Object _scope;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -151,6 +158,15 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
+    if (_scope != null) {
+      return _ScopedInheritedProvider(
+        delegate: _delegate,
+        lazy: _lazy,
+        scope: _scope,
+        $createElement: (scope) => _ScopedInheritedProviderElement<T>(scope),
+        child: child,
+      );
+    }
     return _DefaultInheritedProviderScope<T>(
       owner: this,
       child: child,
@@ -232,6 +248,77 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement with _In
   @override
   void _mountDelegate() {
     _delegateState = widget.owner._delegate.createState()..element = this;
+  }
+}
+
+class _ScopedInheritedProvider extends InheritedWidget {
+  _ScopedInheritedProvider({
+    this.scope,
+    this.$createElement,
+    this.lazy,
+    this.delegate,
+    Widget child,
+  }) : super(child: child);
+
+  final Object scope;
+  final _Delegate<Object> delegate;
+  final bool lazy;
+  final _ScopedInheritedProviderElement<Object> Function(_ScopedInheritedProvider widget) $createElement;
+
+  @override
+  bool updateShouldNotify(InheritedWidget oldWidget) {
+    return false;
+  }
+
+  @override
+  _ScopedInheritedProviderElement<Object> createElement() => $createElement(this);
+}
+
+class _ScopedInheritedProviderElement<T> extends InheritedElement with _InheritedProviderScopeMixin<T> {
+  _ScopedInheritedProviderElement(_ScopedInheritedProvider widget) : super(widget);
+
+  @override
+  _ScopedInheritedProvider get widget => super.widget as _ScopedInheritedProvider;
+
+  Map<Object, Map<Type, _ScopedInheritedProviderElement<Object>>> _scopes;
+
+  @override
+  void activate() {
+    super.activate();
+    _mountDelegate();
+  }
+
+  @override
+  _DelegateState<T, _Delegate<T>> _delegateState;
+
+  @override
+  bool _isLazy(_ScopedInheritedProvider widget) => widget.lazy;
+
+  @override
+  void _mountDelegate() {
+    _ScopedInheritedProviderElement _parentScope;
+
+    visitAncestorElements((e) {
+      _parentScope =
+          e.getElementForInheritedWidgetOfExactType<_ScopedInheritedProvider>() as _ScopedInheritedProviderElement;
+      return false;
+    });
+
+    _delegateState = widget.delegate.createState() as _DelegateState<T, _Delegate<T>>..element = this;
+    if (_parentScope != null) {
+      _scopes = {..._parentScope._scopes}
+        ..putIfAbsent(widget.scope, () => {})
+        ..[widget.scope][T] = this;
+    } else {
+      _scopes = {
+        widget.scope: {T: this},
+      };
+    }
+  }
+
+  @override
+  _Delegate<T> _widgetToDelegate(_ScopedInheritedProvider widget) {
+    return widget.delegate as _Delegate<T>;
   }
 }
 

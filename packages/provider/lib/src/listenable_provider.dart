@@ -25,6 +25,7 @@ class ListenableProvider<T extends Listenable> extends InheritedProvider<T> {
     Key key,
     @required Create<T> create,
     Dispose<T> dispose,
+    Object scope,
     bool lazy,
     Widget child,
   })  : assert(create != null),
@@ -62,6 +63,7 @@ ChangeNotifierProvider(
 ''');
                   }
                 },
+          scope: scope,
           lazy: lazy,
           child: child,
         );
@@ -71,12 +73,14 @@ ChangeNotifierProvider(
     Key key,
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
+    Object scope,
     Widget child,
   }) : super.value(
           key: key,
           value: value,
           updateShouldNotify: updateShouldNotify,
           startListening: _startListening,
+          scope: scope,
           child: child,
         );
 
@@ -98,11 +102,13 @@ class ListenableProxyProvider0<R extends Listenable> extends InheritedProvider<R
     @required R Function(BuildContext, R previous) update,
     Dispose<R> dispose,
     UpdateShouldNotify<R> updateShouldNotify,
+    Object scope,
     bool lazy,
     Widget child,
   })  : assert(create != null || update != null),
         super(
           key: key,
+          scope: scope,
           create: create,
           update: update,
           lazy: lazy,
@@ -142,6 +148,7 @@ class ListenableProxyProvider<T, R extends Listenable> extends ListenableProxyPr
     @required Create<R> create,
     @required ProxyProviderBuilder<T, R> update,
     Dispose<R> dispose,
+    Object scope,
     bool lazy,
     Widget child,
   })  : assert(create != null || update != null),
@@ -149,6 +156,7 @@ class ListenableProxyProvider<T, R extends Listenable> extends ListenableProxyPr
           key: key,
           create: create,
           lazy: lazy,
+          scope: scope,
           update: (context, previous) => update(
             context,
             Provider.of(context),
@@ -167,6 +175,7 @@ class ListenableProxyProvider2<T, T2, R extends Listenable> extends ListenablePr
     @required Create<R> create,
     @required ProxyProviderBuilder2<T, T2, R> update,
     Dispose<R> dispose,
+    Object scope,
     bool lazy,
     Widget child,
   })  : assert(create != null || update != null),
@@ -174,6 +183,7 @@ class ListenableProxyProvider2<T, T2, R extends Listenable> extends ListenablePr
           key: key,
           create: create,
           lazy: lazy,
+          scope: scope,
           update: (context, previous) => update(
             context,
             Provider.of(context),
@@ -193,6 +203,7 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable> extends Listenab
     @required Create<R> create,
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
     Dispose<R> dispose,
+    Object scope,
     bool lazy,
     Widget child,
   })  : assert(create != null || update != null),
@@ -200,6 +211,7 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable> extends Listenab
           key: key,
           create: create,
           lazy: lazy,
+          scope: scope,
           update: (context, previous) => update(
             context,
             Provider.of(context),
@@ -220,6 +232,7 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable> extends List
     @required Create<R> create,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     Dispose<R> dispose,
+    Object scope,
     bool lazy,
     Widget child,
   })  : assert(create != null || update != null),
@@ -227,6 +240,7 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable> extends List
           key: key,
           create: create,
           lazy: lazy,
+          scope: scope,
           update: (context, previous) => update(
             context,
             Provider.of(context),
@@ -248,6 +262,7 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable> extends 
     @required Create<R> create,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     Dispose<R> dispose,
+    Object scope,
     bool lazy,
     Widget child,
   })  : assert(create != null || update != null),
@@ -255,6 +270,7 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable> extends 
           key: key,
           create: create,
           lazy: lazy,
+          scope: scope,
           update: (context, previous) => update(
             context,
             Provider.of(context),
@@ -277,6 +293,7 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable> exte
     @required Create<R> create,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     Dispose<R> dispose,
+    Object scope,
     bool lazy,
     Widget child,
   })  : assert(create != null || update != null),
@@ -284,6 +301,7 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable> exte
           key: key,
           create: create,
           lazy: lazy,
+          scope: scope,
           update: (context, previous) => update(
             context,
             Provider.of(context),

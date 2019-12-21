@@ -126,6 +126,7 @@ class Provider<T> extends InheritedProvider<T> {
     Key key,
     @required Create<T> create,
     Dispose<T> dispose,
+    Object scope,
     bool lazy,
     Widget child,
   })  : assert(create != null),
@@ -134,6 +135,7 @@ class Provider<T> extends InheritedProvider<T> {
           lazy: lazy,
           create: create,
           dispose: dispose,
+          scope: scope,
           debugCheckInvalidValueType:
               kReleaseMode ? null : (T value) => Provider.debugCheckInvalidValueType?.call<T>(value),
           child: child,
@@ -144,6 +146,7 @@ class Provider<T> extends InheritedProvider<T> {
     Key key,
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
+    Object scope,
     Widget child,
   })  : assert(() {
           Provider.debugCheckInvalidValueType?.call<T>(value);
@@ -153,6 +156,7 @@ class Provider<T> extends InheritedProvider<T> {
           key: key,
           value: value,
           updateShouldNotify: updateShouldNotify,
+          scope: scope,
           child: child,
         );
 
@@ -192,7 +196,7 @@ class Provider<T> extends InheritedProvider<T> {
   ///   },
   /// )
   /// ```
-  static T of<T>(BuildContext context, {bool listen}) {
+  static T of<T>(BuildContext context, {bool listen, Object scope}) {
     assert(
       T != dynamic,
       '''
@@ -209,7 +213,14 @@ Tried to listen to a value exposed with provider, from outside of the widget tre
 
     InheritedContext<T> inheritedElement;
 
-    if (context.widget is _DefaultInheritedProviderScope<T>) {
+    if (scope != null) {
+      final scopeElement = context.getElementForInheritedWidgetOfExactType<_ScopedInheritedProvider>()
+          as _ScopedInheritedProviderElement;
+      if (scopeElement == null || !scopeElement._scopes.containsKey(scope)) {
+        throw ProviderNotFoundException(T, context.widget.runtimeType);
+      }
+      inheritedElement = scopeElement._scopes[scope][T] as InheritedContext<T>;
+    } else if (context.widget is _DefaultInheritedProviderScope<T>) {
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
       // the same type.
       context.visitAncestorElements((parent) {

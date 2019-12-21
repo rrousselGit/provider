@@ -161,9 +161,13 @@ class Consumer<T> extends SingleChildStatelessWidget {
   Consumer({
     Key key,
     @required this.builder,
+    Object scope,
     Widget child,
   })  : assert(builder != null),
+        _scope = scope,
         super(key: key, child: child);
+
+  final Object _scope;
 
   /// {@template provider.consumer.builder}
   /// Build a widget tree based on the value from a [Provider<T>].
@@ -176,7 +180,7 @@ class Consumer<T> extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
-      Provider.of<T>(context),
+      Provider.of<T>(context, scope: _scope),
       child,
     );
   }
@@ -188,9 +192,13 @@ class Consumer2<A, B> extends SingleChildStatelessWidget {
   Consumer2({
     Key key,
     @required this.builder,
+    Object scope,
     Widget child,
   })  : assert(builder != null),
+        _scope = scope,
         super(key: key, child: child);
+
+  final Object _scope;
 
   /// {@macro provider.consumer.builder}
   final Widget Function(BuildContext context, A value, B value2, Widget child) builder;
@@ -199,8 +207,8 @@ class Consumer2<A, B> extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
-      Provider.of<A>(context),
-      Provider.of<B>(context),
+      Provider.of<A>(context, scope: _scope),
+      Provider.of<B>(context, scope: _scope),
       child,
     );
   }
@@ -212,9 +220,13 @@ class Consumer3<A, B, C> extends SingleChildStatelessWidget {
   Consumer3({
     Key key,
     @required this.builder,
+    Object scope,
     Widget child,
   })  : assert(builder != null),
+        _scope = scope,
         super(key: key, child: child);
+
+  final Object _scope;
 
   /// {@macro provider.consumer.builder}
   final Widget Function(BuildContext context, A value, B value2, C value3, Widget child) builder;
@@ -223,9 +235,9 @@ class Consumer3<A, B, C> extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
-      Provider.of<A>(context),
-      Provider.of<B>(context),
-      Provider.of<C>(context),
+      Provider.of<A>(context, scope: _scope),
+      Provider.of<B>(context, scope: _scope),
+      Provider.of<C>(context, scope: _scope),
       child,
     );
   }
@@ -237,9 +249,13 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
   Consumer4({
     Key key,
     @required this.builder,
+    Object scope,
     Widget child,
   })  : assert(builder != null),
+        _scope = scope,
         super(key: key, child: child);
+
+  final Object _scope;
 
   /// {@macro provider.consumer.builder}
   final Widget Function(
@@ -254,10 +270,10 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
-      Provider.of<A>(context),
-      Provider.of<B>(context),
-      Provider.of<C>(context),
-      Provider.of<D>(context),
+      Provider.of<A>(context, scope: _scope),
+      Provider.of<B>(context, scope: _scope),
+      Provider.of<C>(context, scope: _scope),
+      Provider.of<D>(context, scope: _scope),
       child,
     );
   }
@@ -269,9 +285,13 @@ class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
   Consumer5({
     Key key,
     @required this.builder,
+    Object scope,
     Widget child,
   })  : assert(builder != null),
+        _scope = scope,
         super(key: key, child: child);
+
+  final Object _scope;
 
   /// {@macro provider.consumer.builder}
   final Widget Function(
@@ -288,11 +308,11 @@ class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
-      Provider.of<A>(context),
-      Provider.of<B>(context),
-      Provider.of<C>(context),
-      Provider.of<D>(context),
-      Provider.of<E>(context),
+      Provider.of<A>(context, scope: _scope),
+      Provider.of<B>(context, scope: _scope),
+      Provider.of<C>(context, scope: _scope),
+      Provider.of<D>(context, scope: _scope),
+      Provider.of<E>(context, scope: _scope),
       child,
     );
   }
@@ -304,9 +324,13 @@ class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
   Consumer6({
     Key key,
     @required this.builder,
+    Object scope,
     Widget child,
   })  : assert(builder != null),
+        _scope = scope,
         super(key: key, child: child);
+
+  final Object _scope;
 
   /// {@macro provider.consumer.builder}
   final Widget Function(
@@ -324,12 +348,12 @@ class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
       context,
-      Provider.of<A>(context),
-      Provider.of<B>(context),
-      Provider.of<C>(context),
-      Provider.of<D>(context),
-      Provider.of<E>(context),
-      Provider.of<F>(context),
+      Provider.of<A>(context, scope: _scope),
+      Provider.of<B>(context, scope: _scope),
+      Provider.of<C>(context, scope: _scope),
+      Provider.of<D>(context, scope: _scope),
+      Provider.of<E>(context, scope: _scope),
+      Provider.of<F>(context, scope: _scope),
       child,
     );
   }
