@@ -16,16 +16,16 @@ part 'deferred_inherited_provider.dart';
 /// As such, we're going from:
 ///
 /// ```dart
-/// Provider<Foo>.value(
-///   value: foo,
-///   child: Provider<Bar>.value(
-///     value: bar,
-///     child: Provider<Baz>.value(
-///       value: baz,
+/// Provider<Something>(
+///   create: (_) => Something(),
+///   child: Provider<SomethingElse>(
+///     create: (_) => SomethingElse(),
+///     child: Provider<AnotherThing>(
+///       create: (_) => AnotherThing(),
 ///       child: someWidget,
-///     )
-///   )
-/// )
+///     ),
+///   ),
+/// ),
 /// ```
 ///
 /// To:
@@ -33,9 +33,9 @@ part 'deferred_inherited_provider.dart';
 /// ```dart
 /// MultiProvider(
 ///   providers: [
-///     Provider<Foo>.value(value: foo),
-///     Provider<Bar>.value(value: bar),
-///     Provider<Baz>.value(value: baz),
+///     Provider<Something>(create: (_) => Something()),
+///     Provider<SomethingElse>(create: (_) => SomethingElse()),
+///     Provider<AnotherThing>(create: (_) => AnotherThing()),
 ///   ],
 ///   child: someWidget,
 /// )
@@ -66,13 +66,6 @@ class MultiProvider extends Nested {
 /// The following example instantiates a `Model` once, and disposes it when
 /// [Provider] is removed from the tree.
 ///
-/// {@template provider.updateshouldnotify}
-/// `updateShouldNotify` can optionally be passed to avoid unnecessarily
-/// rebuilding dependents when nothing changed. Defaults to
-/// `(previous, next) => previous != next`. See
-/// [InheritedWidget.updateShouldNotify] for more information.
-/// {@endtemplate}
-///
 /// ```dart
 /// class Model {
 ///   void dispose() {}
@@ -90,12 +83,18 @@ class MultiProvider extends Nested {
 /// }
 /// ```
 ///
+/// It is worth noting that the `create` callback is lazily called.
+/// It is called the first time the value is read, instead of the first time
+/// [Provider] is inserted in the widget tree.
+///
+/// This behavior can be disabled by passing `lazy: false` to [Provider].
+///
 /// ## Testing
 ///
 /// When testing widgets that consumes providers, it is necessary to
 /// add the proper providers in the widget tree above the tested widget.
 ///
-/// A typical test may like this:
+/// A typical test may look like this:
 ///
 /// ```dart
 /// final foo = MockFoo();
@@ -117,10 +116,9 @@ class MultiProvider extends Nested {
 class Provider<T> extends InheritedProvider<T> {
   /// Creates a value, store it, and expose it to its descendants.
   ///
-  /// The value can be optionally disposed using [dispose] callback. This
-  /// callback which will be called when [Provider] is unmounted from the
-  /// widget tree, or if [Provider] is rebuilt to use [Provider.value] instead.
-  ///
+  /// The value can be optionally disposed using [dispose] callback.
+  /// This callback which will be called when [Provider] is unmounted from the
+  /// widget tree.
   Provider({
     Key key,
     @required Create<T> create,
@@ -138,7 +136,15 @@ class Provider<T> extends InheritedProvider<T> {
           child: child,
         );
 
-  /// Allows to specify parameters to [Provider].
+  /// Expose an existing value without disposing it.
+  ///
+  /// {@template provider.updateshouldnotify}
+  /// `updateShouldNotify` can optionally be passed to avoid unnecessarily
+  /// rebuilding dependents when [Provider] is rebuilt but `value` did not change.
+  ///
+  /// Defaults to `(previous, next) => previous != next`.
+  /// See [InheritedWidget.updateShouldNotify] for more information.
+  /// {@endtemplate}
   Provider.value({
     Key key,
     @required T value,
@@ -164,6 +170,7 @@ class Provider<T> extends InheritedProvider<T> {
   ///
   /// By default, `listen` is inferred based on wether the widget tree is
   /// currently building or not:
+  ///
   /// - if widgets are building, `listen` is `true`
   /// - if widgets aren't, `listen` is `false`.
   ///
@@ -233,10 +240,10 @@ Tried to listen to a value exposed with provider, from outside of the widget tre
   }
 
   /// A sanity check to prevent misuse of [Provider] when a variant should be
-  /// used.
+  /// used instead.
   ///
   /// By default, [debugCheckInvalidValueType] will throw if `value` is a
-  /// [Listenable] or a [Stream].  In release mode, [debugCheckInvalidValueType]
+  /// [Listenable] or a [Stream]. In release mode, [debugCheckInvalidValueType]
   /// does nothing.
   ///
   /// This check can be disabled altogether by setting
@@ -282,8 +289,8 @@ void main() {
   };
 }
 
-/// The error that will be thrown if [Provider.of<T>] fails to find a
-/// [Provider<T>] as an ancestor of the [BuildContext] used.
+/// The error that will be thrown if [Provider.of] fails to find a [Provider]
+/// as an ancestor of the [BuildContext] used.
 class ProviderNotFoundException implements Exception {
   /// The type of the value being retrieved
   final Type valueType;

@@ -92,7 +92,7 @@ class ProxyProvider0<R> extends InheritedProvider<R> {
 /// The exposed value is built through either `create` or `update`, then passed
 /// to [InheritedProvider].
 ///
-/// As opposed to the `create`, `update` may be called more than once.
+/// As opposed to `create`, `update` may be called more than once.
 /// It will be called once the first time the value is obtained, then once
 /// whenever [ProxyProvider] rebuilds or when one of the providers it depends on
 /// updates.
@@ -121,15 +121,16 @@ class ProxyProvider0<R> extends InheritedProvider<R> {
 /// );
 /// ```
 ///
-/// This last parameter of `update` is previous value returned by either
-/// `create` or `update`. It is `null` by default.
+/// This last parameter of `update` is the last value returned by either
+/// `create` or `update`.
+/// It is `null` by default.
 ///
 /// `update` must not be `null`.
 ///
 /// See also:
 ///
-///  * [Provider], which matches the behavior of [ProxyProvider] without
-/// dependending on other providers.
+///  * [Provider], which matches the behavior of [ProxyProvider] but has only
+///     a `create` callback.
 /// {@endtemplate}
 class ProxyProvider<T, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.

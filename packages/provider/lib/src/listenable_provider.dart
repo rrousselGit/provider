@@ -131,7 +131,7 @@ class ListenableProxyProvider0<R extends Listenable> extends InheritedProvider<R
 /// [ChangeNotifierProxyProvider] extends [ListenableProxyProvider] to make it
 /// work with [ChangeNotifier], but the behavior stays the same.
 /// Most of the time you'll want to use [ChangeNotifierProxyProvider] instead.
-/// But [ListenableProxyProvider] is exposed in case one wants to use a
+/// But [ListenableProxyProvider] is exposed in case someone wants to use a
 /// [Listenable] implementation other than [ChangeNotifier], such as
 /// [Animation].
 /// {@endtemplate}

@@ -118,9 +118,6 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
           ),
           child: child,
         );
-
-  // TODO: .controller
-  // TODO: add builder parameter
 }
 
 DeferredStartListening<Future<T>, T> _futureStartListening<T>({
