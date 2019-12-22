@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:provider/provider.dart';
 
 part 'inherited_provider.dart';
 part 'deferred_inherited_provider.dart';
