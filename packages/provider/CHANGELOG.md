@@ -1,3 +1,21 @@
+# 4.0.0
+
+- `Selector` now deeply compares collections by default, and offers a `shouldRebuild`
+  to customize the rebuild behavior.
+- renamed `ProviderNotFoundError` to `ProviderNotFoundException`.
+  This allows calling `Provider.of` inside a `try/catch` without triggering a
+  warning.
+- update provider to work with Flutter 1.12.1
+- The creation and listening of objects using providers is now performed lazily.
+  This means that objects are created the first time the value is read instead of
+  the first time the provider is mounted.
+- The `listen` argument of `Provider.of` is now automatically inferred.
+  It is no longer necessary to pass `listen: false` when calling `Provider.of`
+  outside of the widget tree.
+- renamed `initialBuilder` & `builder` of `*ProxyProvider` to `create` & `update`
+- renamed `builder` of `*Provider` to `create`
+- added a `*ProxyProvider0` variant
+
 # 3.2.0
 
 - Deprecated "builder" of providers in favor to "create"

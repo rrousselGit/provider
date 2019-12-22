@@ -1,31 +1,194 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' hide TypeMatcher;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:matcher/matcher.dart' show TypeMatcher;
+// ignore: deprecated_member_use
+import 'package:test_api/test_api.dart' show TypeMatcher;
 
 import 'common.dart';
 
 void main() {
-  group('Provider', () {
-    testWidgets('throws if the provided value is a Listenable/Stream',
-        (tester) async {
+  testWidgets('works with MultiProvider', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider.value(
+            value: 42,
+          ),
+        ],
+        child: const TextOf<int>(),
+      ),
+    );
+
+    expect(find.text('42'), findsOneWidget);
+  });
+  group('Provider.of', () {
+    testWidgets('throws if T is dynamic', (tester) async {
       await tester.pumpWidget(
-        Provider.value(
-          value: MyListenable(),
+        Provider<dynamic>.value(
+          value: 42,
           child: Container(),
+        ),
+      );
+
+      expect(
+        () => Provider.of<dynamic>(tester.element(find.byType(Container))),
+        throwsAssertionError,
+      );
+    });
+    testWidgets(
+      'listen defaults to true when building widgets',
+      (tester) async {
+        var buildCount = 0;
+        final child = Builder(
+          builder: (context) {
+            buildCount++;
+            Provider.of<int>(context);
+            return Container();
+          },
+        );
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 42,
+            child: child,
+          ),
+        );
+
+        expect(buildCount, equals(1));
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 24,
+            child: child,
+          ),
+        );
+
+        expect(buildCount, equals(2));
+      },
+    );
+    testWidgets(
+      'listen defaults to false outside of the widget tree',
+      (tester) async {
+        var buildCount = 0;
+        final child = Builder(
+          builder: (context) {
+            buildCount++;
+            return Container();
+          },
+        );
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 42,
+            child: child,
+          ),
+        );
+
+        final context = tester.element(find.byWidget(child));
+        Provider.of<int>(context);
+        expect(buildCount, equals(1));
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 24,
+            child: child,
+          ),
+        );
+
+        expect(buildCount, equals(1));
+      },
+    );
+    testWidgets(
+      "listen:false doesn't trigger rebuild",
+      (tester) async {
+        var buildCount = 0;
+        final child = Builder(
+          builder: (context) {
+            Provider.of<int>(context, listen: false);
+            buildCount++;
+            return Container();
+          },
+        );
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 42,
+            child: child,
+          ),
+        );
+
+        expect(buildCount, equals(1));
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 24,
+            child: child,
+          ),
+        );
+
+        expect(buildCount, equals(1));
+      },
+    );
+    testWidgets(
+      'listen:true outside of the widget tree throws',
+      (tester) async {
+        final child = Builder(
+          builder: (context) {
+            return Container();
+          },
+        );
+
+        await tester.pumpWidget(
+          InheritedProvider<int>.value(
+            value: 42,
+            child: child,
+          ),
+        );
+
+        final context = tester.element(find.byWidget(child));
+
+        expect(
+          () => Provider.of<int>(context, listen: true),
+          throwsAssertionError,
+        );
+      },
+    );
+  });
+  group('Provider', () {
+    testWidgets('throws if the provided value is a Listenable/Stream', (tester) async {
+      expect(
+        () => Provider.value(
+          value: MyListenable(),
+          child: const TextOf<MyListenable>(),
+        ),
+        throwsFlutterError,
+      );
+
+      expect(
+        () => Provider.value(
+          value: MyStream(),
+          child: const TextOf<MyListenable>(),
+        ),
+        throwsFlutterError,
+      );
+
+      await tester.pumpWidget(
+        Provider(
+          key: UniqueKey(),
+          create: (_) => MyListenable(),
+          child: const TextOf<MyListenable>(),
         ),
       );
 
       expect(tester.takeException(), isFlutterError);
 
       await tester.pumpWidget(
-        Provider.value(
-          value: MyStream(),
-          child: Container(),
+        Provider(
+          key: UniqueKey(),
+          create: (_) => MyStream(),
+          child: const TextOf<MyStream>(),
         ),
       );
-
       expect(tester.takeException(), isFlutterError);
     });
     testWidgets('debugCheckInvalidValueType can be disabled', (tester) async {
@@ -36,33 +199,18 @@ void main() {
       await tester.pumpWidget(
         Provider.value(
           value: MyListenable(),
-          child: Container(),
+          child: const TextOf<MyListenable>(),
         ),
       );
 
       await tester.pumpWidget(
         Provider.value(
           value: MyStream(),
-          child: Container(),
+          child: const TextOf<MyStream>(),
         ),
       );
     });
-    test('cloneWithChild works', () {
-      final provider = Provider.value(
-        value: 42,
-        child: Container(),
-        key: const ValueKey(42),
-        updateShouldNotify: (int _, int __) => true,
-      );
 
-      final newChild = Container();
-      final clone = provider.cloneWithChild(newChild);
-      expect(clone.child, equals(newChild));
-      // ignore: invalid_use_of_protected_member
-      expect(clone.delegate, equals(provider.delegate));
-      expect(clone.key, equals(provider.key));
-      expect(provider.updateShouldNotify, equals(clone.updateShouldNotify));
-    });
     testWidgets('simple usage', (tester) async {
       var buildCount = 0;
       int value;
@@ -74,8 +222,8 @@ void main() {
       final builder = Builder(
         builder: (context) {
           buildCount++;
-          value = Provider.of(context);
-          second = Provider.of(context, listen: false);
+          value = Provider.of<int>(context);
+          second = Provider.of<double>(context, listen: false);
           return Container();
         },
       );
@@ -144,7 +292,7 @@ void main() {
 
       expect(
         tester.takeException(),
-        const TypeMatcher<ProviderNotFoundError>()
+        const TypeMatcher<ProviderNotFoundException>()
             .having((err) => err.valueType, 'valueType', String)
             .having((err) => err.widgetType, 'widgetType', Builder)
             .having((err) => err.toString(), 'toString()', '''

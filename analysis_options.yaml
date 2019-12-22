@@ -4,9 +4,6 @@ analyzer:
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false
-  errors:
-    todo: error
-    include_file_not_found: ignore
 linter:
   rules:
     - public_member_api_docs
@@ -39,7 +36,7 @@ linter:
     - library_names
     - library_prefixes
     - list_remove_unrelated_type
-    - lines_longer_than_80_chars
+    # - lines_longer_than_80_chars
     - no_adjacent_strings_in_list
     - no_duplicate_case_values
     - non_constant_identifier_names

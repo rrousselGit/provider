@@ -1,8 +1,11 @@
 import 'package:flutter/widgets.dart';
+import 'package:nested/nested.dart';
 import 'package:provider/src/provider.dart';
+import 'package:collection/collection.dart';
 
 import 'consumer.dart';
-import 'delegate_widget.dart';
+
+typedef ShouldRebuild<T> = bool Function(T previous, T next);
 
 /// A base class for custom [Selector].
 ///
@@ -24,19 +27,20 @@ import 'delegate_widget.dart';
 /// ```
 ///
 /// will still call `builder` again, even if `value` didn't change.
-class Selector0<T> extends StatefulWidget
-    implements SingleChildCloneableWidget {
+class Selector0<T> extends SingleChildStatefulWidget {
   /// Both `builder` and `selector` must not be `null`.
   Selector0({
     Key key,
     @required this.builder,
     @required this.selector,
-    this.child,
+    ShouldRebuild<T> shouldRebuild,
+    Widget child,
   })  : assert(builder != null),
         assert(selector != null),
-        super(key: key);
+        _shouldRebuild = shouldRebuild,
+        super(key: key, child: child);
 
-  /// A function that builds a widget tree from [child] and the last result of
+  /// A function that builds a widget tree from `child` and the last result of
   /// [selector].
   ///
   /// [builder] will be called again whenever the its parent widget asks for an
@@ -52,43 +56,33 @@ class Selector0<T> extends StatefulWidget
   /// The returned object must implement [operator==].
   ///
   /// Must not be `null`
-  final ValueBuilder<T> selector;
+  final T Function(BuildContext) selector;
 
-  /// A cache of a widget tree that does not depend on the value of [selector].
-  ///
-  /// See [Consumer] for an explanation on how to use it.
-  final Widget child;
+  final ShouldRebuild<T> _shouldRebuild;
 
   @override
   _Selector0State<T> createState() => _Selector0State<T>();
-
-  @override
-  Selector0<T> cloneWithChild(Widget child) {
-    return Selector0(
-      key: key,
-      selector: selector,
-      builder: builder,
-      child: child,
-    );
-  }
 }
 
-class _Selector0State<T> extends State<Selector0<T>> {
+class _Selector0State<T> extends SingleChildState<Selector0<T>> {
   T value;
   Widget cache;
   Widget oldWidget;
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
     final selected = widget.selector(context);
 
-    if (oldWidget != widget || selected != value) {
+    var shouldInvalidateCache = oldWidget != widget ||
+        (widget._shouldRebuild != null && widget._shouldRebuild.call(value, selected)) ||
+        (widget._shouldRebuild == null && !const DeepCollectionEquality().equals(value, selected));
+    if (shouldInvalidateCache) {
       value = selected;
       oldWidget = widget;
       cache = widget.builder(
         context,
         selected,
-        widget.child,
+        child,
       );
     }
     return cache;
@@ -103,12 +97,21 @@ class _Selector0State<T> extends State<Selector0<T>> {
 /// to `selector`. That `selector` callback is then tasked to return an object
 /// that contains only the informations needed for `builder` to complete.
 ///
-/// The object returned by `selector` should be immutable and override
-/// [operator==] such that two objects with the same content are equal, even
-/// if they are not [identical].
+/// By default, [Selector] determines if `builder` needs to be called again
+/// by comparing the previous and new result of `selector` using
+/// [DeepCollectionEquality] from the package `collecton`.
 ///
-/// As such, to select multiple values, the easiest solution is to use a "Tuple"
-/// from [tuple](https://pub.dev/packages/tuple):
+/// This behavior can be overriden by passing a custom `shouldRebuild` callback.
+///
+///  **NOTE**:
+/// The selected value must be immutable, or otherwise [Selector] may think
+/// nothing changed and not call `builder` again.
+///
+/// As such, it `selector` should return either a collection ([List]/[Map]/[Set]/[Iterable])
+/// or a class that override `==`.
+///
+/// To select multiple values without having to write a class that implements `==`,
+/// the easiest solution is to use a "Tuple" from [tuple](https://pub.dev/packages/tuple):
 ///
 /// ```dart
 /// Selector<Foo, Tuple2<Bar, Baz>>(
@@ -123,7 +126,6 @@ class _Selector0State<T> extends State<Selector0<T>> {
 /// `foo.baz` changes.
 ///
 /// For generic usage informations, see [Consumer].
-///
 /// {@endtemplate}
 class Selector<A, S> extends Selector0<S> {
   /// {@macro provider.selector}
@@ -131,10 +133,12 @@ class Selector<A, S> extends Selector0<S> {
     Key key,
     @required ValueWidgetBuilder<S> builder,
     @required S Function(BuildContext, A) selector,
+    ShouldRebuild<S> shouldRebuild,
     Widget child,
   })  : assert(selector != null),
         super(
           key: key,
+          shouldRebuild: shouldRebuild,
           builder: builder,
           selector: (context) => selector(context, Provider.of(context)),
           child: child,
@@ -148,10 +152,12 @@ class Selector2<A, B, S> extends Selector0<S> {
     Key key,
     @required ValueWidgetBuilder<S> builder,
     @required S Function(BuildContext, A, B) selector,
+    ShouldRebuild<S> shouldRebuild,
     Widget child,
   })  : assert(selector != null),
         super(
           key: key,
+          shouldRebuild: shouldRebuild,
           builder: builder,
           selector: (context) => selector(
             context,
@@ -169,10 +175,12 @@ class Selector3<A, B, C, S> extends Selector0<S> {
     Key key,
     @required ValueWidgetBuilder<S> builder,
     @required S Function(BuildContext, A, B, C) selector,
+    ShouldRebuild<S> shouldRebuild,
     Widget child,
   })  : assert(selector != null),
         super(
           key: key,
+          shouldRebuild: shouldRebuild,
           builder: builder,
           selector: (context) => selector(
             context,
@@ -191,10 +199,12 @@ class Selector4<A, B, C, D, S> extends Selector0<S> {
     Key key,
     @required ValueWidgetBuilder<S> builder,
     @required S Function(BuildContext, A, B, C, D) selector,
+    ShouldRebuild<S> shouldRebuild,
     Widget child,
   })  : assert(selector != null),
         super(
           key: key,
+          shouldRebuild: shouldRebuild,
           builder: builder,
           selector: (context) => selector(
             context,
@@ -214,10 +224,12 @@ class Selector5<A, B, C, D, E, S> extends Selector0<S> {
     Key key,
     @required ValueWidgetBuilder<S> builder,
     @required S Function(BuildContext, A, B, C, D, E) selector,
+    ShouldRebuild<S> shouldRebuild,
     Widget child,
   })  : assert(selector != null),
         super(
           key: key,
+          shouldRebuild: shouldRebuild,
           builder: builder,
           selector: (context) => selector(
             context,
@@ -238,10 +250,12 @@ class Selector6<A, B, C, D, E, F, S> extends Selector0<S> {
     Key key,
     @required ValueWidgetBuilder<S> builder,
     @required S Function(BuildContext, A, B, C, D, E, F) selector,
+    ShouldRebuild<S> shouldRebuild,
     Widget child,
   })  : assert(selector != null),
         super(
           key: key,
+          shouldRebuild: shouldRebuild,
           builder: builder,
           selector: (context) => selector(
             context,

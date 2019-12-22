@@ -4,18 +4,46 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
 
 Element findElementOfWidget<T extends Widget>() {
   return find.byType(T).first.evaluate().first;
 }
 
+InheritedContext<T> findInheritedContext<T>() {
+  return find.byElementPredicate((e) => e is InheritedContext<T>).first.evaluate().first as InheritedContext<T>;
+}
+
 Type typeOf<T>() => T;
 
-class ValueBuilderMock<T> extends Mock {
+class InitialValueBuilderMock<T> extends Mock {
+  InitialValueBuilderMock([T value]) {
+    when(this(any)).thenAnswer((_) => value);
+  }
+
   T call(BuildContext context);
 }
 
-class DisposerMock<T> extends Mock {
+class ValueBuilderMock<T> extends Mock {
+  ValueBuilderMock([T value]) {
+    when(this(any, any)).thenReturn(value);
+  }
+  T call(BuildContext context, T previous);
+}
+
+class StartListeningMock<T> extends Mock {
+  StartListeningMock([VoidCallback value]) {
+    when(this(any, any)).thenReturn(value);
+  }
+
+  VoidCallback call(InheritedContext<T> context, T value);
+}
+
+class StopListeningMock extends Mock {
+  void call();
+}
+
+class DisposeMock<T> extends Mock {
   void call(BuildContext context, T value);
 }
 
@@ -25,12 +53,61 @@ class BuilderMock extends Mock {
   Widget call(BuildContext context);
 }
 
+class StreamMock<T> extends Mock implements Stream<T> {}
+
+class FutureMock<T> extends Mock implements Future<T> {}
+
+class StreamSubscriptionMock<T> extends Mock implements StreamSubscription<T> {}
+
 class MockConsumerBuilder<T> extends Mock {
   Widget call(BuildContext context, T value, Widget child);
 }
 
 class UpdateShouldNotifyMock<T> extends Mock {
   bool call(T old, T newValue);
+}
+
+class TextOf<T> extends StatelessWidget {
+  const TextOf();
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      Provider.of<T>(context).toString(),
+      textDirection: TextDirection.ltr,
+    );
+  }
+}
+
+class DeferredStartListeningMock<T, R> extends Mock {
+  DeferredStartListeningMock(
+      [VoidCallback call(
+        InheritedContext<R> context,
+        void Function(R value) setState,
+        T controller,
+        R value,
+      )]) {
+    if (call != null) {
+      when(this(any, any, any, any)).thenAnswer((invoc) {
+        return Function.apply(
+          call,
+          invoc.positionalArguments,
+          invoc.namedArguments,
+        ) as VoidCallback;
+      });
+    }
+  }
+
+  VoidCallback call(
+    InheritedContext<R> context,
+    void Function(R value) setState,
+    T controller,
+    R value,
+  );
+}
+
+class DebugCheckValueTypeMock<T> extends Mock {
+  void call(T value);
 }
 
 class A with DiagnosticableTreeMixin {}
@@ -67,8 +144,7 @@ class Combined extends DiagnosticableTree {
   final Combined previous;
   final BuildContext context;
 
-  Combined(this.context, this.previous, this.a,
-      [this.b, this.c, this.d, this.e, this.f]);
+  Combined(this.context, this.previous, this.a, [this.b, this.c, this.d, this.e, this.f]);
 
   @override
   // ignore: hash_and_equals
@@ -107,4 +183,36 @@ class MyStream extends Stream<void> {
       {Function onError, void Function() onDone, bool cancelOnError}) {
     return null;
   }
+}
+
+int buildCountOf(BuildCount widget) {
+  return ((find.byWidget(widget).evaluate().single as StatefulElement).state as _BuildCountState).buildCount;
+}
+
+class BuildCount extends StatefulWidget {
+  const BuildCount(this.builder, {Key key}) : super(key: key);
+
+  final WidgetBuilder builder;
+
+  @override
+  _BuildCountState createState() => _BuildCountState();
+}
+
+class _BuildCountState extends State<BuildCount> {
+  int buildCount = 0;
+  @override
+  Widget build(BuildContext context) {
+    buildCount++;
+    return widget.builder(context);
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IntProperty('buildCount', buildCount));
+  }
+}
+
+Matcher throwsProviderNotFound<T>() {
+  return throwsA(isA<ProviderNotFoundException>().having((err) => err.valueType, 'valueType', T));
 }

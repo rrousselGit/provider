@@ -1,23 +1,44 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-import 'delegate_widget.dart';
 import 'provider.dart';
 
 typedef ProviderBuilder<R> = Widget Function(
-    BuildContext context, R value, Widget child);
+  BuildContext context,
+  R value,
+  Widget child,
+);
 
 typedef ProxyProviderBuilder<T, R> = R Function(
-    BuildContext context, T value, R previous);
+  BuildContext context,
+  T value,
+  R previous,
+);
 
 typedef ProxyProviderBuilder2<T, T2, R> = R Function(
-    BuildContext context, T value, T2 value2, R previous);
+  BuildContext context,
+  T value,
+  T2 value2,
+  R previous,
+);
 
 typedef ProxyProviderBuilder3<T, T2, T3, R> = R Function(
-    BuildContext context, T value, T2 value2, T3 value3, R previous);
+  BuildContext context,
+  T value,
+  T2 value2,
+  T3 value3,
+  R previous,
+);
 
 typedef ProxyProviderBuilder4<T, T2, T3, T4, R> = R Function(
-    BuildContext context, T value, T2 value2, T3 value3, T4 value4, R previous);
+  BuildContext context,
+  T value,
+  T2 value2,
+  T3 value3,
+  T4 value4,
+  R previous,
+);
 
 typedef ProxyProviderBuilder5<T, T2, T3, T4, T5, R> = R Function(
   BuildContext context,
@@ -40,479 +61,249 @@ typedef ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> = R Function(
   R previous,
 );
 
-/// A [StatefulWidget] that uses [ProxyProviderState] as [State].
-abstract class ProxyProviderWidget extends StatefulWidget {
+/// {@macro provider.proxyprovider}
+class ProxyProvider0<R> extends InheritedProvider<R> {
   /// Initializes [key] for subclasses.
-  const ProxyProviderWidget({Key key}) : super(key: key);
-
-  @override
-  ProxyProviderState<ProxyProviderWidget> createState();
-
-  @override
-  ProxyProviderElement createElement() => ProxyProviderElement(this);
-}
-
-/// A [State] with an added life-cycle: [didUpdateDependencies].
-///
-/// Widgets such as [ProxyProvider] are expected to build their value from
-/// within [didUpdateDependencies] instead of [didChangeDependencies].
-abstract class ProxyProviderState<T extends ProxyProviderWidget>
-    extends State<T> {
-  /// To not confuse with [didChangeDependencies].
-  ///
-  /// As opposed to [didChangeDependencies], [didUpdateDependencies] is
-  /// guaranteed to be followed by a call to [build], and will be called only
-  /// once after _all_ dependencies have changed.
-  ///
-  /// This guarantees that everything is up to date when [didUpdateDependencies]
-  /// is called, and that the widget will not be unmounted before updates are
-  /// applied. It is therefore safe to make network http calls or mutations
-  /// inside this life-cycle.
-  @protected
-  @mustCallSuper
-  void didUpdateDependencies() {}
-}
-
-/// An [Element] that uses a [ProxyProviderWidget] as its configuration.
-class ProxyProviderElement extends StatefulElement {
-  /// Creates an element that uses the given widget as its configuration.
-  ProxyProviderElement(ProxyProviderWidget widget) : super(widget);
-
-  @override
-  ProxyProviderWidget get widget => super.widget as ProxyProviderWidget;
-
-  @override
-  ProxyProviderState<ProxyProviderWidget> get state =>
-      super.state as ProxyProviderState<ProxyProviderWidget>;
-
-  bool _didChangeDependencies = true;
-
-  @override
-  void didChangeDependencies() {
-    _didChangeDependencies = true;
-    super.didChangeDependencies();
-  }
-
-  @override
-  Widget build() {
-    if (_didChangeDependencies) {
-      _didChangeDependencies = false;
-      state.didUpdateDependencies();
-    }
-    return super.build();
-  }
-}
-
-// ignore: public_member_api_docs
-abstract class Void {}
-
-/// A base class for custom "Proxy provider".
-///
-/// See [ProxyProvider] for a concrete implementation.
-abstract class ProxyProviderBase<R> extends ProxyProviderWidget {
-  /// Initializes [key], [create] and [dispose] for subclasses.
-  ProxyProviderBase({
+  ProxyProvider0({
     Key key,
-    @Deprecated('Will be removed as part of 4.0.0, use create instead')
-        ValueBuilder<R> initialBuilder,
-    @required ValueBuilder<R> create,
-    this.dispose,
-  })  : initialBuilder = create ??
-            // ignore: deprecated_member_use_from_same_package
-            initialBuilder,
-        super(key: key);
-
-  /// Builds the initial value passed as `previous` to [didChangeDependencies].
-  ///
-  /// If omitted, [didChangeDependencies] will be called with `null` instead.
-  final ValueBuilder<R> initialBuilder;
-
-  /// Optionally allows to clean-up resources when the widget is removed from
-  /// the tree.
-  final Disposer<R> dispose;
-
-  @override
-  _ProxyProviderState<R> createState() => _ProxyProviderState();
-
-  /// Builds the value passed to [build] by combining [InheritedWidget].
-  ///
-  /// [didChangeDependencies] will be called once when the widget is mounted,
-  /// and once whenever any of the [InheritedWidget] which [ProxyProviderBase]
-  /// depends on updates.
-  ///
-  /// It is safe to perform side-effects in this method.
-  R didChangeDependencies(BuildContext context, R previous);
-
-  /// An equivalent of [StatelessWidget.build].
-  ///
-  /// `value` is the latest result of [didChangeDependencies].
-  ///
-  /// [build] should avoid depending on [InheritedWidget]. Instead these
-  /// [InheritedWidget] should be used inside [didChangeDependencies].
-  Widget build(BuildContext context, R value);
-}
-
-class _ProxyProviderState<R> extends ProxyProviderState<ProxyProviderBase<R>> {
-  R _value;
-
-  @override
-  void initState() {
-    super.initState();
-    _value = widget.initialBuilder?.call(context);
-  }
-
-  @override
-  void didUpdateDependencies() {
-    super.didUpdateDependencies();
-    _value = widget.didChangeDependencies(context, _value);
-  }
-
-  @override
-  Widget build(BuildContext context) => widget.build(context, _value);
-
-  @override
-  void dispose() {
-    if (widget.dispose != null) {
-      widget.dispose(context, _value);
-    }
-    super.dispose();
-  }
-}
-
-@visibleForTesting
-// ignore: public_member_api_docs
-class NumericProxyProvider<T, T2, T3, T4, T5, T6, R>
-    extends ProxyProviderBase<R> implements SingleChildCloneableWidget {
-  // ignore: public_member_api_docs
-  NumericProxyProvider({
-    Key key,
-    @Deprecated('Will be removed as part of 4.0.0, use create instead')
-        ValueBuilder<R> initialBuilder,
-    ValueBuilder<R> create,
-    @Deprecated('Will be removed as part of 4.0.0, use update instead')
-        Function builder,
-    @required Function update,
-    this.updateShouldNotify,
-    Disposer<R> dispose,
-    this.child,
-    // ignore: deprecated_member_use_from_same_package
-  })  : assert(builder != null || update != null),
-        // ignore: deprecated_member_use_from_same_package
-        builder = update ?? builder,
+    Create<R> create,
+    @required R Function(BuildContext context, R value) update,
+    UpdateShouldNotify<R> updateShouldNotify,
+    Dispose<R> dispose,
+    bool lazy,
+    Widget child,
+  })  : assert(update != null),
         super(
           key: key,
-          // ignore: deprecated_member_use_from_same_package
-          create: create ?? initialBuilder,
+          lazy: lazy,
+          create: create,
+          update: update,
           dispose: dispose,
+          updateShouldNotify: updateShouldNotify,
+          debugCheckInvalidValueType:
+              kReleaseMode ? null : (R value) => Provider.debugCheckInvalidValueType?.call<R>(value),
+          child: child,
         );
-
-  /// The widget that is below the current [Provider] widget in the
-  /// tree.
-  ///
-  /// {@macro flutter.widgets.child}
-  final Widget child;
-
-  /// {@template provider.proxyprovider.builder}
-  /// Builds the value passed to [InheritedProvider] by combining
-  /// [InheritedWidget].
-  ///
-  /// [builder] will be called once when the widget is mounted, and once
-  /// whenever any of the [InheritedWidget] which [ProxyProvider] depends on
-  /// updates.
-  ///
-  /// It is safe to perform side-effects in this method.
-  /// {@endtemplate}
-  final Function builder;
-
-  /// The [UpdateShouldNotify] passed to [InheritedProvider].
-  final UpdateShouldNotify<R> updateShouldNotify;
-
-  @override
-  NumericProxyProvider<T, T2, T3, T4, T5, T6, R> cloneWithChild(Widget child) {
-    return NumericProxyProvider(
-      key: key,
-      create: initialBuilder,
-      update: builder,
-      updateShouldNotify: updateShouldNotify,
-      dispose: dispose,
-      child: child,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context, R value) {
-    assert(() {
-      Provider.debugCheckInvalidValueType?.call(value);
-      return true;
-    }());
-    return InheritedProvider<R>(
-      value: value,
-      updateShouldNotify: updateShouldNotify,
-      child: child,
-    );
-  }
-
-  @override
-  R didChangeDependencies(BuildContext context, R previous) {
-    final arguments = <dynamic>[
-      context,
-      Provider.of<T>(context),
-    ];
-
-    if (T2 != Void) arguments.add(Provider.of<T2>(context));
-    if (T3 != Void) arguments.add(Provider.of<T3>(context));
-    if (T4 != Void) arguments.add(Provider.of<T4>(context));
-    if (T5 != Void) arguments.add(Provider.of<T5>(context));
-    if (T6 != Void) arguments.add(Provider.of<T6>(context));
-
-    arguments.add(previous);
-    return Function.apply(builder, arguments) as R;
-  }
 }
 
 /// {@template provider.proxyprovider}
 /// A provider that builds a value based on other providers.
 ///
-/// The exposed value is built through `create`/`update`, and then passed to
-/// [InheritedProvider].
+/// The exposed value is built through either `create` or `update`, then passed
+/// to [InheritedProvider].
 ///
-/// As opposed to the `create` parameter of [Provider], `update` may be called
-/// more than once. It will be called once when the widget is mounted, then once
-/// whenever any of the [InheritedWidget] which [ProxyProvider] depends emits an
-/// update.
+/// As opposed to `create`, `update` may be called more than once.
+/// It will be called once the first time the value is obtained, then once
+/// whenever [ProxyProvider] rebuilds or when one of the providers it depends on
+/// updates.
 ///
-/// [ProxyProvider] comes in different variants such as [ProxyProvider2].  This
-/// only changes the `update` function, such that it takes a different number
-/// of arguments.  The `2` in [ProxyProvider2] means that `update` builds its
-/// value from **2** other providers.
+/// [ProxyProvider] comes in different variants such as [ProxyProvider2]. This
+/// is syntax sugar on the top of [ProxyProvider0].
 ///
-/// All variations of `update` will receive the [BuildContext] as first
-/// parameter, and the previously built value as last parameter.
+/// As such, `ProxyProvider<A, Result>` is equal to:
+/// ```dart
+/// ProxyProvider0<Result>(
+///   update: (context, result) {
+///     final a = Provider.of<A>(context);
+///     return update(context, a, b, result);
+///   }
+/// );
+/// ```
 ///
-/// This previously built value will be `null` by default, unless
-/// `create` is specified – in which case, it will be the value returned
-/// by `create`.
+/// Whereas `ProxyProvider2<A, B, Result>` is equal to:
+/// ```dart
+/// ProxyProvider0<Result>(
+///   update: (context, result) {
+///     final a = Provider.of<A>(context);
+///     final b = Provider.of<B>(context);
+///     return update(context, a, b, result);
+///   }
+/// );
+/// ```
+///
+/// This last parameter of `update` is the last value returned by either
+/// `create` or `update`.
+/// It is `null` by default.
 ///
 /// `update` must not be `null`.
 ///
-/// ## Note:
-///
-/// While [ProxyProvider] has built-in support with [Provider.of], it works
-/// with *any* [InheritedWidget].
-///
-/// As such, `ProxyProvider2<Foo, Bar, Baz>` is just syntax sugar for:
-///
-/// ```dart
-/// ProxyProvider<Foo, Baz>(
-///   update: (context, foo, baz) {
-///     final bar = Provider.of<Bar>(context);
-///   },
-///   child: ...,
-/// )
-/// ```
-///
-/// And it will also work with other `.of` patterns, including [Scrollable.of],
-/// [MediaQuery.of], and many more:
-///
-/// ```dart
-/// ProxyProvider<Foo, Baz>(
-///   update: (context, foo, _) {
-///     final mediaQuery = MediaQuery.of(context);
-///     return Baz(mediaQuery.size);
-///   },
-///   child: ...,
-/// )
-/// ```
-///
-/// This previous example will correctly rebuild `Baz` when the `MediaQuery`
-/// updates.
-///
 /// See also:
 ///
-///  * [Provider], which matches the behavior of [ProxyProvider] without
-/// dependending on other providers.
+///  * [Provider], which matches the behavior of [ProxyProvider] but has only
+///     a `create` callback.
 /// {@endtemplate}
-class ProxyProvider<T, R>
-    extends NumericProxyProvider<T, Void, Void, Void, Void, Void, R> {
+class ProxyProvider<T, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider({
     Key key,
-    @Deprecated('Will be removed as part of 4.0.0, use create instead')
-        ValueBuilder<R> initialBuilder,
-    ValueBuilder<R> create,
-    @Deprecated('Will be removed as part of 4.0.0, use update instead')
-        ProxyProviderBuilder<T, R> builder,
+    Create<R> create,
     @required ProxyProviderBuilder<T, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
+    bool lazy,
     Widget child,
-  }) : super(
+  })  : assert(update != null),
+        super(
           key: key,
-          // ignore: deprecated_member_use_from_same_package
-          create: create ?? initialBuilder,
-          // ignore: deprecated_member_use_from_same_package
-          update: update ?? builder,
+          lazy: lazy,
+          create: create,
+          update: (context, value) => update(
+            context,
+            Provider.of(context),
+            value,
+          ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder<T, R> get builder =>
-      super.builder as ProxyProviderBuilder<T, R>;
 }
 
 /// {@macro provider.proxyprovider}
-class ProxyProvider2<T, T2, R>
-    extends NumericProxyProvider<T, T2, Void, Void, Void, Void, R> {
+class ProxyProvider2<T, T2, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider2({
     Key key,
-    @Deprecated('Will be removed as part of 4.0.0, use create instead')
-        ValueBuilder<R> initialBuilder,
-    ValueBuilder<R> create,
-    @Deprecated('Will be removed as part of 4.0.0, use update instead')
-        ProxyProviderBuilder2<T, T2, R> builder,
+    Create<R> create,
     @required ProxyProviderBuilder2<T, T2, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
+    bool lazy,
     Widget child,
-  }) : super(
+  })  : assert(update != null),
+        super(
           key: key,
-          // ignore: deprecated_member_use_from_same_package
-          create: create ?? initialBuilder,
-          // ignore: deprecated_member_use_from_same_package
-          update: update ?? builder,
+          lazy: lazy,
+          create: create,
+          update: (context, value) => update(
+            context,
+            Provider.of(context),
+            Provider.of(context),
+            value,
+          ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder2<T, T2, R> get builder =>
-      super.builder as ProxyProviderBuilder2<T, T2, R>;
 }
 
 /// {@macro provider.proxyprovider}
-class ProxyProvider3<T, T2, T3, R>
-    extends NumericProxyProvider<T, T2, T3, Void, Void, Void, R> {
+class ProxyProvider3<T, T2, T3, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider3({
     Key key,
-    @Deprecated('Will be removed as part of 4.0.0, use create instead')
-        ValueBuilder<R> initialBuilder,
-    ValueBuilder<R> create,
-    @Deprecated('Will be removed as part of 4.0.0, use update instead')
-        ProxyProviderBuilder3<T, T2, T3, R> builder,
+    Create<R> create,
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
+    bool lazy,
     Widget child,
-  }) : super(
+  })  : assert(update != null),
+        super(
           key: key,
-          // ignore: deprecated_member_use_from_same_package
-          create: create ?? initialBuilder,
-          // ignore: deprecated_member_use_from_same_package
-          update: update ?? builder,
+          lazy: lazy,
+          create: create,
+          update: (context, value) => update(
+            context,
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            value,
+          ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder3<T, T2, T3, R> get builder =>
-      super.builder as ProxyProviderBuilder3<T, T2, T3, R>;
 }
 
 /// {@macro provider.proxyprovider}
-class ProxyProvider4<T, T2, T3, T4, R>
-    extends NumericProxyProvider<T, T2, T3, T4, Void, Void, R> {
+class ProxyProvider4<T, T2, T3, T4, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider4({
     Key key,
-    @Deprecated('Will be removed as part of 4.0.0, use create instead')
-        ValueBuilder<R> initialBuilder,
-    ValueBuilder<R> create,
-    @Deprecated('Will be removed as part of 4.0.0, use update instead')
-        ProxyProviderBuilder4<T, T2, T3, T4, R> builder,
+    Create<R> create,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
+    bool lazy,
     Widget child,
-  }) : super(
+  })  : assert(update != null),
+        super(
           key: key,
-          // ignore: deprecated_member_use_from_same_package
-          create: create ?? initialBuilder,
-          // ignore: deprecated_member_use_from_same_package
-          update: update ?? builder,
+          lazy: lazy,
+          create: create,
+          update: (context, value) => update(
+            context,
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            value,
+          ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder4<T, T2, T3, T4, R> get builder =>
-      super.builder as ProxyProviderBuilder4<T, T2, T3, T4, R>;
 }
 
 /// {@macro provider.proxyprovider}
-class ProxyProvider5<T, T2, T3, T4, T5, R>
-    extends NumericProxyProvider<T, T2, T3, T4, T5, Void, R> {
+class ProxyProvider5<T, T2, T3, T4, T5, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider5({
     Key key,
-    @Deprecated('Will be removed as part of 4.0.0, use create instead')
-        ValueBuilder<R> initialBuilder,
-    ValueBuilder<R> create,
-    @Deprecated('Will be removed as part of 4.0.0, use update instead')
-        ProxyProviderBuilder5<T, T2, T3, T4, T5, R> builder,
+    Create<R> create,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
+    bool lazy,
     Widget child,
-  }) : super(
+  })  : assert(update != null),
+        super(
           key: key,
-          // ignore: deprecated_member_use_from_same_package
-          create: create ?? initialBuilder,
-          // ignore: deprecated_member_use_from_same_package
-          update: update ?? builder,
+          lazy: lazy,
+          create: create,
+          update: (context, value) => update(
+            context,
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            value,
+          ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder5<T, T2, T3, T4, T5, R> get builder =>
-      super.builder as ProxyProviderBuilder5<T, T2, T3, T4, T5, R>;
 }
 
 /// {@macro provider.proxyprovider}
-class ProxyProvider6<T, T2, T3, T4, T5, T6, R>
-    extends NumericProxyProvider<T, T2, T3, T4, T5, T6, R> {
+class ProxyProvider6<T, T2, T3, T4, T5, T6, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider6({
     Key key,
-    @Deprecated('Will be removed as part of 4.0.0, use create instead')
-        ValueBuilder<R> initialBuilder,
-    ValueBuilder<R> create,
-    @Deprecated('Will be removed as part of 4.0.0, use update instead')
-        ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> builder,
+    Create<R> create,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     UpdateShouldNotify<R> updateShouldNotify,
-    Disposer<R> dispose,
+    Dispose<R> dispose,
+    bool lazy,
     Widget child,
-  }) : super(
+  })  : assert(update != null),
+        super(
           key: key,
-          // ignore: deprecated_member_use_from_same_package
-          create: create ?? initialBuilder,
-          // ignore: deprecated_member_use_from_same_package
-          update: update ?? builder,
+          lazy: lazy,
+          create: create,
+          update: (context, value) => update(
+            context,
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            Provider.of(context),
+            value,
+          ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
           child: child,
         );
-
-  @override
-  ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> get builder =>
-      super.builder as ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R>;
 }

@@ -1,31 +1,11 @@
-import 'package:flutter/widgets.dart' hide TypeMatcher;
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:matcher/matcher.dart';
 import 'package:provider/provider.dart';
 
-Type _typeOf<T>() => T;
-
-Matcher throwsProviderNotFound({Type widgetType, Type valueType}) {
-  return throwsA(const TypeMatcher<ProviderNotFoundError>()
-      .having((err) => err.valueType, 'valueType', valueType)
-      .having((err) => err.widgetType, 'widgetType', widgetType));
-}
+import 'common.dart';
 
 void main() {
   group('MultiProvider', () {
-    test('cloneWithChild works', () {
-      final provider = MultiProvider(
-        providers: [],
-        child: Container(),
-        key: const ValueKey(42),
-      );
-
-      final newChild = Container();
-      final clone = provider.cloneWithChild(newChild);
-      expect(clone.child, newChild);
-      expect(clone.providers, provider.providers);
-      expect(clone.key, provider.key);
-    });
     test('throw if providers is null', () {
       expect(
         () => MultiProvider(providers: null, child: Container()),
@@ -33,21 +13,7 @@ void main() {
       );
     });
 
-    testWidgets('MultiProvider with empty providers returns child',
-        (tester) async {
-      await tester.pumpWidget(const MultiProvider(
-        providers: [],
-        child: Text(
-          'Foo',
-          textDirection: TextDirection.ltr,
-        ),
-      ));
-
-      expect(find.text('Foo'), findsOneWidget);
-    });
-
-    testWidgets('MultiProvider children can only access parent providers',
-        (tester) async {
+    testWidgets('MultiProvider children can only access parent providers', (tester) async {
       final k1 = GlobalKey();
       final k2 = GlobalKey();
       final k3 = GlobalKey();
@@ -66,31 +32,26 @@ void main() {
       // p1 cannot access to p1/p2/p3
       expect(
         () => Provider.of<int>(k1.currentContext),
-        throwsProviderNotFound(
-            valueType: int, widgetType: _typeOf<Provider<int>>()),
+        throwsProviderNotFound<int>(),
       );
       expect(
         () => Provider.of<String>(k1.currentContext),
-        throwsProviderNotFound(
-            valueType: String, widgetType: _typeOf<Provider<int>>()),
+        throwsProviderNotFound<String>(),
       );
       expect(
         () => Provider.of<double>(k1.currentContext),
-        throwsProviderNotFound(
-            valueType: double, widgetType: _typeOf<Provider<int>>()),
+        throwsProviderNotFound<double>(),
       );
 
       // p2 can access only p1
       expect(Provider.of<int>(k2.currentContext), 42);
       expect(
         () => Provider.of<String>(k2.currentContext),
-        throwsProviderNotFound(
-            valueType: String, widgetType: _typeOf<Provider<String>>()),
+        throwsProviderNotFound<String>(),
       );
       expect(
         () => Provider.of<double>(k2.currentContext),
-        throwsProviderNotFound(
-            valueType: double, widgetType: _typeOf<Provider<String>>()),
+        throwsProviderNotFound<double>(),
       );
 
       // p3 can access both p1 and p2
@@ -98,8 +59,7 @@ void main() {
       expect(Provider.of<String>(k3.currentContext), 'foo');
       expect(
         () => Provider.of<double>(k3.currentContext),
-        throwsProviderNotFound(
-            valueType: double, widgetType: _typeOf<Provider<double>>()),
+        throwsProviderNotFound<double>(),
       );
 
       // the child can access them all

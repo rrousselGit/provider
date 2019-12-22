@@ -2,250 +2,200 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-import 'delegate_widget.dart';
 import 'provider.dart';
 
 /// A callback used to build a valid value from an error.
 ///
 /// See also:
 ///
-///   * [StreamProvider.catchError] which uses [ErrorBuilder] to handle errors
-///     emitted by a [Stream].
-///   * [FutureProvider.catchError] which uses [ErrorBuilder] to handle
-///     [Future.catch].
+///   * [StreamProvider] and [FutureProvider], which both uses [ErrorBuilder] to
+///     handle respectively [Stream.catchError] and [Future.catch].
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
 
-/// Listens to a [Stream<T>] and exposes [T] to its descendants.
+DeferredStartListening<Stream<T>, T> _streamStartListening<T>({
+  T initialData,
+  ErrorBuilder<T> catchError,
+}) {
+  return (e, setState, controller, __) {
+    if (!e.hasValue) {
+      setState(initialData);
+    }
+    if (controller == null) {
+      return () {};
+    }
+    final sub = controller.listen(
+      setState,
+      onError: (dynamic error) {
+        if (catchError != null) {
+          setState(catchError(e, error));
+        } else {
+          FlutterError.reportError(
+            FlutterErrorDetails(
+              library: 'provider',
+              exception: FlutterError('''
+An exception was throw by ${controller.runtimeType} listened by
+StreamProvider<$T>, but no `catchError` was provided.
+
+Exception:
+$error
+'''),
+            ),
+          );
+        }
+      },
+    );
+
+    return sub.cancel;
+  };
+}
+
+/// Listens to a [Stream] and exposes its content to `child` and descendants.
 ///
 /// Its main use-case is to provide to a large number of a widget the content
 /// of a [Stream], without caring about reacting to events.
-///
 /// A typical example would be to expose the battery level, or a Firebase query.
+///
 /// Trying to use [Stream] to replace [ChangeNotifier] is outside of the scope
 /// of this class.
 ///
 /// It is considered an error to pass a stream that can emit errors without
-/// providing a [catchError] method.
+/// providing a `catchError` method.
 ///
-/// {@template provider.streamprovider.initialdata}
-/// [initialData] determines the value exposed until the [Stream] emits a value.
+/// `initialData` determines the value exposed until the [Stream] emits a value.
 /// If omitted, defaults to `null`.
-/// {@endtemplate}
 ///
-/// {@macro provider.updateshouldnotify}
+/// By default, [StreamProvider] considers that the [Stream] listened uses
+/// immutable data. As such, it will not rebuild dependents if the previous and
+/// the new value are `==`.
+/// To change this behavior, pass a custom `updateShouldNotify`.
 ///
 /// See also:
 ///
 ///   * [Stream], which is listened by [StreamProvider].
-///   * [StreamController], to create a [Stream]
-class StreamProvider<T> extends ValueDelegateWidget<Stream<T>>
-    implements SingleChildCloneableWidget {
-  /// Creates a [Stream] from [create] and subscribes to it.
+///   * [StreamController], to create a [Stream].
+class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
+  /// Creates a [Stream] using `create` and subscribes to it.
   ///
-  /// The parameter [create] must not be `null`.
+  /// The parameter `create` must not be `null`.
   StreamProvider({
     Key key,
-    @required ValueBuilder<Stream<T>> create,
-    @Deprecated('will be removed in 4.0.0, use create instead')
-        ValueBuilder<Stream<T>> builder,
+    @required Create<Stream<T>> create,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
+    bool lazy,
     Widget child,
-  }) : this._(
+  })  : assert(create != null),
+        super(
           key: key,
-          // ignore: deprecated_member_use_from_same_package
-          delegate: BuilderStateDelegate<Stream<T>>(create ?? builder),
-          initialData: initialData,
-          catchError: catchError,
+          lazy: lazy,
+          create: create,
           updateShouldNotify: updateShouldNotify,
+          startListening: _streamStartListening(
+            catchError: catchError,
+            initialData: initialData,
+          ),
           child: child,
         );
 
-  /// Creates a [StreamController] from [create] and subscribes to its stream.
-  ///
-  /// [StreamProvider] will automatically call [StreamController.close] when the
-  /// widget is removed from the tree.
-  ///
-  /// The parameter [create] must not be `null`.
-  StreamProvider.controller({
-    Key key,
-    @required ValueBuilder<StreamController<T>> create,
-    @Deprecated('will be removed in 4.0.0, use create instead')
-        ValueBuilder<StreamController<T>> builder,
-    T initialData,
-    ErrorBuilder<T> catchError,
-    UpdateShouldNotify<T> updateShouldNotify,
-    Widget child,
-  }) : this._(
-          key: key,
-          // ignore: deprecated_member_use_from_same_package
-          delegate: _StreamControllerBuilderDelegate(create ?? builder),
-          initialData: initialData,
-          catchError: catchError,
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
-
-  /// Listens to [value] and expose it to all of [StreamProvider] descendants.
+  /// Listens to `value` and expose it to all of [StreamProvider] descendants.
   StreamProvider.value({
     Key key,
     @required Stream<T> value,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
+    bool lazy,
     Widget child,
-  }) : this._(
+  }) : super.value(
           key: key,
-          delegate: SingleValueDelegate(value),
-          initialData: initialData,
-          catchError: catchError,
+          lazy: lazy,
+          value: value,
           updateShouldNotify: updateShouldNotify,
+          startListening: _streamStartListening(
+            catchError: catchError,
+            initialData: initialData,
+          ),
           child: child,
         );
-
-  StreamProvider._({
-    Key key,
-    @required ValueStateDelegate<Stream<T>> delegate,
-    this.initialData,
-    this.catchError,
-    this.updateShouldNotify,
-    this.child,
-  }) : super(key: key, delegate: delegate);
-
-  /// {@macro provider.streamprovider.initialdata}
-  final T initialData;
-
-  /// The widget that is below the current [StreamProvider] widget in the tree.
-  ///
-  /// {@macro flutter.widgets.child}
-  final Widget child;
-
-  /// An optional function used whenever the [Stream] emits an error.
-  ///
-  /// [catchError] will be called with the emitted error and is expected to
-  /// return a fallback value without throwing.
-  ///
-  /// The returned value will then be exposed to the descendants of
-  /// [StreamProvider] like any valid value.
-  final ErrorBuilder<T> catchError;
-
-  /// {@macro provider.updateshouldnotify}
-  final UpdateShouldNotify<T> updateShouldNotify;
-
-  @override
-  StreamProvider<T> cloneWithChild(Widget child) {
-    return StreamProvider._(
-      key: key,
-      delegate: delegate,
-      updateShouldNotify: updateShouldNotify,
-      initialData: initialData,
-      catchError: catchError,
-      child: child,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<T>(
-      stream: delegate.value,
-      initialData: initialData,
-      builder: (_, snapshot) {
-        return InheritedProvider<T>(
-          value: _snapshotToValue(snapshot, context, catchError, this),
-          child: child,
-          updateShouldNotify: updateShouldNotify,
-        );
-      },
-    );
-  }
 }
 
-T _snapshotToValue<T>(AsyncSnapshot<T> snapshot, BuildContext context,
-    ErrorBuilder<T> catchError, ValueDelegateWidget owner) {
-  if (snapshot.hasError) {
-    if (catchError != null) {
-      return catchError(context, snapshot.error);
+DeferredStartListening<Future<T>, T> _futureStartListening<T>({
+  T initialData,
+  ErrorBuilder<T> catchError,
+}) {
+  return (e, setState, controller, __) {
+    if (!e.hasValue) {
+      setState(initialData);
     }
-    throw FlutterError('''
-An exception was throw by ${
-        // ignore: invalid_use_of_protected_member
-        owner.delegate.value?.runtimeType} listened by
-$owner, but no `catchError` was provided.
+
+    var canceled = false;
+    controller?.then(
+      (value) {
+        if (canceled) return;
+        setState(value);
+      },
+      onError: (dynamic error) {
+        if (canceled) return;
+        if (catchError != null) {
+          setState(catchError(e, error));
+        } else {
+          FlutterError.reportError(
+            FlutterErrorDetails(
+              library: 'provider',
+              exception: FlutterError('''
+An exception was throw by ${controller.runtimeType} listened by
+FutureProvider<$T>, but no `catchError` was provided.
 
 Exception:
-${snapshot.error}
-''');
-  }
-  return snapshot.data;
+$error
+'''),
+            ),
+          );
+        }
+      },
+    );
+
+    return () => canceled = true;
+  };
 }
 
-class _StreamControllerBuilderDelegate<T>
-    extends ValueStateDelegate<Stream<T>> {
-  _StreamControllerBuilderDelegate(this._create) : assert(_create != null);
-
-  StreamController<T> _controller;
-  final ValueBuilder<StreamController<T>> _create;
-
-  @override
-  Stream<T> value;
-
-  @override
-  void initDelegate() {
-    super.initDelegate();
-    _controller = _create(context);
-    value = _controller?.stream;
-  }
-
-  @override
-  void didUpdateDelegate(_StreamControllerBuilderDelegate<T> old) {
-    super.didUpdateDelegate(old);
-    value = old.value;
-    _controller = old._controller;
-  }
-
-  @override
-  void dispose() {
-    _controller?.close();
-    super.dispose();
-  }
-}
-
-/// Listens to a [Future<T>] and exposes [T] to its descendants.
+/// Listens to a [Future] and exposes its result to `child` and its descendants.
 ///
 /// It is considered an error to pass a future that can emit errors without
-/// providing a [catchError] method.
+/// providing a `catchError` method.
 ///
 /// {@macro provider.updateshouldnotify}
 ///
 /// See also:
 ///
 ///   * [Future], which is listened by [FutureProvider].
-class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
-    implements SingleChildCloneableWidget {
-  /// Creates a [Future] from [create] and subscribes to it.
+class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
+  /// Creates a [Future] from `create` and subscribes to it.
   ///
-  /// [create] must not be `null`.
+  /// `create` must not be `null`.
   FutureProvider({
     Key key,
-    @required ValueBuilder<Future<T>> create,
-    @Deprecated('will be removed in 4.0.0, use create instead')
-        ValueBuilder<Future<T>> builder,
+    @required Create<Future<T>> create,
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
+    bool lazy,
     Widget child,
-  }) : this._(
+  })  : assert(create != null),
+        super(
           key: key,
-          initialData: initialData,
-          catchError: catchError,
+          lazy: lazy,
+          create: create,
           updateShouldNotify: updateShouldNotify,
-          // ignore: deprecated_member_use_from_same_package
-          delegate: BuilderStateDelegate(create ?? builder),
+          startListening: _futureStartListening(
+            catchError: catchError,
+            initialData: initialData,
+          ),
           child: child,
         );
 
-  /// Listens to [value] and expose it to all of [FutureProvider] descendants.
+  /// Listens to `value` and expose it to all of [FutureProvider] descendants.
   FutureProvider.value({
     Key key,
     @required Future<T> value,
@@ -253,70 +203,15 @@ class FutureProvider<T> extends ValueDelegateWidget<Future<T>>
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     Widget child,
-  }) : this._(
+  }) : super.value(
           key: key,
-          initialData: initialData,
-          catchError: catchError,
+          lazy: false,
+          value: value,
           updateShouldNotify: updateShouldNotify,
-          delegate: SingleValueDelegate(value),
+          startListening: _futureStartListening(
+            catchError: catchError,
+            initialData: initialData,
+          ),
           child: child,
         );
-
-  FutureProvider._({
-    Key key,
-    @required ValueStateDelegate<Future<T>> delegate,
-    this.initialData,
-    this.catchError,
-    this.updateShouldNotify,
-    this.child,
-  }) : super(key: key, delegate: delegate);
-
-  /// [initialData] determines the value exposed until the [Future] completes.
-  ///
-  /// If omitted, defaults to `null`.
-  final T initialData;
-
-  /// The widget that is below the current [FutureProvider] widget in the tree.
-  ///
-  /// {@macro flutter.widgets.child}
-  final Widget child;
-
-  /// Optional function used if the [Future] emits an error.
-  ///
-  /// [catchError] will be called with the emitted error and is expected to
-  /// return a fallback value without throwing.
-  ///
-  /// The returned value will then be exposed to the descendants of
-  /// [FutureProvider] like any valid value.
-  final ErrorBuilder<T> catchError;
-
-  /// {@macro provider.updateshouldnotify}
-  final UpdateShouldNotify<T> updateShouldNotify;
-
-  @override
-  FutureProvider<T> cloneWithChild(Widget child) {
-    return FutureProvider._(
-      key: key,
-      delegate: delegate,
-      updateShouldNotify: updateShouldNotify,
-      initialData: initialData,
-      catchError: catchError,
-      child: child,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<T>(
-      future: delegate.value,
-      initialData: initialData,
-      builder: (_, snapshot) {
-        return InheritedProvider<T>(
-          value: _snapshotToValue(snapshot, context, catchError, this),
-          updateShouldNotify: updateShouldNotify,
-          child: child,
-        );
-      },
-    );
-  }
 }

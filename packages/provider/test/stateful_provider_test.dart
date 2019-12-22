@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/src/provider.dart';
 
+import 'common.dart';
+
 class ValueBuilder extends Mock {
   int call(BuildContext context);
 }
@@ -13,20 +15,19 @@ class Dispose extends Mock {
 }
 
 void main() {
-  test('cloneWithChild works', () {
-    final provider = Provider(
-      create: (_) => 42,
-      child: Container(),
-      key: const ValueKey(42),
+  testWidgets('works with MultiProvider', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider(
+            create: (_) => 42,
+          ),
+        ],
+        child: const TextOf<int>(),
+      ),
     );
 
-    final newChild = Container();
-    final clone = provider.cloneWithChild(newChild);
-    expect(clone.child, equals(newChild));
-    // ignore: invalid_use_of_protected_member
-    expect(clone.delegate, equals(provider.delegate));
-    expect(clone.key, equals(provider.key));
-    expect(provider.updateShouldNotify, equals(clone.updateShouldNotify));
+    expect(find.text('42'), findsOneWidget);
   });
   test('asserts', () {
     expect(
@@ -41,11 +42,11 @@ void main() {
     final create = ValueBuilder();
     await tester.pumpWidget(Provider<int>(
       create: create,
-      child: Container(),
+      child: const TextOf<int>(),
     ));
     await tester.pumpWidget(Provider<int>(
       create: create,
-      child: Container(),
+      child: const TextOf<int>(),
     ));
     await tester.pumpWidget(Container());
 
@@ -54,18 +55,16 @@ void main() {
 
   testWidgets('dispose', (tester) async {
     final dispose = Dispose();
-    const key = ValueKey(42);
 
     await tester.pumpWidget(
       Provider<int>(
-        key: key,
         create: (_) => 42,
         dispose: dispose,
-        child: Container(),
+        child: const TextOf<int>(),
       ),
     );
 
-    final context = tester.element(find.byKey(key));
+    final context = findInheritedContext<int>();
 
     verifyZeroInteractions(dispose);
     await tester.pumpWidget(Container());

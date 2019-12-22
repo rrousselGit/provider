@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/rrousselGit/provider.svg?branch=master)](https://travis-ci.org/rrousselGit/provider)
 [![pub package](https://img.shields.io/pub/v/provider.svg)](https://pub.dartlang.org/packages/provider) [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider) [![Gitter](https://badges.gitter.im/flutter_provider/community.svg)](https://gitter.im/flutter_provider/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+[<img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
+
 A mixture between dependency injection (DI) and state management, built with
 widgets for widgets.
 
@@ -18,87 +20,139 @@ By using widgets for state management, `provider` can guarantee:
 
 To read more about `provider`, see the [documentation](https://pub.dev/documentation/provider/latest/).
 
-## Migration from v2.0.0 to v3.0.0
+## Migration from v3.x.0 to v4.0.0
 
-- Providers can no longer be instantiated with `const`.
-- `Provider` now throws if used with a `Listenable`/`Stream`.
-  Consider using `ListenableProvider`/`StreamProvider` instead. Alternatively,
-  this exception can be disabled by setting
-  `Provider.debugCheckInvalidValueType` to `null` like so:
+- The parameters `builder` and `initialBuilder` of providers are removed.
 
-```dart
-void main() {
-  Provider.debugCheckInvalidValueType = null;
+  - `initialBuilder` should be replaced by `create`.
+  - `builder` of "proxy" providers should be replaced by `update`
+  - `builder` of classical providers should be replaced by `create`.
 
-  runApp(MyApp());
-}
-```
+- The new `create`/`update` callbacks are lazy-loaded, which means they are called
+  the first time the value is read instead of the first time the provider is created.
 
-- All `XXProvider.value` constructors now use `value` as parameter name.
+  If this is undesired, you can disable lazy-loading by passing `lazy: false` to
+  the provider of your choice:
 
-Before:
+  ```dart
+  FutureProvider(
+    create: (_) async => doSomeHttpRequest(),
+    lazy: false,
+    child: ...
+  )
+  ```
 
-```dart
-ChangeNotifierProvider.value(notifier: myNotifier),
-```
+- `ProviderNotFoundError` is renamed to `ProviderNotFoundException`.
 
-After:
+- The `SingleChildCloneableWidget` interface is removed and replaced by a new kind
+  of widget `SingleChildWidget`.
 
-```dart
-ChangeNotifierProvider.value(value: myNotifier),
-```
+  See [this issue](https://github.com/rrousselGit/provider/issues/237) for details
+  on how to migrate.
 
-- `StreamProvider`'s default constructor now builds a `Stream` instead of a
-  `StreamController`. The previous behavior has been moved to the named
-  constructor `StreamProvider.controller`.
+- `Selector` now deeply compared the previous and new values if they are collections.
 
-Before:
+  If this is undesired, you can revert to the old behavior by passing a `shouldRebuild`
+  parameter to `Selector`:
 
-```dart
-StreamProvider(create: (_) => StreamController<int>()),
-```
+  ```dart
+  Selector<Selected, Consumed>(
+    shouldRebuild: (previous, next) => previous == next,
+    builder: ...,
+  )
+  ```
 
-After:
-
-```dart
-StreamProvider.controller(create: (_) => StreamController<int>()),
-```
+- `DelegateWidget` and its family is removed. Instead, for custom providers,
+  directly subclass `InheritedProvider` or an existing provider.
 
 ## Usage
 
 ### Exposing a value
 
-To expose a variable using `provider`, wrap any widget into one of the provider
-widgets from this package and pass it your variable. Then, all descendants of
-the newly added provider widget can access this variable.
+#### Exposing a new object instance
 
-A simple example would be to wrap the entire application into a `Provider`
-widget and pass it our variable:
+Providers allows to not only expose a value, but also create/listen/dispose it.
+
+To expose a newly created object, use the default constructor of a provider.
+Do _not_ use the `.value` constructor if you want to **create** an object, or you
+may otherwise have undesired side-effects.
+
+See [this stackoverflow answer](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)
+which explains in further details why using the `.value` constructor to
+create values is undesired.
+
+- **DO** create a new object inside `create`.
 
 ```dart
-Provider<String>.value(
-  value: 'Hello World',
-  child: MaterialApp(
-    home: Home(),
-  )
+Provider(
+  create: (_) => new MyModel(),
+  child: ...
 )
 ```
 
-Alternatively, for complex objects, most providers expose a constructor that
-takes a function to create the value. The provider will call that function only
-once, when inserting the widget in the tree, and expose the result. This is
-perfect for exposing a complex object that never changes over time without
-writing a `StatefulWidget`.
-
-The following creates and exposes a `MyComplexClass`. And in the event where
-`Provider` is removed from the widget tree, the instantiated `MyComplexClass`
-will be disposed.
+- **DON'T** use `Provider.value` to create your object.
 
 ```dart
-Provider<MyComplexClass>(
-  create: (context) => MyComplexClass(),
-  dispose: (context, value) => value.dispose()
-  child: SomeWidget(),
+ChangeNotifierProvider.value(
+  value: new MyModel(),
+  child: ...
+)
+```
+
+- **DON'T** create your object from variables that can change over
+  the time.
+
+  In such situation, your object would never be updated when the
+  value changes.
+
+```dart
+int count;
+
+Provider(
+  create: (_) => new MyModel(count),
+  child: ...
+)
+```
+
+If you want to pass variables that can change over time to your object,
+consider using [ProxyProvider]:
+
+```dart
+int count;
+
+ProxyProvider0(
+  update: (_, __) => new MyModel(count),
+  child: ...
+)
+```
+
+#### Reusing an existing object instance:
+
+If you already have an object instance and want to expose it,
+you should use the `.value` constructor of a provider.
+
+Failing to do so may call the `dispose` method of your object when it is still in use.
+
+- **DO** use [ChangeNotifierProvider.value] to provide an existing
+  [ChangeNotifier].
+
+```dart
+MyChangeNotifier variable;
+
+ChangeNotifierProvider.value(
+  value: variable,
+  child: ...
+)
+```
+
+- **DON'T** reuse an existing [ChangeNotifier] using the default constructor
+
+```dart
+MyChangeNotifier variable;
+
+ChangeNotifierProvider(
+  create: (_) => variable,
+  child: ...
 )
 ```
 
@@ -119,7 +173,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      /// Don't forget to pass the type of the object you want to obtain to `Provider.of`!
+      Don't forget to pass the type of the object you want to obtain to `Provider.of`!
       Provider.of<String>(context)
     );
   }
@@ -141,26 +195,26 @@ When injecting many values in big applications, `Provider` can rapidly become
 pretty nested:
 
 ```dart
-Provider<Foo>(
-  create: (_) => Foo(),
-  child: Provider<Bar>(
-    create: (_) => Bar(),
-    child: Provider<Baz>(
-      create: (_) => Baz(),
+Provider<Something>(
+  create: (_) => Something(),
+  child: Provider<SomethingElse>(
+    create: (_) => SomethingElse(),
+    child: Provider<AnotherThing>(
+      create: (_) => AnotherThing(),
       child: someWidget,
-    )
-  )
-)
+    ),
+  ),
+),
 ```
 
-In that situation, we can use `MultiProvider` to improve the readability:
+To:
 
 ```dart
 MultiProvider(
   providers: [
-    Provider<Foo>(create: (_) => Foo()),
-    Provider<Bar>(create: (_) => Bar()),
-    Provider<Baz>(create: (_) => Baz()),
+    Provider<Something>(create: (_) => Something()),
+    Provider<SomethingElse>(create: (_) => SomethingElse()),
+    Provider<AnotherThing>(create: (_) => AnotherThing()),
   ],
   child: someWidget,
 )
@@ -289,6 +343,7 @@ Instead, you should perform that mutation in a place that would affect the
 entire tree equally:
 
 - directly inside the `create` of your provider/constructor of your model:
+
   ```dart
   class MyNotifier with ChangeNotifier {
     MyNotifier() {
@@ -298,6 +353,7 @@ entire tree equally:
     Future<void> _fetchSomething() async {}
   }
   ```
+
   This is useful when there's no "external parameter".
 
 - asynchronously at the end of the frame:
@@ -357,7 +413,9 @@ where we can read the state by doing:
 ```dart
 return Text(Provider.of<int>(context).toString());
 ```
+
 and modify the state with:
+
 ```dart
 return FloatingActionButton(
   onPressed: Provider.of<ExampleState>(context).increment,
@@ -377,7 +435,7 @@ This includes:
 - `InheritedProvider`, the generic `InheritedWidget` obtained when doing `Provider.of`.
 - `DelegateWidget`/`BuilderDelegate`/`ValueDelegate` to help handle the logic of
   "MyProvider() that creates an object" vs "MyProvider.value() that can update over time".
-  
+
 Here's an example of a custom provider to use `ValueNotifier` as state:
 https://gist.github.com/rrousselGit/4910f3125e41600df3c2577e26967c91
 
