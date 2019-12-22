@@ -115,7 +115,7 @@ Provider(
 ```
 
 If you want to pass variables that can change over time to your object,
-consider using [ProxyProvider]:
+consider using `ProxyProvider`:
 
 ```dart
 int count;
@@ -133,8 +133,8 @@ you should use the `.value` constructor of a provider.
 
 Failing to do so may call the `dispose` method of your object when it is still in use.
 
-- **DO** use [ChangeNotifierProvider.value] to provide an existing
-  [ChangeNotifier].
+- **DO** use `ChangeNotifierProvider.value` to provide an existing
+  `ChangeNotifier`.
 
 ```dart
 MyChangeNotifier variable;
@@ -145,7 +145,7 @@ ChangeNotifierProvider.value(
 )
 ```
 
-- **DON'T** reuse an existing [ChangeNotifier] using the default constructor
+- **DON'T** reuse an existing `ChangeNotifier` using the default constructor
 
 ```dart
 MyChangeNotifier variable;
