@@ -13,8 +13,7 @@ void main() {
       );
     });
 
-    testWidgets('MultiProvider children can only access parent providers',
-        (tester) async {
+    testWidgets('MultiProvider children can only access parent providers', (tester) async {
       final k1 = GlobalKey();
       final k2 = GlobalKey();
       final k3 = GlobalKey();

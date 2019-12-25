@@ -131,10 +131,8 @@ class Provider<T> extends InheritedProvider<T> {
           lazy: lazy,
           create: create,
           dispose: dispose,
-          debugCheckInvalidValueType: kReleaseMode
-              ? null
-              : (T value) =>
-                  Provider.debugCheckInvalidValueType?.call<T>(value),
+          debugCheckInvalidValueType:
+              kReleaseMode ? null : (T value) => Provider.debugCheckInvalidValueType?.call<T>(value),
           child: child,
         );
 
@@ -212,9 +210,7 @@ If you want to expose a variable that can be anything, consider changing
 ''',
     );
     assert(
-      context.owner.debugBuilding ||
-          listen == false ||
-          _debugIsInInheritedProviderUpdate,
+      context.owner.debugBuilding || listen == false || _debugIsInInheritedProviderUpdate,
       '''
 Tried to listen to a value exposed with provider, from outside of the widget tree.
 
@@ -235,14 +231,12 @@ event handler, when the widget tree doesn't care about the value.
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
       // the same type.
       context.visitAncestorElements((parent) {
-        inheritedElement = parent.getElementForInheritedWidgetOfExactType<
-                _DefaultInheritedProviderScope<T>>()
+        inheritedElement = parent.getElementForInheritedWidgetOfExactType<_DefaultInheritedProviderScope<T>>()
             as _DefaultInheritedProviderScopeElement<T>;
         return false;
       });
     } else {
-      inheritedElement = context.getElementForInheritedWidgetOfExactType<
-              _DefaultInheritedProviderScope<T>>()
+      inheritedElement = context.getElementForInheritedWidgetOfExactType<_DefaultInheritedProviderScope<T>>()
           as _DefaultInheritedProviderScopeElement<T>;
     }
 

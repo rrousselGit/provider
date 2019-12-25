@@ -18,8 +18,7 @@ BuildContext get context => find.byType(Context).evaluate().single;
 T of<T>([BuildContext c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
-  testWidgets('provider.of throws if listen:true outside of the widget tree',
-      (tester) async {
+  testWidgets('provider.of throws if listen:true outside of the widget tree', (tester) async {
     await tester.pumpWidget(
       InheritedProvider<int>.value(
         value: 42,
@@ -172,8 +171,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
   });
 
   group('InheritedProvider.value()', () {
-    testWidgets('markNeedsNotifyDependents during startListening is noop',
-        (tester) async {
+    testWidgets('markNeedsNotifyDependents during startListening is noop', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>.value(
           value: 42,
@@ -185,8 +183,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         ),
       );
     });
-    testWidgets('startListening called again when create returns new value',
-        (tester) async {
+    testWidgets('startListening called again when create returns new value', (tester) async {
       final stopListening = StopListeningMock();
       final startListening = StartListeningMock<int>(stopListening);
 
@@ -427,8 +424,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(find.text('42'), findsOneWidget);
     });
 
-    testWidgets('update lazy loaded can call Provider.of with listen:true',
-        (tester) async {
+    testWidgets('update lazy loaded can call Provider.of with listen:true', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>.value(
           value: 42,
@@ -441,8 +437,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(Provider.of<String>(context, listen: false), equals('42'));
     });
-    testWidgets('markNeedsNotifyDependents during startListening is noop',
-        (tester) async {
+    testWidgets('markNeedsNotifyDependents during startListening is noop', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>(
           update: (_, __) => 24,
@@ -558,8 +553,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verifyNoMoreInteractions(stopListening);
     });
 
-    testWidgets('startListening called again when create returns new value',
-        (tester) async {
+    testWidgets('startListening called again when create returns new value', (tester) async {
       final stopListening = StopListeningMock();
       final startListening = StartListeningMock<int>(stopListening);
 
@@ -683,8 +677,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           },
         );
         final update = ValueBuilderMock<int>();
-        when(update(any, any))
-            .thenAnswer((i) => (i.positionalArguments[1] as int) * 2);
+        when(update(any, any)).thenAnswer((i) => (i.positionalArguments[1] as int) * 2);
 
         await tester.pumpWidget(
           InheritedProvider<int>(
@@ -927,8 +920,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verify(dispose(context, 42)).called(1);
       verifyNoMoreInteractions(dispose);
     });
-    testWidgets('builder unmount, dispose not called if value never read',
-        (tester) async {
+    testWidgets('builder unmount, dispose not called if value never read', (tester) async {
       final dispose = DisposeMock<int>();
 
       await tester.pumpWidget(
@@ -1052,8 +1044,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     // TODO: stopListening cannot be null
     testWidgets('startListening', (tester) async {
       final stopListening = StopListeningMock();
-      final startListening =
-          DeferredStartListeningMock<ValueNotifier<int>, int>(
+      final startListening = DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
           setState(controller.value);
           return stopListening;
@@ -1129,10 +1120,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(tester.takeException(), isAssertionError);
     });
-    testWidgets("startListening doesn't need setState if already initialized",
-        (tester) async {
-      final startListening =
-          DeferredStartListeningMock<ValueNotifier<int>, int>(
+    testWidgets("startListening doesn't need setState if already initialized", (tester) async {
+      final startListening = DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
           setState(controller.value);
           return () {};
@@ -1150,8 +1139,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(find.text('0'), findsOneWidget);
 
-      final startListening2 =
-          DeferredStartListeningMock<ValueNotifier<int>, int>();
+      final startListening2 = DeferredStartListeningMock<ValueNotifier<int>, int>();
       when(startListening2(any, any, any, any)).thenReturn(() {});
       final controller2 = ValueNotifier<int>(0);
 
@@ -1265,10 +1253,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(find.text('1'), findsOneWidget);
       expect(buildCount, equals(2));
     });
-    testWidgets('startListening never leave the widget uninitialized',
-        (tester) async {
-      final startListening =
-          DeferredStartListeningMock<ValueNotifier<int>, int>();
+    testWidgets('startListening never leave the widget uninitialized', (tester) async {
+      final startListening = DeferredStartListeningMock<ValueNotifier<int>, int>();
       when(startListening(any, any, any, any)).thenReturn(() {});
       final controller = ValueNotifier<int>(0);
 
@@ -1287,8 +1273,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       );
     });
 
-    testWidgets('startListening called again on controller change',
-        (tester) async {
+    testWidgets('startListening called again on controller change', (tester) async {
       var buildCount = 0;
       final child = Consumer<int>(builder: (_, value, __) {
         buildCount++;
@@ -1296,8 +1281,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       });
 
       final stopListening = StopListeningMock();
-      final startListening =
-          DeferredStartListeningMock<ValueNotifier<int>, int>(
+      final startListening = DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
           setState(controller.value);
           return stopListening;
@@ -1319,8 +1303,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verifyZeroInteractions(stopListening);
 
       final stopListening2 = StopListeningMock();
-      final startListening2 =
-          DeferredStartListeningMock<ValueNotifier<int>, int>(
+      final startListening2 = DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
           setState(controller.value);
           return stopListening2;
@@ -1400,8 +1383,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(of<int>(), equals(0));
 
       verify(create(argThat(isNotNull))).called(1);
-      verify(startListening(argThat(isNotNull), argThat(isNotNull), '0', null))
-          .called(1);
+      verify(startListening(argThat(isNotNull), argThat(isNotNull), '0', null)).called(1);
 
       expect(of<int>(), equals(0));
 
@@ -1583,8 +1565,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     verify(startListening(argThat(isNotNull), 42)).called(1);
   });
 
-  testWidgets('InheritedProvider.value lazy loading can be disabled',
-      (tester) async {
+  testWidgets('InheritedProvider.value lazy loading can be disabled', (tester) async {
     final startListening = StartListeningMock<int>(() {});
 
     await tester.pumpWidget(
@@ -1619,10 +1600,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verifyNoMoreInteractions(create);
     },
   );
-  testWidgets('DeferredInheritedProvider lazy loading can be disabled',
-      (tester) async {
-    final startListening =
-        DeferredStartListeningMock<int, int>((a, setState, c, d) {
+  testWidgets('DeferredInheritedProvider lazy loading can be disabled', (tester) async {
+    final startListening = DeferredStartListeningMock<int, int>((a, setState, c, d) {
       setState(0);
       return () {};
     });
@@ -1637,14 +1616,11 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null))
-        .called(1);
+    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null)).called(1);
     verifyNoMoreInteractions(startListening);
   });
-  testWidgets('DeferredInheritedProvider.value lazy loading can be disabled',
-      (tester) async {
-    final startListening =
-        DeferredStartListeningMock<int, int>((a, setState, c, d) {
+  testWidgets('DeferredInheritedProvider.value lazy loading can be disabled', (tester) async {
+    final startListening = DeferredStartListeningMock<int, int>((a, setState, c, d) {
       setState(0);
       return () {};
     });
@@ -1659,8 +1635,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null))
-        .called(1);
+    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null)).called(1);
     verifyNoMoreInteractions(startListening);
   });
 }
