@@ -85,7 +85,7 @@ void main() {
         );
 
         final context = tester.element(find.byWidget(child));
-        Provider.of<int>(context);
+        Provider.of<int>(context, listen: false);
         expect(buildCount, equals(1));
 
         await tester.pumpWidget(

@@ -131,8 +131,10 @@ class Provider<T> extends InheritedProvider<T> {
           lazy: lazy,
           create: create,
           dispose: dispose,
-          debugCheckInvalidValueType:
-              kReleaseMode ? null : (T value) => Provider.debugCheckInvalidValueType?.call<T>(value),
+          debugCheckInvalidValueType: kReleaseMode
+              ? null
+              : (T value) =>
+                  Provider.debugCheckInvalidValueType?.call<T>(value),
           child: child,
         );
 
@@ -198,7 +200,7 @@ class Provider<T> extends InheritedProvider<T> {
   ///   },
   /// )
   /// ```
-  static T of<T>(BuildContext context, {bool listen}) {
+  static T of<T>(BuildContext context, {bool listen = true}) {
     assert(
       T != dynamic,
       '''
@@ -209,9 +211,23 @@ If you want to expose a variable that can be anything, consider changing
 `dynamic` to `Object` instead.
 ''',
     );
-    assert(!(listen == true && !isWidgetTreeBuilding), '''
+    assert(
+      context.owner.debugBuilding ||
+          listen == false ||
+          _debugIsInInheritedProviderUpdate,
+      '''
 Tried to listen to a value exposed with provider, from outside of the widget tree.
-''');
+
+This is likely caused by an event handler (like a button's onPressed) that called
+Provider.of without passing `listen: false`.
+
+To fix, write:
+Provider.of<$T>(context, listen: false);
+
+It is unsupported because may pointlessly rebuild the widget associated to the
+event handler, when the widget tree doesn't care about the value.
+''',
+    );
 
     InheritedContext<T> inheritedElement;
 
@@ -219,12 +235,14 @@ Tried to listen to a value exposed with provider, from outside of the widget tre
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
       // the same type.
       context.visitAncestorElements((parent) {
-        inheritedElement = parent.getElementForInheritedWidgetOfExactType<_DefaultInheritedProviderScope<T>>()
+        inheritedElement = parent.getElementForInheritedWidgetOfExactType<
+                _DefaultInheritedProviderScope<T>>()
             as _DefaultInheritedProviderScopeElement<T>;
         return false;
       });
     } else {
-      inheritedElement = context.getElementForInheritedWidgetOfExactType<_DefaultInheritedProviderScope<T>>()
+      inheritedElement = context.getElementForInheritedWidgetOfExactType<
+              _DefaultInheritedProviderScope<T>>()
           as _DefaultInheritedProviderScopeElement<T>;
     }
 
@@ -232,7 +250,7 @@ Tried to listen to a value exposed with provider, from outside of the widget tre
       throw ProviderNotFoundException(T, context.widget.runtimeType);
     }
 
-    if (listen ?? isWidgetTreeBuilding) {
+    if (listen) {
       context.dependOnInheritedElement(inheritedElement as InheritedElement);
     }
 

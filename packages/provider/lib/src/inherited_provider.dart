@@ -37,47 +37,6 @@ typedef Dispose<T> = void Function(BuildContext context, T value);
 ///   listening.
 typedef StartListening<T> = VoidCallback Function(InheritedContext<T> element, T value);
 
-/// Express if the widget tree is currently being updated.
-bool get isWidgetTreeBuilding => _isWidgetTreeBuilding;
-
-bool _isWidgetTreeBuilding = false;
-int _frameId;
-// we track the number of providers in the widget tree, such that when all of
-// them are disposed, we can stop scheduling frames.
-//
-// This is a requirement for testWidgets, as it would otherwise fail if there's
-// an uncancelled frame callback.
-int _providerCount = 0;
-
-void _startWatchingScheduler() {
-  _isWidgetTreeBuilding = true;
-
-  final endFrameCallback = (Duration _) {
-    _isWidgetTreeBuilding = false;
-    if (_providerCount == 0 && _frameId != null) {
-      SchedulerBinding.instance.cancelFrameCallbackWithId(_frameId);
-      _frameId = null;
-    }
-  };
-
-  void Function(Duration) startFrameCallback;
-  startFrameCallback = (Duration _) {
-    _isWidgetTreeBuilding = true;
-
-    SchedulerBinding.instance.addPostFrameCallback(endFrameCallback);
-
-    _frameId = SchedulerBinding.instance.scheduleFrameCallback(
-      startFrameCallback,
-      rescheduling: true,
-    );
-  };
-
-  _frameId = SchedulerBinding.instance.scheduleFrameCallback(
-    startFrameCallback,
-  );
-  SchedulerBinding.instance.addPostFrameCallback(endFrameCallback);
-}
-
 /// A generic implementation of an [InheritedWidget].
 ///
 /// Any descendant of this widget can obtain `value` using [Provider.of].
@@ -253,15 +212,6 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
   bool get hasValue => _delegateState.hasValue;
 
   @override
-  void mount(Element parent, dynamic newSlot) {
-    _providerCount++;
-    if (_providerCount == 1) {
-      _startWatchingScheduler();
-    }
-    super.mount(parent, newSlot);
-  }
-
-  @override
   void performRebuild() {
     if (_firstBuild) {
       _firstBuild = false;
@@ -274,7 +224,6 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
   void update(InheritedWidget newWidget) {
     assert(() {
       if (_widgetToDelegate(widget).runtimeType != _widgetToDelegate(newWidget).runtimeType) {
-        _providerCount--;
         throw StateError('''Rebuilt $widget using a different constructor.
       
 This is likely a mistake and is unsupported.
@@ -293,7 +242,6 @@ If you're in this situation, consider passing a `key` unique to each individual 
 
   @override
   void unmount() {
-    _providerCount--;
     _delegateState.dispose();
     super.unmount();
   }
@@ -427,6 +375,8 @@ class _CreateInheritedProvider<T> extends _Delegate<T> {
   _CreateInheritedProviderState<T> createState() => _CreateInheritedProviderState();
 }
 
+bool _debugIsInInheritedProviderUpdate = false;
+
 class _CreateInheritedProviderState<T> extends _DelegateState<T, _CreateInheritedProvider<T>> {
   VoidCallback _removeListener;
   bool _didInitValue = false;
@@ -448,7 +398,15 @@ class _CreateInheritedProviderState<T> extends _DelegateState<T, _CreateInherite
         }());
       }
       if (delegate.update != null) {
+        assert(() {
+          _debugIsInInheritedProviderUpdate = true;
+          return true;
+        }());
         _value = delegate.update(element, _value);
+        assert(() {
+          _debugIsInInheritedProviderUpdate = false;
+          return true;
+        }());
 
         assert(() {
           delegate.debugCheckInvalidValueType?.call(_value);

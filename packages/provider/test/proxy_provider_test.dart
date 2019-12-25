@@ -341,7 +341,7 @@ void main() {
       final context = findProxyProvider();
 
       expect(
-        Provider.of<Combined>(key.currentContext),
+        Provider.of<Combined>(key.currentContext, listen: false),
         Combined(context, null, a),
       );
     });

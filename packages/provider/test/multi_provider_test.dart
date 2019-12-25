@@ -13,7 +13,8 @@ void main() {
       );
     });
 
-    testWidgets('MultiProvider children can only access parent providers', (tester) async {
+    testWidgets('MultiProvider children can only access parent providers',
+        (tester) async {
       final k1 = GlobalKey();
       final k2 = GlobalKey();
       final k3 = GlobalKey();
@@ -31,41 +32,44 @@ void main() {
 
       // p1 cannot access to p1/p2/p3
       expect(
-        () => Provider.of<int>(k1.currentContext),
+        () => Provider.of<int>(k1.currentContext, listen: false),
         throwsProviderNotFound<int>(),
       );
       expect(
-        () => Provider.of<String>(k1.currentContext),
+        () => Provider.of<String>(k1.currentContext, listen: false),
         throwsProviderNotFound<String>(),
       );
       expect(
-        () => Provider.of<double>(k1.currentContext),
+        () => Provider.of<double>(k1.currentContext, listen: false),
         throwsProviderNotFound<double>(),
       );
 
       // p2 can access only p1
-      expect(Provider.of<int>(k2.currentContext), 42);
+      expect(Provider.of<int>(k2.currentContext, listen: false), 42);
       expect(
-        () => Provider.of<String>(k2.currentContext),
+        () => Provider.of<String>(k2.currentContext, listen: false),
         throwsProviderNotFound<String>(),
       );
       expect(
-        () => Provider.of<double>(k2.currentContext),
+        () => Provider.of<double>(k2.currentContext, listen: false),
         throwsProviderNotFound<double>(),
       );
 
       // p3 can access both p1 and p2
-      expect(Provider.of<int>(k3.currentContext), 42);
-      expect(Provider.of<String>(k3.currentContext), 'foo');
+      expect(Provider.of<int>(k3.currentContext, listen: false), 42);
+      expect(Provider.of<String>(k3.currentContext, listen: false), 'foo');
       expect(
-        () => Provider.of<double>(k3.currentContext),
+        () => Provider.of<double>(k3.currentContext, listen: false),
         throwsProviderNotFound<double>(),
       );
 
       // the child can access them all
-      expect(Provider.of<int>(keyChild.currentContext), 42);
-      expect(Provider.of<String>(keyChild.currentContext), 'foo');
-      expect(Provider.of<double>(keyChild.currentContext), 44);
+      expect(Provider.of<int>(keyChild.currentContext, listen: false), 42);
+      expect(
+        Provider.of<String>(keyChild.currentContext, listen: false),
+        'foo',
+      );
+      expect(Provider.of<double>(keyChild.currentContext, listen: false), 44);
     });
   });
 }
