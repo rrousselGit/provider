@@ -107,10 +107,7 @@ class IncrementCounterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
-        // We don't need to do `Provider.of<Counter>(context, listen: false)`
-        // because the listen:false is inferred automatically since Provider.of
-        // is called when the widget tree is not building anymore.
-        Provider.of<Counter>(context).increment();
+        Provider.of<Counter>(context, listen: false).increment();
       },
       tooltip: 'Increment',
       child: const Icon(Icons.add),
