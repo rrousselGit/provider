@@ -1,3 +1,8 @@
+# 4.0.1
+
+- stable release of 4.0.0-hotfix+1
+- fix some typos
+
 # 4.0.0-hotfix.1
 
 - removed the inference of the `listen` flag of `Provider.of` in favor of an exception in debug mode if `listen` is true when it shouldn't.

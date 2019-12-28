@@ -50,7 +50,7 @@ To read more about `provider`, see the [documentation](https://pub.dev/documenta
   See [this issue](https://github.com/rrousselGit/provider/issues/237) for details
   on how to migrate.
 
-- `Selector` now deeply compared the previous and new values if they are collections.
+- `Selector` now deeply compares the previous and new values if they are collections.
 
   If this is undesired, you can revert to the old behavior by passing a `shouldRebuild`
   parameter to `Selector`:
