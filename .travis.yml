@@ -2,7 +2,7 @@ language: bash
 os:
   - osx
 env:
-  # - FLUTTER_CHANNEL="stable"
+  - FLUTTER_CHANNEL="stable"
   - FLUTTER_CHANNEL="master"
 sudo: false
 before_script:
@@ -13,8 +13,8 @@ before_script:
   - flutter doctor
 script:
   - set -e # abort CI if an error happens
-  - ./scripts/flutter_test.sh packages/provider
-  - ./scripts/flutter_test.sh packages/provider/example
+  - ./scripts/flutter_test.sh .
+  - ./scripts/flutter_test.sh ./example
 
   # export coverage
   - if [ $FLUTTER_CHANNEL = "stable" ]; then
