@@ -2,6 +2,7 @@
 
 - fix `Provider.of` returning the previous value instead of the new value
   if called inside `didChangeDependencies`.
+- fixed an issue where `update` was unnecessarily called. 
 
 # 4.0.1
 
