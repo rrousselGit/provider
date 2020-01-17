@@ -71,11 +71,13 @@ class ProxyProvider0<R> extends InheritedProvider<R> {
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
     bool lazy,
+    ValueWidgetBuilder<R> builder,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
           lazy: lazy,
+          builder: builder,
           create: create,
           update: update,
           dispose: dispose,
@@ -141,11 +143,13 @@ class ProxyProvider<T, R> extends ProxyProvider0<R> {
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
     bool lazy,
+    ValueWidgetBuilder<R> builder,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
           lazy: lazy,
+          builder: builder,
           create: create,
           update: (context, value) => update(
             context,
@@ -168,11 +172,13 @@ class ProxyProvider2<T, T2, R> extends ProxyProvider0<R> {
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
     bool lazy,
+    ValueWidgetBuilder<R> builder,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
           lazy: lazy,
+          builder: builder,
           create: create,
           update: (context, value) => update(
             context,
@@ -196,11 +202,13 @@ class ProxyProvider3<T, T2, T3, R> extends ProxyProvider0<R> {
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
     bool lazy,
+    ValueWidgetBuilder<R> builder,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
           lazy: lazy,
+          builder: builder,
           create: create,
           update: (context, value) => update(
             context,
@@ -225,11 +233,13 @@ class ProxyProvider4<T, T2, T3, T4, R> extends ProxyProvider0<R> {
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
     bool lazy,
+    ValueWidgetBuilder<R> builder,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
           lazy: lazy,
+          builder: builder,
           create: create,
           update: (context, value) => update(
             context,
@@ -255,11 +265,13 @@ class ProxyProvider5<T, T2, T3, T4, T5, R> extends ProxyProvider0<R> {
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
     bool lazy,
+    ValueWidgetBuilder<R> builder,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
           lazy: lazy,
+          builder: builder,
           create: create,
           update: (context, value) => update(
             context,
@@ -286,11 +298,13 @@ class ProxyProvider6<T, T2, T3, T4, T5, T6, R> extends ProxyProvider0<R> {
     UpdateShouldNotify<R> updateShouldNotify,
     Dispose<R> dispose,
     bool lazy,
+    ValueWidgetBuilder<R> builder,
     Widget child,
   })  : assert(update != null),
         super(
           key: key,
           lazy: lazy,
+          builder: builder,
           create: create,
           update: (context, value) => update(
             context,

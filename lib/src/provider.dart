@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -124,11 +125,13 @@ class Provider<T> extends InheritedProvider<T> {
     @required Create<T> create,
     Dispose<T> dispose,
     bool lazy,
+    ValueWidgetBuilder<T> builder,
     Widget child,
   })  : assert(create != null),
         super(
           key: key,
           lazy: lazy,
+          builder: builder,
           create: create,
           dispose: dispose,
           debugCheckInvalidValueType:
@@ -149,6 +152,7 @@ class Provider<T> extends InheritedProvider<T> {
     Key key,
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
+    ValueWidgetBuilder<T> builder,
     Widget child,
   })  : assert(() {
           Provider.debugCheckInvalidValueType?.call<T>(value);
@@ -156,6 +160,7 @@ class Provider<T> extends InheritedProvider<T> {
         }()),
         super.value(
           key: key,
+          builder: builder,
           value: value,
           updateShouldNotify: updateShouldNotify,
           child: child,
@@ -207,7 +212,17 @@ The context used was: $context
 ''',
     );
 
-    InheritedContext<T> inheritedElement;
+    final inheritedElement = _inheritedElementOf<T>(context);
+
+    if (listen) {
+      context.dependOnInheritedElement(inheritedElement);
+    }
+
+    return inheritedElement.value;
+  }
+
+  static _InheritedProviderScopeMixin<T> _inheritedElementOf<T>(BuildContext context) {
+    _InheritedProviderScopeMixin<T> inheritedElement;
 
     if (context.widget is _DefaultInheritedProviderScope<T>) {
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
@@ -226,11 +241,7 @@ The context used was: $context
       throw ProviderNotFoundException(T, context.widget.runtimeType);
     }
 
-    if (listen) {
-      context.dependOnInheritedElement(inheritedElement as InheritedElement);
-    }
-
-    return inheritedElement.value;
+    return inheritedElement;
   }
 
   /// A sanity check to prevent misuse of [Provider] when a variant should be
@@ -316,3 +327,103 @@ https://github.com/rrousselGit/provider/issues
 ''';
   }
 }
+
+/// Exposes the [read] method.
+extension ReadProvider on BuildContext {
+  /// Obtain a value from the nearest ancestor provider of type [T].
+  ///
+  /// This method will _not_ make widget rebuild when the value changes.
+  ///
+  /// Calling this method is equivalent to calling:
+  ///
+  /// ```dart
+  /// Provider.of<T>(context, listen: false)
+  /// ```
+  ///
+  /// This method can be freely passed to objects, so that they can read providers
+  /// without having a reference on a [BuildContext].
+  ///
+  ///
+  /// For example, instead of:
+  ///
+  /// ```dart
+  /// class Model {
+  ///   Model(this.context);
+  ///
+  ///   final BuildContext context;
+  ///
+  ///   void method() {
+  ///     print(Provider.of<Whatever>(context));
+  ///   }
+  /// }
+  ///
+  /// // ...
+  ///
+  /// Provider(
+  ///   create: (context) => Model(context),
+  ///   child: ...,
+  /// )
+  /// ```
+  ///
+  /// we will prefer to write:
+  ///
+  /// ```dart
+  /// class Model {
+  ///   Model(this.locator);
+  ///
+  ///   final Locator locator;
+  ///
+  ///   void method() {
+  ///     print(locator<Whatever>());
+  ///   }
+  /// }
+  ///
+  /// // ...
+  ///
+  /// Provider(
+  ///   create: (context) => Model(context.read),
+  ///   child: ...,
+  /// )
+  /// ```
+  ///
+  /// The behavior is the same. But in this second snippet, `Model` has no dependency
+  /// on Flutter/[BuildContext]/provider.
+  ///
+  /// See also:
+  ///
+  /// - [WatchProvider] and its `watch` method, similar to [read], but
+  ///   will make the widget tree rebuild when the obtained value changes.
+  /// - [Locator], a typedef to make it easier to pass [read] to objects.
+  T read<T>() => Provider.of<T>(this, listen: false);
+}
+
+/// Exposes the [watch] method.
+extension WatchProvider on BuildContext {
+  /// Obtain a value from the nearest ancestor provider of type [T], and subscribe
+  /// to the provider.
+  ///
+  /// Calling this method is equivalent to calling:
+  ///
+  /// ```dart
+  /// Provider.of<T>(context)
+  /// ```
+  ///
+  /// See also:
+  ///
+  /// - [ReadProvider] and its `read` method, similar to [watch], but doesn't make
+  ///   widgets rebuild if the value obtained changes.
+  T watch<T>() => Provider.of<T>(this);
+}
+
+/// A generic function that can be called to read providers, without having a
+/// reference on [BuildContext].
+///
+/// It is typically a reference to the `read` [BuildContext] extension:
+///
+/// ```dart
+/// BuildContext context;
+/// Locator locator = context.read;
+/// ```
+///
+/// This function
+typedef Locator = T Function<T>();
