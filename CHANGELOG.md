@@ -1,3 +1,8 @@
+# 4.0.2
+
+- fix `Provider.of` returning the previous value instead of the new value
+  if called inside `didChangeDependencies`.
+
 # 4.0.1
 
 - stable release of 4.0.0-hotfix+1
@@ -8,7 +13,6 @@
 - removed the inference of the `listen` flag of `Provider.of` in favor of an exception in debug mode if `listen` is true when it shouldn't.
 
   This is because it caused a critical performance issue. See https://github.com/rrousselGit/provider/issues/305
-
 
 # 4.0.0
 
