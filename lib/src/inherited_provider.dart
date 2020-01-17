@@ -220,6 +220,7 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
     super.performRebuild();
   }
 
+  bool _updatedShouldNotify = false;
   @override
   void update(InheritedWidget newWidget) {
     assert(() {
@@ -233,11 +234,17 @@ If you're in this situation, consider passing a `key` unique to each individual 
       return true;
     }());
 
-    _delegateState.willUpdateDelegate(
-      _widgetToDelegate(newWidget),
-      newWidget,
-    );
+    _updatedShouldNotify = _delegateState.willUpdateDelegate(_widgetToDelegate(newWidget));
     super.update(newWidget);
+    _updatedShouldNotify = false;
+  }
+
+  @override
+  void updated(InheritedWidget oldWidget) {
+    super.updated(oldWidget);
+    if (_updatedShouldNotify) {
+      notifyClients(oldWidget);
+    }
   }
 
   @override
@@ -341,10 +348,7 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
     return element._debugSetInheritedLock(value);
   }
 
-  void willUpdateDelegate(
-    D newDelegate,
-    InheritedWidget newWidget,
-  ) {}
+  bool willUpdateDelegate(D newDelegate) => false;
 
   void dispose() {}
 
@@ -530,10 +534,7 @@ class _ValueInheritedProviderState<T> extends _DelegateState<T, _ValueInheritedP
   }
 
   @override
-  void willUpdateDelegate(
-    _ValueInheritedProvider<T> newDelegate,
-    InheritedWidget newWidget,
-  ) {
+  bool willUpdateDelegate(_ValueInheritedProvider<T> newDelegate) {
     bool shouldNotify;
     if (delegate._updateShouldNotify != null) {
       shouldNotify = delegate._updateShouldNotify(
@@ -544,14 +545,11 @@ class _ValueInheritedProviderState<T> extends _DelegateState<T, _ValueInheritedP
       shouldNotify = newDelegate.value != delegate.value;
     }
 
-    if (shouldNotify) {
-      if (_removeListener != null) {
-        _removeListener();
-        _removeListener = null;
-      }
-
-      element.notifyClients(newWidget);
+    if (shouldNotify && _removeListener != null) {
+      _removeListener();
+      _removeListener = null;
     }
+    return shouldNotify;
   }
 
   @override
