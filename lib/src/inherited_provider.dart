@@ -220,6 +220,8 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
     super.performRebuild();
   }
 
+  bool _updatedShouldNotify = false;
+  bool _isBuildFromExternalSources = false;
   @override
   void update(InheritedWidget newWidget) {
     assert(() {
@@ -233,11 +235,24 @@ If you're in this situation, consider passing a `key` unique to each individual 
       return true;
     }());
 
-    _delegateState.willUpdateDelegate(
-      _widgetToDelegate(newWidget),
-      newWidget,
-    );
+    _isBuildFromExternalSources = true;
+    _updatedShouldNotify = _delegateState.willUpdateDelegate(_widgetToDelegate(newWidget));
     super.update(newWidget);
+    _updatedShouldNotify = false;
+  }
+
+  @override
+  void updated(InheritedWidget oldWidget) {
+    super.updated(oldWidget);
+    if (_updatedShouldNotify) {
+      notifyClients(oldWidget);
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    _isBuildFromExternalSources = true;
+    super.didChangeDependencies();
   }
 
   @override
@@ -259,7 +274,8 @@ If you're in this situation, consider passing a `key` unique to each individual 
     if (_isLazy(widget) == false) {
       value; // this will force the value to be computed.
     }
-    _delegateState.build();
+    _delegateState.build(_isBuildFromExternalSources);
+    _isBuildFromExternalSources = false;
     if (_shouldNotifyDependents) {
       _shouldNotifyDependents = false;
       notifyClients(widget);
@@ -341,16 +357,13 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
     return element._debugSetInheritedLock(value);
   }
 
-  void willUpdateDelegate(
-    D newDelegate,
-    InheritedWidget newWidget,
-  ) {}
+  bool willUpdateDelegate(D newDelegate) => false;
 
   void dispose() {}
 
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {}
 
-  void build() {}
+  void build(bool isBuildFromExternalSources) {}
 }
 
 class _CreateInheritedProvider<T> extends _Delegate<T> {
@@ -458,9 +471,11 @@ class _CreateInheritedProviderState<T> extends _DelegateState<T, _CreateInherite
   }
 
   @override
-  void build() {
+  void build(bool isBuildFromExternalSources) {
     var shouldNotify = false;
-    if (_didInitValue && delegate.update != null) {
+    // Don't call `update` unless the build was triggered from `updated`/`didChangeDependencies`
+    // otherwise `markNeedsNotifyDependents` will trigger unnecessary `update` calls
+    if (isBuildFromExternalSources && _didInitValue && delegate.update != null) {
       final previousValue = _value;
       _value = delegate.update(element, _value);
 
@@ -487,7 +502,7 @@ class _CreateInheritedProviderState<T> extends _DelegateState<T, _CreateInherite
       element._shouldNotifyDependents = true;
     }
     _previousWidget = delegate;
-    return super.build();
+    return super.build(isBuildFromExternalSources);
   }
 
   @override
@@ -530,10 +545,7 @@ class _ValueInheritedProviderState<T> extends _DelegateState<T, _ValueInheritedP
   }
 
   @override
-  void willUpdateDelegate(
-    _ValueInheritedProvider<T> newDelegate,
-    InheritedWidget newWidget,
-  ) {
+  bool willUpdateDelegate(_ValueInheritedProvider<T> newDelegate) {
     bool shouldNotify;
     if (delegate._updateShouldNotify != null) {
       shouldNotify = delegate._updateShouldNotify(
@@ -544,14 +556,11 @@ class _ValueInheritedProviderState<T> extends _DelegateState<T, _ValueInheritedP
       shouldNotify = newDelegate.value != delegate.value;
     }
 
-    if (shouldNotify) {
-      if (_removeListener != null) {
-        _removeListener();
-        _removeListener = null;
-      }
-
-      element.notifyClients(newWidget);
+    if (shouldNotify && _removeListener != null) {
+      _removeListener();
+      _removeListener = null;
     }
+    return shouldNotify;
   }
 
   @override

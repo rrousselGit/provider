@@ -18,6 +18,39 @@ BuildContext get context => find.byType(Context).evaluate().single;
 T of<T>([BuildContext c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
+  testWidgets('new value is available in didChangeDependencies', (tester) async {
+    final didChangeDependencies = ValueBuilderMock<int>();
+    final build = ValueBuilderMock<int>();
+
+    await tester.pumpWidget(
+      InheritedProvider.value(
+        value: 0,
+        child: Test<int>(
+          didChangeDependencies: didChangeDependencies,
+          build: build,
+        ),
+      ),
+    );
+    verify(didChangeDependencies(argThat(isNotNull), 0)).called(1);
+    verify(build(argThat(isNotNull), 0)).called(1);
+
+    verifyNoMoreInteractions(didChangeDependencies);
+    verifyNoMoreInteractions(build);
+
+    await tester.pumpWidget(
+      InheritedProvider.value(
+        value: 1,
+        child: Test<int>(
+          didChangeDependencies: didChangeDependencies,
+          build: build,
+        ),
+      ),
+    );
+    verify(didChangeDependencies(argThat(isNotNull), 1)).called(1);
+    verify(build(argThat(isNotNull), 1)).called(1);
+    verifyNoMoreInteractions(didChangeDependencies);
+    verifyNoMoreInteractions(build);
+  });
   testWidgets('provider.of throws if listen:true outside of the widget tree', (tester) async {
     await tester.pumpWidget(
       InheritedProvider<int>.value(
@@ -410,6 +443,37 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     });
   });
   group('InheritedProvider()', () {
+    testWidgets("provider notifying dependents doesn't call update", (tester) async {
+      final notifier = ValueNotifier(0);
+      final mock = ValueBuilderMock<ValueNotifier<int>>(notifier);
+
+      await tester.pumpWidget(
+        ChangeNotifierProxyProvider0<ValueNotifier<int>>(
+          create: (_) => notifier,
+          update: mock,
+          child: const TextOf<ValueNotifier<int>>(),
+        ),
+      );
+
+      verify(mock(any, notifier)).called(1);
+      verifyNoMoreInteractions(mock);
+
+      notifier.value++;
+      await tester.pump();
+
+      verifyNoMoreInteractions(mock);
+
+      await tester.pumpWidget(
+        ChangeNotifierProxyProvider0<ValueNotifier<int>>(
+          create: (_) => notifier,
+          update: mock,
+          child: const TextOf<ValueNotifier<int>>(),
+        ),
+      );
+
+      verify(mock(any, notifier)).called(1);
+      verifyNoMoreInteractions(mock);
+    });
     testWidgets('update can call Provider.of with listen:true', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>.value(
@@ -1638,6 +1702,30 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null)).called(1);
     verifyNoMoreInteractions(startListening);
   });
+}
+
+class Test<T> extends StatefulWidget {
+  const Test({Key key, this.didChangeDependencies, this.build}) : super(key: key);
+
+  final ValueBuilderMock<T> didChangeDependencies;
+  final ValueBuilderMock<T> build;
+
+  @override
+  _TestState<T> createState() => _TestState<T>();
+}
+
+class _TestState<T> extends State<Test<T>> {
+  @override
+  void didChangeDependencies() {
+    widget.didChangeDependencies?.call(this.context, Provider.of<T>(this.context));
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    widget.build?.call(this.context, Provider.of<T>(this.context));
+    return Container();
+  }
 }
 
 class SubclassProvider extends InheritedProvider<int> {

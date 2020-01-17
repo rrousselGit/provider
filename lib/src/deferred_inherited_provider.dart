@@ -235,17 +235,15 @@ class _ValueDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
 class _ValueDeferredInheritedProviderState<T, R>
     extends _DeferredDelegateState<T, R, _ValueDeferredInheritedProvider<T, R>> {
   @override
-  void willUpdateDelegate(
-    _ValueDeferredInheritedProvider<T, R> oldDelegate,
-    InheritedWidget oldWidget,
-  ) {
+  bool willUpdateDelegate(_ValueDeferredInheritedProvider<T, R> oldDelegate) {
     if (delegate.value != oldDelegate.value) {
       if (_removeListener != null) {
         _removeListener();
         _removeListener = null;
       }
-      element.notifyClients(oldWidget);
+      return true;
     }
+    return false;
   }
 
   @override
