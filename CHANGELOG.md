@@ -1,3 +1,44 @@
+# 4.1.0
+
+- Added `builder` on the different providers.
+  This parameters simplifies situations where we want to directly consume the value.
+
+  As such, instead of:
+
+  ```dart
+  Provider(
+    create: (_) => Something(),
+    child: Consumer<Something>(
+      builder: (_, something, __) {
+        return Text('$something');
+      },
+    ),
+  )
+  ```
+
+  we can write:
+
+  ```dart
+  Provider(
+    create: (_) => Something(),
+    builder: (_, something, __) {
+      return Text('$something');
+    },
+  )
+  ```
+
+  The behavior is the same. This is only a small syntax sugar.
+
+- Added a two extensions on [BuildContext], to slightly reduce the boilerplate:
+
+  | before                                   | after               |
+  | ---------------------------------------- | ------------------- |
+  | `Provider.of<T>(context, listen: false)` | `context.read<T>()` |
+  | `Provider.of<T>(context)`                | `context.watch<T>`  |
+
+- Added a `Locator` typedef and an extension on [BuildContext], to help with
+  being able to read providers from a class that doesn't depend on Flutter.
+
 # 4.0.1
 
 - stable release of 4.0.0-hotfix+1
@@ -8,7 +49,6 @@
 - removed the inference of the `listen` flag of `Provider.of` in favor of an exception in debug mode if `listen` is true when it shouldn't.
 
   This is because it caused a critical performance issue. See https://github.com/rrousselGit/provider/issues/305
-
 
 # 4.0.0
 
@@ -131,4 +171,6 @@
 # 1.1.0
 
 - `onDispose` has been added to `StatefulProvider`
-- `BuildContext` is now passed to `valueBuilder` callback
+- [BuildContext] is now passed to `valueBuilder` callback
+
+[buildcontext]: (https://api.flutter.dev/flutter/widgets/BuildContext-class.html)

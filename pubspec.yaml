@@ -1,13 +1,13 @@
 name: provider
-description: A mixture between dependency injection and state management, built with widgets for widgets.
-version: 4.0.1
+description: A wrapper around InheritedWidget to make them easier to use and more reusable.
+version: 4.1.0
 homepage: https://github.com/rrousselGit/provider
 authors:
   - Remi Rousselet <darky12s@gmail.com>
   - Flutter Team <flutter-dev@googlegroups.com>
 
 environment:
-  sdk: '>=2.2.2 <3.0.0'
+  sdk: '>=2.6.0 <3.0.0'
   flutter: '>= 1.12.1'
 
 dependencies:

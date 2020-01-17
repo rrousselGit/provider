@@ -18,6 +18,94 @@ BuildContext get context => find.byType(Context).evaluate().single;
 T of<T>([BuildContext c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
+  testWidgets('new value is available in didChangeDependencies', (tester) async {
+    final didChangeDependencies = ValueBuilderMock<int>();
+    final build = ValueBuilderMock<int>();
+
+    await tester.pumpWidget(
+      InheritedProvider.value(
+        value: 0,
+        child: Test<int>(
+          didChangeDependencies: didChangeDependencies,
+          build: build,
+        ),
+      ),
+    );
+    verify(didChangeDependencies(argThat(isNotNull), 0)).called(1);
+    verify(build(argThat(isNotNull), 0)).called(1);
+
+    verifyNoMoreInteractions(didChangeDependencies);
+    verifyNoMoreInteractions(build);
+
+    await tester.pumpWidget(
+      InheritedProvider.value(
+        value: 1,
+        child: Test<int>(
+          didChangeDependencies: didChangeDependencies,
+          build: build,
+        ),
+      ),
+    );
+    verify(didChangeDependencies(argThat(isNotNull), 1)).called(1);
+    verify(build(argThat(isNotNull), 1)).called(1);
+    verifyNoMoreInteractions(didChangeDependencies);
+    verifyNoMoreInteractions(build);
+  });
+  testWidgets('builder receives the current value and updates independently from `update`', (tester) async {
+    final child = Container();
+
+    var notifier = ValueNotifier(0);
+    final update = ValueBuilderMock(0);
+    final builder = ValueWidgetBuilderMock<int>((c, value, child) {
+      final notifier = Provider.of<ValueNotifier<int>>(c);
+      return Text(
+        'notifier: ${notifier.value} value: $value',
+        textDirection: TextDirection.ltr,
+      );
+    });
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (_) => notifier,
+        child: InheritedProvider<int>(
+          update: update,
+          builder: builder,
+          child: child,
+        ),
+      ),
+    );
+
+    expect(find.text('notifier: 0 value: 0'), findsOneWidget);
+    verify(builder(argThat(isNotNull), 0, child)).called(1);
+    verifyNoMoreInteractions(builder);
+    verify(update(any, any)).called(1);
+    verifyNoMoreInteractions(update);
+
+    notifier.value++;
+    await tester.pump();
+
+    expect(find.text('notifier: 1 value: 0'), findsOneWidget);
+    verify(builder(argThat(isNotNull), 0, child)).called(1);
+    verifyNoMoreInteractions(builder);
+    verifyNoMoreInteractions(update);
+
+    when(update(any, any)).thenReturn(1);
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (_) => notifier,
+        child: InheritedProvider<int>(
+          update: update,
+          builder: builder,
+          child: child,
+        ),
+      ),
+    );
+    expect(find.text('notifier: 1 value: 1'), findsOneWidget);
+    verify(builder(argThat(isNotNull), 1, child)).called(1);
+    verifyNoMoreInteractions(builder);
+    verify(update(any, any)).called(1);
+    verifyNoMoreInteractions(update);
+  });
   testWidgets('provider.of throws if listen:true outside of the widget tree', (tester) async {
     await tester.pumpWidget(
       InheritedProvider<int>.value(
@@ -410,6 +498,26 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     });
   });
   group('InheritedProvider()', () {
+    testWidgets("provider notifying dependents doesn't call update", (tester) async {
+      final notifier = ValueNotifier(0);
+      final mock = ValueBuilderMock<ValueNotifier<int>>(notifier);
+
+      await tester.pumpWidget(
+        ChangeNotifierProxyProvider0<ValueNotifier<int>>(
+          create: (_) => notifier,
+          update: mock,
+          child: const TextOf<ValueNotifier<int>>(),
+        ),
+      );
+
+      verify(mock(any, notifier)).called(1);
+      verifyNoMoreInteractions(mock);
+
+      notifier.value++;
+      await tester.pump();
+
+      verifyNoMoreInteractions(mock);
+    }, skip: true);
     testWidgets('update can call Provider.of with listen:true', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>.value(
@@ -1638,6 +1746,213 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null)).called(1);
     verifyNoMoreInteractions(startListening);
   });
+
+  testWidgets('selector', (tester) async {
+    final notifier = ValueNotifier(0);
+    var buildCount = 0;
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (_) => notifier,
+        child: Builder(builder: (context) {
+          buildCount++;
+          final isEven = context.select((ValueNotifier<int> value) => value.value.isEven);
+
+          return Text('$isEven', textDirection: TextDirection.ltr);
+        }),
+      ),
+    );
+
+    expect(buildCount, 1);
+    expect(find.text('true'), findsOneWidget);
+
+    notifier.value = 1;
+    await tester.pump();
+
+    expect(buildCount, 2);
+    expect(find.text('false'), findsOneWidget);
+
+    notifier.value = 3;
+    await tester.pump();
+
+    expect(buildCount, 2);
+    expect(find.text('false'), findsOneWidget);
+  });
+
+  testWidgets('can select multiple types from same provider', (tester) async {
+    var buildCount = 0;
+
+    var builder = Builder(builder: (context) {
+      buildCount++;
+      final isNotNull = context.select((int value) => value != null);
+      final isAbove0 = context.select((int value) => (value == null || value > 0).toString());
+
+      return Text('$isNotNull $isAbove0', textDirection: TextDirection.ltr);
+    });
+
+    await tester.pumpWidget(Provider.value(value: 0, child: builder));
+
+    expect(buildCount, 1);
+    expect(find.text('true false'), findsOneWidget);
+
+    await tester.pumpWidget(Provider.value(value: -1, child: builder));
+
+    expect(buildCount, 1);
+
+    await tester.pumpWidget(Provider.value(value: 1, child: builder));
+
+    expect(buildCount, 2);
+    expect(find.text('true true'), findsOneWidget);
+
+    await tester.pumpWidget(Provider<int>.value(value: null, child: builder));
+
+    expect(buildCount, 3);
+    expect(find.text('false true'), findsOneWidget);
+  });
+  testWidgets('can select same type on two different providers', (tester) async {
+    var buildCount = 0;
+
+    var builder = Builder(builder: (context) {
+      buildCount++;
+      final intValue = context.select((int value) => value.toString());
+      final stringValue = context.select((String value) => value);
+
+      return Text('$intValue $stringValue', textDirection: TextDirection.ltr);
+    });
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider.value(value: 0),
+          Provider.value(value: 'a'),
+        ],
+        child: builder,
+      ),
+    );
+
+    expect(buildCount, 1);
+    expect(find.text('0 a'), findsOneWidget);
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider.value(value: 0),
+          Provider.value(value: 'a'),
+        ],
+        child: builder,
+      ),
+    );
+
+    expect(buildCount, 1);
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider.value(value: 1),
+          Provider.value(value: 'a'),
+        ],
+        child: builder,
+      ),
+    );
+
+    expect(buildCount, 2);
+    expect(find.text('1 a'), findsOneWidget);
+  });
+  testWidgets('can give a key to selectors to select same type twice on same provider', (tester) async {
+    var buildCount = 0;
+    var child = Builder(builder: (context) {
+      buildCount++;
+      final value = context.select((int value) => value.isEven, 0);
+      final value2 = context.select((int value) => value.isNegative, 1);
+
+      return Text('$value $value2', textDirection: TextDirection.ltr);
+    });
+
+    await tester.pumpWidget(Provider.value(value: 0, child: child));
+
+    expect(find.text('true false'), findsOneWidget);
+    expect(buildCount, 1);
+
+    await tester.pumpWidget(Provider.value(value: 2, child: child));
+
+    expect(find.text('true false'), findsOneWidget);
+    expect(buildCount, 1);
+
+    await tester.pumpWidget(Provider.value(value: -2, child: child));
+
+    expect(find.text('true true'), findsOneWidget);
+    expect(buildCount, 2);
+
+    await tester.pumpWidget(Provider.value(value: -4, child: child));
+
+    expect(find.text('true true'), findsOneWidget);
+    expect(buildCount, 2);
+
+    await tester.pumpWidget(Provider.value(value: -3, child: child));
+
+    expect(find.text('false true'), findsOneWidget);
+    expect(buildCount, 3);
+
+    await tester.pumpWidget(Provider.value(value: -2, child: child));
+
+    expect(find.text('true true'), findsOneWidget);
+    expect(buildCount, 4);
+  });
+  testWidgets('selecting same provider + same type twice is not allowed without keys', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider(create: (_) => 42),
+        ],
+        child: Builder(builder: (context) {
+          final value = context.select((int value) => value);
+          final value2 = context.select((int value) => value);
+
+          return Text('$value $value2', textDirection: TextDirection.ltr);
+        }),
+      ),
+    );
+
+    expect(tester.takeException(), isAssertionError);
+  });
+}
+
+class Model {
+  int a;
+  String b;
+}
+
+class Example extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final a = context.select((Model model) => model.a);
+    final b = context.select((Model model) => model.b);
+    return Text('$a $b');
+  }
+}
+
+class Test<T> extends StatefulWidget {
+  const Test({Key key, this.didChangeDependencies, this.build}) : super(key: key);
+
+  final ValueBuilderMock<T> didChangeDependencies;
+  final ValueBuilderMock<T> build;
+
+  @override
+  _TestState<T> createState() => _TestState<T>();
+}
+
+class _TestState<T> extends State<Test<T>> {
+  @override
+  void didChangeDependencies() {
+    widget.didChangeDependencies?.call(this.context, Provider.of<T>(this.context));
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    widget.build?.call(this.context, Provider.of<T>(this.context));
+    return Container();
+  }
 }
 
 class SubclassProvider extends InheritedProvider<int> {

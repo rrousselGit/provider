@@ -49,7 +49,29 @@ class DisposeMock<T> extends Mock {
 
 class MockNotifier extends Mock implements ChangeNotifier {}
 
+class ValueWidgetBuilderMock<T> extends Mock {
+  ValueWidgetBuilderMock([Widget cb(BuildContext c, T value, Widget child)]) {
+    if (cb != null) {
+      when(this(any, any, any)).thenAnswer((i) {
+        final context = i.positionalArguments.first as BuildContext;
+        final value = i.positionalArguments[1] as T;
+        final child = i.positionalArguments[2] as Widget;
+        return cb(context, value, child);
+      });
+    }
+  }
+  Widget call(BuildContext context, T value, Widget child);
+}
+
 class BuilderMock extends Mock {
+  BuilderMock([Widget cb(BuildContext c)]) {
+    if (cb != null) {
+      when(this(any)).thenAnswer((i) {
+        final context = i.positionalArguments.first as BuildContext;
+        return cb(context);
+      });
+    }
+  }
   Widget call(BuildContext context);
 }
 

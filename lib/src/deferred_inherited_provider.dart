@@ -34,11 +34,13 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     @required DeferredStartListening<T, R> startListening,
     UpdateShouldNotify<R> updateShouldNotify,
     bool lazy,
+    ValueWidgetBuilder<R> builder,
     Widget child,
   }) : super._constructor(
           key: key,
           child: child,
           lazy: lazy,
+          builder: builder,
           delegate: _CreateDeferredInheritedProvider(
             create: create,
             dispose: dispose,
@@ -54,10 +56,12 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     @required DeferredStartListening<T, R> startListening,
     UpdateShouldNotify<R> updateShouldNotify,
     bool lazy,
+    ValueWidgetBuilder<R> builder,
     Widget child,
   }) : super._constructor(
           key: key,
           lazy: lazy,
+          builder: builder,
           delegate: _ValueDeferredInheritedProvider<T, R>(
             value,
             updateShouldNotify,
@@ -235,17 +239,15 @@ class _ValueDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
 class _ValueDeferredInheritedProviderState<T, R>
     extends _DeferredDelegateState<T, R, _ValueDeferredInheritedProvider<T, R>> {
   @override
-  void willUpdateDelegate(
-    _ValueDeferredInheritedProvider<T, R> oldDelegate,
-    InheritedWidget oldWidget,
-  ) {
+  bool willUpdateDelegate(_ValueDeferredInheritedProvider<T, R> oldDelegate) {
     if (delegate.value != oldDelegate.value) {
       if (_removeListener != null) {
         _removeListener();
         _removeListener = null;
       }
-      element.notifyClients(oldWidget);
+      return true;
     }
+    return false;
   }
 
   @override

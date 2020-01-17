@@ -56,9 +56,11 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     void Function(T value) debugCheckInvalidValueType,
     StartListening<T> startListening,
     Dispose<T> dispose,
+    ValueWidgetBuilder<T> builder,
     bool lazy,
     Widget child,
   })  : _lazy = lazy,
+        _builder = builder,
         _delegate = _CreateInheritedProvider(
           create: create,
           update: update,
@@ -76,8 +78,10 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     UpdateShouldNotify<T> updateShouldNotify,
     StartListening<T> startListening,
     bool lazy,
+    ValueWidgetBuilder<T> builder,
     Widget child,
   })  : _lazy = lazy,
+        _builder = builder,
         _delegate = _ValueInheritedProvider(
           value: value,
           updateShouldNotify: updateShouldNotify,
@@ -89,13 +93,16 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     Key key,
     _Delegate<T> delegate,
     bool lazy,
+    ValueWidgetBuilder<T> builder,
     Widget child,
   })  : _lazy = lazy,
+        _builder = builder,
         _delegate = delegate,
         super(key: key, child: child);
 
   final _Delegate<T> _delegate;
   final bool _lazy;
+  final ValueWidgetBuilder<T> _builder;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -104,21 +111,27 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   }
 
   @override
-  _InheritedProvderElement<T> createElement() {
-    return _InheritedProvderElement<T>(this);
+  _InheritedProviderElement<T> createElement() {
+    return _InheritedProviderElement<T>(this);
   }
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
     return _DefaultInheritedProviderScope<T>(
       owner: this,
-      child: child,
+      child: _builder != null
+          ? Builder(
+              builder: (context) {
+                return _builder(context, Provider.of<T>(context), child);
+              },
+            )
+          : child,
     );
   }
 }
 
-class _InheritedProvderElement<T> extends SingleChildStatelessElement {
-  _InheritedProvderElement(InheritedProvider<T> widget) : super(widget);
+class _InheritedProviderElement<T> extends SingleChildStatelessElement {
+  _InheritedProviderElement(InheritedProvider<T> widget) : super(widget);
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -126,6 +139,94 @@ class _InheritedProvderElement<T> extends SingleChildStatelessElement {
     visitChildren((e) {
       e.debugFillProperties(properties);
     });
+  }
+}
+
+/// Adds a `select` method on [BuildContext].
+extension SelectContext on BuildContext {
+  /// Watch a value of type [T] exposed from a provider, and listen only partially
+  /// to changes.
+  ///
+  /// By using [select], instead of watching the entire object, the listener will
+  /// rebuild only if the value returned by `selector` changes.
+  ///
+  /// When a provider emits an update, it will call synchronously all `selector`.
+  ///
+  /// Then, if they return a value different from the previously returned value,
+  /// the dependent will be marked as needing to rebuild.
+  ///
+  /// For example, consider the following object:
+  ///
+  /// ```dart
+  /// class Person with ChangeNotifier {
+  ///   String name;
+  ///   int age;
+  ///
+  ///   // Add some logic that may update `name` and `age`
+  /// }
+  /// ```
+  ///
+  /// Then a widget may want to listen to a person's `name` without listening
+  /// to its `age`.
+  ///
+  /// This cannot be done using `context.watch`/[Provider.of]. Instead, we
+  /// can use [select], by writing the following:
+  ///
+  /// ```dart
+  /// Widget build(BuildContext context) {
+  ///   final name = context.select((Person p) => p.name);
+  ///
+  ///   return Text(name);
+  /// }
+  /// ```
+  ///
+  /// It is fine to call `select` multiple times, but there's a catch.
+  /// Each individual [select] must either:
+  ///
+  /// - use a different provider:
+  ///
+  ///  `Provider.of<Person>(context)` vs `Provider.of<City>(context)`
+  /// - select a different type:
+  ///
+  ///  *OK*:
+  ///   ```dart
+  ///   final String name = context.select((Person p) => p.name);
+  ///   final int age = context.select((Person p) => p.age);
+  ///   ```
+  ///   We can select two values from `Person`, because they are from two different
+  ///   types.
+  ///
+  ///   *OK*:
+  ///   ```dart
+  ///   final String personName = context.select((Person p) => p.name);
+  ///   final String cityName = context.select((City p) => p.name);
+  ///   ```
+  ///   We can select `String` twice here, person one of them is from a `Person`
+  ///   and another one is from `City`.
+  ///
+  ///   *BAD*:
+  ///   ```dart
+  ///   final bool hasName = context.select((Person p) => p.hasName);
+  ///   final bool hasAge = context.select((Person p) => p.hasAge);
+  ///   ```
+  ///   This won't work, because we selected two `bool` from `Person`.
+  ///
+  ///   Instead, if you need such thing, you can give a "key" to [select]:
+  ///   ```dart
+  ///   final bool hasName = context.select((Person p) => p.hasName, 0);
+  ///   final bool hasAge = context.select((Person p) => p.hasAge, 1);
+  ///   ```
+  ///
+  ///   This time, the example works, because we gave each [select] a unique
+  ///   identifier (here `0` and `1`).
+  R select<T, R>(R selector(T value), [Object key]) {
+    final inheritedElement = Provider._inheritedElementOf<T>(this);
+    final selected = selector(inheritedElement.value);
+    dependOnInheritedElement(
+      inheritedElement,
+      aspect: _SelectorAspect(selector, selected, key),
+    );
+    return selected;
   }
 }
 
@@ -194,11 +295,80 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement with _In
   }
 }
 
+class _SelectorAspect<T, R> {
+  _SelectorAspect(this.selector, this.selected, [Object key]) : type = key ?? R;
+
+  final R Function(T value) selector;
+  final R selected;
+
+  final Object type;
+}
+
 mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedContext<T> {
   bool _shouldNotifyDependents = false;
   bool _debugInheritLocked = false;
   bool _isNotifyDependentsEnabled = true;
   bool _firstBuild = true;
+
+  Map<Element, Set<Object>> _debugSelectedKeysWithinFrame;
+
+  @override
+  void updateDependencies(Element dependent, Object aspect) {
+    final dependencies = getDependencies(dependent) as Map<Object, _SelectorAspect<T, Object>>;
+    // once subscribed to everything once, it always stays subscribed to everything
+    if (dependencies != null && dependencies.isEmpty) return;
+
+    if (aspect is _SelectorAspect<T, Object>) {
+      assert(() {
+        if (_debugSelectedKeysWithinFrame?.containsKey(dependent) ?? false) {
+          final selectedKeysThisFrame = _debugSelectedKeysWithinFrame[dependent];
+
+          assert(selectedKeysThisFrame?.contains(aspect.type) != true);
+        }
+        return true;
+      }());
+      assert(() {
+        _debugSelectedKeysWithinFrame ??= {};
+        _debugSelectedKeysWithinFrame[dependent] ??= {};
+        _debugSelectedKeysWithinFrame[dependent].add(aspect.type);
+
+        Future.microtask(() {
+          _debugSelectedKeysWithinFrame = null;
+        });
+        return true;
+      }());
+
+      final newDependencies = dependencies ?? HashMap();
+
+      newDependencies[aspect.type] = aspect;
+      setDependencies(dependent, newDependencies);
+    } else {
+      // subscribes to everything
+      setDependencies(dependent, HashMap<Object, _SelectorAspect<T, Object>>());
+    }
+  }
+
+  @override
+  void notifyDependent(InheritedWidget oldWidget, Element dependent) {
+    final dependencies = getDependencies(dependent) as Map<Object, _SelectorAspect<T, Object>>;
+
+    var shouldNotify = false;
+    if (dependencies != null) {
+      if (dependencies.isEmpty) {
+        shouldNotify = true;
+      } else {
+        for (final dependency in dependencies.values) {
+          if (dependency.selector(value) != dependency.selected) {
+            shouldNotify = true;
+            break;
+          }
+        }
+      }
+    }
+    if (shouldNotify) {
+      dependent.didChangeDependencies();
+    }
+  }
 
   void _mountDelegate();
 
@@ -220,6 +390,8 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
     super.performRebuild();
   }
 
+  bool _shouldNotify = false;
+
   @override
   void update(InheritedWidget newWidget) {
     assert(() {
@@ -233,11 +405,18 @@ If you're in this situation, consider passing a `key` unique to each individual 
       return true;
     }());
 
-    _delegateState.willUpdateDelegate(
-      _widgetToDelegate(newWidget),
-      newWidget,
-    );
+    _shouldNotify = _delegateState.willUpdateDelegate(_widgetToDelegate(newWidget));
+
     super.update(newWidget);
+    _shouldNotify = false;
+  }
+
+  @override
+  void updated(InheritedWidget oldWidget) {
+    super.updated(oldWidget);
+    if (_shouldNotify) {
+      notifyClients(widget);
+    }
   }
 
   @override
@@ -341,10 +520,7 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
     return element._debugSetInheritedLock(value);
   }
 
-  void willUpdateDelegate(
-    D newDelegate,
-    InheritedWidget newWidget,
-  ) {}
+  bool willUpdateDelegate(D newDelegate) => false;
 
   void dispose() {}
 
@@ -530,10 +706,7 @@ class _ValueInheritedProviderState<T> extends _DelegateState<T, _ValueInheritedP
   }
 
   @override
-  void willUpdateDelegate(
-    _ValueInheritedProvider<T> newDelegate,
-    InheritedWidget newWidget,
-  ) {
+  bool willUpdateDelegate(_ValueInheritedProvider<T> newDelegate) {
     bool shouldNotify;
     if (delegate._updateShouldNotify != null) {
       shouldNotify = delegate._updateShouldNotify(
@@ -544,14 +717,11 @@ class _ValueInheritedProviderState<T> extends _DelegateState<T, _ValueInheritedP
       shouldNotify = newDelegate.value != delegate.value;
     }
 
-    if (shouldNotify) {
-      if (_removeListener != null) {
-        _removeListener();
-        _removeListener = null;
-      }
-
-      element.notifyClients(newWidget);
+    if (shouldNotify && _removeListener != null) {
+      _removeListener();
+      _removeListener = null;
     }
+    return shouldNotify;
   }
 
   @override
