@@ -22,246 +22,6 @@ BuildContext get context => find.byType(Context).evaluate().single;
 T of<T>([BuildContext c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
-  testWidgets('regression test #377', (tester) async {
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          StateNotifierProvider<_Controller1, Counter1>(
-            create: (context) => _Controller1(),
-          ),
-          StateNotifierProvider<_Controller2, Counter2>(
-            create: (context) => _Controller2(),
-          ),
-        ],
-        child: Consumer<Counter2>(
-          builder: (c, value, _) {
-            return Text('${value.count}', textDirection: TextDirection.ltr);
-          },
-        ),
-      ),
-    );
-  });
-  testWidgets('rebuild on dependency flags update', (tester) async {
-    await tester.pumpWidget(
-      InheritedProvider<int>(
-        lazy: false,
-        update: (context, value) {
-          assert(!debugIsInInheritedProviderCreate);
-          assert(debugIsInInheritedProviderUpdate);
-          return 0;
-        },
-        child: Container(),
-      ),
-    );
-
-    await tester.pumpWidget(
-      InheritedProvider<int>(
-        lazy: false,
-        update: (context, value) {
-          assert(!debugIsInInheritedProviderCreate);
-          assert(debugIsInInheritedProviderUpdate);
-          return 0;
-        },
-        child: Container(),
-      ),
-    );
-  });
-  testWidgets(
-      'properly update debug flags if a create triggers another deferred create',
-      (tester) async {
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          DeferredInheritedProvider<double, double>(
-            create: (context) {
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-              return 42.0;
-            },
-            startListening: (_, setState, c, __) {
-              setState(c);
-              return () {};
-            },
-          ),
-          DeferredInheritedProvider<int, int>(
-            create: (context) {
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-              return context.read<double>().round();
-            },
-            startListening: (_, setState, c, __) {
-              setState(c);
-              return () {};
-            },
-          ),
-          InheritedProvider<String>(
-            lazy: false,
-            update: (context, value) {
-              assert(!debugIsInInheritedProviderCreate);
-              assert(debugIsInInheritedProviderUpdate);
-              context.watch<double>();
-
-              assert(!debugIsInInheritedProviderCreate);
-              assert(debugIsInInheritedProviderUpdate);
-              return context.watch<int>().toString();
-            },
-          ),
-        ],
-        child: Container(),
-      ),
-    );
-  });
-  testWidgets(
-      'properly update debug flags if a create triggers another deferred create',
-      (tester) async {
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          DeferredInheritedProvider<double, double>(
-            create: (context) {
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-              return 42.0;
-            },
-            startListening: (_, setState, c, __) {
-              setState(c);
-              return () {};
-            },
-          ),
-          DeferredInheritedProvider<int, int>(
-            create: (context) {
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-              return context.read<double>().round();
-            },
-            startListening: (_, setState, c, __) {
-              setState(c);
-              return () {};
-            },
-          ),
-          InheritedProvider<String>(
-            lazy: false,
-            create: (context) {
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-              context.read<double>();
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-
-              return context.read<int>().toString();
-            },
-          ),
-        ],
-        child: Container(),
-      ),
-    );
-  });
-
-  testWidgets(
-      'properly update debug flags if an update triggers another create/update',
-      (tester) async {
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          InheritedProvider<double>(
-            create: (context) {
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-              return 42.0;
-            },
-            update: (context, _) {
-              assert(!debugIsInInheritedProviderCreate);
-              assert(debugIsInInheritedProviderUpdate);
-              return 42.0;
-            },
-          ),
-          InheritedProvider<int>(
-            create: (context) {
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-              return context.read<double>().round();
-            },
-            update: (context, _) {
-              assert(!debugIsInInheritedProviderCreate);
-              assert(debugIsInInheritedProviderUpdate);
-              return context.watch<double>().round();
-            },
-          ),
-          InheritedProvider<String>(
-            lazy: false,
-            update: (context, value) {
-              assert(!debugIsInInheritedProviderCreate);
-              assert(debugIsInInheritedProviderUpdate);
-              context.watch<double>();
-
-              assert(!debugIsInInheritedProviderCreate);
-              assert(debugIsInInheritedProviderUpdate);
-              return context.watch<int>().toString();
-            },
-          ),
-        ],
-        child: Container(),
-      ),
-    );
-  });
-
-  testWidgets(
-      'properly update debug flags if a create triggers another create/update',
-      (tester) async {
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          InheritedProvider<double>(
-            create: (context) {
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-              return 42.0;
-            },
-            update: (context, _) {
-              assert(!debugIsInInheritedProviderCreate);
-              assert(debugIsInInheritedProviderUpdate);
-              return 42.0;
-            },
-          ),
-          InheritedProvider<int>(
-            create: (context) {
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-              return context.read<double>().round();
-            },
-            update: (context, _) {
-              assert(!debugIsInInheritedProviderCreate);
-              assert(debugIsInInheritedProviderUpdate);
-              return context.watch<double>().round();
-            },
-          ),
-          InheritedProvider<String>(
-            lazy: false,
-            create: (context) {
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-              context.read<double>();
-              assert(debugIsInInheritedProviderCreate);
-              assert(!debugIsInInheritedProviderUpdate);
-
-              return context.read<int>().toString();
-            },
-            update: (context, value) {
-              assert(!debugIsInInheritedProviderCreate);
-              assert(debugIsInInheritedProviderUpdate);
-              context.watch<double>();
-
-              assert(!debugIsInInheritedProviderCreate);
-              assert(debugIsInInheritedProviderUpdate);
-              return context.watch<int>().toString();
-            },
-          ),
-        ],
-        child: Container(),
-      ),
-    );
-  });
-
   testWidgets(
       'Provider.of(listen: false) outside of build works when it loads a provider',
       (tester) async {
@@ -322,95 +82,57 @@ void main() {
       (tester) async {
     final child = Container();
 
-    final notifier = ValueNotifier(0);
-    final builder = TransitionBuilderMock((c, child) {
+    var notifier = ValueNotifier(0);
+    final update = ValueBuilderMock(0);
+    final builder = ValueWidgetBuilderMock<int>((c, value, child) {
       final notifier = Provider.of<ValueNotifier<int>>(c);
       return Text(
-        '${notifier.value}',
+        'notifier: ${notifier.value} value: $value',
         textDirection: TextDirection.ltr,
       );
     });
 
     await tester.pumpWidget(
-      ChangeNotifierProvider.value(
-        value: notifier,
-        builder: builder,
-        child: child,
+      ChangeNotifierProvider(
+        create: (_) => notifier,
+        child: InheritedProvider<int>(
+          update: update,
+          builder: builder,
+          child: child,
+        ),
       ),
     );
 
-    verify(builder(argThat(isNotNull), child)).called(1);
+    expect(find.text('notifier: 0 value: 0'), findsOneWidget);
+    verify(builder(argThat(isNotNull), 0, child)).called(1);
     verifyNoMoreInteractions(builder);
-    expect(find.text('0'), findsOneWidget);
+    verify(update(any, any)).called(1);
+    verifyNoMoreInteractions(update);
 
     notifier.value++;
     await tester.pump();
 
-    verify(builder(argThat(isNotNull), child)).called(1);
+    expect(find.text('notifier: 1 value: 0'), findsOneWidget);
+    verify(builder(argThat(isNotNull), 0, child)).called(1);
     verifyNoMoreInteractions(builder);
-    expect(find.text('1'), findsOneWidget);
-  });
-  testWidgets('builder can _not_ rebuild when provider updates',
-      (tester) async {
-    final child = Container();
+    verifyNoMoreInteractions(update);
 
-    final notifier = ValueNotifier(0);
-    final builder = TransitionBuilderMock((c, child) {
-      return const Text('foo', textDirection: TextDirection.ltr);
-    });
-
+    when(update(any, any)).thenReturn(1);
     await tester.pumpWidget(
-      ChangeNotifierProvider.value(
-        value: notifier,
-        builder: builder,
-        child: child,
+      ChangeNotifierProvider(
+        create: (_) => notifier,
+        child: InheritedProvider<int>(
+          update: update,
+          builder: builder,
+          child: child,
+        ),
       ),
     );
-
-    verify(builder(argThat(isNotNull), child)).called(1);
+    expect(find.text('notifier: 1 value: 1'), findsOneWidget);
+    verify(builder(argThat(isNotNull), 1, child)).called(1);
     verifyNoMoreInteractions(builder);
-    expect(find.text('foo'), findsOneWidget);
-
-    notifier.value++;
-    await tester.pump();
-
-    verifyNoMoreInteractions(builder);
-    expect(find.text('foo'), findsOneWidget);
-  });
-  test('Provider.of has a proper error message if context is null', () {
-    expect(() => Provider.of<int>(null), throwsAssertionError);
-  });
-  testWidgets('builder rebuilds if provider is recreated', (tester) async {
-    final child = Container();
-
-    final notifier = ValueNotifier(0);
-    final builder = TransitionBuilderMock((c, child) {
-      return const Text('foo', textDirection: TextDirection.ltr);
-    });
-
-    await tester.pumpWidget(
-      ChangeNotifierProvider.value(
-        value: notifier,
-        builder: builder,
-        child: child,
-      ),
-    );
-
-    verify(builder(argThat(isNotNull), child)).called(1);
-    verifyNoMoreInteractions(builder);
-    expect(find.text('foo'), findsOneWidget);
-
-    await tester.pumpWidget(
-      ChangeNotifierProvider.value(
-        value: notifier,
-        builder: builder,
-        child: child,
-      ),
-    );
-
-    verify(builder(argThat(isNotNull), child)).called(1);
-    verifyNoMoreInteractions(builder);
-    expect(find.text('foo'), findsOneWidget);
+    verify(update(any, any)).called(1);
+    verifyNoMoreInteractions(update);
   });
   testWidgets('provider.of throws if listen:true outside of the widget tree',
       (tester) async {
@@ -912,49 +634,6 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     });
   });
   group('InheritedProvider()', () {
-    testWidgets('hasValue', (tester) async {
-      await tester.pumpWidget(InheritedProvider(
-        create: (_) => 42,
-        child: const Context(),
-      ));
-
-      final inheritedContext = tester.element(find.byElementPredicate((e) {
-        return e is InheritedContext;
-      })) as InheritedContext;
-
-      expect(inheritedContext.hasValue, isFalse);
-
-      inheritedContext.value;
-
-      expect(inheritedContext.hasValue, isTrue);
-    });
-
-    testWidgets(
-        'provider calls update if rebuilding only due to didChangeDependencies',
-        (tester) async {
-      final mock = ValueBuilderMock<String>('');
-
-      final provider = ProxyProvider0<String>(
-        create: (_) => '',
-        update: (c, p) {
-          mock(c, p);
-          return c.watch<int>().toString();
-        },
-        child: const TextOf<String>(),
-      );
-
-      await tester.pumpWidget(Provider.value(value: 0, child: provider));
-
-      expect(find.text('0'), findsOneWidget);
-      verify(mock(any, '')).called(1);
-      verifyNoMoreInteractions(mock);
-
-      await tester.pumpWidget(Provider.value(value: 1, child: provider));
-
-      expect(find.text('1'), findsOneWidget);
-      verify(mock(any, '0')).called(1);
-      verifyNoMoreInteractions(mock);
-    });
     testWidgets("provider notifying dependents doesn't call update",
         (tester) async {
       final notifier = ValueNotifier(0);
@@ -2290,7 +1969,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
   testWidgets('can select multiple types from same provider', (tester) async {
     var buildCount = 0;
 
-    final builder = Builder(builder: (context) {
+    var builder = Builder(builder: (context) {
       buildCount++;
       final isNotNull = context.select((int value) => value != null);
       final isAbove0 = context
@@ -2322,7 +2001,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       (tester) async {
     var buildCount = 0;
 
-    final builder = Builder(builder: (context) {
+    var builder = Builder(builder: (context) {
       buildCount++;
       final intValue = context.select((int value) => value.toString());
       final stringValue = context.select((String value) => value);
@@ -2368,12 +2047,14 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     expect(buildCount, 2);
     expect(find.text('1 a'), findsOneWidget);
   });
-  testWidgets('can select same type twice on same provider', (tester) async {
+  testWidgets(
+      'can give a key to selectors to select same type twice on same provider',
+      (tester) async {
     var buildCount = 0;
-    final child = Builder(builder: (context) {
+    var child = Builder(builder: (context) {
       buildCount++;
-      final value = context.select((int value) => value.isEven);
-      final value2 = context.select((int value) => value.isNegative);
+      final value = context.select((int value) => value.isEven, 0);
+      final value2 = context.select((int value) => value.isNegative, 1);
 
       return Text('$value $value2', textDirection: TextDirection.ltr);
     });
@@ -2408,6 +2089,25 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     expect(find.text('true true'), findsOneWidget);
     expect(buildCount, 4);
   });
+  testWidgets(
+      'selecting same provider + same type twice is not allowed without keys',
+      (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider(create: (_) => 42),
+        ],
+        child: Builder(builder: (context) {
+          final value = context.select((int value) => value);
+          final value2 = context.select((int value) => value);
+
+          return Text('$value $value2', textDirection: TextDirection.ltr);
+        }),
+      ),
+    );
+
+    expect(tester.takeException(), isAssertionError);
+  });
 }
 
 class Model {
@@ -2416,8 +2116,6 @@ class Model {
 }
 
 class Example extends StatelessWidget {
-  const Example({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final a = context.select((Model model) => model.a);

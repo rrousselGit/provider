@@ -24,7 +24,7 @@ class ValueListenableProvider<T>
     @required Create<ValueNotifier<T>> create,
     UpdateShouldNotify<T> updateShouldNotify,
     bool lazy,
-    TransitionBuilder builder,
+    ValueWidgetBuilder<T> builder,
     Widget child,
   }) : super(
           key: key,
@@ -55,7 +55,7 @@ class ValueListenableProvider<T>
     Key key,
     @required ValueListenable<T> value,
     UpdateShouldNotify<T> updateShouldNotify,
-    TransitionBuilder builder,
+    ValueWidgetBuilder<T> builder,
     Widget child,
   }) : super.value(
           key: key,

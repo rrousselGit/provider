@@ -13,13 +13,12 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => Counter()),
       ],
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
 
 /// Mix-in [DiagnosticableTreeMixin] to have access to [debugFillProperties] for the devtool
-// ignore: prefer_mixin
 class Counter with ChangeNotifier, DiagnosticableTreeMixin {
   int _count = 0;
 
@@ -39,8 +38,6 @@ class Counter with ChangeNotifier, DiagnosticableTreeMixin {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -62,15 +59,15 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Text('You have pushed the button this many times:'),
+          children: <Widget>[
+            const Text('You have pushed the button this many times:'),
 
             /// Extracted as a separate widget for performance optimization.
             /// As a separate widget, it will rebuild independently from [MyHomePage].
             ///
             /// This is totally optional (and rarely needed).
             /// Similarly, we could also use [Consumer] or [Selector].
-            Count(),
+            const Count(),
           ],
         ),
       ),
@@ -86,14 +83,16 @@ class MyHomePage extends StatelessWidget {
 }
 
 class Count extends StatelessWidget {
-  const Count({Key key}) : super(key: key);
+  const Count({
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Text(
-
-        /// Calls `context.watch` to make [Count] rebuild when [Counter] changes.
-        '${context.watch<Counter>().count}',
-        style: Theme.of(context).textTheme.headline4);
+      /// Calls `context.watch` to make [MyHomePage] rebuild when [Counter] changes.
+      '${context.watch<Counter>().count}',
+      style: Theme.of(context).textTheme.headline4
+    );
   }
 }

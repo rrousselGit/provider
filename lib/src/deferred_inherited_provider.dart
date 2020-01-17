@@ -39,7 +39,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     @required DeferredStartListening<T, R> startListening,
     UpdateShouldNotify<R> updateShouldNotify,
     bool lazy,
-    TransitionBuilder builder,
+    ValueWidgetBuilder<R> builder,
     Widget child,
   }) : super._constructor(
           key: key,
@@ -61,7 +61,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     @required DeferredStartListening<T, R> startListening,
     UpdateShouldNotify<R> updateShouldNotify,
     bool lazy,
-    TransitionBuilder builder,
+    ValueWidgetBuilder<R> builder,
     Widget child,
   }) : super._constructor(
           key: key,
