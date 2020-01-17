@@ -443,6 +443,37 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     });
   });
   group('InheritedProvider()', () {
+    testWidgets("provider notifying dependents doesn't call update", (tester) async {
+      final notifier = ValueNotifier(0);
+      final mock = ValueBuilderMock<ValueNotifier<int>>(notifier);
+
+      await tester.pumpWidget(
+        ChangeNotifierProxyProvider0<ValueNotifier<int>>(
+          create: (_) => notifier,
+          update: mock,
+          child: const TextOf<ValueNotifier<int>>(),
+        ),
+      );
+
+      verify(mock(any, notifier)).called(1);
+      verifyNoMoreInteractions(mock);
+
+      notifier.value++;
+      await tester.pump();
+
+      verifyNoMoreInteractions(mock);
+
+      await tester.pumpWidget(
+        ChangeNotifierProxyProvider0<ValueNotifier<int>>(
+          create: (_) => notifier,
+          update: mock,
+          child: const TextOf<ValueNotifier<int>>(),
+        ),
+      );
+
+      verify(mock(any, notifier)).called(1);
+      verifyNoMoreInteractions(mock);
+    });
     testWidgets('update can call Provider.of with listen:true', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>.value(
