@@ -1966,30 +1966,6 @@ class _TestState<T> extends State<Test<T>> {
   }
 }
 
-class Test<T> extends StatefulWidget {
-  const Test({Key key, this.didChangeDependencies, this.build}) : super(key: key);
-
-  final ValueBuilderMock<T> didChangeDependencies;
-  final ValueBuilderMock<T> build;
-
-  @override
-  _TestState<T> createState() => _TestState<T>();
-}
-
-class _TestState<T> extends State<Test<T>> {
-  @override
-  void didChangeDependencies() {
-    widget.didChangeDependencies?.call(this.context, Provider.of<T>(this.context));
-    super.didChangeDependencies();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    widget.build?.call(this.context, Provider.of<T>(this.context));
-    return Container();
-  }
-}
-
 class SubclassProvider extends InheritedProvider<int> {
   SubclassProvider({
     Key key,
