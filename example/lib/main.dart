@@ -82,9 +82,7 @@ class MyHomePage extends StatelessWidget {
 }
 
 class Count extends StatelessWidget {
-  const Count({
-    Key key,
-  }) : super(key: key);
+  const Count({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
