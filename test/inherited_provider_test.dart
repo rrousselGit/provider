@@ -517,7 +517,18 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       await tester.pump();
 
       verifyNoMoreInteractions(mock);
-    }, skip: true);
+
+      await tester.pumpWidget(
+        ChangeNotifierProxyProvider0<ValueNotifier<int>>(
+          create: (_) => notifier,
+          update: mock,
+          child: const TextOf<ValueNotifier<int>>(),
+        ),
+      );
+
+      verify(mock(any, notifier)).called(1);
+      verifyNoMoreInteractions(mock);
+    });
     testWidgets('update can call Provider.of with listen:true', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>.value(
@@ -1928,6 +1939,30 @@ class Example extends StatelessWidget {
     final a = context.select((Model model) => model.a);
     final b = context.select((Model model) => model.b);
     return Text('$a $b');
+  }
+}
+
+class Test<T> extends StatefulWidget {
+  const Test({Key key, this.didChangeDependencies, this.build}) : super(key: key);
+
+  final ValueBuilderMock<T> didChangeDependencies;
+  final ValueBuilderMock<T> build;
+
+  @override
+  _TestState<T> createState() => _TestState<T>();
+}
+
+class _TestState<T> extends State<Test<T>> {
+  @override
+  void didChangeDependencies() {
+    widget.didChangeDependencies?.call(this.context, Provider.of<T>(this.context));
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    widget.build?.call(this.context, Provider.of<T>(this.context));
+    return Container();
   }
 }
 

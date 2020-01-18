@@ -173,28 +173,8 @@ class Provider<T> extends InheritedProvider<T> {
   /// [State.build] to widgets, and [State.didChangeDependencies] for
   /// [StatefulWidget].
   ///
-  /// By default, `listen` is inferred based on wether the widget tree is
-  /// currently building or not:
-  ///
-  /// - if widgets are building, `listen` is `true`
-  /// - if widgets aren't, `listen` is `false`.
-  ///
-  /// As such, it is fine to call `Provider.of` inside event handlers without
-  /// specifying `listen: false`:
-  ///
-  /// ```dart
-  /// RaisedButton(
-  ///   onPressed: () {
-  ///     Provider.of<Model>(context); // no need to pass listen:false
-  ///
-  ///     Provider.of<Model>(context, listen: false); // unnecessary flag
-  ///   }
-  /// )
-  /// ```
-  ///
-  /// On the other hand, `listen: false` is necessary to be able to call
-  /// `Provider.of` inside [State.initState] or the `create` method of providers
-  /// like so:
+  /// `listen: false` is necessary to be able to call `Provider.of` inside
+  /// [State.initState] or the `create` method of providers like so:
   ///
   /// ```dart
   /// Provider(

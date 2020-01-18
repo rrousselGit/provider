@@ -4,6 +4,7 @@
   but is a lot less verbose to write:
 
   With Selector:
+
   ```dart
   Widget build(BuildContext context) {
     return Selector<Person, String(
@@ -24,8 +25,7 @@
   }
   ```
 
-
-- Added `builder` on the different providers.
+* Added `builder` on the different providers.
   This parameters simplifies situations where we want to directly consume the value.
 
   As such, instead of:
@@ -54,16 +54,21 @@
 
   The behavior is the same. This is only a small syntax sugar.
 
-- Added a two extensions on [BuildContext], to slightly reduce the boilerplate:
+* Added a two extensions on [BuildContext], to slightly reduce the boilerplate:
 
   | before                                   | after               |
   | ---------------------------------------- | ------------------- |
   | `Provider.of<T>(context, listen: false)` | `context.read<T>()` |
   | `Provider.of<T>(context)`                | `context.watch<T>`  |
 
-- Added a `Locator` typedef and an extension on [BuildContext], to help with
+* Added a `Locator` typedef and an extension on [BuildContext], to help with
   being able to read providers from a class that doesn't depend on Flutter.
 
+# 4.0.2
+
+- fix `Provider.of` returning the previous value instead of the new value
+  if called inside `didChangeDependencies`.
+- fixed an issue where `update` was unnecessarily called.
 
 # 4.0.1
 
