@@ -323,7 +323,45 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
         if (_debugSelectedKeysWithinFrame?.containsKey(dependent) ?? false) {
           final selectedKeysThisFrame = _debugSelectedKeysWithinFrame[dependent];
 
-          assert(selectedKeysThisFrame?.contains(aspect.type) != true);
+          if (selectedKeysThisFrame?.contains(aspect.type) == true) {
+            Element parentElement;
+            visitAncestorElements((e) {
+              parentElement = e;
+              return false;
+            });
+
+            if (aspect.type is Type) {
+              throw FlutterError('''
+Called `context.select<$T, ${aspect.type}>(...)` multiple times within the same frame.
+
+This is unsupported. Instead consider giving each individual call to `select` a unique "key":
+
+```dart
+context.select<$T, ${aspect.type}>((value) => value.something, 0);
+context.select<$T, ${aspect.type}>((value) => value.somethingElse, 1);
+```
+
+Variables used:
+- context used: $dependent
+- provider obtained: ${parentElement.widget}
+- type requested: $T
+- value selected: ${aspect.selected}
+''');
+            } else {
+              throw FlutterError('''
+`select` was called multiple times with the same key (${aspect.type}) on the same provider (${parentElement.widget}).
+
+This is unsupported. Instead consider giving each individual call to `select` a unique "key":
+
+Variables used:
+- context used: $dependent
+- provider obtained: ${parentElement.widget}
+- type requested: $T
+- value selected: ${aspect.selected}
+- value type: ${aspect.selected.runtimeType}
+''');
+            }
+          }
         }
         return true;
       }());
@@ -676,7 +714,7 @@ class _CreateInheritedProviderState<T> extends _DelegateState<T, _CreateInherite
   }
 
   @override
-  bool get hasValue => _didInitValue != null;
+  bool get hasValue => _didInitValue;
 }
 
 class _ValueInheritedProvider<T> extends _Delegate<T> {

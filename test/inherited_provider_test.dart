@@ -544,8 +544,23 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     });
   });
   group('InheritedProvider()', () {
-    testWidgets("provider notifying dependents doesn't call update",
-        (tester) async {
+    testWidgets('hasValue', (tester) async {
+      await tester.pumpWidget(InheritedProvider(
+        create: (_) => 42,
+        child: Context(),
+      ));
+
+      final inheritedContext = tester.element(find.byElementPredicate((e) {
+        return e is InheritedContext;
+      })) as InheritedContext;
+
+      expect(inheritedContext.hasValue, isFalse);
+
+      inheritedContext.value;
+
+      expect(inheritedContext.hasValue, isTrue);
+    });
+    testWidgets("provider notifying dependents doesn't call update", (tester) async {
       final notifier = ValueNotifier(0);
       final mock = ValueBuilderMock<ValueNotifier<int>>(notifier);
 
@@ -1212,6 +1227,22 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
   });
 
   group('DeferredInheritedProvider.value()', () {
+    testWidgets('hasValue', (tester) async {
+      await tester.pumpWidget(InheritedProvider.value(
+        value: 42,
+        child: Container(),
+      ));
+
+      final inheritedContext = tester.element(find.byElementPredicate((e) {
+        return e is InheritedContext;
+      })) as InheritedContext;
+
+      expect(inheritedContext.hasValue, isTrue);
+
+      inheritedContext.value;
+
+      expect(inheritedContext.hasValue, isTrue);
+    });
     // TODO: stopListening cannot be null
     testWidgets('startListening', (tester) async {
       final stopListening = StopListeningMock();
@@ -1992,15 +2023,62 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           Provider(create: (_) => 42),
         ],
         child: Builder(builder: (context) {
-          final value = context.select((int value) => value);
-          final value2 = context.select((int value) => value);
+          final value = context.select((int value) => value.toString());
+          final value2 = context.select((int value) => (value * 2).toString());
 
           return Text('$value $value2', textDirection: TextDirection.ltr);
         }),
       ),
     );
 
-    expect(tester.takeException(), isAssertionError);
+    var exception = tester.takeException();
+    expect(exception, isFlutterError);
+    expect(exception.toString(), '''
+Called `context.select<int, String>(...)` multiple times within the same frame.
+
+This is unsupported. Instead consider giving each individual call to `select` a unique "key":
+
+```dart
+context.select<int, String>((value) => value.something, 0);
+context.select<int, String>((value) => value.somethingElse, 1);
+```
+
+Variables used:
+- context used: Builder(dirty, dependencies: [_DefaultInheritedProviderScope<int>])
+- provider obtained: Provider<int>
+- type requested: int
+- value selected: 84
+''');
+  });
+  testWidgets('select called with a key, but key already exists', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider(create: (_) => 42),
+        ],
+        child: Builder(builder: (context) {
+          final value = context.select((int value) => value, 0);
+          final value2 = context.select((int value) => (value * 2).toString(), 0);
+
+          return Text('$value $value2', textDirection: TextDirection.ltr);
+        }),
+      ),
+    );
+
+    var exception = tester.takeException();
+    expect(exception, isFlutterError);
+    expect(exception.toString(), '''
+`select` was called multiple times with the same key (0) on the same provider (Provider<int>).
+
+This is unsupported. Instead consider giving each individual call to `select` a unique "key":
+
+Variables used:
+- context used: Builder(dirty, dependencies: [_DefaultInheritedProviderScope<int>])
+- provider obtained: Provider<int>
+- type requested: int
+- value selected: 84
+- value type: String
+''');
   });
 }
 
