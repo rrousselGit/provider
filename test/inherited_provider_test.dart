@@ -2019,8 +2019,7 @@ class Example extends StatelessWidget {
 }
 
 class Test<T> extends StatefulWidget {
-  const Test({Key key, this.didChangeDependencies, this.build})
-      : super(key: key);
+  const Test({Key key, this.didChangeDependencies, this.build}) : super(key: key);
 
   final ValueBuilderMock<T> didChangeDependencies;
   final ValueBuilderMock<T> build;
@@ -2032,8 +2031,7 @@ class Test<T> extends StatefulWidget {
 class _TestState<T> extends State<Test<T>> {
   @override
   void didChangeDependencies() {
-    widget.didChangeDependencies
-        ?.call(this.context, Provider.of<T>(this.context));
+    widget.didChangeDependencies?.call(this.context, Provider.of<T>(this.context));
     super.didChangeDependencies();
   }
 
