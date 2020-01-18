@@ -1,5 +1,30 @@
 # 4.1.0
 
+- Added a `select` extension on `BuildContext`. It behaves similarly to `Selector`,
+  but is a lot less verbose to write:
+
+  With Selector:
+  ```dart
+  Widget build(BuildContext context) {
+    return Selector<Person, String(
+      selector: (_, p) => p.name,
+      builder: (_, name, __) {
+        return Text(name);
+      },
+    ),
+  }
+  ```
+
+  VS with the new `select` extension:
+
+  ```dart
+  Widget build(BuildContext context) {
+    final name = context.select((Person p) => p.name);
+    return Text(name);
+  }
+  ```
+
+
 - Added `builder` on the different providers.
   This parameters simplifies situations where we want to directly consume the value.
 
@@ -38,6 +63,7 @@
 
 - Added a `Locator` typedef and an extension on [BuildContext], to help with
   being able to read providers from a class that doesn't depend on Flutter.
+
 
 # 4.0.1
 
