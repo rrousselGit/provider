@@ -1956,7 +1956,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    var exception = tester.takeException();
+    dynamic exception = tester.takeException();
     expect(exception, isFlutterError);
     expect(exception.toString(), '''
 Called `context.select<int, String>(...)` multiple times within the same frame.
@@ -1990,7 +1990,7 @@ Variables used:
       ),
     );
 
-    var exception = tester.takeException();
+    dynamic exception = tester.takeException();
     expect(exception, isFlutterError);
     expect(exception.toString(), '''
 `select` was called multiple times with the same key (0) on the same provider (Provider<int>).
