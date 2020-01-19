@@ -334,47 +334,53 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
             });
 
             if (aspect.key is Type) {
-              throw FlutterError('''
-Called `context.select<$T, ${aspect.key}>(...)` multiple times within the same frame.
-
-This is unsupported. Instead consider giving each individual call to `select` a unique "key":
+              throw FlutterError.fromParts([
+                ErrorSummary('Called `context.select<$T, ${aspect.key}>(...)` multiple times within the same frame.'),
+                ErrorDescription(
+                  'If `select` is called multiple times inside a widget, '
+                  "then all calls must have a unique combination of provider's type + value's type, "
+                  'or they must have a different "key".',
+                ),
+                ErrorDescription(
+                  '''
 
 ```dart
 context.select<$T, ${aspect.key}>((value) => value.something, 0);
 context.select<$T, ${aspect.key}>((value) => value.somethingElse, 1);
 ```
-
-context: $dependent
-provider obtained: ${parentElement.widget}
-provider's value type: $T
-
-Failing selector:
-- value selected: ${aspect.selected}
-- value type: ${aspect.selected.runtimeType}
-
-Conflicting selector values:
-- value selected: ${existingSelectorWithSameKey.selected}
-- value type: ${existingSelectorWithSameKey.selected.runtimeType}
-''');
+''',
+                ),
+                ErrorSpacer(),
+                DiagnosticsProperty('context', dependent),
+                DiagnosticsProperty('provider obtained', parentElement.widget),
+                DiagnosticsProperty("provider's value type", T),
+                ErrorDescription('\nFailing selector:'),
+                DiagnosticsProperty('- value selected', aspect.selected),
+                DiagnosticsProperty('- value type', aspect.selected.runtimeType),
+                ErrorDescription('\nConflicting selector:'),
+                DiagnosticsProperty('- value selected', existingSelectorWithSameKey.selected),
+                DiagnosticsProperty('- value type', existingSelectorWithSameKey.selected.runtimeType),
+              ]);
             } else {
-              throw FlutterError('''
-`select` was called multiple times with the same key on the same provider.
-
-This is unsupported. Instead consider giving each individual call to `select` a unique "key":
-
-context: $dependent
-key: ${aspect.key}
-provider obtained: ${parentElement.widget}
-provider's value type: $T
-
-Failing selector:
-- value selected: ${aspect.selected}
-- value type: ${aspect.selected.runtimeType}
-
-Conflicting selector values:
-- value selected: ${existingSelectorWithSameKey.selected}
-- value type: ${existingSelectorWithSameKey.selected.runtimeType}
-''');
+              throw FlutterError.fromParts([
+                ErrorSummary('`select` was called multiple times with the same key on the same provider.'),
+                ErrorDescription(
+                  'If `select` is called multiple times inside a widget, '
+                  "then all calls must have a unique combination of provider's type + value's type, "
+                  'or they must have a different "key".',
+                ),
+                ErrorSpacer(),
+                DiagnosticsProperty('context', dependent),
+                DiagnosticsProperty('key', aspect.key),
+                DiagnosticsProperty('provider obtained', parentElement.widget),
+                DiagnosticsProperty("provider's value type", T),
+                ErrorDescription('\nFailing selector:'),
+                DiagnosticsProperty('- value selected', aspect.selected),
+                DiagnosticsProperty('- value type', aspect.selected.runtimeType),
+                ErrorDescription('\nConflicting selector:'),
+                DiagnosticsProperty('- value selected', existingSelectorWithSameKey.selected),
+                DiagnosticsProperty('- value type', existingSelectorWithSameKey.selected.runtimeType),
+              ]);
             }
           }
         }
