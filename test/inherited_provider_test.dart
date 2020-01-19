@@ -2035,26 +2035,24 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     expect(exception, isFlutterError);
     expect(exception.toString(), '''
 Called `context.select<int, String>(...)` multiple times within the same frame.
-
-This is unsupported. Instead consider giving each individual call to `select` a unique "key":
+If `select` is called multiple times inside a widget, then all calls must have a unique combination of provider's type + value's type, or they must have a different "key".
 
 ```dart
 context.select<int, String>((value) => value.something, 0);
 context.select<int, String>((value) => value.somethingElse, 1);
 ```
 
-context: Builder(dirty, dependencies: [_DefaultInheritedProviderScope<int>])
-provider obtained: Provider<int>(value: 42)
+context: Builder
+provider obtained: Provider<int>
 provider's value type: int
 
 Failing selector:
 - value selected: 84
 - value type: String
 
-Conflicting selector values:
+Conflicting selector:
 - value selected: 42
-- value type: String
-''');
+- value type: String''');
   });
   testWidgets('select called with a key, but key already exists', (tester) async {
     await tester.pumpWidget(
@@ -2075,22 +2073,20 @@ Conflicting selector values:
     expect(exception, isFlutterError);
     expect(exception.toString(), '''
 `select` was called multiple times with the same key on the same provider.
+If `select` is called multiple times inside a widget, then all calls must have a unique combination of provider's type + value's type, or they must have a different "key".
 
-This is unsupported. Instead consider giving each individual call to `select` a unique "key":
-
-context: Builder(dirty, dependencies: [_DefaultInheritedProviderScope<int>])
+context: Builder
 key: 0
-provider obtained: Provider<int>(value: 42)
+provider obtained: Provider<int>
 provider's value type: int
 
 Failing selector:
 - value selected: 84
 - value type: String
 
-Conflicting selector values:
+Conflicting selector:
 - value selected: 42
-- value type: int
-''');
+- value type: int''');
   });
 }
 
