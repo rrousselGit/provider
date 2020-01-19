@@ -1945,7 +1945,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          Provider(create: (_) => 42),
+          Provider.value(value: 42),
         ],
         child: Builder(builder: (context) {
           final value = context.select((int value) => value.toString());
@@ -1968,18 +1968,24 @@ context.select<int, String>((value) => value.something, 0);
 context.select<int, String>((value) => value.somethingElse, 1);
 ```
 
-Variables used:
-- context used: Builder(dirty, dependencies: [_DefaultInheritedProviderScope<int>])
-- provider obtained: Provider<int>
-- type requested: int
+context: Builder(dirty, dependencies: [_DefaultInheritedProviderScope<int>])
+provider obtained: Provider<int>(value: 42)
+provider's value type: int
+
+Failing selector:
 - value selected: 84
+- value type: String
+
+Conflicting selector values:
+- value selected: 42
+- value type: String
 ''');
   });
   testWidgets('select called with a key, but key already exists', (tester) async {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          Provider(create: (_) => 42),
+          Provider.value(value: 42),
         ],
         child: Builder(builder: (context) {
           final value = context.select((int value) => value, 0);
@@ -1993,16 +1999,22 @@ Variables used:
     dynamic exception = tester.takeException();
     expect(exception, isFlutterError);
     expect(exception.toString(), '''
-`select` was called multiple times with the same key (0) on the same provider (Provider<int>).
+`select` was called multiple times with the same key on the same provider.
 
 This is unsupported. Instead consider giving each individual call to `select` a unique "key":
 
-Variables used:
-- context used: Builder(dirty, dependencies: [_DefaultInheritedProviderScope<int>])
-- provider obtained: Provider<int>
-- type requested: int
+context: Builder(dirty, dependencies: [_DefaultInheritedProviderScope<int>])
+key: 0
+provider obtained: Provider<int>(value: 42)
+provider's value type: int
+
+Failing selector:
 - value selected: 84
 - value type: String
+
+Conflicting selector values:
+- value selected: 42
+- value type: int
 ''');
   });
 }
