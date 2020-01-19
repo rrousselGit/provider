@@ -296,12 +296,11 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement with _In
 }
 
 class _SelectorAspect<T, R> {
-  _SelectorAspect(this.selector, this.selected, [Object key]) : type = key ?? R;
+  _SelectorAspect(this.selector, this.selected, [Object key]) : key = key ?? R;
 
   final R Function(T value) selector;
   final R selected;
-
-  final Object type;
+  final Object key;
 }
 
 mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedContext<T> {
@@ -310,7 +309,7 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
   bool _isNotifyDependentsEnabled = true;
   bool _firstBuild = true;
 
-  Map<Element, Set<Object>> _debugSelectedKeysWithinFrame;
+  Map<Element, Set<_SelectorAspect<T, Object>>> _debugSelectedKeysWithinFrame;
 
   @override
   void updateDependencies(Element dependent, Object aspect) {
@@ -323,42 +322,58 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
         if (_debugSelectedKeysWithinFrame?.containsKey(dependent) ?? false) {
           final selectedKeysThisFrame = _debugSelectedKeysWithinFrame[dependent];
 
-          if (selectedKeysThisFrame?.contains(aspect.type) == true) {
+          final existingSelectorWithSameKey = selectedKeysThisFrame?.firstWhere((s) {
+            return s.key == aspect.key;
+          }, orElse: () => null);
+
+          if (existingSelectorWithSameKey != null) {
             Element parentElement;
             visitAncestorElements((e) {
               parentElement = e;
               return false;
             });
 
-            if (aspect.type is Type) {
+            if (aspect.key is Type) {
               throw FlutterError('''
-Called `context.select<$T, ${aspect.type}>(...)` multiple times within the same frame.
+Called `context.select<$T, ${aspect.key}>(...)` multiple times within the same frame.
 
 This is unsupported. Instead consider giving each individual call to `select` a unique "key":
 
 ```dart
-context.select<$T, ${aspect.type}>((value) => value.something, 0);
-context.select<$T, ${aspect.type}>((value) => value.somethingElse, 1);
+context.select<$T, ${aspect.key}>((value) => value.something, 0);
+context.select<$T, ${aspect.key}>((value) => value.somethingElse, 1);
 ```
 
-Variables used:
-- context used: $dependent
-- provider obtained: ${parentElement.widget}
-- type requested: $T
+context: $dependent
+provider obtained: ${parentElement.widget}
+provider's value type: $T
+
+Failing selector:
 - value selected: ${aspect.selected}
+- value type: ${aspect.selected.runtimeType}
+
+Conflicting selector values:
+- value selected: ${existingSelectorWithSameKey.selected}
+- value type: ${existingSelectorWithSameKey.selected.runtimeType}
 ''');
             } else {
               throw FlutterError('''
-`select` was called multiple times with the same key (${aspect.type}) on the same provider (${parentElement.widget}).
+`select` was called multiple times with the same key on the same provider.
 
 This is unsupported. Instead consider giving each individual call to `select` a unique "key":
 
-Variables used:
-- context used: $dependent
-- provider obtained: ${parentElement.widget}
-- type requested: $T
+context: $dependent
+key: ${aspect.key}
+provider obtained: ${parentElement.widget}
+provider's value type: $T
+
+Failing selector:
 - value selected: ${aspect.selected}
 - value type: ${aspect.selected.runtimeType}
+
+Conflicting selector values:
+- value selected: ${existingSelectorWithSameKey.selected}
+- value type: ${existingSelectorWithSameKey.selected.runtimeType}
 ''');
             }
           }
@@ -368,7 +383,7 @@ Variables used:
       assert(() {
         _debugSelectedKeysWithinFrame ??= {};
         _debugSelectedKeysWithinFrame[dependent] ??= {};
-        _debugSelectedKeysWithinFrame[dependent].add(aspect.type);
+        _debugSelectedKeysWithinFrame[dependent].add(aspect);
 
         Future.microtask(() {
           _debugSelectedKeysWithinFrame = null;
@@ -378,7 +393,7 @@ Variables used:
 
       final newDependencies = dependencies ?? HashMap();
 
-      newDependencies[aspect.type] = aspect;
+      newDependencies[aspect.key] = aspect;
       setDependencies(dependent, newDependencies);
     } else {
       // subscribes to everything
