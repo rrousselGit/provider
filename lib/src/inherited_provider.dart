@@ -417,7 +417,7 @@ context.select<$T, ${aspect.key}>((value) => value.somethingElse, 1);
         shouldNotify = true;
       } else {
         for (final dependency in dependencies.values) {
-          if (dependency.selector(value) != dependency.selected) {
+          if (!const DeepCollectionEquality().equals(dependency.selector(value), dependency.selected)) {
             shouldNotify = true;
             break;
           }
