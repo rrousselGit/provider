@@ -89,6 +89,7 @@ class Count extends StatelessWidget {
     return Text(
       /// Calls `context.watch` to make [MyHomePage] rebuild when [Counter] changes.
       '${context.watch<Counter>().count}',
+      // ignore: deprecated_member_use
       style: Theme.of(context).textTheme.display1,
     );
   }
