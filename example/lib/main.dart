@@ -130,6 +130,7 @@ class CounterLabel extends StatelessWidget {
         ),
         Text(
           '${counter.count}',
+          // ignore: deprecated_member_use
           style: Theme.of(context).textTheme.display1,
         ),
       ],
