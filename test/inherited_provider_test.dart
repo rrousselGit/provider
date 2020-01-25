@@ -1972,14 +1972,12 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     expect(buildCount, 2);
     expect(find.text('1 a'), findsOneWidget);
   });
-  testWidgets(
-      'can give a key to selectors to select same type twice on same provider',
-      (tester) async {
+  testWidgets('can select same type twice on same provider', (tester) async {
     var buildCount = 0;
     var child = Builder(builder: (context) {
       buildCount++;
-      final value = context.select((int value) => value.isEven, 0);
-      final value2 = context.select((int value) => value.isNegative, 1);
+      final value = context.select((int value) => value.isEven);
+      final value2 = context.select((int value) => value.isNegative);
 
       return Text('$value $value2', textDirection: TextDirection.ltr);
     });
@@ -2013,80 +2011,6 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
     expect(find.text('true true'), findsOneWidget);
     expect(buildCount, 4);
-  });
-  testWidgets(
-      'selecting same provider + same type twice is not allowed without keys',
-      (tester) async {
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          Provider.value(value: 42),
-        ],
-        child: Builder(builder: (context) {
-          final value = context.select((int value) => value.toString());
-          final value2 = context.select((int value) => (value * 2).toString());
-
-          return Text('$value $value2', textDirection: TextDirection.ltr);
-        }),
-      ),
-    );
-
-    dynamic exception = tester.takeException();
-    expect(exception, isFlutterError);
-    expect(exception.toString(), '''
-Called `context.select<int, String>(...)` multiple times within the same frame.
-If `select` is called multiple times inside a widget, then all calls must have a unique combination of provider's type + value's type, or they must have a different "key".
-
-```dart
-context.select<int, String>((value) => value.something, 0);
-context.select<int, String>((value) => value.somethingElse, 1);
-```
-
-context: Builder
-provider obtained: Provider<int>
-provider's value type: int
-
-Failing selector:
-- value selected: 84
-- value type: String
-
-Conflicting selector:
-- value selected: 42
-- value type: String''');
-  });
-  testWidgets('select called with a key, but key already exists', (tester) async {
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          Provider.value(value: 42),
-        ],
-        child: Builder(builder: (context) {
-          final value = context.select((int value) => value, 0);
-          final value2 = context.select((int value) => (value * 2).toString(), 0);
-
-          return Text('$value $value2', textDirection: TextDirection.ltr);
-        }),
-      ),
-    );
-
-    dynamic exception = tester.takeException();
-    expect(exception, isFlutterError);
-    expect(exception.toString(), '''
-`select` was called multiple times with the same key on the same provider.
-If `select` is called multiple times inside a widget, then all calls must have a unique combination of provider's type + value's type, or they must have a different "key".
-
-context: Builder
-key: 0
-provider obtained: Provider<int>
-provider's value type: int
-
-Failing selector:
-- value selected: 84
-- value type: String
-
-Conflicting selector:
-- value selected: 42
-- value type: int''');
   });
 }
 
