@@ -142,10 +142,15 @@ class _InheritedProviderElement<T> extends SingleChildStatelessElement {
   }
 }
 
+bool _debugIsSelecting = false;
+
 /// Adds a `select` method on [BuildContext].
 extension SelectContext on BuildContext {
   /// Watch a value of type [T] exposed from a provider, and listen only partially
   /// to changes.
+  ///
+  /// [select] must be used only inside the `build` method of a widget.
+  /// It will not work inside other life-cycles, including [State.didChangeDependencies].
   ///
   /// By using [select], instead of watching the entire object, the listener will
   /// rebuild only if the value returned by `selector` changes.
@@ -180,53 +185,27 @@ extension SelectContext on BuildContext {
   /// }
   /// ```
   ///
-  /// It is fine to call `select` multiple times, but there's a catch.
-  /// Each individual [select] must either:
-  ///
-  /// - use a different provider:
-  ///
-  ///  `Provider.of<Person>(context)` vs `Provider.of<City>(context)`
-  /// - select a different type:
-  ///
-  ///  *OK*:
-  ///   ```dart
-  ///   final String name = context.select((Person p) => p.name);
-  ///   final int age = context.select((Person p) => p.age);
-  ///   ```
-  ///   We can select two values from `Person`, because they are from two different
-  ///   types.
-  ///
-  ///   *OK*:
-  ///   ```dart
-  ///   final String personName = context.select((Person p) => p.name);
-  ///   final String cityName = context.select((City p) => p.name);
-  ///   ```
-  ///   We can select `String` twice here, person one of them is from a `Person`
-  ///   and another one is from `City`.
-  ///
-  ///   *BAD*:
-  ///   ```dart
-  ///   final bool hasName = context.select((Person p) => p.hasName);
-  ///   final bool hasAge = context.select((Person p) => p.hasAge);
-  ///   ```
-  ///   This won't work, because we selected two `bool` from `Person`.
-  ///
-  ///   Instead, if you need such thing, you can give a "key" to [select]:
-  ///   ```dart
-  ///   final bool hasName = context.select((Person p) => p.hasName, 0);
-  ///   final bool hasAge = context.select((Person p) => p.hasAge, 1);
-  ///   ```
-  ///
-  ///   This time, the example works, because we gave each [select] a unique
-  ///   identifier (here `0` and `1`).
-  R select<T, R>(R selector(T value), [Object key]) {
+  /// It is fine to call `select` multiple times.
+  R select<T, R>(R selector(T value)) {
+    assert(_canSelect, 'Cannot call `select` inside `didChangeDependencies');
     final inheritedElement = Provider._inheritedElementOf<T>(this);
-    final selected = selector(inheritedElement.value);
-    dependOnInheritedElement(
-      inheritedElement,
-      aspect: _SelectorAspect(selector, selected, key),
-    );
-    return selected;
+    try {
+      assert(() {
+        _debugIsSelecting = true;
+        return true;
+      }());
+      final selected = selector(inheritedElement.value);
+      dependOnInheritedElement(
+        inheritedElement,
+        aspect: _SelectorAspect(selector, selected),
+      );
+      return selected;
+    } finally {
+      assert(() {
+        _debugIsSelecting = false;
+        return true;
+      }());
+    }
   }
 }
 
@@ -296,12 +275,23 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement with _In
 }
 
 class _SelectorAspect<T, R> {
-  _SelectorAspect(this.selector, this.selected, [Object key]) : key = key ?? R;
+  _SelectorAspect(this.selector, this.selected);
 
   final R Function(T value) selector;
   final R selected;
-  final Object key;
 }
+
+class _SelectorDependency<T> {
+  _SelectorDependency(this.latestFrameId);
+
+  int latestFrameId;
+
+  List<_SelectorAspect<T, Object>> selectors = [];
+}
+
+bool _didWatchFrameId = false;
+int _frameId = 0;
+bool _canSelect = true;
 
 mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedContext<T> {
   bool _shouldNotifyDependents = false;
@@ -309,123 +299,88 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
   bool _isNotifyDependentsEnabled = true;
   bool _firstBuild = true;
 
-  Map<Element, Set<_SelectorAspect<T, Object>>> _debugSelectedKeysWithinFrame;
+  @override
+  void mount(Element parent, dynamic slot) {
+    super.mount(parent, slot);
+    if (_didWatchFrameId == false) {
+      _didWatchFrameId = true;
+      assert(_frameId == 0);
+      void Function(Duration) callback;
+
+      callback = (Duration _) {
+        _frameId++;
+        SchedulerBinding.instance.addPostFrameCallback(callback);
+      };
+      SchedulerBinding.instance.addPostFrameCallback(callback);
+    }
+  }
 
   @override
   void updateDependencies(Element dependent, Object aspect) {
-    final dependencies = getDependencies(dependent) as Map<Object, _SelectorAspect<T, Object>>;
+    final dependencies = getDependencies(dependent);
     // once subscribed to everything once, it always stays subscribed to everything
-    if (dependencies != null && dependencies.isEmpty) return;
+    if (dependencies != null && dependencies is! _SelectorDependency<T>) {
+      return;
+    }
 
     if (aspect is _SelectorAspect<T, Object>) {
-      assert(() {
-        if (_debugSelectedKeysWithinFrame?.containsKey(dependent) ?? false) {
-          final selectedKeysThisFrame = _debugSelectedKeysWithinFrame[dependent];
-
-          final existingSelectorWithSameKey = selectedKeysThisFrame?.firstWhere((s) {
-            return s.key == aspect.key;
-          }, orElse: () => null);
-
-          if (existingSelectorWithSameKey != null) {
-            Element parentElement;
-            visitAncestorElements((e) {
-              parentElement = e;
-              return false;
-            });
-
-            if (aspect.key is Type) {
-              throw FlutterError.fromParts([
-                ErrorSummary('Called `context.select<$T, ${aspect.key}>(...)` multiple times within the same frame.'),
-                ErrorDescription(
-                  'If `select` is called multiple times inside a widget, '
-                  "then all calls must have a unique combination of provider's type + value's type, "
-                  'or they must have a different "key".',
-                ),
-                ErrorDescription(
-                  '''
-
-```dart
-context.select<$T, ${aspect.key}>((value) => value.something, 0);
-context.select<$T, ${aspect.key}>((value) => value.somethingElse, 1);
-```
-''',
-                ),
-                ErrorSpacer(),
-                DiagnosticsProperty('context', dependent),
-                DiagnosticsProperty('provider obtained', parentElement.widget),
-                DiagnosticsProperty("provider's value type", T),
-                ErrorDescription('\nFailing selector:'),
-                DiagnosticsProperty('- value selected', aspect.selected),
-                DiagnosticsProperty('- value type', aspect.selected.runtimeType),
-                ErrorDescription('\nConflicting selector:'),
-                DiagnosticsProperty('- value selected', existingSelectorWithSameKey.selected),
-                DiagnosticsProperty('- value type', existingSelectorWithSameKey.selected.runtimeType),
-              ]);
-            } else {
-              throw FlutterError.fromParts([
-                ErrorSummary('`select` was called multiple times with the same key on the same provider.'),
-                ErrorDescription(
-                  'If `select` is called multiple times inside a widget, '
-                  "then all calls must have a unique combination of provider's type + value's type, "
-                  'or they must have a different "key".',
-                ),
-                ErrorSpacer(),
-                DiagnosticsProperty('context', dependent),
-                DiagnosticsProperty('key', aspect.key),
-                DiagnosticsProperty('provider obtained', parentElement.widget),
-                DiagnosticsProperty("provider's value type", T),
-                ErrorDescription('\nFailing selector:'),
-                DiagnosticsProperty('- value selected', aspect.selected),
-                DiagnosticsProperty('- value type', aspect.selected.runtimeType),
-                ErrorDescription('\nConflicting selector:'),
-                DiagnosticsProperty('- value selected', existingSelectorWithSameKey.selected),
-                DiagnosticsProperty('- value type', existingSelectorWithSameKey.selected.runtimeType),
-              ]);
-            }
-          }
-        }
-        return true;
-      }());
-      assert(() {
-        _debugSelectedKeysWithinFrame ??= {};
-        _debugSelectedKeysWithinFrame[dependent] ??= {};
-        _debugSelectedKeysWithinFrame[dependent].add(aspect);
-
-        Future.microtask(() {
-          _debugSelectedKeysWithinFrame = null;
-        });
-        return true;
-      }());
-
-      final newDependencies = dependencies ?? HashMap();
-
-      newDependencies[aspect.key] = aspect;
-      setDependencies(dependent, newDependencies);
+      final selectorDependency = (dependencies ?? _SelectorDependency<T>(_frameId)) as _SelectorDependency<T>;
+      if (selectorDependency.latestFrameId != _frameId) {
+        selectorDependency.latestFrameId = _frameId;
+        selectorDependency.selectors.clear();
+      }
+      selectorDependency.selectors.add(aspect);
+      setDependencies(dependent, selectorDependency);
     } else {
       // subscribes to everything
-      setDependencies(dependent, HashMap<Object, _SelectorAspect<T, Object>>());
+      setDependencies(dependent, const Object());
     }
   }
 
   @override
   void notifyDependent(InheritedWidget oldWidget, Element dependent) {
-    final dependencies = getDependencies(dependent) as Map<Object, _SelectorAspect<T, Object>>;
+    final dependencies = getDependencies(dependent);
 
     var shouldNotify = false;
     if (dependencies != null) {
-      if (dependencies.isEmpty) {
-        shouldNotify = true;
-      } else {
-        for (final dependency in dependencies.values) {
-          if (!const DeepCollectionEquality().equals(dependency.selector(value), dependency.selected)) {
+      if (dependencies is _SelectorDependency<T>) {
+        for (final dependency in dependencies.selectors) {
+          Object selected;
+          try {
+            assert(() {
+              _debugIsSelecting = true;
+              return true;
+            }());
+            selected = dependency.selector(value);
+          } finally {
+            assert(() {
+              _debugIsSelecting = false;
+              return true;
+            }());
+          }
+          if (!const DeepCollectionEquality().equals(selected, dependency.selected)) {
             shouldNotify = true;
             break;
           }
         }
+      } else {
+        shouldNotify = true;
       }
     }
+
     if (shouldNotify) {
-      dependent.didChangeDependencies();
+      try {
+        assert(() {
+          _canSelect = false;
+          return true;
+        }());
+        dependent.didChangeDependencies();
+      } finally {
+        assert(() {
+          _canSelect = true;
+          return true;
+        }());
+      }
     }
   }
 

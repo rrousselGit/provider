@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -186,16 +185,6 @@ class Provider<T> extends InheritedProvider<T> {
   /// ```
   static T of<T>(BuildContext context, {bool listen = true}) {
     assert(
-      T != dynamic,
-      '''
-Tried to call Provider.of<dynamic>. This is likely a mistake and is therefore
-unsupported.
-
-If you want to expose a variable that can be anything, consider changing
-`dynamic` to `Object` instead.
-''',
-    );
-    assert(
       context.owner.debugBuilding || listen == false || _debugIsInInheritedProviderUpdate,
       '''
 Tried to listen to a value exposed with provider, from outside of the widget tree.
@@ -221,6 +210,17 @@ event handler, when the widget tree doesn't care about the value.
   }
 
   static _InheritedProviderScopeMixin<T> _inheritedElementOf<T>(BuildContext context) {
+    assert(_debugIsSelecting == false, 'Cannot call context.read/watch/select inside the callback of a context.select');
+    assert(
+      T != dynamic,
+      '''
+Tried to call Provider.of<dynamic>. This is likely a mistake and is therefore
+unsupported.
+
+If you want to expose a variable that can be anything, consider changing
+`dynamic` to `Object` instead.
+''',
+    );
     _InheritedProviderScopeMixin<T> inheritedElement;
 
     if (context.widget is _DefaultInheritedProviderScope<T>) {
