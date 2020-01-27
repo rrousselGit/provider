@@ -197,7 +197,7 @@ extension SelectContext on BuildContext {
       final selected = selector(inheritedElement.value);
       dependOnInheritedElement(
         inheritedElement,
-        aspect: _SelectorAspect(selector, selected),
+        aspect: (T value) => !const DeepCollectionEquality().equals(selector(value), selected),
       );
       return selected;
     } finally {
@@ -274,19 +274,14 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement with _In
   }
 }
 
-class _SelectorAspect<T, R> {
-  _SelectorAspect(this.selector, this.selected);
-
-  final R Function(T value) selector;
-  final R selected;
-}
+typedef _SelectorAspect<T> = bool Function(T value);
 
 class _SelectorDependency<T> {
   _SelectorDependency(this.latestFrameId);
 
   int latestFrameId;
 
-  List<_SelectorAspect<T, Object>> selectors = [];
+  List<_SelectorAspect<T>> selectors = [];
 }
 
 bool _didWatchFrameId = false;
@@ -323,7 +318,7 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
       return;
     }
 
-    if (aspect is _SelectorAspect<T, Object>) {
+    if (aspect is _SelectorAspect<T>) {
       final selectorDependency = (dependencies ?? _SelectorDependency<T>(_frameId)) as _SelectorDependency<T>;
       if (selectorDependency.latestFrameId != _frameId) {
         selectorDependency.latestFrameId = _frameId;
@@ -344,22 +339,20 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
     var shouldNotify = false;
     if (dependencies != null) {
       if (dependencies is _SelectorDependency<T>) {
-        for (final dependency in dependencies.selectors) {
-          Object selected;
+        for (final updateShouldNotify in dependencies.selectors) {
           try {
             assert(() {
               _debugIsSelecting = true;
               return true;
             }());
-            selected = dependency.selector(value);
+            shouldNotify = updateShouldNotify(value);
           } finally {
             assert(() {
               _debugIsSelecting = false;
               return true;
             }());
           }
-          if (!const DeepCollectionEquality().equals(selected, dependency.selected)) {
-            shouldNotify = true;
+          if (shouldNotify) {
             break;
           }
         }
