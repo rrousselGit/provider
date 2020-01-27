@@ -187,7 +187,7 @@ extension SelectContext on BuildContext {
   ///
   /// It is fine to call `select` multiple times.
   R select<T, R>(R selector(T value)) {
-    assert(_canSelect, 'Cannot call `select` inside `didChangeDependencies');
+    assert(_debugCanSelect, 'Cannot call `select` inside `didChangeDependencies');
     final inheritedElement = Provider._inheritedElementOf<T>(this);
     try {
       assert(() {
@@ -286,7 +286,7 @@ class _SelectorDependency<T> {
 
 bool _didWatchFrameId = false;
 int _frameId = 0;
-bool _canSelect = true;
+bool _debugCanSelect = true;
 
 mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedContext<T> {
   bool _shouldNotifyDependents = false;
@@ -364,13 +364,13 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
     if (shouldNotify) {
       try {
         assert(() {
-          _canSelect = false;
+          _debugCanSelect = false;
           return true;
         }());
         dependent.didChangeDependencies();
       } finally {
         assert(() {
-          _canSelect = true;
+          _debugCanSelect = true;
           return true;
         }());
       }
