@@ -44,6 +44,27 @@ void main() {
       verify(selector(notifier)).called(1);
       verifyNoMoreInteractions(selector);
     });
+    testWidgets('selects throws inside click handlers', (tester) async {
+      await tester.pumpWidget(
+        Provider.value(
+          value: 42,
+          child: Builder(builder: (context) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                context.select((int a) => a);
+              },
+              child: Container(),
+            );
+          }),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.byType(GestureDetector));
+
+      expect(tester.takeException(), isAssertionError);
+    });
     testWidgets('select throws if try to read dynamic', (tester) async {
       await tester.pumpWidget(
         Builder(builder: (c) {

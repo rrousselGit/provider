@@ -187,6 +187,7 @@ extension SelectContext on BuildContext {
   ///
   /// It is fine to call `select` multiple times.
   R select<T, R>(R selector(T value)) {
+    assert(owner.debugBuilding);
     assert(_debugCanSelect, 'Cannot call `select` inside `didChangeDependencies');
     final inheritedElement = Provider._inheritedElementOf<T>(this);
     try {
