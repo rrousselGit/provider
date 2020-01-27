@@ -277,15 +277,9 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement with _In
 typedef _SelectorAspect<T> = bool Function(T value);
 
 class _SelectorDependency<T> {
-  _SelectorDependency(this.latestFrameId);
-
-  int latestFrameId;
-
   List<_SelectorAspect<T>> selectors = [];
 }
 
-bool _didWatchFrameId = false;
-int _frameId = 0;
 bool _debugCanSelect = true;
 
 mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedContext<T> {
@@ -293,22 +287,8 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
   bool _debugInheritLocked = false;
   bool _isNotifyDependentsEnabled = true;
   bool _firstBuild = true;
-
-  @override
-  void mount(Element parent, dynamic slot) {
-    super.mount(parent, slot);
-    if (_didWatchFrameId == false) {
-      _didWatchFrameId = true;
-      assert(_frameId == 0);
-      void Function(Duration) callback;
-
-      callback = (Duration _) {
-        _frameId++;
-        SchedulerBinding.instance.addPostFrameCallback(callback);
-      };
-      SchedulerBinding.instance.addPostFrameCallback(callback);
-    }
-  }
+  bool _shouldClearSelectors = false;
+  bool _shouldClearMutationScheduled = false;
 
   @override
   void updateDependencies(Element dependent, Object aspect) {
@@ -319,10 +299,16 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
     }
 
     if (aspect is _SelectorAspect<T>) {
-      final selectorDependency = (dependencies ?? _SelectorDependency<T>(_frameId)) as _SelectorDependency<T>;
-      if (selectorDependency.latestFrameId != _frameId) {
-        selectorDependency.latestFrameId = _frameId;
+      final selectorDependency = (dependencies ?? _SelectorDependency<T>()) as _SelectorDependency<T>;
+      if (_shouldClearSelectors) {
+        _shouldClearSelectors = false;
         selectorDependency.selectors.clear();
+      }
+      if (_shouldClearMutationScheduled == false) {
+        _shouldClearMutationScheduled = true;
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          _shouldClearSelectors = true;
+        });
       }
       selectorDependency.selectors.add(aspect);
       setDependencies(dependent, selectorDependency);
