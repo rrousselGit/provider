@@ -272,15 +272,15 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implemen
   void updateDependencies(Element dependent, Object aspect) {
     final dependencies = getDependencies(dependent);
     // once subscribed to everything once, it always stays subscribed to everything
-    if (dependencies != null && dependencies is! _SelectorDependency<T>) {
+    if (dependencies != null && dependencies is! List<_SelectorAspect<T>>) {
       return;
     }
 
     if (aspect is _SelectorAspect<T>) {
-      final selectorDependency = (dependencies ?? _SelectorDependency<T>()) as _SelectorDependency<T>;
+      final selectorDependency = (dependencies ?? <_SelectorAspect<T>>[]) as List<_SelectorAspect<T>>;
       if (_shouldClearSelectors) {
         _shouldClearSelectors = false;
-        selectorDependency.selectors.clear();
+        selectorDependency.clear();
       }
       if (_shouldClearMutationScheduled == false) {
         _shouldClearMutationScheduled = true;
@@ -288,7 +288,7 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implemen
           _shouldClearSelectors = true;
         });
       }
-      selectorDependency.selectors.add(aspect);
+      selectorDependency.add(aspect);
       setDependencies(dependent, selectorDependency);
     } else {
       // subscribes to everything
@@ -302,8 +302,8 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implemen
 
     var shouldNotify = false;
     if (dependencies != null) {
-      if (dependencies is _SelectorDependency<T>) {
-        for (final updateShouldNotify in dependencies.selectors) {
+      if (dependencies is List<_SelectorAspect<T>>) {
+        for (final updateShouldNotify in dependencies) {
           try {
             assert(() {
               _debugIsSelecting = true;
@@ -469,10 +469,6 @@ To fix, consider:
 }
 
 typedef _SelectorAspect<T> = bool Function(T value);
-
-class _SelectorDependency<T> {
-  List<_SelectorAspect<T>> selectors = [];
-}
 
 bool _debugCanSelect = true;
 
