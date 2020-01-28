@@ -252,44 +252,21 @@ class _DefaultInheritedProviderScope<T> extends InheritedWidget {
   }
 }
 
-class _DefaultInheritedProviderScopeElement<T> extends InheritedElement with _InheritedProviderScopeMixin<T> {
+class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implements InheritedContext<T> {
   _DefaultInheritedProviderScopeElement(_DefaultInheritedProviderScope<T> widget) : super(widget);
 
-  @override
-  _DefaultInheritedProviderScope<T> get widget => super.widget as _DefaultInheritedProviderScope<T>;
-
-  @override
-  bool _isLazy(_DefaultInheritedProviderScope<T> widget) => widget.owner._lazy;
-
-  @override
-  _DelegateState<T, _Delegate<T>> _delegateState;
-
-  @override
-  _Delegate<T> _widgetToDelegate(_DefaultInheritedProviderScope<T> widget) {
-    return widget.owner._delegate;
-  }
-
-  @override
-  void _mountDelegate() {
-    _delegateState = widget.owner._delegate.createState()..element = this;
-  }
-}
-
-typedef _SelectorAspect<T> = bool Function(T value);
-
-class _SelectorDependency<T> {
-  List<_SelectorAspect<T>> selectors = [];
-}
-
-bool _debugCanSelect = true;
-
-mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedContext<T> {
   bool _shouldNotifyDependents = false;
   bool _debugInheritLocked = false;
   bool _isNotifyDependentsEnabled = true;
   bool _firstBuild = true;
   bool _shouldClearSelectors = false;
   bool _shouldClearMutationScheduled = false;
+  bool _updatedShouldNotify = false;
+  bool _isBuildFromExternalSources = false;
+  _DelegateState<T, _Delegate<T>> _delegateState;
+
+  @override
+  _DefaultInheritedProviderScope<T> get widget => super.widget as _DefaultInheritedProviderScope<T>;
 
   @override
   void updateDependencies(Element dependent, Object aspect) {
@@ -364,32 +341,19 @@ mixin _InheritedProviderScopeMixin<T> on InheritedElement implements InheritedCo
     }
   }
 
-  void _mountDelegate();
-
-  _Delegate<T> _widgetToDelegate(covariant InheritedWidget widget);
-
-  _DelegateState<T, _Delegate<T>> get _delegateState;
-
-  bool _isLazy(covariant InheritedWidget widget);
-
-  @override
-  bool get hasValue => _delegateState.hasValue;
-
   @override
   void performRebuild() {
     if (_firstBuild) {
       _firstBuild = false;
-      _mountDelegate();
+      _delegateState = widget.owner._delegate.createState()..element = this;
     }
     super.performRebuild();
   }
 
-  bool _updatedShouldNotify = false;
-  bool _isBuildFromExternalSources = false;
   @override
-  void update(InheritedWidget newWidget) {
+  void update(_DefaultInheritedProviderScope<T> newWidget) {
     assert(() {
-      if (_widgetToDelegate(widget).runtimeType != _widgetToDelegate(newWidget).runtimeType) {
+      if (widget.owner._delegate.runtimeType != newWidget.owner._delegate.runtimeType) {
         throw StateError('''Rebuilt $widget using a different constructor.
       
 This is likely a mistake and is unsupported.
@@ -400,7 +364,7 @@ If you're in this situation, consider passing a `key` unique to each individual 
     }());
 
     _isBuildFromExternalSources = true;
-    _updatedShouldNotify = _delegateState.willUpdateDelegate(_widgetToDelegate(newWidget));
+    _updatedShouldNotify = _delegateState.willUpdateDelegate(newWidget.owner._delegate);
     super.update(newWidget);
     _updatedShouldNotify = false;
   }
@@ -420,22 +384,8 @@ If you're in this situation, consider passing a `key` unique to each individual 
   }
 
   @override
-  void unmount() {
-    _delegateState.dispose();
-    super.unmount();
-  }
-
-  @override
-  void markNeedsNotifyDependents() {
-    if (!_isNotifyDependentsEnabled) return;
-
-    markNeedsBuild();
-    _shouldNotifyDependents = true;
-  }
-
-  @override
   Widget build() {
-    if (_isLazy(widget) == false) {
+    if (widget.owner._lazy == false) {
       value; // this will force the value to be computed.
     }
     _delegateState.build(_isBuildFromExternalSources);
@@ -445,6 +395,23 @@ If you're in this situation, consider passing a `key` unique to each individual 
       notifyClients(widget);
     }
     return super.build();
+  }
+
+  @override
+  void unmount() {
+    _delegateState.dispose();
+    super.unmount();
+  }
+
+  @override
+  bool get hasValue => _delegateState.hasValue;
+
+  @override
+  void markNeedsNotifyDependents() {
+    if (!_isNotifyDependentsEnabled) return;
+
+    markNeedsBuild();
+    _shouldNotifyDependents = true;
   }
 
   bool _debugSetInheritedLock(bool value) {
@@ -501,6 +468,14 @@ To fix, consider:
   }
 }
 
+typedef _SelectorAspect<T> = bool Function(T value);
+
+class _SelectorDependency<T> {
+  List<_SelectorAspect<T>> selectors = [];
+}
+
+bool _debugCanSelect = true;
+
 @immutable
 abstract class _Delegate<T> {
   _DelegateState<T, _Delegate<T>> createState();
@@ -509,11 +484,11 @@ abstract class _Delegate<T> {
 }
 
 abstract class _DelegateState<T, D extends _Delegate<T>> {
-  _InheritedProviderScopeMixin<T> element;
+  _DefaultInheritedProviderScopeElement<T> element;
 
   T get value;
 
-  D get delegate => element._widgetToDelegate(element.widget) as D;
+  D get delegate => element.widget.owner._delegate as D;
 
   bool get hasValue;
 
