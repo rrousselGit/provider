@@ -209,7 +209,7 @@ event handler, when the widget tree doesn't care about the value.
     return inheritedElement.value;
   }
 
-  static _InheritedProviderScopeMixin<T> _inheritedElementOf<T>(BuildContext context) {
+  static _DefaultInheritedProviderScopeElement<T> _inheritedElementOf<T>(BuildContext context) {
     assert(_debugIsSelecting == false, 'Cannot call context.read/watch/select inside the callback of a context.select');
     assert(
       T != dynamic,
@@ -221,7 +221,7 @@ If you want to expose a variable that can be anything, consider changing
 `dynamic` to `Object` instead.
 ''',
     );
-    _InheritedProviderScopeMixin<T> inheritedElement;
+    _DefaultInheritedProviderScopeElement<T> inheritedElement;
 
     if (context.widget is _DefaultInheritedProviderScope<T>) {
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
