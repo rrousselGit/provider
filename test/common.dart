@@ -44,7 +44,6 @@ class TransitionBuilderMock extends Mock {
   Widget call(BuildContext context, Widget child);
 }
 
-
 class StartListeningMock<T> extends Mock {
   StartListeningMock([VoidCallback value]) {
     when(this(any, any)).thenReturn(value);
