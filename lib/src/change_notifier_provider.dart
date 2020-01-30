@@ -108,7 +108,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvide
     Key key,
     @required Create<T> create,
     bool lazy,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -123,7 +123,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvide
   ChangeNotifierProvider.value({
     Key key,
     @required T value,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super.value(
           key: key,
@@ -214,7 +214,7 @@ class ChangeNotifierProxyProvider<T, R extends ChangeNotifier> extends Listenabl
     @required Create<R> create,
     @required ProxyProviderBuilder<T, R> update,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -235,7 +235,7 @@ class ChangeNotifierProxyProvider0<R extends ChangeNotifier> extends ListenableP
     @required Create<R> create,
     @required R Function(BuildContext, R value) update,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -256,7 +256,7 @@ class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier> extends List
     @required Create<R> create,
     @required ProxyProviderBuilder2<T, T2, R> update,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -277,7 +277,7 @@ class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier> extends 
     @required Create<R> create,
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -299,7 +299,7 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
     @required Create<R> create,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -321,7 +321,7 @@ class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
     @required Create<R> create,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -343,7 +343,7 @@ class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6, R extends ChangeNotifi
     @required Create<R> create,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,

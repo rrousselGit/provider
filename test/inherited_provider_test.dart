@@ -79,56 +79,90 @@ void main() {
     final child = Container();
 
     var notifier = ValueNotifier(0);
-    final update = ValueBuilderMock(0);
-    final builder = ValueWidgetBuilderMock<int>((c, value, child) {
+    final builder = TransitionBuilderMock((c, child) {
       final notifier = Provider.of<ValueNotifier<int>>(c);
       return Text(
-        'notifier: ${notifier.value} value: $value',
+        '${notifier.value}',
         textDirection: TextDirection.ltr,
       );
     });
 
     await tester.pumpWidget(
-      ChangeNotifierProvider(
-        create: (_) => notifier,
-        child: InheritedProvider<int>(
-          update: update,
-          builder: builder,
-          child: child,
-        ),
+      ChangeNotifierProvider.value(
+        value: notifier,
+        builder: builder,
+        child: child,
       ),
     );
 
-    expect(find.text('notifier: 0 value: 0'), findsOneWidget);
-    verify(builder(argThat(isNotNull), 0, child)).called(1);
+    verify(builder(argThat(isNotNull), child)).called(1);
     verifyNoMoreInteractions(builder);
-    verify(update(any, any)).called(1);
-    verifyNoMoreInteractions(update);
+    expect(find.text('0'), findsOneWidget);
 
     notifier.value++;
     await tester.pump();
 
-    expect(find.text('notifier: 1 value: 0'), findsOneWidget);
-    verify(builder(argThat(isNotNull), 0, child)).called(1);
+    verify(builder(argThat(isNotNull), child)).called(1);
     verifyNoMoreInteractions(builder);
-    verifyNoMoreInteractions(update);
+    expect(find.text('1'), findsOneWidget);
+  });
+  testWidgets('builder can _not_ rebuild when provider updates', (tester) async {
+    final child = Container();
 
-    when(update(any, any)).thenReturn(1);
+    var notifier = ValueNotifier(0);
+    final builder = TransitionBuilderMock((c, child) {
+      return const Text('foo', textDirection: TextDirection.ltr);
+    });
+
     await tester.pumpWidget(
-      ChangeNotifierProvider(
-        create: (_) => notifier,
-        child: InheritedProvider<int>(
-          update: update,
-          builder: builder,
-          child: child,
-        ),
+      ChangeNotifierProvider.value(
+        value: notifier,
+        builder: builder,
+        child: child,
       ),
     );
-    expect(find.text('notifier: 1 value: 1'), findsOneWidget);
-    verify(builder(argThat(isNotNull), 1, child)).called(1);
+
+    verify(builder(argThat(isNotNull), child)).called(1);
     verifyNoMoreInteractions(builder);
-    verify(update(any, any)).called(1);
-    verifyNoMoreInteractions(update);
+    expect(find.text('foo'), findsOneWidget);
+
+    notifier.value++;
+    await tester.pump();
+
+    verifyNoMoreInteractions(builder);
+    expect(find.text('foo'), findsOneWidget);
+  });
+  testWidgets('builder rebuilds if provider is recreated', (tester) async {
+    final child = Container();
+
+    var notifier = ValueNotifier(0);
+    final builder = TransitionBuilderMock((c, child) {
+      return const Text('foo', textDirection: TextDirection.ltr);
+    });
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: notifier,
+        builder: builder,
+        child: child,
+      ),
+    );
+
+    verify(builder(argThat(isNotNull), child)).called(1);
+    verifyNoMoreInteractions(builder);
+    expect(find.text('foo'), findsOneWidget);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: notifier,
+        builder: builder,
+        child: child,
+      ),
+    );
+
+    verify(builder(argThat(isNotNull), child)).called(1);
+    verifyNoMoreInteractions(builder);
+    expect(find.text('foo'), findsOneWidget);
   });
   testWidgets('provider.of throws if listen:true outside of the widget tree',
       (tester) async {
