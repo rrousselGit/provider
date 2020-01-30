@@ -7,7 +7,7 @@
 
   ```dart
   Widget build(BuildContext context) {
-    return Selector<Person, String(
+    return Selector<Person, String>(
       selector: (_, p) => p.name,
       builder: (_, name, __) {
         return Text(name);
@@ -26,16 +26,18 @@
   ```
 
 * Added `builder` on the different providers.
-  This parameters simplifies situations where we want to directly consume the value.
+  This parameters simplifies situations where we need a [BuildContext] that
+  can access the new provider.
 
   As such, instead of:
 
   ```dart
   Provider(
     create: (_) => Something(),
-    child: Consumer<Something>(
-      builder: (_, something, __) {
-        return Text('$something');
+    child: Builder(
+      builder: (context) {
+        final name = context.select((Something s) => s.name);
+        return Text(name);
       },
     ),
   )
@@ -46,8 +48,9 @@
   ```dart
   Provider(
     create: (_) => Something(),
-    builder: (_, something, __) {
-      return Text('$something');
+    builder: (context, child) {
+      final name = context.select((Something s) => s.name);
+      return Text(name);
     },
   )
   ```

@@ -184,6 +184,7 @@ class Provider<T> extends InheritedProvider<T> {
   /// )
   /// ```
   static T of<T>(BuildContext context, {bool listen = true}) {
+    assert(context != null);
     assert(
       context.owner.debugBuilding || listen == false || _debugIsInInheritedProviderUpdate,
       '''

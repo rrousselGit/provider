@@ -108,6 +108,9 @@ void main() {
     verifyNoMoreInteractions(builder);
     expect(find.text('foo'), findsOneWidget);
   });
+  test('Provider.of has a proper error message if context is null', ()  {
+    expect(() => Provider.of<int>(null), throwsAssertionError);
+  });
   testWidgets('builder rebuilds if provider is recreated', (tester) async {
     final child = Container();
 
