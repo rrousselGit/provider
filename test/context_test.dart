@@ -226,49 +226,6 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
-    testWidgets('throws if select called inside didChangeDependencies on rebuild', (tester) async {
-      var child = StatefulTest(
-        didChangeDependencies: (context) {
-          context.select((int i) => i);
-        },
-        child: const Text('foo', textDirection: TextDirection.ltr),
-      );
-
-      await tester.pumpWidget(
-        Provider.value(
-          value: 42,
-          child: child,
-        ),
-      );
-
-      expect(find.text('foo'), findsOneWidget);
-
-      await tester.pumpWidget(
-        Provider.value(
-          value: 21,
-          child: child,
-        ),
-      );
-
-      expect(tester.takeException(), isAssertionError);
-
-      // future calls to select still works
-      await tester.pumpWidget(
-        Provider.value(
-          value: 21,
-          child: StatefulTest(
-            builder: (context) {
-              return Text(
-                context.select((int i) => i.toString()),
-                textDirection: TextDirection.ltr,
-              );
-            },
-          ),
-        ),
-      );
-
-      expect(find.text('21'), findsOneWidget);
-    });
     testWidgets('can call read/watch inside didChangeDepencies', (tester) async {
       var didChangeDependenciesCount = 0;
       var child = StatefulTest(
