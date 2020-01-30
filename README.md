@@ -12,7 +12,7 @@ By using `provider` instead of manually writing [InheritedWidget], you get:
 - lazy-loading
 - a largely reduced boilerplate over making a new class everytime
 - devtools friendly
-- a common way to consumer these [InheritedWidgets] (See [Provider.of]/[Consumer]/[Selector])
+- a common way to consume these [InheritedWidgets] (See [Provider.of]/[Consumer]/[Selector])
 - increased scalability for classes with a listening mecanism that grows exponentially
   in complexity (such as [ChangeNotifier], which is O(N²) for dispatching notifications).
 
@@ -89,7 +89,7 @@ create values is undesired.
 
 ```dart
 Provider(
-  create: (_) => new MyModel(),
+  create: (_) => MyModel(),
   child: ...
 )
 ```
@@ -98,7 +98,7 @@ Provider(
 
 ```dart
 ChangeNotifierProvider.value(
-  value: new MyModel(),
+  value: MyModel(),
   child: ...
 )
 ```
@@ -113,7 +113,7 @@ ChangeNotifierProvider.value(
 int count;
 
 Provider(
-  create: (_) => new MyModel(count),
+  create: (_) => MyModel(count),
   child: ...
 )
 ```
@@ -125,11 +125,10 @@ consider using `ProxyProvider`:
 int count;
 
 ProxyProvider0(
-  update: (_, __) => new MyModel(count),
+  update: (_, __) => MyModel(count),
   child: ...
 )
 ```
-
 
 **NOTE**:
 
@@ -147,7 +146,6 @@ MyProvider(
   lazy: false,
 )
 ```
-
 
 #### Reusing an existing object instance:
 
@@ -182,14 +180,19 @@ ChangeNotifierProvider(
 ### Reading a value
 
 The easiest way to read a value is by using the extension methods on [BuildContext]:
-- `context.watch<T>()`
-- `context.read<T>()`
 
-Or to use the static method `Provider.of<T>(context)`.
+- `context.watch<T>()`, which makes the widget listen to changes on `T`
+- `context.read<T>()`, which returns `T` without listening to it
+- `context.select<T, R>(R cb(T value))`, which allows a widget to listen to only a small part of `T`.
+
+Or to use the static method `Provider.of<T>(context)`, which will behave similarly to `watch`/`read`.
 
 These methods will look up in the widget tree starting from the widget associated
 with the `BuildContext` passed, and will return the nearest variable of type
 `T` found (or throw if nothing is found).
+
+It's worth noting that this operation is O(1). It doesn't involve actually walking
+in the widget tree.
 
 Combined with the first example of [exposing a value](#exposing-a-value), this
 widget will read the exposed `String` and render "Hello World."
@@ -298,7 +301,7 @@ It comes under multiple variations, such as:
 
 ### FAQ
 
-### Can I inspect the content of my objects?
+#### Can I inspect the content of my objects?
 
 Flutter comes with a [devtool](https://github.com/flutter/devtools) that shows
 what the widget tree is at a given moment.
@@ -313,7 +316,7 @@ From there, if you click on one provider, you will be able to see the value it e
 
 (screenshot of the devtools using the `example` folder)
 
-### The devtool only shows "Instance of MyClass". What can I do?
+#### The devtool only shows "Instance of MyClass". What can I do?
 
 By default, the devtool relies on `toString`, which defaults to "Instance of MyClass".
 
@@ -364,7 +367,7 @@ To have something more useful, you have two solutions:
   }
   ```
 
-### I have an exception when obtaining Providers inside `initState`. What can I do?
+#### I have an exception when obtaining Providers inside `initState`. What can I do?
 
 This exception happens because you're trying to listen to a provider from a
 life-cycle that will never ever be called again.
@@ -410,7 +413,7 @@ initState() {
 
 Which will print `value` once _and ignore updates._
 
-### I use [ChangeNotifier] and I have an exception when I update it, what happens?
+#### I use [ChangeNotifier] and I have an exception when I update it, what happens?
 
 This likely happens because you are modifying the [ChangeNotifier] from one of
 its descendants _while the widget tree is building_.
@@ -503,14 +506,14 @@ class ExampleState extends State<Example> {
 where we can read the state by doing:
 
 ```dart
-return Text(Provider.of<int>(context).toString());
+return Text(context.watch<int>().toString());
 ```
 
 and modify the state with:
 
 ```dart
 return FloatingActionButton(
-  onPressed: Provider.of<ExampleState>(context).increment,
+  onPressed: () => context.read<ExampleState>().increment(),
   child: Icon(Icons.plus_one),
 );
 ```
@@ -533,8 +536,33 @@ https://gist.github.com/rrousselGit/4910f3125e41600df3c2577e26967c91
 
 #### My widget rebuilds too often, what can I do?
 
-Instead of [Provider.of], you can use [Consumer]/[Selector].
+Instead of `context.watch`, you can use `context.select` to listen only to a
+specific set of properties on the obtained object.
 
+For example, while you can write:
+
+```dart
+Widget build(BuildContext context) {
+  final person = context.watch<Person>();
+  return Text(person.name);
+}
+```
+
+It may cause the widget to rebuild if something other than `name` changes.
+
+Instead, you can use `context.select` to listen only to the `name` property:
+
+```dart
+Widget build(BuildContext context) {
+  final name = context.select((Person p) => p.name);
+  return Text(person.name);
+}
+```
+
+This way, the widget won't unnecesserily rebuild if something other than `name`
+changes.
+
+Similarly, you can use [Consumer]/[Selector].
 Their optional `child` argument allows to rebuild only a very specific part of
 the widget tree:
 
@@ -551,21 +579,6 @@ Foo(
 
 In this example, only `Bar` will rebuild when `A` updates. `Foo` and `Baz` won't
 unnecesseraly rebuild.
-
-To go one step further, it is possible to use [Selector] to ignore changes if
-they don't have an impact on the widget-tree:
-
-```dart
-Selector<List, int>(
-  selector: (_, list) => list.length,
-  builder: (_, length, __) {
-    return Text('$length');
-  }
-);
-```
-
-This snippet will rebuild only if the length of the list changes. But it won't
-unnecessarily update if an item is updated.
 
 #### Can I obtain two different providers using the same type?
 
@@ -598,7 +611,7 @@ Provider<Country>(
 ),
 ```
 
-## Existing providers
+### Existing providers
 
 `provider` exposes a few different kinds of "provider" for different types of objects.
 
