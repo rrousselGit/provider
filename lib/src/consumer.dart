@@ -4,21 +4,21 @@ import 'provider.dart';
 import 'selector.dart' show Selector;
 
 /// {@template provider.consumer}
-/// Obtains [Provider<T>] from its ancestors and pass its value to [builder].
+/// Obtains [Provider<T>] from its ancestors and passes its value to [builder].
 ///
-/// The widget [Consumer] doesn't do any fancy work. It just calls [Provider.of]
-/// in a new widget, and delegate its `build` implementation to [builder].
+/// The [Consumer] widget doesn't do any fancy work. It just calls [Provider.of]
+/// in a new widget, and delegates its `build` implementation to [builder].
 ///
 /// [builder] must not be null and may be called multiple times (such as when
-/// provided value change).
+/// the provided value change).
 ///
-/// The wiget [Consumer] has two main purposes:
+/// The [Consumer] widget has two main purposes:
 ///
 /// * It allows obtaining a value from a provider when we don't have a
-///   [BuildContext] that is a descendant of the said provider, and therefore
+///   [BuildContext] that is a descendant of said provider, and therefore
 ///   cannot use [Provider.of].
 ///
-/// Such scenario typically happens when the widget that creates the provider
+/// This scenario typically happens when the widget that creates the provider
 /// is also one of its consumers, like in the following example:
 ///
 /// ```dart
@@ -55,14 +55,12 @@ import 'selector.dart' show Selector;
 /// [Text]. It will also update the [Text] whenever the value `foo` changes.
 ///
 ///
-/// * It helps with performance optimisation by having more granular rebuilds.
+/// * It helps with performance optimisation by providing more granular rebuilds.
 ///
-/// Unless `listen: false` is passed to [Provider.of], it means that the widget
-/// associated to the [BuildContext] passed to [Provider.of] will rebuild
-/// whenever the obtained value changes.
-///
-/// This is the expected behavior, but sometimes it may rebuild more widgets
-/// than needed.
+/// Unless `listen: false` is passed to [Provider.of], the widget
+/// associated with the [BuildContext] passed to [Provider.of] will rebuild
+/// whenever the obtained value changes. This is the expected behavior,
+/// but sometimes it may rebuild more widgets than needed.
 ///
 /// Here's an example:
 ///
@@ -77,12 +75,12 @@ import 'selector.dart' show Selector;
 ///  }
 /// ```
 ///
-/// In such code, only `BarWidget` depends on the value returned by
+/// In the above code, only `BarWidget` depends on the value returned by
 /// [Provider.of]. But when `Bar` changes, then both `BarWidget` _and_
 /// `FooWidget` will rebuild.
 ///
-/// Ideally, only `BarWidget` should be rebuilt. And to achieve that, one
-/// solution is to use [Consumer].
+/// Ideally, only `BarWidget` should be rebuilt. One
+/// solution to achieve that is to use [Consumer].
 ///
 /// To do so, we will wrap _only_ the widgets that depends on a provider into
 /// a [Consumer]:
@@ -128,16 +126,16 @@ import 'selector.dart' show Selector;
 /// In that example, `BarWidget` is built outside of [builder]. Then, the
 /// `BarWidget` instance is passed to [builder] as the last parameter.
 ///
-/// This means that when [builder] is called again with new values, new
-/// instance of `BarWidget` will not be recreated.
-/// This let Flutter knows that it doesn't have to rebuild `BarWidget`.
-/// Therefore in such configuration, only `FooWidget` will rebuild
+/// This means that when [builder] is called again with new values, a new
+/// instance of `BarWidget` will not be created.
+/// This lets Flutter know that it doesn't have to rebuild `BarWidget`.
+/// Therefore in such a configuration, only `FooWidget` will rebuild
 /// if `Foo` changes.
 ///
 /// ## Note:
 ///
-/// The widget [Consumer] can also be used inside [MultiProvider]. To do so, it
-/// must returns the `child` passed to [builder] in the widget tree it creates.
+/// The [Consumer] widget can also be used inside [MultiProvider]. To do so, it
+/// must return the `child` passed to [builder] in the widget tree it creates.
 ///
 /// ```dart
 /// MultiProvider(
