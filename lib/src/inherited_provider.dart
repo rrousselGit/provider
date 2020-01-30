@@ -43,6 +43,11 @@ typedef StartListening<T> = VoidCallback Function(InheritedContext<T> element, T
 ///
 /// Do not use this class directly unless you are creating a custom "Provider".
 /// Instead use [Provider] class, which wraps [InheritedProvider].
+///
+/// See also:
+///
+///  - [DeferredInheritedProvider], a variant of this object where the provided
+///    object and the created object are two different entity.
 class InheritedProvider<T> extends SingleChildStatelessWidget {
   /// Creates a value, then expose it to its descendants.
   ///
@@ -56,7 +61,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     void Function(T value) debugCheckInvalidValueType,
     StartListening<T> startListening,
     Dispose<T> dispose,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     bool lazy,
     Widget child,
   })  : _lazy = lazy,
@@ -78,7 +83,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     UpdateShouldNotify<T> updateShouldNotify,
     StartListening<T> startListening,
     bool lazy,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : _lazy = lazy,
         _builder = builder,
@@ -93,7 +98,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     Key key,
     _Delegate<T> delegate,
     bool lazy,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : _lazy = lazy,
         _builder = builder,
@@ -102,7 +107,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
 
   final _Delegate<T> _delegate;
   final bool _lazy;
-  final ValueWidgetBuilder<T> _builder;
+  final TransitionBuilder _builder;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -121,9 +126,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
       owner: this,
       child: _builder != null
           ? Builder(
-              builder: (context) {
-                return _builder(context, Provider.of<T>(context), child);
-              },
+              builder: (context) => _builder(context, child),
             )
           : child,
     );
@@ -136,9 +139,7 @@ class _InheritedProviderElement<T> extends SingleChildStatelessElement {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    visitChildren((e) {
-      e.debugFillProperties(properties);
-    });
+    visitChildren((e) => e.debugFillProperties(properties));
   }
 }
 

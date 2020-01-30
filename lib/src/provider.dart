@@ -125,7 +125,7 @@ class Provider<T> extends InheritedProvider<T> {
     @required Create<T> create,
     Dispose<T> dispose,
     bool lazy,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null),
         super(
@@ -152,7 +152,7 @@ class Provider<T> extends InheritedProvider<T> {
     Key key,
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(() {
           Provider.debugCheckInvalidValueType?.call<T>(value);

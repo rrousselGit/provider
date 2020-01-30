@@ -84,7 +84,7 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     bool lazy,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null),
         super(
@@ -108,7 +108,7 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     bool lazy,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super.value(
           key: key,
@@ -185,7 +185,7 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     bool lazy,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null),
         super(
@@ -208,7 +208,7 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
     T initialData,
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super.value(
           key: key,

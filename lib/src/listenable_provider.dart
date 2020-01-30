@@ -26,7 +26,7 @@ class ListenableProvider<T extends Listenable> extends InheritedProvider<T> {
     @required Create<T> create,
     Dispose<T> dispose,
     bool lazy,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null),
         super(
@@ -73,7 +73,7 @@ ChangeNotifierProvider(
     Key key,
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super.value(
           key: key,
@@ -103,7 +103,7 @@ class ListenableProxyProvider0<R extends Listenable> extends InheritedProvider<R
     Dispose<R> dispose,
     UpdateShouldNotify<R> updateShouldNotify,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -149,7 +149,7 @@ class ListenableProxyProvider<T, R extends Listenable> extends ListenableProxyPr
     @required ProxyProviderBuilder<T, R> update,
     Dispose<R> dispose,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -176,7 +176,7 @@ class ListenableProxyProvider2<T, T2, R extends Listenable> extends ListenablePr
     @required ProxyProviderBuilder2<T, T2, R> update,
     Dispose<R> dispose,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -204,7 +204,7 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable> extends Listenab
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
     Dispose<R> dispose,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -233,7 +233,7 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable> extends List
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     Dispose<R> dispose,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -263,7 +263,7 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable> extends 
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     Dispose<R> dispose,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -294,7 +294,7 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable> exte
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     Dispose<R> dispose,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(

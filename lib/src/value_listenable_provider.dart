@@ -23,7 +23,7 @@ class ValueListenableProvider<T> extends DeferredInheritedProvider<ValueListenab
     @required Create<ValueNotifier<T>> create,
     UpdateShouldNotify<T> updateShouldNotify,
     bool lazy,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -54,7 +54,7 @@ class ValueListenableProvider<T> extends DeferredInheritedProvider<ValueListenab
     Key key,
     @required ValueListenable<T> value,
     UpdateShouldNotify<T> updateShouldNotify,
-    ValueWidgetBuilder<T> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super.value(
           key: key,

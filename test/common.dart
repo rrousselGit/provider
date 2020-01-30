@@ -31,6 +31,20 @@ class ValueBuilderMock<T> extends Mock {
   T call(BuildContext context, T previous);
 }
 
+class TransitionBuilderMock extends Mock {
+  TransitionBuilderMock([Widget cb(BuildContext c, Widget child)]) {
+    if (cb != null) {
+      when(this(any, any)).thenAnswer((i) {
+        final context = i.positionalArguments.first as BuildContext;
+        final child = i.positionalArguments[1] as Widget;
+        return cb(context, child);
+      });
+    }
+  }
+  Widget call(BuildContext context, Widget child);
+}
+
+
 class StartListeningMock<T> extends Mock {
   StartListeningMock([VoidCallback value]) {
     when(this(any, any)).thenReturn(value);

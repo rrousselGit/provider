@@ -21,6 +21,11 @@ typedef DeferredStartListening<T, R> = VoidCallback Function(
 ///
 /// For example, for a stream provider, we'll want to listen to `Stream<T>`,
 /// but expose `T` not the [Stream].
+///
+/// See also:
+///
+///  - [InheritedProvider], a variant of this object where the provider object and
+///    the created object are the same.
 class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
   /// Lazily create an object automatically disposed when
   /// [DeferredInheritedProvider] is removed from the tree.
@@ -34,7 +39,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     @required DeferredStartListening<T, R> startListening,
     UpdateShouldNotify<R> updateShouldNotify,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super._constructor(
           key: key,
@@ -56,7 +61,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     @required DeferredStartListening<T, R> startListening,
     UpdateShouldNotify<R> updateShouldNotify,
     bool lazy,
-    ValueWidgetBuilder<R> builder,
+    TransitionBuilder builder,
     Widget child,
   }) : super._constructor(
           key: key,
