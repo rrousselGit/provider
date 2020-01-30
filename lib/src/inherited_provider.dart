@@ -189,7 +189,6 @@ extension SelectContext on BuildContext {
   /// It is fine to call `select` multiple times.
   R select<T, R>(R selector(T value)) {
     assert(owner.debugBuilding);
-    assert(_debugCanSelect, 'Cannot call `select` inside `didChangeDependencies');
     final inheritedElement = Provider._inheritedElementOf<T>(this);
     try {
       assert(() {
@@ -327,18 +326,7 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implemen
     }
 
     if (shouldNotify) {
-      try {
-        assert(() {
-          _debugCanSelect = false;
-          return true;
-        }());
-        dependent.didChangeDependencies();
-      } finally {
-        assert(() {
-          _debugCanSelect = true;
-          return true;
-        }());
-      }
+      dependent.didChangeDependencies();
     }
   }
 
@@ -470,8 +458,6 @@ To fix, consider:
 }
 
 typedef _SelectorAspect<T> = bool Function(T value);
-
-bool _debugCanSelect = true;
 
 @immutable
 abstract class _Delegate<T> {
