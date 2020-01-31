@@ -597,6 +597,30 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(inheritedContext.hasValue, isTrue);
     });
+    testWidgets('provider calls update if rebuilding only due to didChangeDependencies', (tester) async {
+      final mock = ValueBuilderMock<String>('');
+
+      final provider = ProxyProvider0<String>(
+        create: (_) => '',
+        update: (c, p) {
+          mock(c, p);
+          return c.watch<int>().toString();
+        },
+        child: const TextOf<String>(),
+      );
+
+      await tester.pumpWidget(Provider.value(value: 0, child: provider));
+
+      expect(find.text('0'), findsOneWidget);
+      verify(mock(any, '')).called(1);
+      verifyNoMoreInteractions(mock);
+
+      await tester.pumpWidget(Provider.value(value: 1, child: provider));
+
+      expect(find.text('1'), findsOneWidget);
+      verify(mock(any, '0')).called(1);
+      verifyNoMoreInteractions(mock);
+    });
     testWidgets("provider notifying dependents doesn't call update", (tester) async {
       final notifier = ValueNotifier(0);
       final mock = ValueBuilderMock<ValueNotifier<int>>(notifier);
