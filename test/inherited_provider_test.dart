@@ -597,6 +597,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(inheritedContext.hasValue, isTrue);
     });
+
     testWidgets('provider calls update if rebuilding only due to didChangeDependencies', (tester) async {
       final mock = ValueBuilderMock<String>('');
 

@@ -592,6 +592,61 @@ void main() {
       expect(find.text('24'), findsOneWidget);
     });
   });
+  testWidgets('clears select dependencies for all dependents', (tester) async {
+    var buildCountChild1 = 0;
+    var buildCountChild2 = 0;
+
+    final select1 = MockSelector<int, int>((v) => 0);
+    final select2 = MockSelector<int, int>((v) => 0);
+
+    Widget build(int value) {
+      return Provider.value(
+        value: value,
+        child: Stack(
+          textDirection: TextDirection.ltr,
+          children: <Widget>[
+            Builder(builder: (c) {
+              buildCountChild1++;
+              c.select<int, int>(select1.call);
+              return Container();
+            }),
+            Builder(builder: (c) {
+              buildCountChild2++;
+              c.select<int, int>(select2.call);
+              return Container();
+            }),
+          ],
+        ),
+      );
+    }
+
+    await tester.pumpWidget(build(0));
+
+    expect(buildCountChild1, 1);
+    expect(buildCountChild2, 1);
+    verify(select1(0)).called(1);
+    verifyNoMoreInteractions(select1);
+    verify(select2(0)).called(1);
+    verifyNoMoreInteractions(select2);
+
+    await tester.pumpWidget(build(1));
+
+    expect(buildCountChild1, 2);
+    expect(buildCountChild2, 2);
+    verify(select1(1)).called(2);
+    verifyNoMoreInteractions(select1);
+    verify(select2(1)).called(2);
+    verifyNoMoreInteractions(select2);
+
+    await tester.pumpWidget(build(2));
+
+    expect(buildCountChild1, 3);
+    expect(buildCountChild2, 3);
+    verify(select1(2)).called(2);
+    verifyNoMoreInteractions(select1);
+    verify(select2(2)).called(2);
+    verifyNoMoreInteractions(select2);
+  });
 }
 
 class StatefulTest extends StatefulWidget {
@@ -629,12 +684,14 @@ class _StatefulTestState extends State<StatefulTest> {
 }
 
 class MockSelector<T, R> extends Mock {
-  static MockSelector<T, T> identity<T>() {
-    final res = MockSelector<T, T>();
-    when(res(any)).thenAnswer((i) {
-      return i.positionalArguments.first as T;
+  MockSelector(R cb(T v)) {
+    when(this(any)).thenAnswer((i) {
+      return cb(i.positionalArguments.first as T);
     });
-    return res;
+  }
+
+  static MockSelector<T, T> identity<T>() {
+    return MockSelector<T, T>((v) => v);
   }
 
   R call(T v);
