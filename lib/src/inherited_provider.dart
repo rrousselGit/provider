@@ -252,6 +252,12 @@ class _DefaultInheritedProviderScope<T> extends InheritedWidget {
   }
 }
 
+class _Dependency<T> {
+  bool shouldClearSelectors = false;
+  bool shouldClearMutationScheduled = false;
+  final selectors = <_SelectorAspect<T>>[];
+}
+
 class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implements InheritedContext<T> {
   _DefaultInheritedProviderScopeElement(_DefaultInheritedProviderScope<T> widget) : super(widget);
 
@@ -259,8 +265,6 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implemen
   bool _debugInheritLocked = false;
   bool _isNotifyDependentsEnabled = true;
   bool _firstBuild = true;
-  bool _shouldClearSelectors = false;
-  bool _shouldClearMutationScheduled = false;
   bool _updatedShouldNotify = false;
   bool _isBuildFromExternalSources = false;
   _DelegateState<T, _Delegate<T>> _delegateState;
@@ -272,23 +276,23 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implemen
   void updateDependencies(Element dependent, Object aspect) {
     final dependencies = getDependencies(dependent);
     // once subscribed to everything once, it always stays subscribed to everything
-    if (dependencies != null && dependencies is! List<_SelectorAspect<T>>) {
+    if (dependencies != null && dependencies is! _Dependency<T>) {
       return;
     }
 
     if (aspect is _SelectorAspect<T>) {
-      final selectorDependency = (dependencies ?? <_SelectorAspect<T>>[]) as List<_SelectorAspect<T>>;
-      if (_shouldClearSelectors) {
-        _shouldClearSelectors = false;
-        selectorDependency.clear();
+      final selectorDependency = (dependencies ?? _Dependency<T>()) as _Dependency<T>;
+      if (selectorDependency.shouldClearSelectors) {
+        selectorDependency.shouldClearSelectors = false;
+        selectorDependency.selectors.clear();
       }
-      if (_shouldClearMutationScheduled == false) {
-        _shouldClearMutationScheduled = true;
+      if (selectorDependency.shouldClearMutationScheduled == false) {
+        selectorDependency.shouldClearMutationScheduled = true;
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          _shouldClearSelectors = true;
+          selectorDependency.shouldClearSelectors = true;
         });
       }
-      selectorDependency.add(aspect);
+      selectorDependency.selectors.add(aspect);
       setDependencies(dependent, selectorDependency);
     } else {
       // subscribes to everything
@@ -302,8 +306,8 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implemen
 
     var shouldNotify = false;
     if (dependencies != null) {
-      if (dependencies is List<_SelectorAspect<T>>) {
-        for (final updateShouldNotify in dependencies) {
+      if (dependencies is _Dependency<T>) {
+        for (final updateShouldNotify in dependencies.selectors) {
           try {
             assert(() {
               _debugIsSelecting = true;
