@@ -122,7 +122,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
-    return _DefaultInheritedProviderScope<T>(
+    return _InheritedProviderScope<T>(
       owner: this,
       child: _builder != null
           ? Builder(
@@ -233,8 +233,8 @@ abstract class InheritedContext<T> extends BuildContext {
   bool get hasValue;
 }
 
-class _DefaultInheritedProviderScope<T> extends InheritedWidget {
-  _DefaultInheritedProviderScope({
+class _InheritedProviderScope<T> extends InheritedWidget {
+  _InheritedProviderScope({
     this.owner,
     @required Widget child,
   }) : super(child: child);
@@ -247,8 +247,8 @@ class _DefaultInheritedProviderScope<T> extends InheritedWidget {
   }
 
   @override
-  _DefaultInheritedProviderScopeElement<T> createElement() {
-    return _DefaultInheritedProviderScopeElement<T>(this);
+  _InheritedProviderScopeElement<T> createElement() {
+    return _InheritedProviderScopeElement<T>(this);
   }
 }
 
@@ -258,8 +258,8 @@ class _Dependency<T> {
   final selectors = <_SelectorAspect<T>>[];
 }
 
-class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implements InheritedContext<T> {
-  _DefaultInheritedProviderScopeElement(_DefaultInheritedProviderScope<T> widget) : super(widget);
+class _InheritedProviderScopeElement<T> extends InheritedElement implements InheritedContext<T> {
+  _InheritedProviderScopeElement(_InheritedProviderScope<T> widget) : super(widget);
 
   bool _shouldNotifyDependents = false;
   bool _debugInheritLocked = false;
@@ -270,7 +270,7 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implemen
   _DelegateState<T, _Delegate<T>> _delegateState;
 
   @override
-  _DefaultInheritedProviderScope<T> get widget => super.widget as _DefaultInheritedProviderScope<T>;
+  _InheritedProviderScope<T> get widget => super.widget as _InheritedProviderScope<T>;
 
   @override
   void updateDependencies(Element dependent, Object aspect) {
@@ -344,7 +344,7 @@ class _DefaultInheritedProviderScopeElement<T> extends InheritedElement implemen
   }
 
   @override
-  void update(_DefaultInheritedProviderScope<T> newWidget) {
+  void update(_InheritedProviderScope<T> newWidget) {
     assert(() {
       if (widget.owner._delegate.runtimeType != newWidget.owner._delegate.runtimeType) {
         throw StateError('''Rebuilt $widget using a different constructor.
@@ -471,7 +471,7 @@ abstract class _Delegate<T> {
 }
 
 abstract class _DelegateState<T, D extends _Delegate<T>> {
-  _DefaultInheritedProviderScopeElement<T> element;
+  _InheritedProviderScopeElement<T> element;
 
   T get value;
 
