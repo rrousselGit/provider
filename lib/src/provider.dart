@@ -210,7 +210,7 @@ event handler, when the widget tree doesn't care about the value.
     return inheritedElement.value;
   }
 
-  static _DefaultInheritedProviderScopeElement<T> _inheritedElementOf<T>(BuildContext context) {
+  static _InheritedProviderScopeElement<T> _inheritedElementOf<T>(BuildContext context) {
     assert(_debugIsSelecting == false, 'Cannot call context.read/watch/select inside the callback of a context.select');
     assert(
       T != dynamic,
@@ -222,19 +222,19 @@ If you want to expose a variable that can be anything, consider changing
 `dynamic` to `Object` instead.
 ''',
     );
-    _DefaultInheritedProviderScopeElement<T> inheritedElement;
+    _InheritedProviderScopeElement<T> inheritedElement;
 
-    if (context.widget is _DefaultInheritedProviderScope<T>) {
+    if (context.widget is _InheritedProviderScope<T>) {
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
       // the same type.
       context.visitAncestorElements((parent) {
-        inheritedElement = parent.getElementForInheritedWidgetOfExactType<_DefaultInheritedProviderScope<T>>()
-            as _DefaultInheritedProviderScopeElement<T>;
+        inheritedElement = parent.getElementForInheritedWidgetOfExactType<_InheritedProviderScope<T>>()
+            as _InheritedProviderScopeElement<T>;
         return false;
       });
     } else {
-      inheritedElement = context.getElementForInheritedWidgetOfExactType<_DefaultInheritedProviderScope<T>>()
-          as _DefaultInheritedProviderScopeElement<T>;
+      inheritedElement = context.getElementForInheritedWidgetOfExactType<_InheritedProviderScope<T>>()
+          as _InheritedProviderScopeElement<T>;
     }
 
     if (inheritedElement == null) {
