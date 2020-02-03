@@ -330,7 +330,7 @@ https://github.com/rrousselGit/provider/issues
 }
 
 /// Exposes the [read] method.
-extension ReadProvider on BuildContext {
+extension ReadContext on BuildContext {
   /// Obtain a value from the nearest ancestor provider of type [T].
   ///
   /// This method will _not_ make widget rebuild when the value changes.
@@ -392,14 +392,14 @@ extension ReadProvider on BuildContext {
   ///
   /// See also:
   ///
-  /// - [WatchProvider] and its `watch` method, similar to [read], but
+  /// - [WatchContext] and its `watch` method, similar to [read], but
   ///   will make the widget tree rebuild when the obtained value changes.
   /// - [Locator], a typedef to make it easier to pass [read] to objects.
   T read<T>() => Provider.of<T>(this, listen: false);
 }
 
 /// Exposes the [watch] method.
-extension WatchProvider on BuildContext {
+extension WatchContext on BuildContext {
   /// Obtain a value from the nearest ancestor provider of type [T], and subscribe
   /// to the provider.
   ///
@@ -411,7 +411,7 @@ extension WatchProvider on BuildContext {
   ///
   /// See also:
   ///
-  /// - [ReadProvider] and its `read` method, similar to [watch], but doesn't make
+  /// - [ReadContext] and its `read` method, similar to [watch], but doesn't make
   ///   widgets rebuild if the value obtained changes.
   T watch<T>() => Provider.of<T>(this);
 }
