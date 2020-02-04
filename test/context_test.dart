@@ -6,6 +6,27 @@ import 'package:provider/provider.dart';
 
 void main() {
   group('BuildContext', () {
+    testWidgets("select doesn't fail if it loads a provider that depends on other providers", (tester) async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider(create: (_) => 42),
+            ProxyProvider<int, String>(
+              create: (c) => '${c.read<int>()}',
+              update: (c, _, __) => '${c.read<int>() * 2}',
+            ),
+          ],
+          child: Builder(
+            builder: (context) {
+              final value = context.select((String value) => value);
+              return Text(value, textDirection: TextDirection.ltr);
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('84'), findsOneWidget);
+    });
     testWidgets("don't call old selectors if the child rebuilds individually", (tester) async {
       final notifier = ValueNotifier(0);
 

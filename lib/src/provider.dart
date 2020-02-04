@@ -213,7 +213,10 @@ The context used was: $context
   }
 
   static _InheritedProviderScopeElement<T> _inheritedElementOf<T>(BuildContext context) {
-    assert(_debugIsSelecting == false, 'Cannot call context.read/watch/select inside the callback of a context.select');
+    assert(
+      _debugIsSelecting == false,
+      'Cannot call context.read/watch/select inside the callback of a context.select',
+    );
     assert(
       T != dynamic,
       '''
