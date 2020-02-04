@@ -191,14 +191,15 @@ extension SelectContext on BuildContext {
     assert(owner.debugBuilding);
     final inheritedElement = Provider._inheritedElementOf<T>(this);
     try {
+      var value = inheritedElement.value;
       assert(() {
         _debugIsSelecting = true;
         return true;
       }());
-      final selected = selector(inheritedElement.value);
+      final selected = selector(value);
       dependOnInheritedElement(
         inheritedElement,
-        aspect: (T value) => !const DeepCollectionEquality().equals(selector(value), selected),
+        aspect: (T newValue) => !const DeepCollectionEquality().equals(selector(newValue), selected),
       );
       return selected;
     } finally {
