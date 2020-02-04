@@ -253,8 +253,26 @@ If you want to expose a variable that can be anything, consider changing
   /// [Listenable] or a [Stream]. In release mode, [debugCheckInvalidValueType]
   /// does nothing.
   ///
-  /// This check can be disabled altogether by setting
-  /// [debugCheckInvalidValueType] to `null` like so:
+  /// You can override the default behavior by "decorating" the default function.\
+  /// For example if you want to allow rxdart's `Subject` to work on [Provider], then
+  /// you could do:
+  ///
+  /// ```dart
+  /// void main() {
+  ///  final previous = Provider.debugCheckInvalidValueType;
+  ///  Provider.debugCheckInvalidValueType = <T>(value) {
+  ///    if (value is Subject) return;
+  ///    previous<T>(value);
+  ///  };
+  ///
+  ///  // ...
+  /// }
+  /// ```
+  ///
+  /// This will allow `Subject`, but still allow [Stream]/[Listenable].
+  ///
+  /// Alternatively you can disable this check entirely by setting
+  /// [debugCheckInvalidValueType] to `null`:
   ///
   /// ```dart
   /// void main() {
