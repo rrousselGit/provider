@@ -1,8 +1,13 @@
+# 4.0.3
+
+- improved error message when `Provider.of` is called without specifying
+  `listen: false` outside of the widget tree.
+
 # 4.0.2
 
 - fix `Provider.of` returning the previous value instead of the new value
   if called inside `didChangeDependencies`.
-- fixed an issue where `update` was unnecessarily called. 
+- fixed an issue where `update` was unnecessarily called.
 
 # 4.0.1
 

@@ -1,6 +1,6 @@
 name: provider
 description: A mixture between dependency injection and state management, built with widgets for widgets.
-version: 4.0.2
+version: 4.0.3
 homepage: https://github.com/rrousselGit/provider
 authors:
   - Remi Rousselet <darky12s@gmail.com>
