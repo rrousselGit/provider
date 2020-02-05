@@ -18,6 +18,25 @@ BuildContext get context => find.byType(Context).evaluate().single;
 T of<T>([BuildContext c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
+  testWidgets('Provider.of(listen: false) outside of build works when it loads a provider', (tester) async {
+    final notifier = ValueNotifier(42);
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ValueListenableProvider.value(value: notifier),
+          ProxyProvider<int, String>(update: (a, b, c) => '$b'),
+        ],
+        child: Context(),
+      ),
+    );
+
+    expect(Provider.of<String>(context, listen: false), '42');
+
+    notifier.value = 21;
+    await tester.pump();
+
+    expect(Provider.of<String>(context, listen: false), '21');
+  });
   testWidgets('new value is available in didChangeDependencies', (tester) async {
     final didChangeDependencies = ValueBuilderMock<int>();
     final build = ValueBuilderMock<int>();
