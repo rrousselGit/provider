@@ -81,7 +81,7 @@ void main() {
     expect(
       () => Provider.of<int>(context),
       throwsA(
-        isAssertionError.having(
+        isA<AssertionError>().having(
           (source) => source.toString(),
           'toString',
           endsWith('''
