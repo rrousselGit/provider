@@ -80,7 +80,26 @@ void main() {
 
     expect(
       () => Provider.of<int>(context),
-      throwsAssertionError,
+      throwsA(
+        isAssertionError.having(
+          (source) => source.toString(),
+          'toString',
+          endsWith('''
+Tried to listen to a value exposed with provider, from outside of the widget tree.
+
+This is likely caused by an event handler (like a button's onPressed) that called
+Provider.of without passing `listen: false`.
+
+To fix, write:
+Provider.of<int>(context, listen: false);
+
+It is unsupported because may pointlessly rebuild the widget associated to the
+event handler, when the widget tree doesn't care about the value.
+
+The context used was: Context
+'''),
+        ),
+      ),
     );
 
     expect(Provider.of<int>(context, listen: false), equals(42));
