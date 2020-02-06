@@ -198,6 +198,8 @@ Provider.of<$T>(context, listen: false);
 
 It is unsupported because may pointlessly rebuild the widget associated to the
 event handler, when the widget tree doesn't care about the value.
+
+The context used was: $context
 ''',
     );
 
