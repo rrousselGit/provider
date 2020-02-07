@@ -1,6 +1,6 @@
 name: provider
 description: A wrapper around InheritedWidget to make them easier to use and more reusable.
-version: 4.1.0
+version: 4.1.0-dev
 homepage: https://github.com/rrousselGit/provider
 authors:
   - Remi Rousselet <darky12s@gmail.com>
