@@ -309,7 +309,6 @@ To fix, please:
   * Provide types to Provider<$valueType>
   * Provide types to Consumer<$valueType>
   * Provide types to Provider.of<$valueType>()
-  * Always use package imports. Ex: `import 'package:my_app/my_code.dart';
   * Ensure the correct `context` is being used.
 
 If none of these solutions work, please file a bug at:

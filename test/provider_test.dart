@@ -304,7 +304,6 @@ To fix, please:
   * Provide types to Provider<String>
   * Provide types to Consumer<String>
   * Provide types to Provider.of<String>()
-  * Always use package imports. Ex: `import 'package:my_app/my_code.dart';
   * Ensure the correct `context` is being used.
 
 If none of these solutions work, please file a bug at:
