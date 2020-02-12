@@ -1,3 +1,7 @@
+# 4.0.4
+
+- Update the ProviderNotFoundException to remove outdated solution. (thanks @augustinreille)
+
 # 4.0.3
 
 - improved error message when `Provider.of` is called without specifying
