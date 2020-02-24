@@ -99,7 +99,7 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
 ///
 /// By default, [Selector] determines if `builder` needs to be called again
 /// by comparing the previous and new result of `selector` using
-/// [DeepCollectionEquality] from the package `collecton`.
+/// [DeepCollectionEquality] from the package `collection`.
 ///
 /// This behavior can be overriden by passing a custom `shouldRebuild` callback.
 ///
