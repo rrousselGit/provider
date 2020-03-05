@@ -104,8 +104,8 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   }
 
   @override
-  _InheritedProvderElement<T> createElement() {
-    return _InheritedProvderElement<T>(this);
+  _InheritedProviderElement<T> createElement() {
+    return _InheritedProviderElement<T>(this);
   }
 
   @override
@@ -117,8 +117,8 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   }
 }
 
-class _InheritedProvderElement<T> extends SingleChildStatelessElement {
-  _InheritedProvderElement(InheritedProvider<T> widget) : super(widget);
+class _InheritedProviderElement<T> extends SingleChildStatelessElement {
+  _InheritedProviderElement(InheritedProvider<T> widget) : super(widget);
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

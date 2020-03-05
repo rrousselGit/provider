@@ -183,7 +183,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvide
 /// - **DON'T** create the [ChangeNotifier] inside `update` directly.
 ///
 ///   This will cause your state to be lost when one of the values used updates.
-///   It will also cause uncesserary overhead because it will dispose the
+///   It will also cause unnecessary overhead because it will dispose the
 ///   previous notifier, then subscribes to the new one.
 ///
 ///  Instead reuse the previous instance, and update some properties or call
@@ -191,7 +191,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvide
 ///
 /// ```dart
 /// ChangeNotifierProxyProvider<MyModel, MyChangeNotifier>(
-///   // may cause the state to be destroyed unvoluntarily
+///   // may cause the state to be destroyed involuntarily
 ///   update: (_, myModel, myNotifier) => MyChangeNotifier(myModel: myModel),
 ///   child: ...
 /// );

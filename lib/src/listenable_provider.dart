@@ -8,10 +8,10 @@ import 'proxy_provider.dart';
 /// Listens to a [Listenable], expose it to its descendants and rebuilds
 /// dependents whenever the listener emits an event.
 ///
-/// For usage informations, see [ChangeNotifierProvider], a subclass of
+/// For usage information, see [ChangeNotifierProvider], a subclass of
 /// [ListenableProvider] made for [ChangeNotifier].
 ///
-/// You will generaly want to use [ChangeNotifierProvider] instead.
+/// You will generally want to use [ChangeNotifierProvider] instead.
 /// But [ListenableProvider] is available in case you want to implement
 /// [Listenable] yourself, or use [Animation].
 class ListenableProvider<T extends Listenable> extends InheritedProvider<T> {

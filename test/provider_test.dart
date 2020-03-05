@@ -356,7 +356,7 @@ https://github.com/rrousselGit/provider/issues
       expect(buildCount, equals(2));
       expect(buildValue, equals(25));
 
-      // value didnt' change
+      // value didn't change
       await tester.pumpWidget(
         Provider<int>.value(
           value: 25,

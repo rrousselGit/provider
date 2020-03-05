@@ -95,13 +95,13 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
 ///
 /// [Selector] will obtain a value using [Provider.of], then pass that value
 /// to `selector`. That `selector` callback is then tasked to return an object
-/// that contains only the informations needed for `builder` to complete.
+/// that contains only the information needed for `builder` to complete.
 ///
 /// By default, [Selector] determines if `builder` needs to be called again
 /// by comparing the previous and new result of `selector` using
 /// [DeepCollectionEquality] from the package `collection`.
 ///
-/// This behavior can be overriden by passing a custom `shouldRebuild` callback.
+/// This behavior can be overridden by passing a custom `shouldRebuild` callback.
 ///
 ///  **NOTE**:
 /// The selected value must be immutable, or otherwise [Selector] may think
@@ -125,7 +125,7 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
 /// In that example, `builder` will be called again only if `foo.bar` or
 /// `foo.baz` changes.
 ///
-/// For generic usage informations, see [Consumer].
+/// For generic usage information, see [Consumer].
 /// {@endtemplate}
 class Selector<A, S> extends Selector0<S> {
   /// {@macro provider.selector}
