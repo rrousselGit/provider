@@ -86,12 +86,12 @@ class MyHomePage extends StatelessWidget {
       /// Splitting our app in small widgets like [Title] or [CounterLabel] is
       /// useful for rebuild optimization.
       ///
-      /// Since they are instanciated using `const`, they won't unnecessarily
+      /// Since they are instantiated using `const`, they won't unnecessarily
       /// rebuild when their parent changes.
       /// But they can still have dynamic content, as they can obtain providers!
       ///
       /// This means only the widgets that depends on a provider to rebuild when they change.
-      /// Alternatively, we could use [Consumer] or [Selector] to acheive the
+      /// Alternatively, we could use [Consumer] or [Selector] to achieve the
       /// same result.
       appBar: AppBar(title: const Title()),
       body: const Center(child: CounterLabel()),

@@ -458,7 +458,7 @@ Foo(
 ```
 
 In this example, only `Bar` will rebuild when `A` updates. `Foo` and `Baz` won't
-unnecesseraly rebuild.
+unnecessarily rebuild.
 
 To go one step further, it is possible to use `Selector` to ignore changes if
 they don't have an impact on the widget-tree:
@@ -510,7 +510,7 @@ Provider<Country>(
 
 `provider` exposes a few different kinds of "provider" for different types of objects.
 
-The complete list of all the objects availables is [here](https://pub.dev/documentation/provider/latest/provider/provider-library.html)
+The complete list of all the objects available is [here](https://pub.dev/documentation/provider/latest/provider/provider-library.html)
 
 | name                                                                                                                          | description                                                                                                                                                            |
 | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

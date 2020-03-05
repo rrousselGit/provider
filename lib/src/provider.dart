@@ -108,7 +108,7 @@ class MultiProvider extends Nested {
 /// ```
 ///
 /// Note this example purposefully specified the object type, instead of having
-/// it infered.
+/// it inferred.
 /// Since we used a mocked class (typically using `mockito`), then we have to
 /// downcast the mock to the type of the mocked class.
 /// Otherwise, the type inference will resolve to `Provider<MockFoo>` instead of
