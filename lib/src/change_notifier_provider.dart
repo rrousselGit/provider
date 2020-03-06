@@ -95,7 +95,8 @@ import 'proxy_provider.dart';
 ///     of variables from other providers.
 ///   * [ListenableProvider], similar to [ChangeNotifierProvider] but works with
 ///     any [Listenable].
-class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvider<T> {
+class ChangeNotifierProvider<T extends ChangeNotifier>
+    extends ListenableProvider<T> {
   static void _dispose(BuildContext context, ChangeNotifier notifier) {
     notifier?.dispose();
   }
@@ -207,7 +208,8 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvide
 ///   http calls or similar side-effects, then it is likely that an immutable
 ///   object built using [ProxyProvider] will work.
 /// {@endtemplate}
-class ChangeNotifierProxyProvider<T, R extends ChangeNotifier> extends ListenableProxyProvider<T, R> {
+class ChangeNotifierProxyProvider<T, R extends ChangeNotifier>
+    extends ListenableProxyProvider<T, R> {
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider({
     Key key,
@@ -228,7 +230,8 @@ class ChangeNotifierProxyProvider<T, R extends ChangeNotifier> extends Listenabl
 }
 
 /// {@macro provider.changenotifierproxyprovider}
-class ChangeNotifierProxyProvider0<R extends ChangeNotifier> extends ListenableProxyProvider0<R> {
+class ChangeNotifierProxyProvider0<R extends ChangeNotifier>
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider0({
     Key key,
@@ -249,7 +252,8 @@ class ChangeNotifierProxyProvider0<R extends ChangeNotifier> extends ListenableP
 }
 
 /// {@macro provider.changenotifierproxyprovider}
-class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier> extends ListenableProxyProvider2<T, T2, R> {
+class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier>
+    extends ListenableProxyProvider2<T, T2, R> {
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider2({
     Key key,
@@ -270,7 +274,8 @@ class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier> extends List
 }
 
 /// {@macro provider.changenotifierproxyprovider}
-class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier> extends ListenableProxyProvider3<T, T2, T3, R> {
+class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier>
+    extends ListenableProxyProvider3<T, T2, T3, R> {
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider3({
     Key key,
@@ -335,7 +340,8 @@ class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
 }
 
 /// {@macro provider.changenotifierproxyprovider}
-class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6, R extends ChangeNotifier>
+class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6,
+        R extends ChangeNotifier>
     extends ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R> {
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider6({

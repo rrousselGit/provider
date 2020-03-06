@@ -106,7 +106,8 @@ void main() {
     verifyNoMoreInteractions(builder);
     expect(find.text('1'), findsOneWidget);
   });
-  testWidgets('builder can _not_ rebuild when provider updates', (tester) async {
+  testWidgets('builder can _not_ rebuild when provider updates',
+      (tester) async {
     final child = Container();
 
     var notifier = ValueNotifier(0);
@@ -598,7 +599,9 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(inheritedContext.hasValue, isTrue);
     });
 
-    testWidgets('provider calls update if rebuilding only due to didChangeDependencies', (tester) async {
+    testWidgets(
+        'provider calls update if rebuilding only due to didChangeDependencies',
+        (tester) async {
       final mock = ValueBuilderMock<String>('');
 
       final provider = ProxyProvider0<String>(
@@ -622,7 +625,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verify(mock(any, '0')).called(1);
       verifyNoMoreInteractions(mock);
     });
-    testWidgets("provider notifying dependents doesn't call update", (tester) async {
+    testWidgets("provider notifying dependents doesn't call update",
+        (tester) async {
       final notifier = ValueNotifier(0);
       final mock = ValueBuilderMock<ValueNotifier<int>>(notifier);
 
@@ -2091,7 +2095,8 @@ class Example extends StatelessWidget {
 }
 
 class Test<T> extends StatefulWidget {
-  const Test({Key key, this.didChangeDependencies, this.build}) : super(key: key);
+  const Test({Key key, this.didChangeDependencies, this.build})
+      : super(key: key);
 
   final ValueBuilderMock<T> didChangeDependencies;
   final ValueBuilderMock<T> build;
@@ -2103,7 +2108,8 @@ class Test<T> extends StatefulWidget {
 class _TestState<T> extends State<Test<T>> {
   @override
   void didChangeDependencies() {
-    widget.didChangeDependencies?.call(this.context, Provider.of<T>(this.context));
+    widget.didChangeDependencies
+        ?.call(this.context, Provider.of<T>(this.context));
     super.didChangeDependencies();
   }
 

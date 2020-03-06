@@ -87,9 +87,9 @@ class Count extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      /// Calls `context.watch` to make [MyHomePage] rebuild when [Counter] changes.
-      '${context.watch<Counter>().count}',
-      style: Theme.of(context).textTheme.headline4
-    );
+
+        /// Calls `context.watch` to make [MyHomePage] rebuild when [Counter] changes.
+        '${context.watch<Counter>().count}',
+        style: Theme.of(context).textTheme.headline4);
   }
 }

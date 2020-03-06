@@ -12,7 +12,8 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => ValueNotifier(0),
           builder: (context, child) {
-            assert(Provider.of<ValueNotifier<int>>(context, listen: false) != null);
+            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
+                null);
             return child;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -26,7 +27,8 @@ void main() {
         ChangeNotifierProvider.value(
           value: ValueNotifier(0),
           builder: (context, child) {
-            assert(Provider.of<ValueNotifier<int>>(context, listen: false) != null);
+            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
+                null);
             return child;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -42,7 +44,8 @@ void main() {
         ListenableProvider(
           create: (_) => ValueNotifier(0),
           builder: (context, child) {
-            assert(Provider.of<ValueNotifier<int>>(context, listen: false) != null);
+            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
+                null);
             return child;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -56,7 +59,8 @@ void main() {
         ListenableProvider.value(
           value: ValueNotifier(0),
           builder: (context, child) {
-            assert(Provider.of<ValueNotifier<int>>(context, listen: false) != null);
+            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
+                null);
             return child;
           },
           child: const Text('child', textDirection: TextDirection.ltr),

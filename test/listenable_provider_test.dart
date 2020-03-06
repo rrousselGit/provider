@@ -23,7 +23,8 @@ void main() {
         ),
       );
 
-      expect(Provider.of<ChangeNotifier>(key.currentContext, listen: false), listenable);
+      expect(Provider.of<ChangeNotifier>(key.currentContext, listen: false),
+          listenable);
     });
     testWidgets(
       'asserts that the created notifier has no listener',
@@ -94,7 +95,8 @@ void main() {
         },
       );
     }, skip: true);
-    testWidgets("don't listen again if listenable instance doesn't change", (tester) async {
+    testWidgets("don't listen again if listenable instance doesn't change",
+        (tester) async {
       final listenable = MockNotifier();
       await tester.pumpWidget(
         ListenableProvider<ChangeNotifier>.value(
@@ -121,7 +123,8 @@ void main() {
         ),
       );
 
-      expect(Provider.of<ChangeNotifier>(key.currentContext, listen: false), null);
+      expect(
+          Provider.of<ChangeNotifier>(key.currentContext, listen: false), null);
     });
     testWidgets('works with null (create)', (tester) async {
       final key = GlobalKey();
@@ -132,7 +135,8 @@ void main() {
         ),
       );
 
-      expect(Provider.of<ChangeNotifier>(key.currentContext, listen: false), null);
+      expect(
+          Provider.of<ChangeNotifier>(key.currentContext, listen: false), null);
     });
     group('stateful constructor', () {
       testWidgets('called with context', (tester) async {
@@ -214,7 +218,8 @@ void main() {
 
       verify(create(context)).called(1);
       verifyNoMoreInteractions(create);
-      final listener = verify(listenable.addListener(captureAny)).captured.first as VoidCallback;
+      final listener = verify(listenable.addListener(captureAny)).captured.first
+          as VoidCallback;
       clearInteractions(listenable);
 
       await tester.pumpWidget(Container());
@@ -272,7 +277,8 @@ void main() {
 
       expect(listenable.hasListeners, false);
     });
-    testWidgets("rebuilding with the same provider don't rebuilds descendants", (tester) async {
+    testWidgets("rebuilding with the same provider don't rebuilds descendants",
+        (tester) async {
       final listenable = ChangeNotifier();
 
       var buildCount = 0;
@@ -353,7 +359,9 @@ void main() {
       await Future<void>.value();
       await tester.pump();
       verify(builder(any)).called(1);
-      expect(Provider.of<ChangeNotifier>(keyChild.currentContext, listen: false), listenable);
+      expect(
+          Provider.of<ChangeNotifier>(keyChild.currentContext, listen: false),
+          listenable);
     });
   });
 }

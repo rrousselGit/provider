@@ -11,7 +11,11 @@ Element findElementOfWidget<T extends Widget>() {
 }
 
 InheritedContext<T> findInheritedContext<T>() {
-  return find.byElementPredicate((e) => e is InheritedContext<T>).first.evaluate().first as InheritedContext<T>;
+  return find
+      .byElementPredicate((e) => e is InheritedContext<T>)
+      .first
+      .evaluate()
+      .first as InheritedContext<T>;
 }
 
 Type typeOf<T>() => T;
@@ -179,7 +183,8 @@ class Combined extends DiagnosticableTree {
   final Combined previous;
   final BuildContext context;
 
-  Combined(this.context, this.previous, this.a, [this.b, this.c, this.d, this.e, this.f]);
+  Combined(this.context, this.previous, this.a,
+      [this.b, this.c, this.d, this.e, this.f]);
 
   @override
   // ignore: hash_and_equals
@@ -221,7 +226,9 @@ class MyStream extends Stream<void> {
 }
 
 int buildCountOf(BuildCount widget) {
-  return ((find.byWidget(widget).evaluate().single as StatefulElement).state as _BuildCountState).buildCount;
+  return ((find.byWidget(widget).evaluate().single as StatefulElement).state
+          as _BuildCountState)
+      .buildCount;
 }
 
 class BuildCount extends StatefulWidget {
@@ -249,5 +256,6 @@ class _BuildCountState extends State<BuildCount> {
 }
 
 Matcher throwsProviderNotFound<T>() {
-  return throwsA(isA<ProviderNotFoundException>().having((err) => err.valueType, 'valueType', T));
+  return throwsA(isA<ProviderNotFoundException>()
+      .having((err) => err.valueType, 'valueType', T));
 }

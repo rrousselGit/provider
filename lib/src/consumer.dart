@@ -191,7 +191,8 @@ class Consumer2<A, B> extends SingleChildStatelessWidget {
         super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(BuildContext context, A value, B value2, Widget child) builder;
+  final Widget Function(BuildContext context, A value, B value2, Widget child)
+      builder;
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
@@ -215,7 +216,8 @@ class Consumer3<A, B, C> extends SingleChildStatelessWidget {
         super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(BuildContext context, A value, B value2, C value3, Widget child) builder;
+  final Widget Function(
+      BuildContext context, A value, B value2, C value3, Widget child) builder;
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
