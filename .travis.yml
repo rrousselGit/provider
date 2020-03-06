@@ -17,7 +17,7 @@ script:
   - ./scripts/flutter_test.sh ./example
 
   # export coverage
-  - if [ $FLUTTER_CHANNEL = "stable" ]; then
+  - if [ $FLUTTER_CHANNEL = "master" ]; then
     bash <(curl -s https://codecov.io/bash);
     fi
 matrix:
