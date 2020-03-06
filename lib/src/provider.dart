@@ -134,8 +134,10 @@ class Provider<T> extends InheritedProvider<T> {
           builder: builder,
           create: create,
           dispose: dispose,
-          debugCheckInvalidValueType:
-              kReleaseMode ? null : (T value) => Provider.debugCheckInvalidValueType?.call<T>(value),
+          debugCheckInvalidValueType: kReleaseMode
+              ? null
+              : (T value) =>
+                  Provider.debugCheckInvalidValueType?.call<T>(value),
           child: child,
         );
 
@@ -186,7 +188,9 @@ class Provider<T> extends InheritedProvider<T> {
   static T of<T>(BuildContext context, {bool listen = true}) {
     assert(context != null);
     assert(
-      context.owner.debugBuilding || listen == false || _debugIsInInheritedProviderUpdate,
+      context.owner.debugBuilding ||
+          listen == false ||
+          _debugIsInInheritedProviderUpdate,
       '''
 Tried to listen to a value exposed with provider, from outside of the widget tree.
 
@@ -212,7 +216,8 @@ The context used was: $context
     return inheritedElement.value;
   }
 
-  static _InheritedProviderScopeElement<T> _inheritedElementOf<T>(BuildContext context) {
+  static _InheritedProviderScopeElement<T> _inheritedElementOf<T>(
+      BuildContext context) {
     assert(
       _debugIsSelecting == false,
       'Cannot call context.read/watch/select inside the callback of a context.select',
@@ -233,13 +238,13 @@ If you want to expose a variable that can be anything, consider changing
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
       // the same type.
       context.visitAncestorElements((parent) {
-        inheritedElement = parent.getElementForInheritedWidgetOfExactType<_InheritedProviderScope<T>>()
-            as _InheritedProviderScopeElement<T>;
+        inheritedElement = parent.getElementForInheritedWidgetOfExactType<
+            _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>;
         return false;
       });
     } else {
-      inheritedElement = context.getElementForInheritedWidgetOfExactType<_InheritedProviderScope<T>>()
-          as _InheritedProviderScopeElement<T>;
+      inheritedElement = context.getElementForInheritedWidgetOfExactType<
+          _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>;
     }
 
     if (inheritedElement == null) {
@@ -355,16 +360,17 @@ https://github.com/rrousselGit/provider/issues
 extension ReadContext on BuildContext {
   /// Obtain a value from the nearest ancestor provider of type [T].
   ///
-  /// This method will _not_ make widget rebuild when the value changes.
+  /// This method is the opposite of [watch].\
+  /// It will _not_ make widget rebuild when the value changes and cannot be
+  /// called inside [StatelessWidget.build]/[State.build].\
+  /// On the other hand, it can be freely called _outside_ of these methods.
   ///
-  /// Calling this method is equivalent to calling:
-  ///
-  /// ```dart
-  /// Provider.of<T>(context, listen: false)
-  /// ```
+  /// If that is incompatible with your criteria, consider using `Provider.of(context, listen: false)`.\
+  /// It does the same thing, but without these added restrictions (but unsafe).
   ///
   /// This method can be freely passed to objects, so that they can read providers
   /// without having a reference on a [BuildContext].
+  ///
   ///
   ///
   /// For example, instead of:
@@ -417,7 +423,10 @@ extension ReadContext on BuildContext {
   /// - [WatchContext] and its `watch` method, similar to [read], but
   ///   will make the widget tree rebuild when the obtained value changes.
   /// - [Locator], a typedef to make it easier to pass [read] to objects.
-  T read<T>() => Provider.of<T>(this, listen: false);
+  T read<T>() {
+    assert(!debugDoingBuild && !_debugIsInInheritedProviderUpdate);
+    return Provider.of<T>(this, listen: false);
+  }
 }
 
 /// Exposes the [watch] method.
@@ -431,11 +440,20 @@ extension WatchContext on BuildContext {
   /// Provider.of<T>(context)
   /// ```
   ///
+  /// This method is accessible only inside [StatelessWidget.build] and
+  /// [State.build].\
+  /// If you need need to use it outside of these methods, consider using [Provider.of]
+  /// instead, which doesn't have this restriction.\
+  /// The only exception to this rule is Providers's `update` method.
+  ///
   /// See also:
   ///
   /// - [ReadContext] and its `read` method, similar to [watch], but doesn't make
   ///   widgets rebuild if the value obtained changes.
-  T watch<T>() => Provider.of<T>(this);
+  T watch<T>() {
+    assert(debugDoingBuild || _debugIsInInheritedProviderUpdate);
+    return Provider.of<T>(this);
+  }
 }
 
 /// A generic function that can be called to read providers, without having a

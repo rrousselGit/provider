@@ -6,14 +6,100 @@ import 'package:provider/provider.dart';
 
 void main() {
   group('BuildContext', () {
-    testWidgets("select doesn't fail if it loads a provider that depends on other providers", (tester) async {
+    testWidgets("read can't be used inside update", (tester) async {
+      await tester.pumpWidget(
+        Provider.value(
+          value: 42,
+          child: InheritedProvider<String>(
+            update: (c, _) {
+              return c.read<int>().toString();
+            },
+            child: Consumer<String>(
+              builder: (c, value, _) {
+                return Text(value, textDirection: TextDirection.ltr);
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isAssertionError);
+    });
+    testWidgets("read can't be used inside build", (tester) async {
+      await tester.pumpWidget(
+        Provider.value(
+          value: 42,
+          child: Builder(builder: (c) {
+            c.read<int>();
+            return Container();
+          }),
+        ),
+      );
+
+      expect(tester.takeException(), isAssertionError);
+    });
+    testWidgets('watch can be used inside InheritedProvider.update',
+        (tester) async {
+      await tester.pumpWidget(
+        Provider.value(
+          value: 42,
+          child: InheritedProvider<String>(
+            update: (c, _) {
+              return c.watch<int>().toString();
+            },
+            child: Consumer<String>(
+              builder: (c, value, _) {
+                return Text(value, textDirection: TextDirection.ltr);
+              },
+            ),
+          ),
+        ),
+      );
+    });
+    testWidgets('watch throws if used outside of build', (tester) async {
+      await tester.pumpWidget(
+        Provider.value(
+          value: 42,
+          child: Builder(
+            builder: (c1) {
+              return Builder(
+                builder: (c2) {
+                  c1.watch<int>();
+                  return Container();
+                },
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isAssertionError);
+    });
+    testWidgets('watch throws if used inside didChangeDependencies',
+        (tester) async {
+      await tester.pumpWidget(
+        Provider.value(
+            value: 42,
+            child: StatefulTest(
+              didChangeDependencies: (c) {
+                c.watch<int>();
+              },
+              child: Container(),
+            )),
+      );
+
+      expect(tester.takeException(), isAssertionError);
+    });
+    testWidgets(
+        "select doesn't fail if it loads a provider that depends on other providers",
+        (tester) async {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
             Provider(create: (_) => 42),
             ProxyProvider<int, String>(
               create: (c) => '${c.read<int>()}',
-              update: (c, _, __) => '${c.read<int>() * 2}',
+              update: (c, _, __) => '${c.watch<int>() * 2}',
             ),
           ],
           child: Builder(
@@ -27,7 +113,8 @@ void main() {
 
       expect(find.text('84'), findsOneWidget);
     });
-    testWidgets("don't call old selectors if the child rebuilds individually", (tester) async {
+    testWidgets("don't call old selectors if the child rebuilds individually",
+        (tester) async {
       final notifier = ValueNotifier(0);
 
       var buildCount = 0;
@@ -106,7 +193,8 @@ void main() {
 
       expect(tester.takeException(), isA<ProviderNotFoundException>());
     });
-    testWidgets('select throws if watch called inside the callback from build', (tester) async {
+    testWidgets('select throws if watch called inside the callback from build',
+        (tester) async {
       await tester.pumpWidget(
         Provider.value(
           value: 42,
@@ -122,7 +210,8 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
-    testWidgets('select throws if read called inside the callback from build', (tester) async {
+    testWidgets('select throws if read called inside the callback from build',
+        (tester) async {
       await tester.pumpWidget(
         Provider.value(
           value: 42,
@@ -138,7 +227,8 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
-    testWidgets('select throws if select called inside the callback from build', (tester) async {
+    testWidgets('select throws if select called inside the callback from build',
+        (tester) async {
       await tester.pumpWidget(
         Provider.value(
           value: 42,
@@ -154,7 +244,9 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
-    testWidgets('select throws if read called inside the callback on dependency change', (tester) async {
+    testWidgets(
+        'select throws if read called inside the callback on dependency change',
+        (tester) async {
       var shouldCall = false;
       var child = Builder(builder: (context) {
         context.select((int i) {
@@ -185,7 +277,9 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
-    testWidgets('select throws if watch called inside the callback on dependency change', (tester) async {
+    testWidgets(
+        'select throws if watch called inside the callback on dependency change',
+        (tester) async {
       var shouldCall = false;
       var child = Builder(builder: (context) {
         context.select((int i) {
@@ -216,7 +310,9 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
-    testWidgets('select throws if select called inside the callback on dependency change', (tester) async {
+    testWidgets(
+        'select throws if select called inside the callback on dependency change',
+        (tester) async {
       var shouldCall = false;
       var child = Builder(builder: (context) {
         context.select((int i) {
@@ -247,39 +343,24 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
-    testWidgets('can call read/watch inside didChangeDepencies', (tester) async {
-      var didChangeDependenciesCount = 0;
-      var child = StatefulTest(
-        didChangeDependencies: (context) {
-          didChangeDependenciesCount++;
-          context
-            ..watch<int>()
-            ..read<int>();
-        },
-        child: const Text('42', textDirection: TextDirection.ltr),
-      );
-
+    testWidgets('can call read inside didChangeDependencies', (tester) async {
       await tester.pumpWidget(
         Provider.value(
           value: 42,
-          child: child,
+          child: StatefulTest(
+            didChangeDependencies: (context) {
+              context..read<int>();
+            },
+            child: const Text('42', textDirection: TextDirection.ltr),
+          ),
         ),
       );
 
-      expect(didChangeDependenciesCount, 1);
-      expect(find.text('42'), findsOneWidget);
-
-      await tester.pumpWidget(
-        Provider.value(
-          value: 21,
-          child: child,
-        ),
-      );
-
-      expect(didChangeDependenciesCount, 2);
       expect(find.text('42'), findsOneWidget);
     });
-    testWidgets('select in didChangeDependencies stops working if build uses select too', (tester) async {
+    testWidgets(
+        'select in didChangeDependencies stops working if build uses select too',
+        (tester) async {
       var didChangeDependenciesCount = 0;
       var selectorCount = 0;
       var child = StatefulTest(
@@ -370,7 +451,8 @@ void main() {
 
       expect(value, 42);
     });
-    testWidgets('consumer can be removed and selector stops to be called', (tester) async {
+    testWidgets('consumer can be removed and selector stops to be called',
+        (tester) async {
       final selector = MockSelector.identity<int>();
 
       final child = Builder(builder: (c) {
@@ -564,30 +646,6 @@ void main() {
       verify(selector(notifier.value)).called(1);
       verifyNoMoreInteractions(selector);
     });
-    testWidgets('context.read does not listen to value changes', (tester) async {
-      final child = Builder(builder: (context) {
-        final value = context.read<int>();
-        return Text('$value', textDirection: TextDirection.ltr);
-      });
-
-      await tester.pumpWidget(
-        Provider.value(
-          value: 42,
-          child: child,
-        ),
-      );
-
-      expect(find.text('42'), findsOneWidget);
-
-      await tester.pumpWidget(
-        Provider.value(
-          value: 24,
-          child: child,
-        ),
-      );
-
-      expect(find.text('42'), findsOneWidget);
-    });
     testWidgets('context.watch listens to value changes', (tester) async {
       final child = Builder(builder: (context) {
         final value = context.watch<int>();
@@ -671,12 +729,20 @@ void main() {
 }
 
 class StatefulTest extends StatefulWidget {
-  StatefulTest({Key key, this.initState, this.child, this.didChangeDependencies, this.builder}) : super(key: key);
+  StatefulTest({
+    Key key,
+    this.initState,
+    this.child,
+    this.didChangeDependencies,
+    this.builder,
+    this.dispose,
+  }) : super(key: key);
 
   final void Function(BuildContext c) initState;
   final void Function(BuildContext c) didChangeDependencies;
   final WidgetBuilder builder;
   final Widget child;
+  final void Function(BuildContext c) dispose;
 
   @override
   _StatefulTestState createState() => _StatefulTestState();
@@ -693,6 +759,12 @@ class _StatefulTestState extends State<StatefulTest> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     widget.didChangeDependencies?.call(context);
+  }
+
+  @override
+  void dispose() {
+    widget.dispose?.call(context);
+    super.dispose();
   }
 
   @override

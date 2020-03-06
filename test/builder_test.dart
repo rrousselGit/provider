@@ -12,7 +12,7 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => ValueNotifier(0),
           builder: (context, child) {
-            assert(context.read<ValueNotifier<int>>() != null);
+            assert(Provider.of<ValueNotifier<int>>(context, listen: false) != null);
             return child;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -26,7 +26,7 @@ void main() {
         ChangeNotifierProvider.value(
           value: ValueNotifier(0),
           builder: (context, child) {
-            assert(context.read<ValueNotifier<int>>() != null);
+            assert(Provider.of<ValueNotifier<int>>(context, listen: false) != null);
             return child;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -42,7 +42,7 @@ void main() {
         ListenableProvider(
           create: (_) => ValueNotifier(0),
           builder: (context, child) {
-            assert(context.read<ValueNotifier<int>>() != null);
+            assert(Provider.of<ValueNotifier<int>>(context, listen: false) != null);
             return child;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -56,7 +56,7 @@ void main() {
         ListenableProvider.value(
           value: ValueNotifier(0),
           builder: (context, child) {
-            assert(context.read<ValueNotifier<int>>() != null);
+            assert(Provider.of<ValueNotifier<int>>(context, listen: false) != null);
             return child;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -72,7 +72,7 @@ void main() {
         Provider(
           create: (_) => 0,
           builder: (context, child) {
-            assert(context.read<int>() != null);
+            assert(Provider.of<int>(context, listen: false) != null);
             return child;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -86,7 +86,7 @@ void main() {
         Provider.value(
           value: 0,
           builder: (context, child) {
-            assert(context.read<int>() != null);
+            assert(Provider.of<int>(context, listen: false) != null);
             return child;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -106,7 +106,7 @@ void main() {
               update: (_, __) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(context.read<int>() != null);
+                assert(Provider.of<int>(context, listen: false) != null);
                 return child;
               },
             ),
@@ -128,7 +128,7 @@ void main() {
               update: (_, __, ___) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(context.read<int>() != null);
+                assert(Provider.of<int>(context, listen: false) != null);
                 return child;
               },
             ),
@@ -151,7 +151,7 @@ void main() {
               update: (a, b, c, d) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(context.read<int>() != null);
+                assert(Provider.of<int>(context, listen: false) != null);
                 return child;
               },
             ),
@@ -175,7 +175,7 @@ void main() {
               update: (a, b, c, d, e) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(context.read<int>() != null);
+                assert(Provider.of<int>(context, listen: false) != null);
                 return child;
               },
             ),
@@ -200,7 +200,7 @@ void main() {
               update: (a, b, c, d, e, f) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(context.read<int>() != null);
+                assert(Provider.of<int>(context, listen: false) != null);
                 return child;
               },
             ),
@@ -226,7 +226,7 @@ void main() {
               update: (a, b, c, d, e, f, g) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(context.read<int>() != null);
+                assert(Provider.of<int>(context, listen: false) != null);
                 return child;
               },
             ),
@@ -253,7 +253,7 @@ void main() {
               update: (a, b, c, d, e, f, g, h) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(context.read<int>() != null);
+                assert(Provider.of<int>(context, listen: false) != null);
                 return child;
               },
             ),
