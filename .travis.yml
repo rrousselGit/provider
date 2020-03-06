@@ -22,8 +22,9 @@ script:
     fi
 matrix:
   fast_finish: true
-  # allow_failures:
-  # - env: FLUTTER_CHANNEL="master"
+  allow_failures:
+    # stable doesn't have debugDoingBuild yet
+  - env: FLUTTER_CHANNEL="stable"
 cache:
   directories:
     - $HOME/.pub-cache
