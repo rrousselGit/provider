@@ -182,7 +182,33 @@ class _CreateDeferredInheritedProviderElement<T, R>
   T get controller {
     if (!_didBuild) {
       assert(debugSetInheritedLock(true));
-      _controller = delegate.create(element);
+      bool _debugPreviousIsInInheritedProviderCreate;
+      bool _debugPreviousIsInInheritedProviderUpdate;
+
+      assert(() {
+        _debugPreviousIsInInheritedProviderCreate =
+            debugIsInInheritedProviderCreate;
+        _debugPreviousIsInInheritedProviderUpdate =
+            debugIsInInheritedProviderUpdate;
+        return true;
+      }());
+
+      try {
+        assert(() {
+          debugIsInInheritedProviderCreate = true;
+          debugIsInInheritedProviderUpdate = false;
+          return true;
+        }());
+        _controller = delegate.create(element);
+      } finally {
+        assert(() {
+          debugIsInInheritedProviderCreate =
+              _debugPreviousIsInInheritedProviderCreate;
+          debugIsInInheritedProviderUpdate =
+              _debugPreviousIsInInheritedProviderUpdate;
+          return true;
+        }());
+      }
       _didBuild = true;
     }
     return _controller;

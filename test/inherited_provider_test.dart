@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 import 'package:provider/src/provider.dart';
 
 import 'common.dart';
@@ -18,6 +19,246 @@ BuildContext get context => find.byType(Context).evaluate().single;
 T of<T>([BuildContext c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
+  testWidgets('regression test #377', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          StateNotifierProvider<_Controller1, Counter1>(
+            create: (context) => _Controller1(),
+          ),
+          StateNotifierProvider<_Controller2, Counter2>(
+            create: (context) => _Controller2(),
+          ),
+        ],
+        child: Consumer<Counter2>(
+          builder: (c, value, _) {
+            return Text('${value.count}', textDirection: TextDirection.ltr);
+          },
+        ),
+      ),
+    );
+  });
+  testWidgets('rebuild on dependency flags update', (tester) async {
+    await tester.pumpWidget(
+      InheritedProvider<int>(
+        lazy: false,
+        update: (context, value) {
+          assert(!debugIsInInheritedProviderCreate);
+          assert(debugIsInInheritedProviderUpdate);
+          return 0;
+        },
+        child: Container(),
+      ),
+    );
+
+    await tester.pumpWidget(
+      InheritedProvider<int>(
+        lazy: false,
+        update: (context, value) {
+          assert(!debugIsInInheritedProviderCreate);
+          assert(debugIsInInheritedProviderUpdate);
+          return 0;
+        },
+        child: Container(),
+      ),
+    );
+  });
+  testWidgets(
+      'properly update debug flags if a create triggers another deferred create',
+      (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          DeferredInheritedProvider<double, double>(
+            create: (context) {
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return 42.0;
+            },
+            startListening: (_, setState, c, __) {
+              setState(c);
+              return () {};
+            },
+          ),
+          DeferredInheritedProvider<int, int>(
+            create: (context) {
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return context.read<double>().round();
+            },
+            startListening: (_, setState, c, __) {
+              setState(c);
+              return () {};
+            },
+          ),
+          InheritedProvider<String>(
+            lazy: false,
+            update: (context, value) {
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              context.watch<double>();
+
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              return context.watch<int>().toString();
+            },
+          ),
+        ],
+        child: Container(),
+      ),
+    );
+  });
+  testWidgets(
+      'properly update debug flags if a create triggers another deferred create',
+      (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          DeferredInheritedProvider<double, double>(
+            create: (context) {
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return 42.0;
+            },
+            startListening: (_, setState, c, __) {
+              setState(c);
+              return () {};
+            },
+          ),
+          DeferredInheritedProvider<int, int>(
+            create: (context) {
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return context.read<double>().round();
+            },
+            startListening: (_, setState, c, __) {
+              setState(c);
+              return () {};
+            },
+          ),
+          InheritedProvider<String>(
+            lazy: false,
+            create: (context) {
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              context.read<double>();
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+
+              return context.read<int>().toString();
+            },
+          ),
+        ],
+        child: Container(),
+      ),
+    );
+  });
+
+  testWidgets(
+      'properly update debug flags if an update triggers another create/update',
+      (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          InheritedProvider<double>(
+            create: (context) {
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return 42.0;
+            },
+            update: (context, _) {
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              return 42.0;
+            },
+          ),
+          InheritedProvider<int>(
+            create: (context) {
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return context.read<double>().round();
+            },
+            update: (context, _) {
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              return context.watch<double>().round();
+            },
+          ),
+          InheritedProvider<String>(
+            lazy: false,
+            update: (context, value) {
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              context.watch<double>();
+
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              return context.watch<int>().toString();
+            },
+          ),
+        ],
+        child: Container(),
+      ),
+    );
+  });
+
+  testWidgets(
+      'properly update debug flags if a create triggers another create/update',
+      (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          InheritedProvider<double>(
+            create: (context) {
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return 42.0;
+            },
+            update: (context, _) {
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              return 42.0;
+            },
+          ),
+          InheritedProvider<int>(
+            create: (context) {
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return context.read<double>().round();
+            },
+            update: (context, _) {
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              return context.watch<double>().round();
+            },
+          ),
+          InheritedProvider<String>(
+            lazy: false,
+            create: (context) {
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              context.read<double>();
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+
+              return context.read<int>().toString();
+            },
+            update: (context, value) {
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              context.watch<double>();
+
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              return context.watch<int>().toString();
+            },
+          ),
+        ],
+        child: Container(),
+      ),
+    );
+  });
+
   testWidgets(
       'Provider.of(listen: false) outside of build works when it loads a provider',
       (tester) async {
@@ -2157,4 +2398,89 @@ class DeferredSubclassProvider extends DeferredInheritedProvider<int, int> {
           },
           child: child,
         );
+}
+
+class StateNotifier<T> extends ValueNotifier<T> {
+  StateNotifier(T value) : super(value);
+
+  Locator read;
+  void update(Locator watch) {}
+}
+
+class _Controller1 extends StateNotifier<Counter1> {
+  _Controller1() : super(Counter1(0));
+
+  void increment() => value = Counter1(value.count + 1);
+}
+
+class Counter1 {
+  Counter1(this.count);
+
+  final int count;
+}
+
+class _Controller2 extends StateNotifier<Counter2> {
+  _Controller2() : super(Counter2(0));
+
+  void increment() => value = Counter2(value.count + 1);
+
+  @override
+  void update(T Function<T>() watch) {
+    watch<Counter1>();
+    watch<_Controller1>();
+  }
+}
+
+class Counter2 {
+  Counter2(this.count);
+
+  final int count;
+}
+
+// A stripped version of StateNotifierProvider
+class StateNotifierProvider<Controller extends StateNotifier<Value>, Value>
+    extends SingleChildStatelessWidget {
+  // ignore: prefer_const_constructors_in_immutables
+  StateNotifierProvider({
+    Key key,
+    @required this.create,
+    this.lazy,
+    Widget child,
+  })  : assert(create != null),
+        super(key: key, child: child);
+
+  final Create<Controller> create;
+  final bool lazy;
+
+  @override
+  Widget buildWithChild(BuildContext context, Widget child) {
+    return InheritedProvider<Controller>(
+      create: (context) {
+        assert(debugIsInInheritedProviderCreate);
+        assert(!debugIsInInheritedProviderUpdate);
+        return create(context)..read = context.read;
+      },
+      update: (context, controller) {
+        assert(!debugIsInInheritedProviderCreate);
+        assert(debugIsInInheritedProviderUpdate);
+        return controller..update(context.watch);
+      },
+      dispose: (_, controller) => controller.dispose(),
+      child: DeferredInheritedProvider<Controller, Value>(
+        lazy: lazy,
+        create: (context) {
+          assert(debugIsInInheritedProviderCreate);
+          assert(!debugIsInInheritedProviderUpdate);
+          return context.read<Controller>();
+        },
+        startListening: (context, setState, controller, _) {
+          setState(controller.value);
+          final listener = () => setState(controller.value);
+          controller.addListener(listener);
+          return () => controller.removeListener(listener);
+        },
+        child: child,
+      ),
+    );
+  }
 }

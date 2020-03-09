@@ -190,7 +190,7 @@ class Provider<T> extends InheritedProvider<T> {
     assert(
       context.owner.debugBuilding ||
           listen == false ||
-          _debugIsInInheritedProviderUpdate,
+          debugIsInInheritedProviderUpdate,
       '''
 Tried to listen to a value exposed with provider, from outside of the widget tree.
 
@@ -424,7 +424,10 @@ extension ReadContext on BuildContext {
   ///   will make the widget tree rebuild when the obtained value changes.
   /// - [Locator], a typedef to make it easier to pass [read] to objects.
   T read<T>() {
-    assert(!debugDoingBuild && !_debugIsInInheritedProviderUpdate);
+    assert(
+      debugIsInInheritedProviderCreate ||
+          (!debugDoingBuild && !debugIsInInheritedProviderUpdate),
+    );
     return Provider.of<T>(this, listen: false);
   }
 }
@@ -451,7 +454,7 @@ extension WatchContext on BuildContext {
   /// - [ReadContext] and its `read` method, similar to [watch], but doesn't make
   ///   widgets rebuild if the value obtained changes.
   T watch<T>() {
-    assert(debugDoingBuild || _debugIsInInheritedProviderUpdate);
+    assert(debugDoingBuild || debugIsInInheritedProviderUpdate);
     return Provider.of<T>(this);
   }
 }

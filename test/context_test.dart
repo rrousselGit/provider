@@ -6,6 +6,26 @@ import 'package:provider/provider.dart';
 
 void main() {
   group('BuildContext', () {
+    testWidgets('create can use read without being lazy', (tester) async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider(create: (context) => 42),
+            Provider(
+              lazy: false,
+              create: (context) => context.read<int>().toString(),
+            ),
+          ],
+          child: Consumer<String>(
+            builder: (c, value, _) {
+              return Text(value, textDirection: TextDirection.ltr);
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('42'), findsOneWidget);
+    });
     testWidgets("read can't be used inside update", (tester) async {
       await tester.pumpWidget(
         Provider.value(
@@ -61,10 +81,10 @@ void main() {
         Provider.value(
           value: 42,
           child: Builder(
-            builder: (c1) {
+            builder: (parentContext) {
               return Builder(
-                builder: (c2) {
-                  c1.watch<int>();
+                builder: (_) {
+                  parentContext.watch<int>();
                   return Container();
                 },
               );
@@ -79,13 +99,14 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         Provider.value(
-            value: 42,
-            child: StatefulTest(
-              didChangeDependencies: (c) {
-                c.watch<int>();
-              },
-              child: Container(),
-            )),
+          value: 42,
+          child: StatefulTest(
+            didChangeDependencies: (c) {
+              c.watch<int>();
+            },
+            child: Container(),
+          ),
+        ),
       );
 
       expect(tester.takeException(), isAssertionError);

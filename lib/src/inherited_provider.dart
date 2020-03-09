@@ -524,7 +524,13 @@ class _CreateInheritedProvider<T> extends _Delegate<T> {
       _CreateInheritedProviderState();
 }
 
-bool _debugIsInInheritedProviderUpdate = false;
+@visibleForTesting
+// ignore: public_member_api_docs
+bool debugIsInInheritedProviderUpdate = false;
+
+@visibleForTesting
+// ignore: public_member_api_docs
+bool debugIsInInheritedProviderCreate = false;
 
 class _CreateInheritedProviderState<T>
     extends _DelegateState<T, _CreateInheritedProvider<T>> {
@@ -535,11 +541,37 @@ class _CreateInheritedProviderState<T>
 
   @override
   T get value {
+    bool _debugPreviousIsInInheritedProviderCreate;
+    bool _debugPreviousIsInInheritedProviderUpdate;
+
+    assert(() {
+      _debugPreviousIsInInheritedProviderCreate =
+          debugIsInInheritedProviderCreate;
+      _debugPreviousIsInInheritedProviderUpdate =
+          debugIsInInheritedProviderUpdate;
+      return true;
+    }());
+
     if (!_didInitValue) {
       _didInitValue = true;
       if (delegate.create != null) {
         assert(debugSetInheritedLock(true));
-        _value = delegate.create(element);
+        try {
+          assert(() {
+            debugIsInInheritedProviderCreate = true;
+            debugIsInInheritedProviderUpdate = false;
+            return true;
+          }());
+          _value = delegate.create(element);
+        } finally {
+          assert(() {
+            debugIsInInheritedProviderCreate =
+                _debugPreviousIsInInheritedProviderCreate;
+            debugIsInInheritedProviderUpdate =
+                _debugPreviousIsInInheritedProviderUpdate;
+            return true;
+          }());
+        }
         assert(debugSetInheritedLock(false));
 
         assert(() {
@@ -548,15 +580,22 @@ class _CreateInheritedProviderState<T>
         }());
       }
       if (delegate.update != null) {
-        assert(() {
-          _debugIsInInheritedProviderUpdate = true;
-          return true;
-        }());
-        _value = delegate.update(element, _value);
-        assert(() {
-          _debugIsInInheritedProviderUpdate = false;
-          return true;
-        }());
+        try {
+          assert(() {
+            debugIsInInheritedProviderCreate = false;
+            debugIsInInheritedProviderUpdate = true;
+            return true;
+          }());
+          _value = delegate.update(element, _value);
+        } finally {
+          assert(() {
+            debugIsInInheritedProviderCreate =
+                _debugPreviousIsInInheritedProviderCreate;
+            debugIsInInheritedProviderUpdate =
+                _debugPreviousIsInInheritedProviderUpdate;
+            return true;
+          }());
+        }
 
         assert(() {
           delegate.debugCheckInvalidValueType?.call(_value);
@@ -616,7 +655,32 @@ class _CreateInheritedProviderState<T>
         _didInitValue &&
         delegate.update != null) {
       final previousValue = _value;
-      _value = delegate.update(element, _value);
+
+      bool _debugPreviousIsInInheritedProviderCreate;
+      bool _debugPreviousIsInInheritedProviderUpdate;
+      assert(() {
+        _debugPreviousIsInInheritedProviderCreate =
+            debugIsInInheritedProviderCreate;
+        _debugPreviousIsInInheritedProviderUpdate =
+            debugIsInInheritedProviderUpdate;
+        return true;
+      }());
+      try {
+        assert(() {
+          debugIsInInheritedProviderCreate = false;
+          debugIsInInheritedProviderUpdate = true;
+          return true;
+        }());
+        _value = delegate.update(element, _value);
+      } finally {
+        assert(() {
+          debugIsInInheritedProviderCreate =
+              _debugPreviousIsInInheritedProviderCreate;
+          debugIsInInheritedProviderUpdate =
+              _debugPreviousIsInInheritedProviderUpdate;
+          return true;
+        }());
+      }
 
       if (delegate._updateShouldNotify != null) {
         shouldNotify = delegate._updateShouldNotify(previousValue, _value);
