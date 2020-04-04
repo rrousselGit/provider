@@ -104,6 +104,23 @@ The context used was: Context
 
     expect(Provider.of<int>(context, listen: false), equals(42));
   });
+
+  testWidgets('Provider throws if no child is provided', (tester) async {
+    await tester.pumpWidget(
+      InheritedProvider<int>.value(
+        value: 42,
+      ),
+    );
+
+    expect(
+      tester.takeException(),
+      isA<AssertionError>().having(
+        (source) => source.toString(),
+        'toString',
+        endsWith('Provider used outside of MultiProvider must specify a child'),
+      ),
+    );
+  });
   group('diagnostics', () {
     testWidgets('InheritedProvider.value', (tester) async {
       await tester.pumpWidget(
