@@ -1,3 +1,7 @@
+# 4.0.5
+
+- Improve error message when forgetting to pass a `child` when using a provider outside of `MultiProvider` (thanks to @felangel)
+
 # 4.0.4
 
 - Update the ProviderNotFoundException to remove outdated solution. (thanks @augustinreille)

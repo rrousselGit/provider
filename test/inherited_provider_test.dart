@@ -142,10 +142,11 @@ The context used was: Context
   testWidgets('DeferredInheritedProvider throws if no child is provided with default constructor', (tester) async {
     await tester.pumpWidget(
       DeferredInheritedProvider<int, int>(
-          create: (_) => 42,
-          startListening: (_, __, ___, ____) {
-            return () {};
-          }),
+        create: (_) => 42,
+        startListening: (_, __, ___, ____) {
+          return () {};
+        },
+      ),
     );
 
     expect(
@@ -161,10 +162,11 @@ The context used was: Context
   testWidgets('DeferredInheritedProvider throws if no child is provided with value constructor', (tester) async {
     await tester.pumpWidget(
       DeferredInheritedProvider<int, int>.value(
-          value: 42,
-          startListening: (_, __, ___, ____) {
-            return () {};
-          }),
+        value: 42,
+        startListening: (_, __, ___, ____) {
+          return () {};
+        },
+      ),
     );
 
     expect(
