@@ -425,9 +425,15 @@ extension ReadContext on BuildContext {
   /// - [Locator], a typedef to make it easier to pass [read] to objects.
   T read<T>() {
     assert(
-      debugIsInInheritedProviderCreate ||
-          (!debugDoingBuild && !debugIsInInheritedProviderUpdate),
-    );
+        debugIsInInheritedProviderCreate ||
+            (!debugDoingBuild && !debugIsInInheritedProviderUpdate),
+        '''
+Tried to use `context.read<$T>` inside either a `build` method or the `update` callback of a provider.
+
+This is unsafe to do so. Instead, consider using `context.watch<$T>`.
+If you used `context.read` voluntarily as a performance optimisation, the solution
+is instead to use `context.select`.
+''');
     return Provider.of<T>(this, listen: false);
   }
 }
@@ -454,7 +460,14 @@ extension WatchContext on BuildContext {
   /// - [ReadContext] and its `read` method, similar to [watch], but doesn't make
   ///   widgets rebuild if the value obtained changes.
   T watch<T>() {
-    assert(debugDoingBuild || debugIsInInheritedProviderUpdate);
+    assert(debugDoingBuild || debugIsInInheritedProviderUpdate, '''
+Tried to use `context.watch<$T>` ouside of the `build` method or `update` callback of a provider.
+
+This is likely a mistake, as it doesn't make sense to rebuild a widget when the value
+obtained changes, if that value is not used to build other widgets.
+
+Consider using `context.read<$T> instead.
+''');
     return Provider.of<T>(this);
   }
 }

@@ -189,7 +189,11 @@ extension SelectContext on BuildContext {
   ///
   /// It is fine to call `select` multiple times.
   R select<T, R>(R selector(T value)) {
-    assert(owner.debugBuilding);
+    assert(owner.debugBuilding, '''
+Tried to use `context.select` outside of the `build` method of a widget.
+
+Any usage other than inside the `build` method of a widget are not supported.
+''');
     final inheritedElement = Provider._inheritedElementOf<T>(this);
     try {
       var value = inheritedElement.value;
