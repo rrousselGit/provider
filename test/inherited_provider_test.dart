@@ -203,6 +203,46 @@ The context used was: Context
       ),
     );
   });
+
+  testWidgets('DeferredInheritedProvider throws if no child is provided with default constructor', (tester) async {
+    await tester.pumpWidget(
+      DeferredInheritedProvider<int, int>(
+        create: (_) => 42,
+        startListening: (_, __, ___, ____) {
+          return () {};
+        },
+      ),
+    );
+
+    expect(
+      tester.takeException(),
+      isA<AssertionError>().having(
+        (source) => source.toString(),
+        'toString',
+        endsWith('DeferredInheritedProvider<int, int> used outside of MultiProvider must specify a child'),
+      ),
+    );
+  });
+
+  testWidgets('DeferredInheritedProvider throws if no child is provided with value constructor', (tester) async {
+    await tester.pumpWidget(
+      DeferredInheritedProvider<int, int>.value(
+        value: 42,
+        startListening: (_, __, ___, ____) {
+          return () {};
+        },
+      ),
+    );
+
+    expect(
+      tester.takeException(),
+      isA<AssertionError>().having(
+        (source) => source.toString(),
+        'toString',
+        endsWith('DeferredInheritedProvider<int, int> used outside of MultiProvider must specify a child'),
+      ),
+    );
+  });
   group('diagnostics', () {
     testWidgets('InheritedProvider.value', (tester) async {
       await tester.pumpWidget(
