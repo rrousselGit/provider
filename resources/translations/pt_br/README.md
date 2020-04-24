@@ -81,7 +81,7 @@ Veja [essa resposta no stackoverflow](https://stackoverflow.com/questions/522495
 que explica em mais detalhes por que usar o construtor `.value` para
 criar valores é indesejado.
 
-- **DO** create a new object inside `create`.
+- **FAÇA** crie um novo objeto dentro do `create`.
 
 ```dart
 Provider(
@@ -90,7 +90,7 @@ Provider(
 )
 ```
 
-- **DON'T** use `Provider.value` to create your object.
+- **NÃO** use o `Provider.value` para criar o seu objeto.
 
 ```dart
 ChangeNotifierProvider.value(
@@ -99,11 +99,11 @@ ChangeNotifierProvider.value(
 )
 ```
 
-- **DON'T** create your object from variables that can change over
-  the time.
+- **NÃO** crie seus objetos a partir de variáveis que possam
+  mudar ao longo do tempo.
 
-  In such situation, your object would never be updated when the
-  value changes.
+  Nessa situação, seu objeto pode nunca ser atualizado quando o
+  valor mudar.
 
 ```dart
 int count;
@@ -114,8 +114,8 @@ Provider(
 )
 ```
 
-If you want to pass variables that can change over time to your object,
-consider using `ProxyProvider`:
+Se você quiser passar variáveis que possam mudar ao longo do tempo para o seu objeto,
+considere usar o `ProxyProvider`:
 
 ```dart
 int count;
@@ -126,15 +126,15 @@ ProxyProvider0(
 )
 ```
 
-#### Reusing an existing object instance:
+#### Re-usando uma instância existente de um objeto:
 
-If you already have an object instance and want to expose it,
-you should use the `.value` constructor of a provider.
+Se você já tem uma instância de um objeto e quer expô-la,
+você deve usar o construtor `.value` de um provider.
 
-Failing to do so may call the `dispose` method of your object when it is still in use.
+Não fazer isso pode ser chamar o método `dispose` do seu objeto quando ele ainda está em uso.
 
-- **DO** use `ChangeNotifierProvider.value` to provide an existing
-  `ChangeNotifier`.
+- **FAÇA** use o `ChangeNotifierProvider.value` para prover um
+  `ChangeNotifier` existente.
 
 ```dart
 MyChangeNotifier variable;
@@ -145,7 +145,7 @@ ChangeNotifierProvider.value(
 )
 ```
 
-- **DON'T** reuse an existing `ChangeNotifier` using the default constructor
+- **NÃO** reuse um `ChangeNotifier` existente usando o construtor padrão
 
 ```dart
 MyChangeNotifier variable;
@@ -156,43 +156,43 @@ ChangeNotifierProvider(
 )
 ```
 
-### Reading a value
+### Lendo um valor
 
-The easiest way to read a value is by using the static method
+A maneira mais fácil de ler um valor é usando um método estático
 `Provider.of<T>(BuildContext context)`.
 
-This method will look up in the widget tree starting from the widget associated
-with the `BuildContext` passed and it will return the nearest variable of type
-`T` found (or throw if nothing is found).
+Esse método irá olhar na árvore de widgets acima começando pelo widget associado
+com o `BuildContext` passado e retornará a variável mais próxima do tipo
+`T` que foi encontrada (ou lançará uma exceção se nada for encontrado).
 
-Combined with the first example of [exposing a value](#exposing-a-value), this
-widget will read the exposed `String` and render "Hello World."
+Combinado com o primeiro exemplo de [expondo um valor](#expondo-um-valor), esse
+widget irá ler a variável `String` exposta e renderizar "Hello World."
 
 ```dart
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      // Don't forget to pass the type of the object you want to obtain to `Provider.of`!
+      // Não se esqueça de passar o tipo do objeto que você quer obter ao `Provider.of`!
       Provider.of<String>(context)
     );
   }
 }
 ```
 
-Alternatively instead of using `Provider.of`, we can use `Consumer` and `Selector`.
+Alternativamente ao invés de usar `Provider.of`, nós podemos usar `Consumer` e `Selector`.
 
-These can be useful for performance optimizations or when it is difficult to
-obtain a `BuildContext` descendant of the provider.
+Esses podem ser úteis para otimizações de performance ou quando for difícil de
+obter um `BuildContext` descendente do provider.
 
-See the [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do) or the documentation of [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
-and [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html)
-for more information.
+Veja o [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do) ou a documentação do [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
+e [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html)
+para mais informação.
 
 ### MultiProvider
 
-When injecting many values in big applications, `Provider` can rapidly become
-pretty nested:
+Quando estiver injetando muitos valores em grandes aplicações, o `Provider` pode rapidamente se
+tornar muito aninhado:
 
 ```dart
 Provider<Something>(
@@ -207,7 +207,7 @@ Provider<Something>(
 ),
 ```
 
-To:
+Para:
 
 ```dart
 MultiProvider(
@@ -220,21 +220,21 @@ MultiProvider(
 )
 ```
 
-The behavior of both examples is strictly the same. `MultiProvider` only changes
-the appearance of the code.
+O comportamento de ambos exemplos é estritamente o mesmo. O `MultiProvider` apenas muda
+a aparência do código.
 
 ### ProxyProvider
 
-Since the 3.0.0, there is a new kind of provider: `ProxyProvider`.
+Desde a versão 3.0.0, existe um novo tipo de provider: `ProxyProvider`.
 
-`ProxyProvider` is a provider that combines multiple values from other providers
-into a new object, and sends the result to `Provider`.
+`ProxyProvider` é um provider que combina múltiplo valores de outros providers
+em um novo objeto, e envia o resultado para o `Provider`.
 
-That new object will then be updated whenever one of the providers it depends on
-updates.
+Esse novo objeto será atualizado quando um dos providers que ele depende
+atualizar.
 
-The following example uses `ProxyProvider` to build translations based on a
-counter coming from another provider.
+O exemplo a seguir usa o `ProxyProvider` para construir traduções baseadas em um
+contador vindo de outro provider.
 
 ```dart
 Widget build(BuildContext context) {
@@ -254,21 +254,21 @@ class Translations {
 
   final int _value;
 
-  String get title => 'You clicked $_value times';
+  String get title => 'Você clicou $_value vezes';
 }
 ```
 
-It comes under multiple variations, such as:
+Ele está sujeito a várias variações, como:
 
 - `ProxyProvider` vs `ProxyProvider2` vs `ProxyProvider3`, ...
 
-  That digit after the class name is the number of other providers that
-  `ProxyProvider` depends on.
+  O digito apos o nome da classe é o número de outros providers que o
+  `ProxyProvider` depende.
 
 - `ProxyProvider` vs `ChangeNotifierProxyProvider` vs `ListenableProxyProvider`, ...
 
-  They all work similarly, but instead of sending the result into a `Provider`,
-  a `ChangeNotifierProxyProvider` will send its value to a `ChangeNotifierProvider`.
+  Eles todos funciona de forma similar, mas ao invés de enviar o resultado ao `Provider`,
+  um `ChangeNotifierProxyProvider` irá enviar um valor ao `ChangeNotifierProvider`.
 
 ### FAQ
 
