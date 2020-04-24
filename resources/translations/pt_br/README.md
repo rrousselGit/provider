@@ -9,7 +9,7 @@ Uma mistura entre injeção de dependência (ID) e gerenciamento de estado, feit
 para widgets.
 
 O seu propósito é usar widgets para ID/gerenciamento de estado ao invés de somente classes do Dart como `Stream`.
-A razão é que, widgets são muito simples mas ainda robustos e escaláveis.
+A razão é que, widgets são muito simples mas ainda assim robustos e escaláveis.
 
 Utilizando widgets para gerenciamento de estado, o `provider` pode garantir:
 
@@ -17,7 +17,7 @@ Utilizando widgets para gerenciamento de estado, o `provider` pode garantir:
 - testabilidade/composição, pois é sempre possível mockar/sobrescrever um
   valor
 - robustez, já que é mais difícil esquecer de atualizar a estrutura de um
-  modelo/widget
+  model/widget
 
 Para ler mais sobre o `provider`, veja a [documentação](https://pub.dev/documentation/provider/latest/).
 
@@ -26,14 +26,14 @@ Para ler mais sobre o `provider`, veja a [documentação](https://pub.dev/docume
 - Os parâmetros `builder` e `initialBuilder` foram removidos dos providers.
 
   - `initialBuilder` deve ser substituído por `create`.
-  - `builder` de providers "proxy" deve ser substituído por `update`
-  - `builder` de providers clássicos deve ser substituído por `create`.
+  - `builder` dos providers "proxy" devem ser substituído por `update`
+  - `builder` dos providers clássicos devem ser substituído por `create`.
 
 - Os novos retornos de chamada `create`/`update` são carregados a medida que forem necessários (lazy-loaded), o que significa que eles são chamados
-  na primeira vez que o valor for lido ao invés de quando o provedor for criado.
+  apenas na primeira vez em que o valor for lido ao invés de quando o provider for criado.
 
   Se desejar, você pode desativar o carregamento sob demanda (lazy-loading) passando `lazy: false` para
-  o provedor de sua escolha:
+  o provider de sua escolha:
 
   ```dart
   FutureProvider(
@@ -50,9 +50,9 @@ Para ler mais sobre o `provider`, veja a [documentação](https://pub.dev/docume
 
   Veja [essa issue](https://github.com/rrousselGit/provider/issues/237) para detalhes de como realizar a migração.
 
-- `Selector` agora compara complementarmente os valores anteriores e novos se forem coleções.
+- `Selector` agora compara complementarmente os valores anteriores e os novos se forem coleções.
 
-  Se desejar, você pode reverter ao comportamento anterior passando um parâmetro `shouldRebuild`
+  Se desejar, você pode voltar ao comportamento anterior passando um parâmetro `shouldRebuild`
   para o `Selector`:
 
   ```dart
@@ -62,8 +62,8 @@ Para ler mais sobre o `provider`, veja a [documentação](https://pub.dev/docume
   )
   ```
 
-- `DelegateWidget` e companhia foram finalmente removidos. Ao invés, para providers customizados,
-  herda diretamente de `InheritedProvider` ou um provedor existente.
+- `DelegateWidget` e companhia foram finalmente removidos. Ao invés, providers customizados
+  herdam diretamente de `InheritedProvider` ou um provedor existente.
 
 ## Uso
 
@@ -79,7 +79,7 @@ caso contrário você poderá ter efeitos colaterais indesejados.
 
 Veja [essa resposta no stackoverflow](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)
 que explica em mais detalhes por que usar o construtor `.value` para
-criar valores é indesejado.
+criar valores não é ideal.
 
 - **FAÇA** crie um novo objeto dentro do `create`.
 
@@ -131,7 +131,7 @@ ProxyProvider0(
 Se você já tem uma instância de um objeto e quer expô-la,
 você deve usar o construtor `.value` de um provider.
 
-Não fazer isso pode ser chamar o método `dispose` do seu objeto quando ele ainda está em uso.
+Não fazendo isso o método `dispose` do seu objeto pode ser chamado quando ele ainda está em uso.
 
 - **FAÇA** use o `ChangeNotifierProvider.value` para prover um
   `ChangeNotifier` existente.
@@ -158,11 +158,11 @@ ChangeNotifierProvider(
 
 ### Lendo um valor
 
-A maneira mais fácil de ler um valor é usando um método estático
+A maneira mais fácil de ler um valor é usando o método estático
 `Provider.of<T>(BuildContext context)`.
 
 Esse método irá olhar na árvore de widgets acima começando pelo widget associado
-com o `BuildContext` passado e retornará a variável mais próxima do tipo
+ao `BuildContext` passado e retornará a variável mais próxima do tipo
 `T` que foi encontrada (ou lançará uma exceção se nada for encontrado).
 
 Combinado com o primeiro exemplo de [expondo um valor](#expondo-um-valor), esse
@@ -182,7 +182,7 @@ class Home extends StatelessWidget {
 
 Alternativamente ao invés de usar `Provider.of`, nós podemos usar `Consumer` e `Selector`.
 
-Esses podem ser úteis para otimizações de performance ou quando for difícil de
+Esses podem ser úteis para otimizações de performance ou quando for difícil de se
 obter um `BuildContext` descendente do provider.
 
 Veja o [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do) ou a documentação do [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
@@ -191,8 +191,7 @@ para mais informação.
 
 ### MultiProvider
 
-Quando estiver injetando muitos valores em grandes aplicações, o `Provider` pode rapidamente se
-tornar muito aninhado:
+Quando estiver injetando muitos valores em grandes aplicações, o `Provider` pode se tornar muito aninhado rapidamente:
 
 ```dart
 Provider<Something>(
@@ -227,11 +226,11 @@ a aparência do código.
 
 Desde a versão 3.0.0, existe um novo tipo de provider: `ProxyProvider`.
 
-`ProxyProvider` é um provider que combina múltiplo valores de outros providers
+`ProxyProvider` é um provider que combina múltiplos valores de outros providers
 em um novo objeto, e envia o resultado para o `Provider`.
 
 Esse novo objeto será atualizado quando um dos providers que ele depende
-atualizar.
+for atualizado.
 
 O exemplo a seguir usa o `ProxyProvider` para construir traduções baseadas em um
 contador vindo de outro provider.
@@ -258,7 +257,7 @@ class Translations {
 }
 ```
 
-Ele está sujeito a várias variações, como:
+Ele está sujeito a variações, como:
 
 - `ProxyProvider` vs `ProxyProvider2` vs `ProxyProvider3`, ...
 
@@ -267,21 +266,21 @@ Ele está sujeito a várias variações, como:
 
 - `ProxyProvider` vs `ChangeNotifierProxyProvider` vs `ListenableProxyProvider`, ...
 
-  Eles todos funciona de forma similar, mas ao invés de enviar o resultado ao `Provider`,
-  um `ChangeNotifierProxyProvider` irá enviar um valor ao `ChangeNotifierProvider`.
+  Todos eles funcionam de forma similar, mas ao invés de enviar o resultado ao `Provider`,
+  um `ChangeNotifierProxyProvider` irá enviar o valor ao `ChangeNotifierProvider`.
 
 ### FAQ
 
-### I have an exception when obtaining Providers inside `initState`. What can I do?
+### Eu recebo uma exceção quando estou obtendo Providers dentro do `initState`. O que posso fazer?
 
-This exception happens because you're trying to listen to a provider from a
-life-cycle that will never ever be called again.
+Essa exceção ocorre porque você está tentando ouvir de um provider a partir
+de um ciclo de vida que nunca será chamado novamente.
 
-It means that you either should use another life-cycle
-(`didChangeDependencies`/`build`), or explicitly specify that you do not care
-about updates.
+Isso significa que você deve utilizar outro ciclo de vida como
+(`didChangeDependencies`/`build`), ou explicitar especificamente que você não se importa
+com as atualizações.
 
-As such, instead of:
+Como, ao invés de:
 
 ```dart
 initState() {
@@ -290,7 +289,7 @@ initState() {
 }
 ```
 
-you can do:
+você pode fazer:
 
 ```dart
 Value value;
@@ -305,9 +304,9 @@ didChangeDependencies() {
 }
 ```
 
-which will print `value` whenever it changes.
+que imprimirá o `value` sempre que ele mudar.
 
-Alternatively you can do:
+Alternativamente você pode fazer:
 
 ```dart
 initState() {
@@ -316,15 +315,15 @@ initState() {
 }
 ```
 
-Which will print `value` once and ignore updates.
+Que imprimirá o `value` uma vez e irá ignorar as atualizações.
 
-### I use `ChangeNotifier` and I have an exception when I update it, what happens?
+### Eu uso o `ChangeNotifier` e estou recebendo uma exceção quando o atualizo, o que acontece?
 
-This likely happens because you are modifying the `ChangeNotifier` from one of
-its descendants _while the widget tree is building_.
+Isso provavelmente acontece porque você está mudando o `ChangeNotifier` de um dos
+seus descendentes _enquanto a árvore de widgets está sendo construída_.
 
-A typical situation where this happens is when starting an http request, where
-the future is stored inside the notifier:
+Uma tipica situação onde isso acontece é quando se está iniciando uma requição http, onde
+o future é armazenado dentro do notifier:
 
 ```dart
 initState() {
@@ -333,16 +332,16 @@ initState() {
 }
 ```
 
-This is not allowed, because the modification is immediate.
+Isso não é permitido, porque as modificações são imediatas.
 
-Which means that some widgets may build _before_ the mutation, while other
-widgets will build _after_ the mutation.
-This could cause inconsistencies in your UI and is therefore not allowed.
+O que significa que alguns widgets podem ser construídos _antes_ da mudança, enquanto outros
+widgets serão construídos _após_ a mudança.
+Isso pode causar consequências na sua interface e portanto não é permitido.
 
-Instead, you should perform that mutation in a place that would affect the
-entire tree equally:
+Ao invés, você deve executar essa mudança em um local que afete igualmente
+a árvore inteira:
 
-- directly inside the `create` of your provider/constructor of your model:
+- diretamente dentro do `create` do provider/construtor do seu model:
 
   ```dart
   class MyNotifier with ChangeNotifier {
@@ -354,9 +353,9 @@ entire tree equally:
   }
   ```
 
-  This is useful when there's no "external parameter".
+  Isso é útil quando não temos "parâmetros externos".
 
-- asynchronously at the end of the frame:
+- assincronamente ao fim do frame:
   ```dart
   initState() {
     super.initState();
@@ -365,16 +364,16 @@ entire tree equally:
     );
   }
   ```
-  It is slightly less ideal, but allows passing parameters to the mutation.
+  É um pouco menos ideal, mas permite a passagem de parâmetros para a mudança.
 
-#### Do I have to use `ChangeNotifier` for complex states?
+#### Preciso usar o `ChangeNotifier` para estados complexos?
 
-No.
+Não.
 
-You can use any object to represent your state. For example, an alternate
-architecture is to use `Provider.value()` combined with a `StatefulWidget`.
+Você pode utilizar qualquer objeto para representar o seu estado. Por exemplo, uma arquitetura
+alternativa é usar o `Provider.value()` combinado com um `StatefulWidget`.
 
-Here's a counter example using such architecture:
+Aqui está um exemplo de contador usando essa arquitetura:
 
 ```dart
 class Example extends StatefulWidget {
@@ -408,13 +407,13 @@ class ExampleState extends State<Example> {
 }
 ```
 
-where we can read the state by doing:
+Onde podemos ler o estado usando:
 
 ```dart
 return Text(Provider.of<int>(context).toString());
 ```
 
-and modify the state with:
+e modificar o estado com:
 
 ```dart
 return FloatingActionButton(
@@ -423,28 +422,28 @@ return FloatingActionButton(
 );
 ```
 
-Alternatively, you can create your own provider.
+Alternativamente, você pode criar o seu próprio provider.
 
-#### Can I make my own Provider?
+#### Posso criar o meu próprio Provider?
 
-Yes. `provider` exposes all the small components that makes a fully fledged provider.
+Sim. O `provider` expõe todos os pequenos componentes que tornam um provider completo.
 
-This includes:
+Isso inclui:
 
-- `SingleChildCloneableWidget`, to make any widget works with `MultiProvider`.
-- `InheritedProvider`, the generic `InheritedWidget` obtained when doing `Provider.of`.
-- `DelegateWidget`/`BuilderDelegate`/`ValueDelegate` to help handle the logic of
-  "MyProvider() that creates an object" vs "MyProvider.value() that can update over time".
+- `SingleChildCloneableWidget`, para fazer com que qualquer widget funcione com o `MultiProvider`.
+- `InheritedProvider`, o `InheritedWidget` generico é obtido usando o `Provider.of`.
+- `DelegateWidget`/`BuilderDelegate`/`ValueDelegate` para ajudar a lidar com a lógica do
+  "MyProvider() que cria um objeto" vs "MyProvider.value() que pode ser atualizado com o tempo".
 
-Here's an example of a custom provider to use `ValueNotifier` as state:
+Aqui está um exempo de um provider cutomizado que usa o `ValueNotifier` como estado:
 https://gist.github.com/rrousselGit/4910f3125e41600df3c2577e26967c91
 
-#### My widget rebuilds too often, what can I do?
+#### Meu widget é reconstruído com frequência, o que posso fazer?
 
-Instead of `Provider.of`, you can use `Consumer`/`Selector`.
+Ao invés de usar o `Provider.of`, você pode usar o `Consumer`/`Selector`.
 
-Their optional `child` argument allows to rebuild only a very specific part of
-the widget tree:
+O seu argumento opcional `child` permite reconstruir somente uma parte específica da
+árvore de widgets:
 
 ```dart
 Foo(
@@ -457,11 +456,11 @@ Foo(
 )
 ```
 
-In this example, only `Bar` will rebuild when `A` updates. `Foo` and `Baz` won't
-unnecessarily rebuild.
+Nesse exemplo, somente `Bar` será reconstruído quando `A` for atualizado. `Foo` e `Baz` não
+serão reconstruídos desnecessariamente.
 
-To go one step further, it is possible to use `Selector` to ignore changes if
-they don't have an impact on the widget-tree:
+Dando um passo a mais, é possível utilizar o `Selector` para ignorar mudanças se
+elas não tiverem impacto na árvore de widgets:
 
 ```dart
 Selector<List, int>(
@@ -472,51 +471,51 @@ Selector<List, int>(
 );
 ```
 
-This snippet will rebuild only if the length of the list changes. But it won't
-unnecessarily update if an item is updated.
+Esse trecho será reconstruído somente se o tamanho da lista mudar. Mas não irá
+atualizar desnecessariamente se um item for atualizado.
 
-#### Can I obtain two different providers using the same type?
+#### Posso obter dois providers diferentes usando o mesmo tipo?
 
-No. While you can have multiple providers sharing the same type, a widget will
-be able to obtain only one of them: the closest ancestor.
+Não. Embora você possa ter vários providers compartilhando o mesmo tipo, um widget
+só ira conseguir obter apenas um deles: o ancestral mais próximo.
 
-Instead, you must explicitly give both providers a different type.
+Ao invés disso, você deve dar explicitamente tipos diferentes a ambos providers.
 
-Instead of:
+Ao invés de:
 
 ```dart
 Provider<String>(
-  create: (_) => 'England',
+  create: (_) => 'Inglaterra',
   child: Provider<String>(
-    create: (_) => 'London',
+    create: (_) => 'Londres',
     child: ...,
   ),
 ),
 ```
 
-Prefer:
+Prefira:
 
 ```dart
 Provider<Country>(
-  create: (_) => Country('England'),
+  create: (_) => Country('Inglaterra'),
   child: Provider<City>(
-    create: (_) => City('London'),
+    create: (_) => City('Londres'),
     child: ...,
   ),
 ),
 ```
 
-## Existing providers
+## Providers existentes
 
-`provider` exposes a few different kinds of "provider" for different types of objects.
+O `provider` expõe alguns diferentes tipos de "provider" para diferentes tipos de objetos.
 
-The complete list of all the objects available is [here](https://pub.dev/documentation/provider/latest/provider/provider-library.html)
+A lista completa de todos os objetos disponiveis está [aqui](https://pub.dev/documentation/provider/latest/provider/provider-library.html)
 
-| name                                                                                                                          | description                                                                                                                                                            |
-| ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Provider](https://pub.dartlang.org/documentation/provider/latest/provider/Provider-class.html)                               | The most basic form of provider. It takes a value and exposes it, whatever the value is.                                                                               |
-| [ListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ListenableProvider-class.html)           | A specific provider for Listenable object. ListenableProvider will listen to the object and ask widgets which depend on it to rebuild whenever the listener is called. |
-| [ChangeNotifierProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ChangeNotifierProvider-class.html)   | A specification of ListenableProvider for ChangeNotifier. It will automatically call `ChangeNotifier.dispose` when needed.                                             |
-| [ValueListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ValueListenableProvider-class.html) | Listen to a ValueListenable and only expose `ValueListenable.value`.                                                                                                   |
-| [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | Listen to a Stream and expose the latest value emitted.                                                                                                                |
-| [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | Takes a `Future` and updates dependents when the future completes.                                                                                                     |
+| nome                                                                                                                          | descrição                                                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Provider](https://pub.dartlang.org/documentation/provider/latest/provider/Provider-class.html)                               | A forma mais básica de provider. Ele pega um valor e o expõe, qualquer que seja o valor.                                                                                                                 |
+| [ListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ListenableProvider-class.html)           | Um provider especifico para objetos que possam ser ouvidos. O ListenableProvider irá ouvir o objetor e pedir para que os widgets que dependam dele sejam reconstruídos sempre que o ouvinte for chamado. |
+| [ChangeNotifierProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ChangeNotifierProvider-class.html)   | Uma especificação do ListenableProvider para ChangeNotifier. Ele chama automaticamente o `ChangeNotifier.dispose` quando preciso.                                                                        |
+| [ValueListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ValueListenableProvider-class.html) | Escuta um ValueListenable e apenas expoe o `ValueListenable.value`.                                                                                                                                      |
+| [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | Escuta uma Stream e expoe o ultimo valor emitido.                                                                                                                                                        |
+| [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | Recebe um `Future` e atualiza os depedentes quando o future for atualizado.                                                                                                                              |
