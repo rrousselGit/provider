@@ -1,3 +1,7 @@
+# 4.0.5+1
+
+- Added Português translation of the readme file (thanks to @robsonsilv4)
+
 # 4.0.5
 
 - Improve error message when forgetting to pass a `child` when using a provider outside of `MultiProvider` (thanks to @felangel)
