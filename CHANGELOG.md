@@ -4,6 +4,7 @@
   but is a lot less verbose to write:
 
   With Selector:
+
   ```dart
   Widget build(BuildContext context) {
     return Selector<Person, String>(
@@ -66,7 +67,15 @@
 - Added a `Locator` typedef and an extension on [BuildContext], to help with
   being able to read providers from a class that doesn't depend on Flutter.
 
-  # 4.0.4
+# 4.0.5+1
+
+- Added Português translation of the readme file (thanks to @robsonsilv4)
+
+# 4.0.5
+
+- Improve error message when forgetting to pass a `child` when using a provider outside of `MultiProvider` (thanks to @felangel)
+
+# 4.0.4
 
 - Update the ProviderNotFoundException to remove outdated solution. (thanks @augustinreille)
 
