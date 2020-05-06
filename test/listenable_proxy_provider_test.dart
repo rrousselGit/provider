@@ -136,7 +136,8 @@ void main() {
         expect(tester.takeException(), isAssertionError);
       },
     );
-    testWidgets('rebuilds dependendents when listeners are called', (tester) async {
+    testWidgets('rebuilds dependendents when listeners are called',
+        (tester) async {
       final notifier = ValueNotifier(0);
       await tester.pumpWidget(
         MultiProvider(
@@ -252,7 +253,8 @@ void main() {
   });
 
   group('ListenableProxyProvider variants', () {
-    InheritedContext<Combined> findInheritedProvider() => findInheritedContext<Combined>();
+    InheritedContext<Combined> findInheritedProvider() =>
+        findInheritedContext<Combined>();
     testWidgets('ListenableProxyProvider', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -310,7 +312,8 @@ void main() {
             Provider.value(value: f),
             ListenableProxyProvider2<A, B, _ListenableCombined>(
               create: (_) => _ListenableCombined(null, null, null),
-              update: (context, a, b, previous) => _ListenableCombined(context, previous, a, b),
+              update: (context, a, b, previous) =>
+                  _ListenableCombined(context, previous, a, b),
             )
           ],
           child: mockConsumer,
@@ -321,7 +324,8 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          _ListenableCombined(context, _ListenableCombined(null, null, null), a, b),
+          _ListenableCombined(
+              context, _ListenableCombined(null, null, null), a, b),
         ),
       ).called(1);
     });
@@ -337,7 +341,8 @@ void main() {
             Provider.value(value: f),
             ListenableProxyProvider3<A, B, C, _ListenableCombined>(
               create: (_) => _ListenableCombined(null, null, null),
-              update: (context, a, b, c, previous) => _ListenableCombined(context, previous, a, b, c),
+              update: (context, a, b, c, previous) =>
+                  _ListenableCombined(context, previous, a, b, c),
             )
           ],
           child: mockConsumer,
@@ -348,7 +353,8 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          _ListenableCombined(context, _ListenableCombined(null, null, null), a, b, c),
+          _ListenableCombined(
+              context, _ListenableCombined(null, null, null), a, b, c),
         ),
       ).called(1);
     });
@@ -364,7 +370,8 @@ void main() {
             Provider.value(value: f),
             ListenableProxyProvider4<A, B, C, D, _ListenableCombined>(
               create: (_) => _ListenableCombined(null, null, null),
-              update: (context, a, b, c, d, previous) => _ListenableCombined(context, previous, a, b, c, d),
+              update: (context, a, b, c, d, previous) =>
+                  _ListenableCombined(context, previous, a, b, c, d),
             )
           ],
           child: mockConsumer,
@@ -375,7 +382,8 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          _ListenableCombined(context, _ListenableCombined(null, null, null), a, b, c, d),
+          _ListenableCombined(
+              context, _ListenableCombined(null, null, null), a, b, c, d),
         ),
       ).called(1);
     });
@@ -391,7 +399,8 @@ void main() {
             Provider.value(value: f),
             ListenableProxyProvider5<A, B, C, D, E, _ListenableCombined>(
               create: (_) => _ListenableCombined(null, null, null),
-              update: (context, a, b, c, d, e, previous) => _ListenableCombined(context, previous, a, b, c, d, e),
+              update: (context, a, b, c, d, e, previous) =>
+                  _ListenableCombined(context, previous, a, b, c, d, e),
             )
           ],
           child: mockConsumer,
@@ -402,7 +411,8 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          _ListenableCombined(context, _ListenableCombined(null, null, null), a, b, c, d, e, null),
+          _ListenableCombined(context, _ListenableCombined(null, null, null), a,
+              b, c, d, e, null),
         ),
       ).called(1);
     });
@@ -418,7 +428,8 @@ void main() {
             Provider.value(value: f),
             ListenableProxyProvider6<A, B, C, D, E, F, _ListenableCombined>(
               create: (_) => _ListenableCombined(null, null, null),
-              update: (context, a, b, c, d, e, f, previous) => _ListenableCombined(context, previous, a, b, c, d, e, f),
+              update: (context, a, b, c, d, e, f, previous) =>
+                  _ListenableCombined(context, previous, a, b, c, d, e, f),
             )
           ],
           child: mockConsumer,
@@ -428,7 +439,8 @@ void main() {
       final context = findInheritedProvider();
       verify(
         combinedConsumerMock(
-          _ListenableCombined(context, _ListenableCombined(null, null, null), a, b, c, d, e, f),
+          _ListenableCombined(
+              context, _ListenableCombined(null, null, null), a, b, c, d, e, f),
         ),
       ).called(1);
     });

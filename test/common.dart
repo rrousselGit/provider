@@ -11,7 +11,11 @@ Element findElementOfWidget<T extends Widget>() {
 }
 
 InheritedContext<T> findInheritedContext<T>() {
-  return find.byElementPredicate((e) => e is InheritedContext<T>).first.evaluate().first as InheritedContext<T>;
+  return find
+      .byElementPredicate((e) => e is InheritedContext<T>)
+      .first
+      .evaluate()
+      .first as InheritedContext<T>;
 }
 
 Type typeOf<T>() => T;
@@ -29,6 +33,19 @@ class ValueBuilderMock<T> extends Mock {
     when(this(any, any)).thenReturn(value);
   }
   T call(BuildContext context, T previous);
+}
+
+class TransitionBuilderMock extends Mock {
+  TransitionBuilderMock([Widget cb(BuildContext c, Widget child)]) {
+    if (cb != null) {
+      when(this(any, any)).thenAnswer((i) {
+        final context = i.positionalArguments.first as BuildContext;
+        final child = i.positionalArguments[1] as Widget;
+        return cb(context, child);
+      });
+    }
+  }
+  Widget call(BuildContext context, Widget child);
 }
 
 class StartListeningMock<T> extends Mock {
@@ -49,7 +66,29 @@ class DisposeMock<T> extends Mock {
 
 class MockNotifier extends Mock implements ChangeNotifier {}
 
+class ValueWidgetBuilderMock<T> extends Mock {
+  ValueWidgetBuilderMock([Widget cb(BuildContext c, T value, Widget child)]) {
+    if (cb != null) {
+      when(this(any, any, any)).thenAnswer((i) {
+        final context = i.positionalArguments.first as BuildContext;
+        final value = i.positionalArguments[1] as T;
+        final child = i.positionalArguments[2] as Widget;
+        return cb(context, value, child);
+      });
+    }
+  }
+  Widget call(BuildContext context, T value, Widget child);
+}
+
 class BuilderMock extends Mock {
+  BuilderMock([Widget cb(BuildContext c)]) {
+    if (cb != null) {
+      when(this(any)).thenAnswer((i) {
+        final context = i.positionalArguments.first as BuildContext;
+        return cb(context);
+      });
+    }
+  }
   Widget call(BuildContext context);
 }
 
@@ -144,7 +183,8 @@ class Combined extends DiagnosticableTree {
   final Combined previous;
   final BuildContext context;
 
-  Combined(this.context, this.previous, this.a, [this.b, this.c, this.d, this.e, this.f]);
+  Combined(this.context, this.previous, this.a,
+      [this.b, this.c, this.d, this.e, this.f]);
 
   @override
   // ignore: hash_and_equals
@@ -186,7 +226,9 @@ class MyStream extends Stream<void> {
 }
 
 int buildCountOf(BuildCount widget) {
-  return ((find.byWidget(widget).evaluate().single as StatefulElement).state as _BuildCountState).buildCount;
+  return ((find.byWidget(widget).evaluate().single as StatefulElement).state
+          as _BuildCountState)
+      .buildCount;
 }
 
 class BuildCount extends StatefulWidget {
@@ -214,5 +256,6 @@ class _BuildCountState extends State<BuildCount> {
 }
 
 Matcher throwsProviderNotFound<T>() {
-  return throwsA(isA<ProviderNotFoundException>().having((err) => err.valueType, 'valueType', T));
+  return throwsA(isA<ProviderNotFoundException>()
+      .having((err) => err.valueType, 'valueType', T));
 }

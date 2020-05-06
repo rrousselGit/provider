@@ -19,7 +19,8 @@ class Combined {
   final Widget child;
   final BuildContext context;
 
-  Combined(this.context, this.child, this.a, [this.b, this.c, this.d, this.e, this.f]);
+  Combined(this.context, this.child, this.a,
+      [this.b, this.c, this.d, this.e, this.f]);
 
   @override
   // ignore: hash_and_equals
@@ -117,7 +118,8 @@ void main() {
           providers: multiProviderNodes,
           child: Consumer2<A, B>(
             key: key,
-            builder: (context, value, v2, child) => mock(Combined(context, child, value, v2)),
+            builder: (context, value, v2, child) =>
+                mock(Combined(context, child, value, v2)),
             child: child,
           ),
         ),
@@ -163,7 +165,8 @@ void main() {
           providers: multiProviderNodes,
           child: Consumer3<A, B, C>(
             key: key,
-            builder: (context, value, v2, v3, child) => mock(Combined(context, child, value, v2, v3)),
+            builder: (context, value, v2, v3, child) =>
+                mock(Combined(context, child, value, v2, v3)),
             child: child,
           ),
         ),
@@ -209,7 +212,8 @@ void main() {
           providers: multiProviderNodes,
           child: Consumer4<A, B, C, D>(
             key: key,
-            builder: (context, value, v2, v3, v4, child) => mock(Combined(context, child, value, v2, v3, v4)),
+            builder: (context, value, v2, v3, v4, child) =>
+                mock(Combined(context, child, value, v2, v3, v4)),
             child: child,
           ),
         ),
@@ -255,7 +259,8 @@ void main() {
           providers: multiProviderNodes,
           child: Consumer5<A, B, C, D, E>(
             key: key,
-            builder: (context, value, v2, v3, v4, v5, child) => mock(Combined(context, child, value, v2, v3, v4, v5)),
+            builder: (context, value, v2, v3, v4, v5, child) =>
+                mock(Combined(context, child, value, v2, v3, v4, v5)),
             child: child,
           ),
         ),

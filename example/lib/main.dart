@@ -3,16 +3,23 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-/// This is an example of a counter application using `provider` + [ChangeNotifier].
-///
-/// It builds a typical `+` button, with a twist: the texts using the counter
-/// are built using the localization framework.
-///
-/// This shows how to bind our custom [ChangeNotifier] to things like [LocalizationsDelegate].
+/// This is a reimplementation of the default Flutter application using provider + [ChangeNotifier].
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(
+    /// Providers are above [MyApp] instead of inside it, so that tests
+    /// can use [MyApp] while mocking the providers
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => Counter()),
+      ],
+      child: MyApp(),
+    ),
+  );
+}
 
-class Counter with ChangeNotifier {
+/// Mix-in [DiagnosticableTreeMixin] to have access to [debugFillProperties] for the devtool
+class Counter with ChangeNotifier, DiagnosticableTreeMixin {
   int _count = 0;
   int get count => _count;
 
@@ -20,59 +27,22 @@ class Counter with ChangeNotifier {
     _count++;
     notifyListeners();
   }
+
+  /// Makes `Counter` readable inside the devtools by listing all of its properties
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IntProperty('count', count));
+  }
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => Counter()),
-      ],
-      child: Consumer<Counter>(
-        builder: (context, counter, _) {
-          return MaterialApp(
-            supportedLocales: const [Locale('en')],
-            localizationsDelegates: [
-              DefaultMaterialLocalizations.delegate,
-              DefaultWidgetsLocalizations.delegate,
-              _ExampleLocalizationsDelegate(counter.count),
-            ],
-            home: const MyHomePage(),
-          );
-        },
-      ),
+    return const MaterialApp(
+      home: MyHomePage(),
     );
   }
-}
-
-class ExampleLocalizations {
-  static ExampleLocalizations of(BuildContext context) {
-    return Localizations.of<ExampleLocalizations>(context, ExampleLocalizations);
-  }
-
-  const ExampleLocalizations(this._count);
-
-  final int _count;
-
-  String get title => 'Tapped $_count times';
-}
-
-class _ExampleLocalizationsDelegate extends LocalizationsDelegate<ExampleLocalizations> {
-  const _ExampleLocalizationsDelegate(this.count);
-
-  final int count;
-
-  @override
-  bool isSupported(Locale locale) => locale.languageCode == 'en';
-
-  @override
-  Future<ExampleLocalizations> load(Locale locale) {
-    return SynchronousFuture(ExampleLocalizations(count));
-  }
-
-  @override
-  bool shouldReload(_ExampleLocalizationsDelegate old) => old.count != count;
 }
 
 class MyHomePage extends StatelessWidget {
@@ -81,68 +51,45 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /// Tons of small widgets!
-      ///
-      /// Splitting our app in small widgets like [Title] or [CounterLabel] is
-      /// useful for rebuild optimization.
-      ///
-      /// Since they are instantiated using `const`, they won't unnecessarily
-      /// rebuild when their parent changes.
-      /// But they can still have dynamic content, as they can obtain providers!
-      ///
-      /// This means only the widgets that depends on a provider to rebuild when they change.
-      /// Alternatively, we could use [Consumer] or [Selector] to achieve the
-      /// same result.
-      appBar: AppBar(title: const Title()),
-      body: const Center(child: CounterLabel()),
-      floatingActionButton: const IncrementCounterButton(),
-    );
-  }
-}
+      appBar: AppBar(
+        title: const Text('Example'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text('You have pushed the button this many times:'),
 
-class IncrementCounterButton extends StatelessWidget {
-  const IncrementCounterButton({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {
-        Provider.of<Counter>(context, listen: false).increment();
-      },
-      tooltip: 'Increment',
-      child: const Icon(Icons.add),
-    );
-  }
-}
-
-class CounterLabel extends StatelessWidget {
-  const CounterLabel({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final counter = Provider.of<Counter>(context);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        const Text(
-          'You have pushed the button this many times:',
+            /// Extracted as a separate widget for performance optimization.
+            /// As a separate widget, it will rebuild independently from [MyHomePage].
+            ///
+            /// This is totally optional (and rarely needed).
+            /// Similarly, we could also use [Consumer] or [Selector].
+            const Count(),
+          ],
         ),
-        Text(
-          '${counter.count}',
-          // ignore: deprecated_member_use
-          style: Theme.of(context).textTheme.display1,
-        ),
-      ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        /// Calls `context.read` instead of `context.watch` so that it does not rebuild
+        /// when [Counter] changes.
+        onPressed: () => context.read<Counter>().increment(),
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
 
-class Title extends StatelessWidget {
-  const Title({Key key}) : super(key: key);
+class Count extends StatelessWidget {
+  const Count({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Text(ExampleLocalizations.of(context).title);
+    return Text(
+
+        /// Calls `context.watch` to make [MyHomePage] rebuild when [Counter] changes.
+        '${context.watch<Counter>().count}',
+        style: Theme.of(context).textTheme.headline4);
   }
 }

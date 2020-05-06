@@ -95,7 +95,8 @@ import 'proxy_provider.dart';
 ///     of variables from other providers.
 ///   * [ListenableProvider], similar to [ChangeNotifierProvider] but works with
 ///     any [Listenable].
-class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvider<T> {
+class ChangeNotifierProvider<T extends ChangeNotifier>
+    extends ListenableProvider<T> {
   static void _dispose(BuildContext context, ChangeNotifier notifier) {
     notifier?.dispose();
   }
@@ -108,12 +109,14 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvide
     Key key,
     @required Create<T> create,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
           create: create,
           dispose: _dispose,
           lazy: lazy,
+          builder: builder,
           child: child,
         );
 
@@ -121,9 +124,11 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvide
   ChangeNotifierProvider.value({
     Key key,
     @required T value,
+    TransitionBuilder builder,
     Widget child,
   }) : super.value(
           key: key,
+          builder: builder,
           value: value,
           child: child,
         );
@@ -203,13 +208,15 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends ListenableProvide
 ///   http calls or similar side-effects, then it is likely that an immutable
 ///   object built using [ProxyProvider] will work.
 /// {@endtemplate}
-class ChangeNotifierProxyProvider<T, R extends ChangeNotifier> extends ListenableProxyProvider<T, R> {
+class ChangeNotifierProxyProvider<T, R extends ChangeNotifier>
+    extends ListenableProxyProvider<T, R> {
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider({
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder<T, R> update,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -217,18 +224,21 @@ class ChangeNotifierProxyProvider<T, R extends ChangeNotifier> extends Listenabl
           update: update,
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
+          builder: builder,
           child: child,
         );
 }
 
 /// {@macro provider.changenotifierproxyprovider}
-class ChangeNotifierProxyProvider0<R extends ChangeNotifier> extends ListenableProxyProvider0<R> {
+class ChangeNotifierProxyProvider0<R extends ChangeNotifier>
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider0({
     Key key,
     @required Create<R> create,
     @required R Function(BuildContext, R value) update,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -236,18 +246,21 @@ class ChangeNotifierProxyProvider0<R extends ChangeNotifier> extends ListenableP
           update: update,
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
+          builder: builder,
           child: child,
         );
 }
 
 /// {@macro provider.changenotifierproxyprovider}
-class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier> extends ListenableProxyProvider2<T, T2, R> {
+class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier>
+    extends ListenableProxyProvider2<T, T2, R> {
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider2({
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder2<T, T2, R> update,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -255,18 +268,21 @@ class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier> extends List
           update: update,
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
+          builder: builder,
           child: child,
         );
 }
 
 /// {@macro provider.changenotifierproxyprovider}
-class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier> extends ListenableProxyProvider3<T, T2, T3, R> {
+class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier>
+    extends ListenableProxyProvider3<T, T2, T3, R> {
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider3({
     Key key,
     @required Create<R> create,
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -274,6 +290,7 @@ class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier> extends 
           update: update,
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
+          builder: builder,
           child: child,
         );
 }
@@ -287,6 +304,7 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
     @required Create<R> create,
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -294,6 +312,7 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
           update: update,
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
+          builder: builder,
           child: child,
         );
 }
@@ -307,6 +326,7 @@ class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
     @required Create<R> create,
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -314,12 +334,14 @@ class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
           update: update,
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
+          builder: builder,
           child: child,
         );
 }
 
 /// {@macro provider.changenotifierproxyprovider}
-class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6, R extends ChangeNotifier>
+class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6,
+        R extends ChangeNotifier>
     extends ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R> {
   /// Initializes [key] for subclasses.
   ChangeNotifierProxyProvider6({
@@ -327,6 +349,7 @@ class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6, R extends ChangeNotifi
     @required Create<R> create,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   }) : super(
           key: key,
@@ -334,6 +357,7 @@ class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6, R extends ChangeNotifi
           update: update,
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
+          builder: builder,
           child: child,
         );
 }

@@ -1,3 +1,72 @@
+# 4.1.0
+
+- Added a `select` extension on `BuildContext`. It behaves similarly to `Selector`,
+  but is a lot less verbose to write:
+
+  With Selector:
+
+  ```dart
+  Widget build(BuildContext context) {
+    return Selector<Person, String>(
+      selector: (_, p) => p.name,
+      builder: (_, name, __) {
+        return Text(name);
+      },
+    ),
+  }
+  ```
+
+  VS with the new `select` extension:
+
+  ```dart
+  Widget build(BuildContext context) {
+    final name = context.select((Person p) => p.name);
+    return Text(name);
+  }
+  ```
+
+* Added `builder` on the different providers.
+  This parameters simplifies situations where we need a [BuildContext] that
+  can access the new provider.
+
+  As such, instead of:
+
+  ```dart
+  Provider(
+    create: (_) => Something(),
+    child: Builder(
+      builder: (context) {
+        final name = context.select((Something s) => s.name);
+        return Text(name);
+      },
+    ),
+  )
+  ```
+
+  we can write:
+
+  ```dart
+  Provider(
+    create: (_) => Something(),
+    builder: (context, child) {
+      final name = context.select((Something s) => s.name);
+      return Text(name);
+    },
+  )
+  ```
+
+  The behavior is the same. This is only a small syntax sugar.
+
+- Added a two extensions on [BuildContext], to slightly reduce the boilerplate:
+
+  | before                                   | after               |
+  | ---------------------------------------- | ------------------- |
+  | `Provider.of<T>(context, listen: false)` | `context.read<T>()` |
+  | `Provider.of<T>(context)`                | `context.watch<T>`  |
+
+- Added a `Locator` typedef and an extension on [BuildContext], to help with
+  being able to read providers from a class that doesn't depend on Flutter.
+
 # 4.0.5+1
 
 - Added Português translation of the readme file (thanks to @robsonsilv4)
@@ -153,4 +222,6 @@
 # 1.1.0
 
 - `onDispose` has been added to `StatefulProvider`
-- `BuildContext` is now passed to `valueBuilder` callback
+- [BuildContext] is now passed to `valueBuilder` callback
+
+[buildcontext]: (https://api.flutter.dev/flutter/widgets/BuildContext-class.html)

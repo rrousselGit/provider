@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'change_notifier_provider.dart' show ChangeNotifierProvider, ChangeNotifierProxyProvider;
+import 'change_notifier_provider.dart'
+    show ChangeNotifierProvider, ChangeNotifierProxyProvider;
 import 'provider.dart';
 import 'proxy_provider.dart';
 
@@ -26,6 +27,7 @@ class ListenableProvider<T extends Listenable> extends InheritedProvider<T> {
     @required Create<T> create,
     Dispose<T> dispose,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null),
         super(
@@ -63,6 +65,7 @@ ChangeNotifierProvider(
                   }
                 },
           lazy: lazy,
+          builder: builder,
           child: child,
         );
 
@@ -71,9 +74,11 @@ ChangeNotifierProvider(
     Key key,
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
+    TransitionBuilder builder,
     Widget child,
   }) : super.value(
           key: key,
+          builder: builder,
           value: value,
           updateShouldNotify: updateShouldNotify,
           startListening: _startListening,
@@ -90,7 +95,8 @@ ChangeNotifierProvider(
 }
 
 /// {@macro provider.listenableproxyprovider}
-class ListenableProxyProvider0<R extends Listenable> extends InheritedProvider<R> {
+class ListenableProxyProvider0<R extends Listenable>
+    extends InheritedProvider<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider0({
     Key key,
@@ -99,6 +105,7 @@ class ListenableProxyProvider0<R extends Listenable> extends InheritedProvider<R
     Dispose<R> dispose,
     UpdateShouldNotify<R> updateShouldNotify,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -106,6 +113,7 @@ class ListenableProxyProvider0<R extends Listenable> extends InheritedProvider<R
           create: create,
           update: update,
           lazy: lazy,
+          builder: builder,
           dispose: dispose,
           updateShouldNotify: updateShouldNotify,
           startListening: ListenableProvider._startListening,
@@ -135,7 +143,8 @@ class ListenableProxyProvider0<R extends Listenable> extends InheritedProvider<R
 /// [Listenable] implementation other than [ChangeNotifier], such as
 /// [Animation].
 /// {@endtemplate}
-class ListenableProxyProvider<T, R extends Listenable> extends ListenableProxyProvider0<R> {
+class ListenableProxyProvider<T, R extends Listenable>
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider({
     Key key,
@@ -143,12 +152,14 @@ class ListenableProxyProvider<T, R extends Listenable> extends ListenableProxyPr
     @required ProxyProviderBuilder<T, R> update,
     Dispose<R> dispose,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
           lazy: lazy,
+          builder: builder,
           update: (context, previous) => update(
             context,
             Provider.of(context),
@@ -160,7 +171,8 @@ class ListenableProxyProvider<T, R extends Listenable> extends ListenableProxyPr
 }
 
 /// {@macro provider.listenableproxyprovider}
-class ListenableProxyProvider2<T, T2, R extends Listenable> extends ListenableProxyProvider0<R> {
+class ListenableProxyProvider2<T, T2, R extends Listenable>
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider2({
     Key key,
@@ -168,12 +180,14 @@ class ListenableProxyProvider2<T, T2, R extends Listenable> extends ListenablePr
     @required ProxyProviderBuilder2<T, T2, R> update,
     Dispose<R> dispose,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
           lazy: lazy,
+          builder: builder,
           update: (context, previous) => update(
             context,
             Provider.of(context),
@@ -186,7 +200,8 @@ class ListenableProxyProvider2<T, T2, R extends Listenable> extends ListenablePr
 }
 
 /// {@macro provider.listenableproxyprovider}
-class ListenableProxyProvider3<T, T2, T3, R extends Listenable> extends ListenableProxyProvider0<R> {
+class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider3({
     Key key,
@@ -194,12 +209,14 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable> extends Listenab
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
     Dispose<R> dispose,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
           lazy: lazy,
+          builder: builder,
           update: (context, previous) => update(
             context,
             Provider.of(context),
@@ -213,7 +230,8 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable> extends Listenab
 }
 
 /// {@macro provider.listenableproxyprovider}
-class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable> extends ListenableProxyProvider0<R> {
+class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider4({
     Key key,
@@ -221,12 +239,14 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable> extends List
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     Dispose<R> dispose,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
           lazy: lazy,
+          builder: builder,
           update: (context, previous) => update(
             context,
             Provider.of(context),
@@ -241,7 +261,8 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable> extends List
 }
 
 /// {@macro provider.listenableproxyprovider}
-class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable> extends ListenableProxyProvider0<R> {
+class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider5({
     Key key,
@@ -249,12 +270,14 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable> extends 
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     Dispose<R> dispose,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
           lazy: lazy,
+          builder: builder,
           update: (context, previous) => update(
             context,
             Provider.of(context),
@@ -270,7 +293,8 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable> extends 
 }
 
 /// {@macro provider.listenableproxyprovider}
-class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable> extends ListenableProxyProvider0<R> {
+class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
+    extends ListenableProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ListenableProxyProvider6({
     Key key,
@@ -278,12 +302,14 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable> exte
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     Dispose<R> dispose,
     bool lazy,
+    TransitionBuilder builder,
     Widget child,
   })  : assert(create != null || update != null),
         super(
           key: key,
           create: create,
           lazy: lazy,
+          builder: builder,
           update: (context, previous) => update(
             context,
             Provider.of(context),

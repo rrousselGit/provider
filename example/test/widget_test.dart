@@ -5,6 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -19,8 +20,6 @@ void main() {
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);
-    expect(find.text('Tapped 0 times'), findsOneWidget);
-    expect(find.text('Tapped 1 times'), findsNothing);
 
     // Tap the '+' icon and trigger a frame.
     await tester.tap(find.byIcon(Icons.add));
@@ -29,7 +28,22 @@ void main() {
     // Verify that our counter has incremented.
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
-    expect(find.text('Tapped 0 times'), findsNothing);
-    expect(find.text('Tapped 1 times'), findsOneWidget);
+  });
+  test('Counter toString()', () {
+    final counter = example.Counter();
+
+    expect(counter.toString(), '${describeIdentity(counter)}(count: 0)');
+
+    counter.increment();
+
+    expect(counter.toString(), '${describeIdentity(counter)}(count: 1)');
+  });
+  test('test coverage', () {
+    // remove when https://github.com/dart-lang/sdk/issues/38934 is closed
+
+    // ignore: prefer_const_constructors
+    example.Count();
+    // ignore: prefer_const_constructors
+    example.MyHomePage();
   });
 }

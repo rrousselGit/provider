@@ -4,7 +4,7 @@ homepage: https://github.com/rrousselGit/provider
 author: Remi Rousselet <darky12s@gmail.com>
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter:
