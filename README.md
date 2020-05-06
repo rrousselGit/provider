@@ -1,4 +1,4 @@
-[English](.README.md) | [Português](/resources/translations/pt_br/README.md)
+[English](https://github.com/rrousselGit/provider/blob/master/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md)
 
 [![Build Status](https://travis-ci.org/rrousselGit/provider.svg?branch=master)](https://travis-ci.org/rrousselGit/provider)
 [![pub package](https://img.shields.io/pub/v/provider.svg)](https://pub.dev/packages/provider) [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider) [![Gitter](https://badges.gitter.im/flutter_provider/community.svg)](https://gitter.im/flutter_provider/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
@@ -12,10 +12,10 @@ By using `provider` instead of manually writing [InheritedWidget], you get:
 
 - simplified allocation/disposal of resources
 - lazy-loading
-- a largely reduced boilerplate over making a new class everytime
+- a largely reduced boilerplate over making a new class every time
 - devtools friendly
 - a common way to consume these [InheritedWidgets] (See [Provider.of]/[Consumer]/[Selector])
-- increased scalability for classes with a listening mecanism that grows exponentially
+- increased scalability for classes with a listening mechanism that grows exponentially
   in complexity (such as [ChangeNotifier], which is O(N²) for dispatching notifications).
 
 To read more about `provider`, see its [documentation](https://pub.dev/documentation/provider/latest/).
@@ -77,7 +77,7 @@ See also:
 
 #### Exposing a new object instance
 
-Providers allows to not only expose a value, but also create/listen/dispose it.
+Providers allow to not only expose a value, but also create/listen/dispose it.
 
 To expose a newly created object, use the default constructor of a provider.
 Do _not_ use the `.value` constructor if you want to **create** an object, or you
@@ -108,7 +108,7 @@ ChangeNotifierProvider.value(
 - **DON'T** create your object from variables that can change over
   the time.
 
-  In such situation, your object would never be updated when the
+  In such a situation, your object would never be updated when the
   value changes.
 
 ```dart
@@ -211,7 +211,7 @@ class Home extends StatelessWidget {
 }
 ```
 
-Alternatively instead of using these methods, we can use [Consumer] and [Selector].
+Alternatively, instead of using these methods, we can use [Consumer] and [Selector].
 
 These can be useful for performance optimizations or when it is difficult to
 obtain a `BuildContext` descendant of the provider.
@@ -524,7 +524,7 @@ Alternatively, you can create your own provider.
 
 #### Can I make my own Provider?
 
-Yes. `provider` exposes all the small components that makes a fully fledged provider.
+Yes. `provider` exposes all the small components that make a fully-fledged provider.
 
 This includes:
 
@@ -561,7 +561,7 @@ Widget build(BuildContext context) {
 }
 ```
 
-This way, the widget won't unnecesserily rebuild if something other than `name`
+This way, the widget won't unnecessarily rebuild if something other than `name`
 changes.
 
 Similarly, you can use [Consumer]/[Selector].
