@@ -321,4 +321,32 @@ void main() {
       expect(myNotifier.notifyListeners, throwsAssertionError);
     });
   });
+
+  testWidgets('Use builder property, not child', (tester) async {
+    final myNotifier = ValueNotifier<int>(0);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<ValueNotifier<int>>(
+        create: (context) => myNotifier,
+        builder: (context, _) {
+          final notifier = context.watch<ValueNotifier<int>>();
+          return Text(
+            '${notifier.value}',
+            textDirection: TextDirection.ltr,
+          );
+        },
+      ),
+    );
+
+    expect(find.text('0'), findsOneWidget);
+
+    myNotifier.value++;
+    await tester.pump();
+
+    expect(find.text('1'), findsOneWidget);
+
+    await tester.pumpWidget(Container());
+
+    expect(myNotifier.notifyListeners, throwsAssertionError);
+  });
 }
