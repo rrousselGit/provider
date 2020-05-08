@@ -263,7 +263,6 @@ class _InheritedProviderScope<T> extends InheritedWidget {
 
 class _Dependency<T> {
   bool shouldClearSelectors = false;
-  bool shouldClearMutationScheduled = false;
   final selectors = <_SelectorAspect<T>>[];
 }
 
@@ -299,12 +298,9 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
         selectorDependency.shouldClearSelectors = false;
         selectorDependency.selectors.clear();
       }
-      if (selectorDependency.shouldClearMutationScheduled == false) {
-        selectorDependency.shouldClearMutationScheduled = true;
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          selectorDependency.shouldClearSelectors = true;
-        });
-      }
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        selectorDependency.shouldClearSelectors = true;
+      });
       selectorDependency.selectors.add(aspect);
       setDependencies(dependent, selectorDependency);
     } else {
