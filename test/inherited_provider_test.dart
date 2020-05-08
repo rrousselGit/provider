@@ -459,7 +459,7 @@ The context used was: Context
       isA<AssertionError>().having(
         (source) => source.toString(),
         'toString',
-        endsWith(
+        contains(
             'InheritedProvider<int> used outside of MultiProvider must specify a child'),
       ),
     );
@@ -479,7 +479,7 @@ The context used was: Context
       isA<AssertionError>().having(
         (source) => source.toString(),
         'toString',
-        endsWith(
+        contains(
             'InheritedProvider<int> used outside of MultiProvider must specify a child'),
       ),
     );
@@ -502,7 +502,7 @@ The context used was: Context
       isA<AssertionError>().having(
         (source) => source.toString(),
         'toString',
-        endsWith(
+        contains(
             'DeferredInheritedProvider<int, int> used outside of MultiProvider must specify a child'),
       ),
     );
@@ -525,7 +525,7 @@ The context used was: Context
       isA<AssertionError>().having(
         (source) => source.toString(),
         'toString',
-        endsWith(
+        contains(
             'DeferredInheritedProvider<int, int> used outside of MultiProvider must specify a child'),
       ),
     );
