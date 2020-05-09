@@ -123,13 +123,10 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
-    assert(() {
-      if (_builder == null && child == null) {
-        throw AssertionError(
-            '$runtimeType used outside of MultiProvider must specify a child');
-      }
-      return true;
-    }());
+    assert(
+      _builder != null || child != null,
+      '$runtimeType used outside of MultiProvider must specify a child',
+    );
     return _InheritedProviderScope<T>(
       owner: this,
       child: _builder != null
