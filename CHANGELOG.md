@@ -1,3 +1,8 @@
+# 4.1.1
+
+- Fixes an "aspect" leak with `context.select`, leading to memory leaks and unnecessary rebuilds
+- Fixes the `builder` parameter of providers not working (thanks to @passsy)
+
 # 4.1.0
 
 - Added a `select` extension on `BuildContext`. It behaves similarly to `Selector`,
@@ -26,7 +31,7 @@
   ```
 
 * Added `builder` on the different providers.
-  This parameters simplifies situations where we need a [BuildContext] that
+  This parameter simplifies situations where we need a [BuildContext] that
   can access the new provider.
 
   As such, instead of:
