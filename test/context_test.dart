@@ -6,6 +6,89 @@ import 'package:provider/provider.dart';
 
 void main() {
   group('BuildContext', () {
+    testWidgets('internal selected value is updated', (tester) async {
+      final notifier = ValueNotifier([false, false, false]);
+
+      var callCounts = <int, int>{
+        0: 0,
+        1: 0,
+        2: 0,
+      };
+
+      Widget buildIndex(int index) {
+        return Builder(builder: (c) {
+          callCounts[index]++;
+          final selected =
+              c.select<ValueNotifier<List<bool>>, bool>((notifier) {
+            return notifier.value[index];
+          });
+          return Text('$index $selected');
+        });
+      }
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider(
+          create: (_) => notifier,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Column(
+              children: [
+                buildIndex(0),
+                buildIndex(1),
+                buildIndex(2),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('0 false'), findsOneWidget);
+      expect(callCounts[0], 1);
+      expect(find.text('1 false'), findsOneWidget);
+      expect(callCounts[1], 1);
+      expect(find.text('2 false'), findsOneWidget);
+      expect(callCounts[2], 1);
+
+      notifier.value = [false, true, false];
+      await tester.pump();
+
+      expect(find.text('0 false'), findsOneWidget);
+      expect(callCounts[0], 1);
+      expect(find.text('1 true'), findsOneWidget);
+      expect(callCounts[1], 2);
+      expect(find.text('2 false'), findsOneWidget);
+      expect(callCounts[2], 1);
+
+      notifier.value = [false, false, false];
+      await tester.pump();
+
+      expect(find.text('0 false'), findsOneWidget);
+      expect(callCounts[0], 1);
+      expect(find.text('1 false'), findsOneWidget);
+      expect(callCounts[1], 3);
+      expect(find.text('2 false'), findsOneWidget);
+      expect(callCounts[2], 1);
+
+      notifier.value = [true, false, false];
+      await tester.pump();
+
+      expect(find.text('0 true'), findsOneWidget);
+      expect(callCounts[0], 2);
+      expect(find.text('1 false'), findsOneWidget);
+      expect(callCounts[1], 3);
+      expect(find.text('2 false'), findsOneWidget);
+      expect(callCounts[2], 1);
+
+      notifier.value = [true, false, false];
+      await tester.pump();
+
+      expect(find.text('0 true'), findsOneWidget);
+      expect(callCounts[0], 2);
+      expect(find.text('1 false'), findsOneWidget);
+      expect(callCounts[1], 3);
+      expect(find.text('2 false'), findsOneWidget);
+      expect(callCounts[2], 1);
+    });
     testWidgets('create can use read without being lazy', (tester) async {
       await tester.pumpWidget(
         MultiProvider(

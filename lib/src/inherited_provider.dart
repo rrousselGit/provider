@@ -295,6 +295,7 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
     if (aspect is _SelectorAspect<T>) {
       final selectorDependency =
           (dependencies ?? _Dependency<T>()) as _Dependency<T>;
+
       if (selectorDependency.shouldClearSelectors) {
         selectorDependency.shouldClearSelectors = false;
         selectorDependency.selectors.clear();
@@ -302,7 +303,9 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
       if (selectorDependency.shouldClearMutationScheduled == false) {
         selectorDependency.shouldClearMutationScheduled = true;
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          selectorDependency.shouldClearSelectors = true;
+          selectorDependency
+            ..shouldClearMutationScheduled = false
+            ..shouldClearSelectors = true;
         });
       }
       selectorDependency.selectors.add(aspect);
