@@ -1,3 +1,7 @@
+# 4.1.2
+
+- Loosened the constraint on Flutter's version to be compatible with `beta` channel.
+
 # 4.1.1
 
 - Fixes an "aspect" leak with `context.select`, leading to memory leaks and unnecessary rebuilds
