@@ -109,7 +109,7 @@ class ProxyProvider0<R> extends InheritedProvider<R> {
 /// ProxyProvider0<Result>(
 ///   update: (context, result) {
 ///     final a = Provider.of<A>(context);
-///     return update(context, a, b, result);
+///     return update(context, a, result);
 ///   }
 /// );
 /// ```
