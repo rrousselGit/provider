@@ -613,6 +613,34 @@ Provider<Country>(
 ),
 ```
 
+#### Can I consume an interface and provide an implementation?
+
+Yes, a type hint must be given to the compiler to indicate the interface will be consumed, with the implementation provided in create.
+
+```dart
+abstract class ProviderInterface with ChangeNotifier {
+  ...
+}
+
+class ProviderImplementation with ChangeNotifier implements ProviderInterface {
+  ...
+}
+
+class Foo extends StatelessWidget {
+  @override
+  build(context) {
+    final provider = Provider.of<ProviderInterface>(context);
+    return ...
+  }
+}
+
+ChangeNotifierProvider<ProviderInterface>(
+  create: (_) => ProviderImplementation(),
+  child: Foo(),
+),
+```
+
+
 ### Existing providers
 
 `provider` exposes a few different kinds of "provider" for different types of objects.
