@@ -288,8 +288,11 @@ The context used was: $context
     return inheritedElement.value;
   }
 
-  static _InheritedProviderScopeMixin<T> _inheritedElementOf<T>(BuildContext context) {
-    _InheritedProviderScopeMixin<T> inheritedElement;
+  static _InheritedProviderScopeElement<T> _inheritedElementOf<T>(
+    BuildContext context,
+  ) {
+    assert(context != null, '''
+Tried to call context.read/watch/select or similar on a `context` that is null.
 
 This can happen if you used the context of a StatefulWidget and that
 StatefulWidget was disposed.
