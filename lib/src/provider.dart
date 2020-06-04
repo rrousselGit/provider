@@ -217,7 +217,14 @@ The context used was: $context
   }
 
   static _InheritedProviderScopeElement<T> _inheritedElementOf<T>(
-      BuildContext context) {
+    BuildContext context,
+  ) {
+    assert(context != null, '''
+Tried to call context.read/watch/select or similar on a `context` that is null.
+
+This can happen if you used the context of a StatefulWidget and that
+StatefulWidget was disposed.
+''');
     assert(
       _debugIsSelecting == false,
       'Cannot call context.read/watch/select inside the callback of a context.select',

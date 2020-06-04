@@ -12,8 +12,10 @@
 
 - Fixes a bug where `context.watch` couldn't be called inside `ListView`/`LayoutBuilder`
 
-- Improve the error messag when trying to use `context.select` inside `ListView.builder`
+- Improve the error message when trying to use `context.select` inside `ListView.builder`
 
+- Improve the error message when calling `context.read/watch/select`/`Provider.of` with
+  a `context` that is `null`.
 
 # 4.1.2
 
