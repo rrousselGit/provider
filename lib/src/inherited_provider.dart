@@ -193,7 +193,26 @@ extension SelectContext on BuildContext {
   ///
   /// It is fine to call `select` multiple times.
   R select<T, R>(R selector(T value)) {
-    assert(owner.debugBuilding, '''
+    assert(widget is! SliverWithKeepAliveWidget, '''
+    Tried to use context.select inside a SliverList/SliderGridView.
+
+    This is likely a mistake, as instead of rebuilding only the item that cares
+    about the selected value, this would rebuild the entire list/grid.
+
+    To fix, add a `Builder` or extract the content of `itemBuilder` in a separate widget:
+
+    ```dart
+    ListView.builder(
+      itemBuilder: (context, index) {
+        return Builder(builder: (context) {
+          final todo = context.select((TodoList list) => list[index]);
+          return Text(todo.name);
+        });
+      },
+    );
+    ```
+    ''');
+    assert(widget is LayoutBuilder || debugDoingBuild, '''
 Tried to use `context.select` outside of the `build` method of a widget.
 
 Any usage other than inside the `build` method of a widget are not supported.
@@ -325,6 +344,13 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
     var shouldNotify = false;
     if (dependencies != null) {
       if (dependencies is _Dependency<T>) {
+        // select can never be used inside `didChangeDependencies`, so if the
+        // dependent is already marked as needed build, there is no point
+        // in executing the selectors.
+        if (dependent.dirty) {
+          return;
+        }
+
         for (final updateShouldNotify in dependencies.selectors) {
           try {
             assert(() {

@@ -1,3 +1,20 @@
+# 4.1.3
+
+- Improved the error message of `ProviderNotFoundException` with instructions
+  that better fit what is usually the problem.
+
+- Added documentation on why `context.read` should not be called inside `build`,
+  and what to do instead.
+
+- Improved the performances of `context.select`, by not calling the selectors
+  when the provider changes if the widgets listening to the value are already
+  needing build.
+
+- Fixes a bug where `context.watch` couldn't be called inside `ListView`/`LayoutBuilder`
+
+- Improve the error messag when trying to use `context.select` inside `ListView.builder`
+
+
 # 4.1.2
 
 - Loosened the constraint on Flutter's version to be compatible with `beta` channel.

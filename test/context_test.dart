@@ -5,6 +5,130 @@ import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  testWidgets('watch in layoutbuilder', (tester) async {
+    await tester.pumpWidget(
+      Provider(
+        create: (_) => 42,
+        child: LayoutBuilder(builder: (context, _) {
+          return Text(
+            context.watch<int>().toString(),
+            textDirection: TextDirection.ltr,
+          );
+        }),
+      ),
+    );
+
+    expect(find.text('42'), findsOneWidget);
+  });
+  testWidgets('select in layoutbuilder', (tester) async {
+    await tester.pumpWidget(
+      Provider(
+        create: (_) => 42,
+        child: LayoutBuilder(builder: (context, _) {
+          return Text(
+            context.select((int i) => '$i'),
+            textDirection: TextDirection.ltr,
+          );
+        }),
+      ),
+    );
+
+    expect(find.text('42'), findsOneWidget);
+  });
+  testWidgets('cannot select in listView', (tester) async {
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Provider(
+          create: (_) => 0,
+          child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (context, index) {
+              return Text(context.select((int v) => '$v'));
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester.takeException(),
+      isAssertionError.having(
+          (s) => s.message,
+          'message',
+          contains(
+            'Tried to use context.select inside a SliverList/SliderGridView.',
+          )),
+    );
+  });
+  testWidgets('watch in listView', (tester) async {
+    final notifier = ValueNotifier([0, 0]);
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: ChangeNotifierProvider(
+          create: (_) => notifier,
+          child: ListView.builder(
+            itemCount: 2,
+            itemBuilder: (context, index) {
+              return Text(
+                context
+                    .watch<ValueNotifier<List<int>>>()
+                    .value[index]
+                    .toString(),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('0'), findsNWidgets(2));
+
+    notifier.value = [1, 0];
+
+    await tester.pump();
+
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('1'), findsOneWidget);
+  });
+  testWidgets('watch in gridView', (tester) async {
+    final notifier = ValueNotifier([0, 0]);
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: ChangeNotifierProvider(
+          create: (_) => notifier,
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+            ),
+            itemCount: 2,
+            itemBuilder: (context, index) {
+              return Text(
+                context
+                    .watch<ValueNotifier<List<int>>>()
+                    .value[index]
+                    .toString(),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('0'), findsNWidgets(2));
+
+    notifier.value = [1, 0];
+
+    await tester.pump();
+
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('1'), findsOneWidget);
+  });
+
   group('BuildContext', () {
     testWidgets('internal selected value is updated', (tester) async {
       final notifier = ValueNotifier([false, false, false]);
@@ -462,52 +586,26 @@ void main() {
 
       expect(find.text('42'), findsOneWidget);
     });
-    testWidgets(
-        'select in didChangeDependencies stops working if build uses select too',
+    testWidgets('select cannot be called inside didChangeDependencies',
         (tester) async {
-      var didChangeDependenciesCount = 0;
-      var selectorCount = 0;
-      var child = StatefulTest(
-        didChangeDependencies: (c) {
-          didChangeDependenciesCount++;
-          c.select((int i) {
-            selectorCount++;
-            return i;
-          });
-        },
-        builder: (context) {
-          // never trigger a rebuild in itself, but still clear selectors
-          context.select((int i) => 0);
-          return Container();
-        },
-      );
-
+      Object error;
       await tester.pumpWidget(
         Provider.value(
           value: 42,
-          child: child,
+          child: StatefulTest(
+            didChangeDependencies: (c) {
+              try {
+                c.select((int i) => i);
+              } catch (err) {
+                error = err;
+              }
+            },
+            builder: (context) => Container(),
+          ),
         ),
       );
 
-      expect(selectorCount, 1);
-      expect(didChangeDependenciesCount, 1);
-
-      tester.element(find.byType(StatefulTest)).markNeedsBuild();
-      await tester.pump();
-
-      expect(selectorCount, 1);
-      expect(didChangeDependenciesCount, 1);
-
-      await tester.pumpWidget(
-        Provider.value(
-          value: 21,
-          child: child,
-        ),
-      );
-
-      // selectors in `didChangeDependencies` where cleared
-      expect(selectorCount, 1);
-      expect(didChangeDependenciesCount, 1);
+      expect(error, isAssertionError);
     });
     testWidgets('select in initState throws', (tester) async {
       await tester.pumpWidget(

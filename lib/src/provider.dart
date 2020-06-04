@@ -342,16 +342,49 @@ class ProviderNotFoundException implements Exception {
     return '''
 Error: Could not find the correct Provider<$valueType> above this $widgetType Widget
 
-To fix, please:
+This likely happens because you used a `BuildContext` that does not include the provider
+of your choice. There are a few common scenarios:
 
-  * Ensure the Provider<$valueType> is an ancestor to this $widgetType Widget
-  * Provide types to Provider<$valueType>
-  * Provide types to Consumer<$valueType>
-  * Provide types to Provider.of<$valueType>()
-  * Ensure the correct `context` is being used.
+- The provider you are trying to read is in a different route.
 
-If none of these solutions work, please file a bug at:
-https://github.com/rrousselGit/provider/issues
+  Providers are "scoped". So if you insert of provider inside a route, then
+  other routes will not be able to access that provider.
+
+- You used a `BuildContext` that is an ancestor of the provider you are trying to read.
+
+  Make sure that $widgetType is under your MultiProvider/Provider<$valueType>.
+  This usually happen when you are creating a provider and trying to read it immediatly.
+
+  For example, instead of:
+
+  ```
+  Widget build(BuildContext context) {
+    return Provider<Example>(
+      create: (_) => Example(),
+      // Will throw a ProviderNotFoundError, because `context` is associated
+      // to the widget that is the parent of `Provider<Example>`
+      child: Text(context.watch<Example>()),
+    ),
+  }
+  ```
+
+  consider using `builder` like so:
+
+  ```
+  Widget build(BuildContext context) {
+    return Provider<Example>(
+      create: (_) => Example(),
+      // we use `builder` to obtain a new `BuildContext` that has access to the provider
+      builer: (context) {
+        // No longer throws
+        return Text(context.watch<Example>()),
+      }
+    ),
+  }
+  ```
+
+If none of these solutions work, consider asking for help on StackOverflow:
+https://stackoverflow.com/questions/tagged/flutter
 ''';
   }
 }
@@ -368,10 +401,74 @@ extension ReadContext on BuildContext {
   /// If that is incompatible with your criteria, consider using `Provider.of(context, listen: false)`.\
   /// It does the same thing, but without these added restrictions (but unsafe).
   ///
+  /// **DON'T** call [read] inside build if the value is used only for events:
+  ///
+  /// ```dart
+  /// Widget build(BuildContext context) {
+  ///   // counter is used only for the onPressed of RaisedButton
+  ///   final counter = context.read<Counter>();
+  ///
+  ///   return RaisedButton(
+  ///     onPressed: () => counter.increment(),
+  ///   );
+  /// }
+  /// ```
+  ///
+  /// While this code is not bugged in itself, this is an anti-pattern.
+  /// It could easily lead to bugs in the future after refactoring the widget
+  /// to use `counter` for other things, but forget to change [read] into [watch].
+  ///
+  /// **CONSIDER** calling [read] inside event handlers:
+  ///
+  /// ```dart
+  /// Widget build(BuildContext context) {
+  ///   return RaisedButton(
+  ///     onPressed: () {
+  ///       // as performant as the previous previous solution, but resilient to refactoring
+  ///       context.read<Counter>().increment(),
+  ///     },
+  ///   );
+  /// }
+  /// ```
+  ///
+  /// This has the same efficiency as the previous anti-pattern, but does not
+  /// suffer from the drawback of being brittle.
+  ///
+  /// **DON'T** use [read] for creating widgets with a value that never changes
+  ///
+  /// ```dart
+  /// Widget build(BuildContext context) {
+  ///   // using read because we only use a value that never changes.
+  ///   final model = context.read<Model>();
+  ///
+  ///   return Text('${model.valueThatNeverChanges}');
+  /// }
+  /// ```
+  ///
+  /// While the idea of not rebuilding the widget if something else changes is
+  /// good, this should not be done with [read].
+  /// Relying on [read] for optimisations is very brittle and dependent
+  /// on an implementation detail.
+  ///
+  /// **CONSIDER** using [select] for filtering unwanted rebuilds
+  ///
+  /// ```dart
+  /// Widget build(BuildContext context) {
+  ///   // Using select to listen only to the value that used
+  ///   final valueThatNeverChanges = context.select((Model model) => model.valueThatNeverChanges);
+  ///
+  ///   return Text('$valueThatNeverChanges');
+  /// }
+  /// ```
+  ///
+  /// While more verbose than [read], using [select] is a lot safer.
+  /// It does not rely on implementation details on `Model`, and it makes
+  /// impossible to have a bug where our UI does not refresh.
+  ///
+  /// ## Using [read] to simplify objects depending on other objects
+  ///
   /// This method can be freely passed to objects, so that they can read providers
   /// without having a reference on a [BuildContext].
-  ///
-  ///
   ///
   /// For example, instead of:
   ///
@@ -398,12 +495,13 @@ extension ReadContext on BuildContext {
   ///
   /// ```dart
   /// class Model {
-  ///   Model(this.locator);
+  ///   Model(this.read);
   ///
-  ///   final Locator locator;
+  ///   // `Locator` is a typedef that matches the type of `read`
+  ///   final Locator read;
   ///
   ///   void method() {
-  ///     print(locator<Whatever>());
+  ///     print(read<Whatever>());
   ///   }
   /// }
   ///
@@ -415,7 +513,7 @@ extension ReadContext on BuildContext {
   /// )
   /// ```
   ///
-  /// The behavior is the same. But in this second snippet, `Model` has no dependency
+  /// Both snippets behaves the same. But in the second snippet, `Model` has no dependency
   /// on Flutter/[BuildContext]/provider.
   ///
   /// See also:
@@ -460,7 +558,12 @@ extension WatchContext on BuildContext {
   /// - [ReadContext] and its `read` method, similar to [watch], but doesn't make
   ///   widgets rebuild if the value obtained changes.
   T watch<T>() {
-    assert(debugDoingBuild || debugIsInInheritedProviderUpdate, '''
+    assert(
+        widget is LayoutBuilder ||
+            widget is SliverWithKeepAliveWidget ||
+            debugDoingBuild ||
+            debugIsInInheritedProviderUpdate,
+        '''
 Tried to use `context.watch<$T>` ouside of the `build` method or `update` callback of a provider.
 
 This is likely a mistake, as it doesn't make sense to rebuild a widget when the value
