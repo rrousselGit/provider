@@ -225,7 +225,7 @@ extension SelectContext on BuildContext {
   /// ```
   ///
   /// It is fine to call `select` multiple times.
-  R select<T, R>(R Function(T value) selector) {
+  R select<T, R>(R selector(T value)) {
     assert(widget is! SliverWithKeepAliveWidget, '''
     Tried to use context.select inside a SliverList/SliderGridView.
 
