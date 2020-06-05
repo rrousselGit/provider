@@ -559,7 +559,7 @@ Instead, you can use `context.select` to listen only to the `name` property:
 ```dart
 Widget build(BuildContext context) {
   final name = context.select((Person p) => p.name);
-  return Text(person.name);
+  return Text(name);
 }
 ```
 
