@@ -382,7 +382,7 @@ of your choice. There are a few common scenarios:
     return Provider<Example>(
       create: (_) => Example(),
       // we use `builder` to obtain a new `BuildContext` that has access to the provider
-      builer: (context) {
+      builder: (context) {
         // No longer throws
         return Text(context.watch<Example>()),
       }
