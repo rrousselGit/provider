@@ -49,8 +49,16 @@ class MultiProvider extends Nested {
     Key key,
     @required List<SingleChildWidget> providers,
     Widget child,
+    TransitionBuilder builder,
   })  : assert(providers != null),
-        super(key: key, children: providers, child: child);
+        super(
+            key: key,
+            children: providers,
+            child: builder != null
+                ? Builder(
+                    builder: (context) => builder(context, child),
+                  )
+                : child);
 }
 
 /// A [Provider] that manages the lifecycle of the value it provides by
