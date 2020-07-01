@@ -216,7 +216,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
-    testWidgets('6', (tester) async {
+    testWidgets('5', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
         MultiProvider(
@@ -262,6 +262,256 @@ void main() {
               },
             ),
           ],
+          child: const Text('child', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(buildCount, 1);
+      expect(find.text('child'), findsOneWidget);
+    });
+  });
+  group('MultiProvider', () {
+    testWidgets('with 1 ChangeNotifierProvider default', (tester) async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) => ValueNotifier(0),
+            ),
+          ],
+          builder: (context, child) {
+            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
+                null);
+            return child;
+          },
+          child: const Text('child', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(find.text('child'), findsOneWidget);
+    });
+    testWidgets('with 2 ChangeNotifierProvider default', (tester) async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) => ValueNotifier(0),
+            ),
+            ChangeNotifierProvider(
+              create: (_) => ValueNotifier('string'),
+            ),
+          ],
+          builder: (context, child) {
+            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
+                null);
+            assert(Provider.of<ValueNotifier<String>>(context, listen: false) !=
+                null);
+            return child;
+          },
+          child: const Text('child', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(find.text('child'), findsOneWidget);
+    });
+    testWidgets('with ListenableProvider default', (tester) async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ListenableProvider(
+              create: (_) => ValueNotifier(0),
+            ),
+          ],
+          builder: (context, child) {
+            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
+                null);
+            return child;
+          },
+          child: const Text('child', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(find.text('child'), findsOneWidget);
+    });
+    testWidgets('with Provider default', (tester) async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider(
+              create: (_) => 0,
+            ),
+          ],
+          builder: (context, child) {
+            assert(Provider.of<int>(context, listen: false) != null);
+            return child;
+          },
+          child: const Text('child', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(find.text('child'), findsOneWidget);
+    });
+    testWidgets('with ProxyProvider0', (tester) async {
+      var buildCount = 0;
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ProxyProvider0<int>(
+              update: (_, __) => 0,
+            ),
+          ],
+          builder: (context, child) {
+            buildCount++;
+            assert(Provider.of<int>(context, listen: false) != null);
+            return child;
+          },
+          child: const Text('child', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(buildCount, 1);
+      expect(find.text('child'), findsOneWidget);
+    });
+    testWidgets('with ProxyProvider1', (tester) async {
+      var buildCount = 0;
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: ''),
+            ProxyProvider<String, int>(
+              update: (_, __, ___) => 0,
+            ),
+          ],
+          builder: (context, child) {
+            buildCount++;
+            assert(Provider.of<int>(context, listen: false) != null);
+            return child;
+          },
+          child: const Text('child', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(buildCount, 1);
+      expect(find.text('child'), findsOneWidget);
+    });
+    testWidgets('with ProxyProvider2', (tester) async {
+      var buildCount = 0;
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: ''),
+            Provider.value(value: .0),
+            ProxyProvider2<String, double, int>(
+              update: (a, b, c, d) => 0,
+            ),
+          ],
+          builder: (context, child) {
+            buildCount++;
+            assert(Provider.of<int>(context, listen: false) != null);
+            return child;
+          },
+          child: const Text('child', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(buildCount, 1);
+      expect(find.text('child'), findsOneWidget);
+    });
+    testWidgets('with ProxyProvider3', (tester) async {
+      var buildCount = 0;
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: ''),
+            Provider.value(value: .0),
+            Provider.value(value: A()),
+            ProxyProvider3<String, double, A, int>(
+              update: (a, b, c, d, e) => 0,
+            ),
+          ],
+          builder: (context, child) {
+            buildCount++;
+            assert(Provider.of<int>(context, listen: false) != null);
+            return child;
+          },
+          child: const Text('child', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(buildCount, 1);
+      expect(find.text('child'), findsOneWidget);
+    });
+    testWidgets('with ProxyProvider4', (tester) async {
+      var buildCount = 0;
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: ''),
+            Provider.value(value: .0),
+            Provider.value(value: A()),
+            Provider.value(value: B()),
+            ProxyProvider4<String, double, A, B, int>(
+              update: (a, b, c, d, e, f) => 0,
+            ),
+          ],
+          builder: (context, child) {
+            buildCount++;
+            assert(Provider.of<int>(context, listen: false) != null);
+            return child;
+          },
+          child: const Text('child', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(buildCount, 1);
+      expect(find.text('child'), findsOneWidget);
+    });
+    testWidgets('with ProxyProvider5', (tester) async {
+      var buildCount = 0;
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: ''),
+            Provider.value(value: .0),
+            Provider.value(value: A()),
+            Provider.value(value: B()),
+            Provider.value(value: C()),
+            ProxyProvider5<String, double, A, B, C, int>(
+              update: (a, b, c, d, e, f, g) => 0,
+            ),
+          ],
+          builder: (context, child) {
+            buildCount++;
+            assert(Provider.of<int>(context, listen: false) != null);
+            return child;
+          },
+          child: const Text('child', textDirection: TextDirection.ltr),
+        ),
+      );
+
+      expect(buildCount, 1);
+      expect(find.text('child'), findsOneWidget);
+    });
+    testWidgets('with ProxyProvider6', (tester) async {
+      var buildCount = 0;
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: ''),
+            Provider.value(value: .0),
+            Provider.value(value: A()),
+            Provider.value(value: B()),
+            Provider.value(value: C()),
+            Provider.value(value: D()),
+            ProxyProvider6<String, double, A, B, C, D, int>(
+              update: (a, b, c, d, e, f, g, h) => 0,
+            ),
+          ],
+          builder: (context, child) {
+            buildCount++;
+            assert(Provider.of<int>(context, listen: false) != null);
+            return child;
+          },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
       );
