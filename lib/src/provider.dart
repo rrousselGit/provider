@@ -52,13 +52,14 @@ class MultiProvider extends Nested {
     TransitionBuilder builder,
   })  : assert(providers != null),
         super(
-            key: key,
-            children: providers,
-            child: builder != null
-                ? Builder(
-                    builder: (context) => builder(context, child),
-                  )
-                : child);
+          key: key,
+          children: providers,
+          child: builder != null
+              ? Builder(
+                  builder: (context) => builder(context, child),
+                )
+              : child,
+        );
 }
 
 /// A [Provider] that manages the lifecycle of the value it provides by
