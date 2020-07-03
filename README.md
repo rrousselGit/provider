@@ -530,10 +530,10 @@ Yes. `provider` exposes all the small components that make a fully-fledged provi
 
 This includes:
 
-- `SingleChildCloneableWidget`, to make any widget works with `MultiProvider`.
-- [InheritedProvider], the generic `InheritedWidget` obtained when doing `Provider.of`.
-- `DelegateWidget`/`BuilderDelegate`/`ValueDelegate` to help handle the logic of
-  "MyProvider() that creates an object" vs "MyProvider.value() that can update over time".
+- `SingleChildStatelessWidget`, to make any widget works with `MultiProvider`.  
+  This interface is exposed as part of `package:provider/single_child_widget`
+
+- [InheritedProvider], the generic `InheritedWidget` obtained when doing `context.watch`.
 
 Here's an example of a custom provider to use `ValueNotifier` as state:
 https://gist.github.com/rrousselGit/4910f3125e41600df3c2577e26967c91
