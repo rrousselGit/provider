@@ -376,9 +376,8 @@ To have something more useful, you have two solutions:
 This exception happens because you're trying to listen to a provider from a
 life-cycle that will never ever be called again.
 
-It means that you either should use another life-cycle
-(`didChangeDependencies`/`build`), or explicitly specify that you do not care
-about updates.
+It means that you either should use another life-cycle (`build`), or explicitly
+specify that you do not care about updates.
 
 As such, instead of:
 
@@ -394,8 +393,7 @@ you can do:
 ```dart
 Value value;
 
-didChangeDependencies() {
-  super.didChangeDependencies();
+Widget build(BuildContext context) {
   final value = context.watch<Foo>.value;
   if (value != this.value) {
     this.value = value;
@@ -404,7 +402,7 @@ didChangeDependencies() {
 }
 ```
 
-which will print `value` whenever it changes.
+which will print `value` whenever it changes (and only when it changes).
 
 Alternatively you can do:
 
