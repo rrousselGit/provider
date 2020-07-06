@@ -376,9 +376,8 @@ To have something more useful, you have two solutions:
 This exception happens because you're trying to listen to a provider from a
 life-cycle that will never ever be called again.
 
-It means that you either should use another life-cycle
-(`didChangeDependencies`/`build`), or explicitly specify that you do not care
-about updates.
+It means that you either should use another life-cycle (`build`), or explicitly
+specify that you do not care about updates.
 
 As such, instead of:
 
@@ -394,8 +393,7 @@ you can do:
 ```dart
 Value value;
 
-didChangeDependencies() {
-  super.didChangeDependencies();
+Widget build(BuildContext context) {
   final value = context.watch<Foo>.value;
   if (value != this.value) {
     this.value = value;
@@ -404,7 +402,7 @@ didChangeDependencies() {
 }
 ```
 
-which will print `value` whenever it changes.
+which will print `value` whenever it changes (and only when it changes).
 
 Alternatively you can do:
 
@@ -530,10 +528,10 @@ Yes. `provider` exposes all the small components that make a fully-fledged provi
 
 This includes:
 
-- `SingleChildCloneableWidget`, to make any widget works with `MultiProvider`.
-- [InheritedProvider], the generic `InheritedWidget` obtained when doing `Provider.of`.
-- `DelegateWidget`/`BuilderDelegate`/`ValueDelegate` to help handle the logic of
-  "MyProvider() that creates an object" vs "MyProvider.value() that can update over time".
+- `SingleChildStatelessWidget`, to make any widget works with `MultiProvider`.  
+  This interface is exposed as part of `package:provider/single_child_widget`
+
+- [InheritedProvider], the generic `InheritedWidget` obtained when doing `context.watch`.
 
 Here's an example of a custom provider to use `ValueNotifier` as state:
 https://gist.github.com/rrousselGit/4910f3125e41600df3c2577e26967c91
