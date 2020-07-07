@@ -1,3 +1,18 @@
+# 4.2.0
+
+- Added a `builder` parameter on `MultiProvider` (thansk to @joaomarcos96):
+  ```dart
+  MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (ct) => Counter()),
+    ],
+    builder: (ctx, child) {
+      final counter = ctx.watch<Counter>();
+      return Text('${counter.count}');
+    },
+  );
+  ```
+
 # 4.1.3+1
 
 - Small Readme changes
