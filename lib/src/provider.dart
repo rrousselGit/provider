@@ -7,6 +7,8 @@ import 'package:nested/nested.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 
+import 'reassemble_handler.dart';
+
 part 'inherited_provider.dart';
 part 'deferred_inherited_provider.dart';
 

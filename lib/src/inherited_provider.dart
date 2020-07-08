@@ -306,6 +306,16 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
       super.widget as _InheritedProviderScope<T>;
 
   @override
+  void reassemble() {
+    super.reassemble();
+
+    final value = this.value;
+    if (value is ReassembleHandler) {
+      value.reassemble();
+    }
+  }
+
+  @override
   void updateDependencies(Element dependent, Object aspect) {
     final dependencies = getDependencies(dependent);
     // once subscribed to everything once, it always stays subscribed to everything
