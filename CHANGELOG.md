@@ -1,3 +1,8 @@
+# 4.3.0
+
+- Added `ReassembleHandler` interface, for objects to implement so that
+  `provider` let them handle hot-reload.
+
 # 4.2.0
 
 - Added a `builder` parameter on `MultiProvider` (thansk to @joaomarcos96):

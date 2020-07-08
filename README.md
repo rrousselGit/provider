@@ -415,6 +415,25 @@ initState() {
 
 Which will print `value` once _and ignore updates._
 
+#### How to handle hot-reload on my objects?
+
+You can make your provided object implement `ReassembleHandler`:
+
+```dart
+class Example extends ChangeNotifier implements ReassembleHandler {
+  @override
+  void reassemble() {
+    print('Did hot-reload');
+  }
+}
+```
+
+Then used normally with `provider`:
+
+```dart
+ChangeNotifierProvider(create: (_) => Example()),
+```
+
 #### I use [ChangeNotifier] and I have an exception when I update it, what happens?
 
 This likely happens because you are modifying the [ChangeNotifier] from one of
