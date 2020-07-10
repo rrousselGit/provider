@@ -1,3 +1,7 @@
+# 4.3.1
+
+- Fixed a bug where hot-reload forced all lazy-loaded providers to be computed.
+
 # 4.3.0
 
 - Added `ReassembleHandler` interface, for objects to implement so that
