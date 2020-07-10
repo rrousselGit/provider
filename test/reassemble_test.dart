@@ -24,7 +24,41 @@ void main() {
 
     // ignore: unawaited_futures
     tester.binding.reassembleApplication();
+    await tester.pump();
 
+    expect(provider.hasReassemble, equals(true));
+  });
+  testWidgets('unevaluated create', (tester) async {
+    final provider = _ReassembleHandler();
+
+    await tester.pumpWidget(
+      Provider(
+        create: (_) => provider,
+        child: const SizedBox(),
+      ),
+    );
+
+    // ignore: unawaited_futures
+    tester.binding.reassembleApplication();
+    await tester.pump();
+
+    expect(provider.hasReassemble, equals(false));
+  });
+  testWidgets('unevaluated create', (tester) async {
+    final provider = _ReassembleHandler();
+
+    await tester.pumpWidget(
+      Provider(
+        create: (_) => provider,
+        builder: (context, _) {
+          context.watch<_ReassembleHandler>();
+          return Container();
+        },
+      ),
+    );
+
+    // ignore: unawaited_futures
+    tester.binding.reassembleApplication();
     await tester.pump();
 
     expect(provider.hasReassemble, equals(true));

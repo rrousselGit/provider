@@ -309,7 +309,7 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
   void reassemble() {
     super.reassemble();
 
-    final value = this.value;
+    final value = _delegateState.hasValue ? _delegateState.value : null;
     if (value is ReassembleHandler) {
       value.reassemble();
     }
