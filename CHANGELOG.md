@@ -9,7 +9,7 @@
 
 # 4.2.0
 
-- Added a `builder` parameter on `MultiProvider` (thansk to @joaomarcos96):
+- Added a `builder` parameter on `MultiProvider` (thanks to @joaomarcos96):
   ```dart
   MultiProvider(
     providers: [
