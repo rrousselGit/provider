@@ -282,4 +282,4 @@
 - `onDispose` has been added to `StatefulProvider`
 - [BuildContext] is now passed to `valueBuilder` callback
 
-[buildcontext]: (https://api.flutter.dev/flutter/widgets/BuildContext-class.html)
+[BuildContext]: (https://api.flutter.dev/flutter/widgets/BuildContext-class.html)
