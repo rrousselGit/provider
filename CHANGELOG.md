@@ -10,6 +10,7 @@
 # 4.2.0
 
 - Added a `builder` parameter on `MultiProvider` (thanks to @joaomarcos96):
+
   ```dart
   MultiProvider(
     providers: [
@@ -81,7 +82,7 @@
   }
   ```
 
-* Added `builder` on the different providers.
+- Added `builder` on the different providers.
   This parameter simplifies situations where we need a [BuildContext] that
   can access the new provider.
 
@@ -188,6 +189,7 @@
 - fixed a bug where `ChangeNotifierProvider.value` didn't update dependents
   when the `ChangeNotifier` instance changed.
 - `Consumer` can now be used inside `MultiProvider`
+
   ```dart
   MultiProvider(
     providers: [
@@ -202,7 +204,7 @@
 
 # 3.0.0
 
-## breaking (see the readme for migration steps):
+## breaking (see the readme for migration steps)
 
 - `Provider` now throws if used with a `Listenable`/`Stream`. This can be disabled by setting
   `Provider.debugCheckInvalidValueType` to `null`.
@@ -212,7 +214,7 @@
 - Added `FutureProvider`, which takes a future and updates dependents when the future completes.
 - Providers can no longer be instantiated using `const` constructors.
 
-## non-breaking:
+## non-breaking
 
 - Added `ProxyProvider`, `ListenableProxyProvider`, and `ChangeNotifierProxyProvider`.
   These providers allows building values that depends on other providers,
