@@ -371,7 +371,7 @@ of your choice. There are a few common scenarios:
 - You used a `BuildContext` that is an ancestor of the provider you are trying to read.
 
   Make sure that $widgetType is under your MultiProvider/Provider<$valueType>.
-  This usually happen when you are creating a provider and trying to read it immediatly.
+  This usually happen when you are creating a provider and trying to read it immediately.
 
   For example, instead of:
 
