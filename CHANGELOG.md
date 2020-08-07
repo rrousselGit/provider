@@ -1,3 +1,7 @@
+# 4.3.2
+
+Fixed typo in the error message of `ProviderNotFoundException`
+
 # 4.3.1
 
 - Fixed a bug where hot-reload forced all lazy-loaded providers to be computed.
