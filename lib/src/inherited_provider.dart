@@ -62,11 +62,10 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     void Function(T value) debugCheckInvalidValueType,
     StartListening<T> startListening,
     Dispose<T> dispose,
-    ValueWidgetBuilder<T> builder,
+    this.builder,
     bool lazy,
     Widget child,
   })  : _lazy = lazy,
-        _builder = builder,
         _delegate = _CreateInheritedProvider(
           create: create,
           update: update,
@@ -84,10 +83,9 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     UpdateShouldNotify<T> updateShouldNotify,
     StartListening<T> startListening,
     bool lazy,
-    ValueWidgetBuilder<T> builder,
+    this.builder,
     Widget child,
   })  : _lazy = lazy,
-        _builder = builder,
         _delegate = _ValueInheritedProvider(
           value: value,
           updateShouldNotify: updateShouldNotify,
@@ -99,16 +97,14 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     Key key,
     _Delegate<T> delegate,
     bool lazy,
-    ValueWidgetBuilder<T> builder,
+    this.builder,
     Widget child,
   })  : _lazy = lazy,
-        _builder = builder,
         _delegate = delegate,
         super(key: key, child: child);
 
   final _Delegate<T> _delegate;
   final bool _lazy;
-  final ValueWidgetBuilder<T> _builder;
 
   /// Syntax sugar for obtaining a [BuildContext] that can read the provider
   /// created.
@@ -138,7 +134,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   ///   ),
   /// )
   /// ```
-  ///
+  /// 
   /// For an explanation on the `child` parameter that `builder` receives,
   /// see the "Performance optimizations" section of [AnimatedBuilder].
   final TransitionBuilder builder;
@@ -156,15 +152,15 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
 
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
-    assert(child != null,
-        '$runtimeType used outside of MultiProvider must specify a child');
+    assert(
+      builder != null || child != null,
+      '$runtimeType used outside of MultiProvider must specify a child',
+    );
     return _InheritedProviderScope<T>(
       owner: this,
-      child: _builder != null
+      child: builder != null
           ? Builder(
-              builder: (context) {
-                return _builder(context, Provider.of<T>(context), child);
-              },
+              builder: (context) => builder(context, child),
             )
           : child,
     );
