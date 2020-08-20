@@ -1,3 +1,7 @@
+# 4.3.2+1
+
+Documentation improvement about the `builder` parameter of Providers.
+
 # 4.3.2
 
 Fixed typo in the error message of `ProviderNotFoundException`

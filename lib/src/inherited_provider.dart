@@ -62,11 +62,10 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     void Function(T value) debugCheckInvalidValueType,
     StartListening<T> startListening,
     Dispose<T> dispose,
-    TransitionBuilder builder,
+    this.builder,
     bool lazy,
     Widget child,
   })  : _lazy = lazy,
-        _builder = builder,
         _delegate = _CreateInheritedProvider(
           create: create,
           update: update,
@@ -84,10 +83,9 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     UpdateShouldNotify<T> updateShouldNotify,
     StartListening<T> startListening,
     bool lazy,
-    TransitionBuilder builder,
+    this.builder,
     Widget child,
   })  : _lazy = lazy,
-        _builder = builder,
         _delegate = _ValueInheritedProvider(
           value: value,
           updateShouldNotify: updateShouldNotify,
@@ -99,16 +97,47 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     Key key,
     _Delegate<T> delegate,
     bool lazy,
-    TransitionBuilder builder,
+    this.builder,
     Widget child,
   })  : _lazy = lazy,
-        _builder = builder,
         _delegate = delegate,
         super(key: key, child: child);
 
   final _Delegate<T> _delegate;
   final bool _lazy;
-  final TransitionBuilder _builder;
+
+  /// Syntax sugar for obtaining a [BuildContext] that can read the provider
+  /// created.
+  ///
+  /// This code:
+  ///
+  /// ```dart
+  /// Provider<int>(
+  ///   create: (context) => 42,
+  ///   builder: (context, child) {
+  ///     final value = context.watch<int>();
+  ///     return Text('$value');
+  ///   }
+  /// )
+  /// ```
+  ///
+  /// is strictly equivalent to:
+  ///
+  /// ```dart
+  /// Provider<int>(
+  ///   create: (context) => 42,
+  ///   child: Builder(
+  ///     builder: (context) {
+  ///       final value = context.watch<int>();
+  ///       return Text('$value');
+  ///     },
+  ///   ),
+  /// )
+  /// ```
+  /// 
+  /// For an explanation on the `child` parameter that `builder` receives,
+  /// see the "Performance optimizations" section of [AnimatedBuilder].
+  final TransitionBuilder builder;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -124,14 +153,14 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
     assert(
-      _builder != null || child != null,
+      builder != null || child != null,
       '$runtimeType used outside of MultiProvider must specify a child',
     );
     return _InheritedProviderScope<T>(
       owner: this,
-      child: _builder != null
+      child: builder != null
           ? Builder(
-              builder: (context) => _builder(context, child),
+              builder: (context) => builder(context, child),
             )
           : child,
     );

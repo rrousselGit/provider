@@ -47,6 +47,46 @@ part 'deferred_inherited_provider.dart';
 /// The widget tree representation of the two approaches are identical.
 class MultiProvider extends Nested {
   /// Build a tree of providers from a list of [SingleChildWidget].
+  ///
+  /// The parameter `builder` is sugar for obtaining a [BuildContext] that can
+  /// read the providers created.
+  ///
+  /// This code:
+  ///
+  /// ```dart
+  /// MultiProvider(
+  ///   providers: [
+  ///     Provider<Something>(create: (_) => Something()),
+  ///     Provider<SomethingElse>(create: (_) => SomethingElse()),
+  ///     Provider<AnotherThing>(create: (_) => AnotherThing()),
+  ///   ],
+  ///   builder: (context, child) {
+  ///     final something = context.watch<Something>();
+  ///     return Text('$something');
+  ///   },
+  /// )
+  /// ```
+  ///
+  /// is strictly equivalent to:
+  ///
+  /// ```dart
+  /// MultiProvider(
+  ///   providers: [
+  ///     Provider<Something>(create: (_) => Something()),
+  ///     Provider<SomethingElse>(create: (_) => SomethingElse()),
+  ///     Provider<AnotherThing>(create: (_) => AnotherThing()),
+  ///   ],
+  ///   child: Builder(
+  ///     builder: (context) {
+  ///       final something = context.watch<Something>();
+  ///       return Text('$something');
+  ///     },
+  ///   ),
+  /// )
+  /// ```
+  ///
+  /// For an explanation on the `child` parameter that `builder` receives,
+  /// see the "Performance optimizations" section of [AnimatedBuilder].
   MultiProvider({
     Key key,
     @required List<SingleChildWidget> providers,
