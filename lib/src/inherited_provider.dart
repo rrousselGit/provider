@@ -134,7 +134,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   ///   ),
   /// )
   /// ```
-  /// 
+  ///
   /// For an explanation on the `child` parameter that `builder` receives,
   /// see the "Performance optimizations" section of [AnimatedBuilder].
   final TransitionBuilder builder;
