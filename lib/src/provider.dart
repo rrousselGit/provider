@@ -48,7 +48,7 @@ part 'deferred_inherited_provider.dart';
 class MultiProvider extends Nested {
   /// Build a tree of providers from a list of [SingleChildWidget].
   ///
-  /// The parameter `builder` is sugar for obtaining a [BuildContext] that can
+  /// The parameter `builder` is syntactic sugar for obtaining a [BuildContext] that can
   /// read the providers created.
   ///
   /// This code:
