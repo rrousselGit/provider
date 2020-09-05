@@ -1,3 +1,7 @@
+# 4.3.2+2
+
+Improve pub score
+
 # 4.3.2+1
 
 Documentation improvement about the `builder` parameter of Providers.
