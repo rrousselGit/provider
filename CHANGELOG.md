@@ -1,3 +1,7 @@
+# 4.3.2+2
+
+Improve pub score
+
 # 4.3.2+1
 
 Documentation improvement about the `builder` parameter of Providers.
@@ -290,4 +294,4 @@ Fixed typo in the error message of `ProviderNotFoundException`
 - `onDispose` has been added to `StatefulProvider`
 - [BuildContext] is now passed to `valueBuilder` callback
 
-[BuildContext]: (https://api.flutter.dev/flutter/widgets/BuildContext-class.html)
+[BuildContext]: https://api.flutter.dev/flutter/widgets/BuildContext-class.html
