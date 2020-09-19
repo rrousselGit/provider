@@ -69,6 +69,9 @@ Fixed typo in the error message of `ProviderNotFoundException`
 
 # 4.1.0
 
+- Now requires:
+  - Flutter >= 1.6.0 
+  - Dart >= 2.7.0
 - Added a `select` extension on `BuildContext`. It behaves similarly to `Selector`,
   but is a lot less verbose to write:
 
