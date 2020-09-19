@@ -187,7 +187,11 @@ The easiest way to read a value is by using the extension methods on [BuildConte
 - `context.read<T>()`, which returns `T` without listening to it
 - `context.select<T, R>(R cb(T value))`, which allows a widget to listen to only a small part of `T`.
 
-Or to use the static method `Provider.of<T>(context)`, which will behave similarly to `watch`/`read`.
+Or to use the static method `Provider.of<T>(context)`, which will behave similarly to `watch` and when you pass `false` 
+to the `listen` parameter like `Provider.of<T>(context,listen: false)` it will behave similar to `read`.
+
+It's worth noting that `context.read<T>()` won't make widget rebuild when the value changes and cannot be 
+called inside `StatelessWidget.build`/`State.build`. On the other hand, it can be freely called outside of these methods.
 
 These methods will look up in the widget tree starting from the widget associated
 with the `BuildContext` passed, and will return the nearest variable of type
