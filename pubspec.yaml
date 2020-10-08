@@ -7,7 +7,7 @@ authors:
   - Flutter Team <flutter-dev@googlegroups.com>
 
 environment:
-  sdk: '>=2.7.0 <3.0.0'
+  sdk: '>=2.10.0 <3.0.0'
   flutter: '>= 1.16.0'
 
 dependencies:
