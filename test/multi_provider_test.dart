@@ -71,5 +71,20 @@ void main() {
       );
       expect(Provider.of<double>(keyChild.currentContext, listen: false), 44);
     });
+
+    testWidgets('MultiProvider.providers with ignored child', (tester) async {
+      final p1 = Provider.value(
+        value: 42,
+        child: const Text('Bar'),
+      );
+
+      await tester.pumpWidget(MultiProvider(
+        providers: [p1],
+        child: const Text('Foo', textDirection: TextDirection.ltr),
+      ));
+
+      expect(find.text('Bar'), findsNothing);
+      expect(find.text('Foo'), findsOneWidget);
+    });
   });
 }
