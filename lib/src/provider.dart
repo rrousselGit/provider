@@ -83,6 +83,28 @@ class MultiProvider extends Nested {
   /// )
   /// ```
   ///
+  /// If the some provider in `providers` has a child, this will be ignored.
+  ///
+  /// This code:
+  /// ```dart
+  /// MultiProvider(
+  ///   providers: [
+  ///     Provider<Something>(create: (_) => Something(), child: SomeWidget()),
+  ///   ],
+  ///   child: Text('Something'),
+  /// )
+  /// ```
+  /// is equivalent to:
+  ///
+  /// ```dart
+  /// MultiProvider(
+  ///   providers: [
+  ///     Provider<Something>(create: (_) => Something()),
+  ///   ],
+  ///   child: Text('Something'),
+  /// )
+  /// ```
+  ///
   /// For an explanation on the `child` parameter that `builder` receives,
   /// see the "Performance optimizations" section of [AnimatedBuilder].
   MultiProvider({
