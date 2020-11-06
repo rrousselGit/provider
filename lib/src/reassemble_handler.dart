@@ -4,9 +4,9 @@ import 'package:flutter/widgets.dart' show Element;
 /// If you need your provider to be notified when 'Hot Reload' occurs,
 /// use this class
 ///
-/// '''dart
+/// ```dart
 /// class MyChangeNotifier extends ChangeNotifier with ReassembleHandler {}
-/// '''
+/// ```
 abstract class ReassembleHandler {
   /// Called when 'Hot Reload' occurs
   ///
