@@ -25,6 +25,7 @@ class ValueListenableProvider<T>
     UpdateShouldNotify<T> updateShouldNotify,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super(
           key: key,
@@ -34,6 +35,7 @@ class ValueListenableProvider<T>
           updateShouldNotify: updateShouldNotify,
           startListening: _startListening(),
           dispose: _dispose,
+          restorationId: restorationId,
           child: child,
         );
 
@@ -56,6 +58,7 @@ class ValueListenableProvider<T>
     @required ValueListenable<T> value,
     UpdateShouldNotify<T> updateShouldNotify,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super.value(
           key: key,
@@ -63,6 +66,7 @@ class ValueListenableProvider<T>
           value: value,
           updateShouldNotify: updateShouldNotify,
           startListening: _startListening(),
+          restorationId: restorationId,
           child: child,
         );
 

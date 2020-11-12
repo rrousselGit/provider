@@ -110,6 +110,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
     @required Create<T> create,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super(
           key: key,
@@ -117,6 +118,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
           dispose: _dispose,
           lazy: lazy,
           builder: builder,
+          restorationId: restorationId,
           child: child,
         );
 
@@ -125,11 +127,13 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
     Key key,
     @required T value,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super.value(
           key: key,
           builder: builder,
           value: value,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -217,6 +221,7 @@ class ChangeNotifierProxyProvider<T, R extends ChangeNotifier>
     @required ProxyProviderBuilder<T, R> update,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super(
           key: key,
@@ -225,6 +230,7 @@ class ChangeNotifierProxyProvider<T, R extends ChangeNotifier>
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
           builder: builder,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -239,6 +245,7 @@ class ChangeNotifierProxyProvider0<R extends ChangeNotifier>
     @required R Function(BuildContext, R value) update,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super(
           key: key,
@@ -247,6 +254,7 @@ class ChangeNotifierProxyProvider0<R extends ChangeNotifier>
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
           builder: builder,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -261,6 +269,7 @@ class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier>
     @required ProxyProviderBuilder2<T, T2, R> update,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super(
           key: key,
@@ -269,6 +278,7 @@ class ChangeNotifierProxyProvider2<T, T2, R extends ChangeNotifier>
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
           builder: builder,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -283,6 +293,7 @@ class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier>
     @required ProxyProviderBuilder3<T, T2, T3, R> update,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super(
           key: key,
@@ -291,6 +302,7 @@ class ChangeNotifierProxyProvider3<T, T2, T3, R extends ChangeNotifier>
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
           builder: builder,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -305,6 +317,7 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
     @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super(
           key: key,
@@ -313,6 +326,7 @@ class ChangeNotifierProxyProvider4<T, T2, T3, T4, R extends ChangeNotifier>
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
           builder: builder,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -327,6 +341,7 @@ class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
     @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super(
           key: key,
@@ -335,6 +350,7 @@ class ChangeNotifierProxyProvider5<T, T2, T3, T4, T5, R extends ChangeNotifier>
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
           builder: builder,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -350,6 +366,7 @@ class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6,
     @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super(
           key: key,
@@ -358,6 +375,7 @@ class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6,
           dispose: ChangeNotifierProvider._dispose,
           lazy: lazy,
           builder: builder,
+          restorationId: restorationId,
           child: child,
         );
 }

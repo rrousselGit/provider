@@ -64,6 +64,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     Dispose<T> dispose,
     this.builder,
     bool lazy,
+    this.restorationId,
     Widget child,
   })  : _lazy = lazy,
         _delegate = _CreateInheritedProvider(
@@ -84,6 +85,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     StartListening<T> startListening,
     bool lazy,
     this.builder,
+    this.restorationId,
     Widget child,
   })  : _lazy = lazy,
         _delegate = _ValueInheritedProvider(
@@ -98,6 +100,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     _Delegate<T> delegate,
     bool lazy,
     this.builder,
+    this.restorationId,
     Widget child,
   })  : _lazy = lazy,
         _delegate = delegate,
@@ -138,6 +141,9 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   /// For an explanation on the `child` parameter that `builder` receives,
   /// see the "Performance optimizations" section of [AnimatedBuilder].
   final TransitionBuilder builder;
+
+  /// See [RestorationMixin.restorationId]
+  final String restorationId;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -322,6 +328,8 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
   _InheritedProviderScopeElement(_InheritedProviderScope<T> widget)
       : super(widget);
 
+  final GlobalKey<_RestorationMixinWrapperState> _restorationKey = GlobalKey();
+
   bool _shouldNotifyDependents = false;
   bool _debugInheritLocked = false;
   bool _isNotifyDependentsEnabled = true;
@@ -472,7 +480,22 @@ If you're in this situation, consider passing a `key` unique to each individual 
       _shouldNotifyDependents = false;
       notifyClients(widget);
     }
-    return super.build();
+
+    var current = super.build();
+
+    if (widget.owner.restorationId != null) {
+      {
+        final value = _delegateState.hasValue ? _delegateState.value : null;
+        current = _RestorationMixinWrapper<RestorationHandler>(
+          key: _restorationKey,
+          restorationId: widget.owner.restorationId,
+          value: value is RestorationHandler ? value : null,
+          child: current,
+        );
+      }
+    }
+
+    return current;
   }
 
   @override
@@ -501,7 +524,15 @@ If you're in this situation, consider passing a `key` unique to each individual 
   }
 
   @override
-  T get value => _delegateState.value;
+  T get value {
+    final value = _delegateState.value;
+
+    if (value is RestorationHandler && widget.owner.restorationId != null) {
+      _restorationKey.currentState?._notifyIfNeeded(value);
+    }
+
+    return value;
+  }
 
   @override
   InheritedWidget dependOnInheritedElement(

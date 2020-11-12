@@ -85,6 +85,7 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
     UpdateShouldNotify<T> updateShouldNotify,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(create != null),
         super(
@@ -97,6 +98,7 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
             catchError: catchError,
             initialData: initialData,
           ),
+          restorationId: restorationId,
           child: child,
         );
 
@@ -109,6 +111,7 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
     UpdateShouldNotify<T> updateShouldNotify,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super.value(
           key: key,
@@ -120,6 +123,7 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
             catchError: catchError,
             initialData: initialData,
           ),
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -186,6 +190,7 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
     UpdateShouldNotify<T> updateShouldNotify,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(create != null),
         super(
@@ -198,6 +203,7 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
             catchError: catchError,
             initialData: initialData,
           ),
+          restorationId: restorationId,
           child: child,
         );
 
@@ -209,6 +215,7 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
     ErrorBuilder<T> catchError,
     UpdateShouldNotify<T> updateShouldNotify,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super.value(
           key: key,
@@ -220,6 +227,7 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
             catchError: catchError,
             initialData: initialData,
           ),
+          restorationId: restorationId,
           child: child,
         );
 }

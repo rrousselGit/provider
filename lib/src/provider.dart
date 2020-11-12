@@ -9,6 +9,7 @@ import 'reassemble_handler.dart';
 
 part 'inherited_provider.dart';
 part 'deferred_inherited_provider.dart';
+part 'restoration.dart';
 
 /// A provider that merges multiple providers into a single linear widget tree.
 /// It is used to improve readability and reduce boilerplate code of having to
@@ -197,6 +198,7 @@ class Provider<T> extends InheritedProvider<T> {
     Dispose<T> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(create != null),
         super(
@@ -209,6 +211,7 @@ class Provider<T> extends InheritedProvider<T> {
               ? null
               : (T value) =>
                   Provider.debugCheckInvalidValueType?.call<T>(value),
+          restorationId: restorationId,
           child: child,
         );
 
@@ -226,6 +229,7 @@ class Provider<T> extends InheritedProvider<T> {
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(() {
           Provider.debugCheckInvalidValueType?.call<T>(value);
@@ -236,6 +240,7 @@ class Provider<T> extends InheritedProvider<T> {
           builder: builder,
           value: value,
           updateShouldNotify: updateShouldNotify,
+          restorationId: restorationId,
           child: child,
         );
 
