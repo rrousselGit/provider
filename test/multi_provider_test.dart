@@ -20,7 +20,7 @@ void main() {
       final k3 = GlobalKey();
       final p1 = Provider.value(key: k1, value: 42);
       final p2 = Provider.value(key: k2, value: 'foo');
-      final p3 = Provider.value(key: k3, value: 44.0);
+      final p3 = Provider<double>.value(key: k3, value: 44);
 
       final keyChild = GlobalKey();
       await tester.pumpWidget(MultiProvider(

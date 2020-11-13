@@ -57,7 +57,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   InheritedProvider({
     Key key,
     Create<T> create,
-    T update(BuildContext context, T value),
+    T Function(BuildContext context, T value) update,
     UpdateShouldNotify<T> updateShouldNotify,
     void Function(T value) debugCheckInvalidValueType,
     StartListening<T> startListening,
@@ -93,7 +93,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
         ),
         super(key: key, child: child);
 
-  InheritedProvider._constructor({
+  const InheritedProvider._constructor({
     Key key,
     _Delegate<T> delegate,
     bool lazy,
@@ -143,6 +143,8 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     _delegate.debugFillProperties(properties);
+    properties
+        .add(ObjectFlagProperty<TransitionBuilder>.has('builder', builder));
   }
 
   @override
@@ -221,7 +223,7 @@ extension SelectContext on BuildContext {
   /// ```
   ///
   /// It is fine to call `select` multiple times.
-  R select<T, R>(R selector(T value)) {
+  R select<T, R>(R Function(T value) selector) {
     assert(widget is! SliverWithKeepAliveWidget, '''
     Tried to use context.select inside a SliverList/SliderGridView.
 
@@ -248,7 +250,7 @@ Any usage other than inside the `build` method of a widget are not supported.
 ''');
     final inheritedElement = Provider._inheritedElementOf<T>(this);
     try {
-      var value = inheritedElement.value;
+      final value = inheritedElement.value;
       assert(() {
         _debugIsSelecting = true;
         return true;
@@ -293,7 +295,7 @@ abstract class InheritedContext<T> extends BuildContext {
 }
 
 class _InheritedProviderScope<T> extends InheritedWidget {
-  _InheritedProviderScope({
+  const _InheritedProviderScope({
     this.owner,
     @required Widget child,
   }) : super(child: child);
@@ -431,7 +433,8 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
     assert(() {
       if (widget.owner._delegate.runtimeType !=
           newWidget.owner._delegate.runtimeType) {
-        throw StateError('''Rebuilt $widget using a different constructor.
+        throw StateError('''
+Rebuilt $widget using a different constructor.
       
 This is likely a mistake and is unsupported.
 If you're in this situation, consider passing a `key` unique to each individual constructor.
@@ -466,7 +469,8 @@ If you're in this situation, consider passing a `key` unique to each individual 
     if (widget.owner._lazy == false) {
       value; // this will force the value to be computed.
     }
-    _delegateState.build(_isBuildFromExternalSources);
+    _delegateState.build(
+        isBuildFromExternalSources: _isBuildFromExternalSources);
     _isBuildFromExternalSources = false;
     if (_shouldNotifyDependents) {
       _shouldNotifyDependents = false;
@@ -486,7 +490,9 @@ If you're in this situation, consider passing a `key` unique to each individual 
 
   @override
   void markNeedsNotifyDependents() {
-    if (!_isNotifyDependentsEnabled) return;
+    if (!_isNotifyDependentsEnabled) {
+      return;
+    }
 
     markNeedsBuild();
     _shouldNotifyDependents = true;
@@ -564,7 +570,7 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
 
   bool get hasValue;
 
-  bool debugSetInheritedLock(bool value) {
+  bool debugSetInheritedLock({bool value}) {
     return element._debugSetInheritedLock(value);
   }
 
@@ -574,7 +580,7 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
 
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {}
 
-  void build(bool isBuildFromExternalSources) {}
+  void build({bool isBuildFromExternalSources}) {}
 }
 
 class _CreateInheritedProvider<T> extends _Delegate<T> {
@@ -631,7 +637,7 @@ class _CreateInheritedProviderState<T>
     if (!_didInitValue) {
       _didInitValue = true;
       if (delegate.create != null) {
-        assert(debugSetInheritedLock(true));
+        assert(debugSetInheritedLock(value: true));
         try {
           assert(() {
             debugIsInInheritedProviderCreate = true;
@@ -648,7 +654,7 @@ class _CreateInheritedProviderState<T>
             return true;
           }());
         }
-        assert(debugSetInheritedLock(false));
+        assert(debugSetInheritedLock(value: false));
 
         assert(() {
           delegate.debugCheckInvalidValueType?.call(_value);
@@ -723,7 +729,7 @@ class _CreateInheritedProviderState<T>
   }
 
   @override
-  void build(bool isBuildFromExternalSources) {
+  void build({bool isBuildFromExternalSources}) {
     var shouldNotify = false;
     // Don't call `update` unless the build was triggered from `updated`/`didChangeDependencies`
     // otherwise `markNeedsNotifyDependents` will trigger unnecessary `update` calls
@@ -781,7 +787,7 @@ class _CreateInheritedProviderState<T>
       element._shouldNotifyDependents = true;
     }
     _previousWidget = delegate;
-    return super.build(isBuildFromExternalSources);
+    return super.build(isBuildFromExternalSources: isBuildFromExternalSources);
   }
 
   @override

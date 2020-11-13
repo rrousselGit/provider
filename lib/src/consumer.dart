@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
+
 import 'provider.dart';
 import 'selector.dart' show Selector;
 
@@ -156,7 +158,7 @@ class Consumer<T> extends SingleChildStatelessWidget {
   /// {@template provider.consumer.constructor}
   /// Consumes a [Provider<T>]
   /// {@endtemplate}
-  Consumer({
+  const Consumer({
     Key key,
     @required this.builder,
     Widget child,
@@ -178,12 +180,20 @@ class Consumer<T> extends SingleChildStatelessWidget {
       child,
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<
+        Widget Function(
+            BuildContext context, T value, Widget child)>('builder', builder));
+  }
 }
 
 /// {@macro provider.consumer}
 class Consumer2<A, B> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
-  Consumer2({
+  const Consumer2({
     Key key,
     @required this.builder,
     Widget child,
@@ -203,12 +213,20 @@ class Consumer2<A, B> extends SingleChildStatelessWidget {
       child,
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<
+        Widget Function(BuildContext context, A value, B value2,
+            Widget child)>('builder', builder));
+  }
 }
 
 /// {@macro provider.consumer}
 class Consumer3<A, B, C> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
-  Consumer3({
+  const Consumer3({
     Key key,
     @required this.builder,
     Widget child,
@@ -229,12 +247,20 @@ class Consumer3<A, B, C> extends SingleChildStatelessWidget {
       child,
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<
+        Widget Function(BuildContext context, A value, B value2, C value3,
+            Widget child)>('builder', builder));
+  }
 }
 
 /// {@macro provider.consumer}
 class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
-  Consumer4({
+  const Consumer4({
     Key key,
     @required this.builder,
     Widget child,
@@ -261,12 +287,20 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
       child,
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<
+        Widget Function(BuildContext context, A value, B value2, C value3,
+            D value4, Widget child)>('builder', builder));
+  }
 }
 
 /// {@macro provider.consumer}
 class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
-  Consumer5({
+  const Consumer5({
     Key key,
     @required this.builder,
     Widget child,
@@ -296,12 +330,20 @@ class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
       child,
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<
+        Widget Function(BuildContext context, A value, B value2, C value3,
+            D value4, E value5, Widget child)>('builder', builder));
+  }
 }
 
 /// {@macro provider.consumer}
 class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
-  Consumer6({
+  const Consumer6({
     Key key,
     @required this.builder,
     Widget child,
@@ -332,5 +374,13 @@ class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
       Provider.of<F>(context),
       child,
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<
+        Widget Function(BuildContext context, A value, B value2, C value3,
+            D value4, E value5, F value6, Widget child)>('builder', builder));
   }
 }

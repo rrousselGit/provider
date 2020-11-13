@@ -1,9 +1,9 @@
 // ignore_for_file: invalid_use_of_protected_member
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:provider/src/provider.dart';
 
 import 'common.dart';
@@ -12,7 +12,7 @@ void main() {
   group('ListenableProvider', () {
     testWidgets('works with MultiProvider', (tester) async {
       final key = GlobalKey();
-      var listenable = ChangeNotifier();
+      final listenable = ChangeNotifier();
 
       await tester.pumpWidget(
         MultiProvider(
@@ -263,7 +263,7 @@ void main() {
 
       expect(listenable.hasListeners, true);
 
-      var previousNotifier = listenable;
+      final previousNotifier = listenable;
       listenable = ChangeNotifier();
 
       await tester.pumpWidget(build());
@@ -348,7 +348,7 @@ void main() {
           return builder(context);
         },
       );
-      var changeNotifierProvider = ListenableProvider.value(
+      final changeNotifierProvider = ListenableProvider.value(
         value: listenable,
         child: child,
       );

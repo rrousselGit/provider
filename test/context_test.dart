@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_lambdas
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -133,7 +133,7 @@ void main() {
     testWidgets('internal selected value is updated', (tester) async {
       final notifier = ValueNotifier([false, false, false]);
 
-      var callCounts = <int, int>{
+      final callCounts = <int, int>{
         0: 0,
         1: 0,
         2: 0,
@@ -349,9 +349,7 @@ void main() {
       final selector = MockSelector.identity<ValueNotifier<int>>();
       final child = Builder(builder: (c) {
         buildCount++;
-        c.select<ValueNotifier<int>, ValueNotifier<int>>((v) {
-          return selector(v);
-        });
+        c.select<ValueNotifier<int>, ValueNotifier<int>>(selector);
         return Container();
       });
 
@@ -476,7 +474,7 @@ void main() {
         'select throws if read called inside the callback on dependency change',
         (tester) async {
       var shouldCall = false;
-      var child = Builder(builder: (context) {
+      final child = Builder(builder: (context) {
         context.select((int i) {
           if (shouldCall) {
             context.read<int>();
@@ -509,7 +507,7 @@ void main() {
         'select throws if watch called inside the callback on dependency change',
         (tester) async {
       var shouldCall = false;
-      var child = Builder(builder: (context) {
+      final child = Builder(builder: (context) {
         context.select((int i) {
           if (shouldCall) {
             context.watch<int>();
@@ -542,7 +540,7 @@ void main() {
         'select throws if select called inside the callback on dependency change',
         (tester) async {
       var shouldCall = false;
-      var child = Builder(builder: (context) {
+      final child = Builder(builder: (context) {
         context.select((int i) {
           if (shouldCall) {
             context.select((int i) => i);
@@ -577,7 +575,7 @@ void main() {
           value: 42,
           child: StatefulTest(
             didChangeDependencies: (context) {
-              context..read<int>();
+              context.read<int>();
             },
             child: const Text('42', textDirection: TextDirection.ltr),
           ),
@@ -658,9 +656,7 @@ void main() {
       final selector = MockSelector.identity<int>();
 
       final child = Builder(builder: (c) {
-        c.select<int, int>((v) {
-          return selector(v);
-        });
+        c.select<int, int>(selector);
         return Container();
       });
 
@@ -702,9 +698,7 @@ void main() {
       final selector = MockSelector.identity<Map<int, int>>();
       final child = Builder(builder: (c) {
         buildCount++;
-        c.select<Map<int, int>, Map<int, int>>((v) {
-          return selector(v);
-        });
+        c.select<Map<int, int>, Map<int, int>>(selector);
         return Container();
       });
 
@@ -741,9 +735,7 @@ void main() {
       final selector = MockSelector.identity<List<int>>();
       final child = Builder(builder: (c) {
         buildCount++;
-        c.select<List<int>, List<int>>((v) {
-          return selector(v);
-        });
+        c.select<List<int>, List<int>>(selector);
         return Container();
       });
 
@@ -779,9 +771,7 @@ void main() {
       final selector = MockSelector.identity<Iterable<int>>();
       final child = Builder(builder: (c) {
         buildCount++;
-        c.select<Iterable<int>, Iterable<int>>((v) {
-          return selector(v);
-        });
+        c.select<Iterable<int>, Iterable<int>>(selector);
         return Container();
       });
 
@@ -817,9 +807,7 @@ void main() {
       final selector = MockSelector.identity<Set<int>>();
       final child = Builder(builder: (c) {
         buildCount++;
-        c.select<Set<int>, Set<int>>((v) {
-          return selector(v);
-        });
+        c.select<Set<int>, Set<int>>(selector);
         return Container();
       });
 
@@ -931,7 +919,7 @@ void main() {
 }
 
 class StatefulTest extends StatefulWidget {
-  StatefulTest({
+  const StatefulTest({
     Key key,
     this.initState,
     this.child,
@@ -948,6 +936,18 @@ class StatefulTest extends StatefulWidget {
 
   @override
   _StatefulTestState createState() => _StatefulTestState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<void Function(BuildContext c)>(
+        'initState', initState));
+    properties.add(DiagnosticsProperty<void Function(BuildContext c)>(
+        'didChangeDependencies', didChangeDependencies));
+    properties.add(ObjectFlagProperty<WidgetBuilder>.has('builder', builder));
+    properties.add(
+        DiagnosticsProperty<void Function(BuildContext c)>('dispose', dispose));
+  }
 }
 
 class _StatefulTestState extends State<StatefulTest> {
@@ -979,15 +979,13 @@ class _StatefulTestState extends State<StatefulTest> {
 }
 
 class MockSelector<T, R> extends Mock {
-  MockSelector(R cb(T v)) {
+  MockSelector(R Function(T v) cb) {
     when(this(any)).thenAnswer((i) {
       return cb(i.positionalArguments.first as T);
     });
   }
 
-  static MockSelector<T, T> identity<T>() {
-    return MockSelector<T, T>((v) => v);
-  }
+  static MockSelector<T, T> identity<T>() => MockSelector<T, T>((v) => v);
 
   R call(T v);
 }

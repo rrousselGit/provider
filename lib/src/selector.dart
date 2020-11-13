@@ -1,9 +1,9 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
-import 'package:provider/src/provider.dart';
-import 'package:collection/collection.dart';
 
-import 'consumer.dart';
+import 'provider.dart';
 
 typedef ShouldRebuild<T> = bool Function(T previous, T next);
 
@@ -29,7 +29,7 @@ typedef ShouldRebuild<T> = bool Function(T previous, T next);
 /// will still call `builder` again, even if `value` didn't change.
 class Selector0<T> extends SingleChildStatefulWidget {
   /// Both `builder` and `selector` must not be `null`.
-  Selector0({
+  const Selector0({
     Key key,
     @required this.builder,
     @required this.selector,
@@ -62,6 +62,15 @@ class Selector0<T> extends SingleChildStatefulWidget {
 
   @override
   _Selector0State<T> createState() => _Selector0State<T>();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(ObjectFlagProperty<ValueWidgetBuilder<T>>.has('builder', builder));
+    properties.add(
+        DiagnosticsProperty<T Function(BuildContext p1)>('selector', selector));
+  }
 }
 
 class _Selector0State<T> extends SingleChildState<Selector0<T>> {
@@ -73,7 +82,7 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
   Widget buildWithChild(BuildContext context, Widget child) {
     final selected = widget.selector(context);
 
-    var shouldInvalidateCache = oldWidget != widget ||
+    final shouldInvalidateCache = oldWidget != widget ||
         (widget._shouldRebuild != null &&
             widget._shouldRebuild.call(value, selected)) ||
         (widget._shouldRebuild == null &&
@@ -88,6 +97,12 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
       );
     }
     return cache;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<T>('value', value));
   }
 }
 

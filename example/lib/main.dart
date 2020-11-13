@@ -13,12 +13,13 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => Counter()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 /// Mix-in [DiagnosticableTreeMixin] to have access to [debugFillProperties] for the devtool
+// ignore: prefer_mixin
 class Counter with ChangeNotifier, DiagnosticableTreeMixin {
   int _count = 0;
   int get count => _count;
@@ -37,6 +38,8 @@ class Counter with ChangeNotifier, DiagnosticableTreeMixin {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -58,15 +61,15 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
+          children: const <Widget>[
+            Text('You have pushed the button this many times:'),
 
             /// Extracted as a separate widget for performance optimization.
             /// As a separate widget, it will rebuild independently from [MyHomePage].
             ///
             /// This is totally optional (and rarely needed).
             /// Similarly, we could also use [Consumer] or [Selector].
-            const Count(),
+            Count(),
           ],
         ),
       ),

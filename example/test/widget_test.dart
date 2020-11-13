@@ -12,7 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:example/main.dart' as example;
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Counter increments smoke test', (tester) async {
     // Build our app and trigger a frame.
 
     example.main();
@@ -40,10 +40,7 @@ void main() {
   });
   test('test coverage', () {
     // remove when https://github.com/dart-lang/sdk/issues/38934 is closed
-
-    // ignore: prefer_const_constructors
-    example.Count();
-    // ignore: prefer_const_constructors
-    example.MyHomePage();
+    const example.Count();
+    const example.MyHomePage();
   });
 }

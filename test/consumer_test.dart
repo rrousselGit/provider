@@ -9,7 +9,11 @@ class ConsumerBuilderMock extends Mock {
   Widget call(Combined foo);
 }
 
+@immutable
 class Combined {
+  const Combined(this.context, this.child, this.a,
+      [this.b, this.c, this.d, this.e, this.f]);
+
   final A a;
   final B b;
   final C c;
@@ -18,9 +22,6 @@ class Combined {
   final F f;
   final Widget child;
   final BuildContext context;
-
-  Combined(this.context, this.child, this.a,
-      [this.b, this.c, this.d, this.e, this.f]);
 
   @override
   // ignore: hash_and_equals

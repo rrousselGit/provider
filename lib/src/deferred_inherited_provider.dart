@@ -181,7 +181,7 @@ class _CreateDeferredInheritedProviderElement<T, R>
   @override
   T get controller {
     if (!_didBuild) {
-      assert(debugSetInheritedLock(true));
+      assert(debugSetInheritedLock(value: true));
       bool _debugPreviousIsInInheritedProviderCreate;
       bool _debugPreviousIsInInheritedProviderUpdate;
 

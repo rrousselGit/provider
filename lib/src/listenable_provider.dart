@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_use_of_protected_member
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -39,7 +40,6 @@ class ListenableProvider<T extends Listenable> extends InheritedProvider<T> {
               ? null
               : (value) {
                   if (value is ChangeNotifier) {
-                    // ignore: invalid_use_of_protected_member
                     assert(!value.hasListeners, '''
 The default constructor of ListenableProvider/ChangeNotifierProvider
 must create a new, unused Listenable.
@@ -121,7 +121,6 @@ class ListenableProxyProvider0<R extends Listenable>
               ? null
               : (value) {
                   if (value is ChangeNotifier) {
-                    // ignore: invalid_use_of_protected_member
                     assert(value.hasListeners != true);
                   }
                 },

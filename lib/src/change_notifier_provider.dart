@@ -97,10 +97,6 @@ import 'proxy_provider.dart';
 ///     any [Listenable].
 class ChangeNotifierProvider<T extends ChangeNotifier>
     extends ListenableProvider<T> {
-  static void _dispose(BuildContext context, ChangeNotifier notifier) {
-    notifier?.dispose();
-  }
-
   /// Creates a [ChangeNotifier] using `create` and automatically
   /// dispose it when [ChangeNotifierProvider] is removed from the widget tree.
   ///
@@ -132,6 +128,10 @@ class ChangeNotifierProvider<T extends ChangeNotifier>
           value: value,
           child: child,
         );
+
+  static void _dispose(BuildContext context, ChangeNotifier notifier) {
+    notifier?.dispose();
+  }
 }
 
 /// {@template provider.changenotifierproxyprovider}

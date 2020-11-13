@@ -127,42 +127,45 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
 DeferredStartListening<Future<T>, T> _futureStartListening<T>({
   T initialData,
   ErrorBuilder<T> catchError,
-}) {
-  return (e, setState, controller, __) {
-    if (!e.hasValue) {
-      setState(initialData);
-    }
+}) =>
+    (e, setState, controller, __) {
+      if (!e.hasValue) {
+        setState(initialData);
+      }
 
-    var canceled = false;
-    controller?.then(
-      (value) {
-        if (canceled) return;
-        setState(value);
-      },
-      onError: (dynamic error) {
-        if (canceled) return;
-        if (catchError != null) {
-          setState(catchError(e, error));
-        } else {
-          FlutterError.reportError(
-            FlutterErrorDetails(
-              library: 'provider',
-              exception: FlutterError('''
+      var canceled = false;
+      controller?.then(
+        (value) {
+          if (canceled) {
+            return;
+          }
+          setState(value);
+        },
+        onError: (dynamic error) {
+          if (canceled) {
+            return;
+          }
+          if (catchError != null) {
+            setState(catchError(e, error));
+          } else {
+            FlutterError.reportError(
+              FlutterErrorDetails(
+                library: 'provider',
+                exception: FlutterError('''
 An exception was throw by ${controller.runtimeType} listened by
 FutureProvider<$T>, but no `catchError` was provided.
 
 Exception:
 $error
 '''),
-            ),
-          );
-        }
-      },
-    );
+              ),
+            );
+          }
+        },
+      );
 
-    return () => canceled = true;
-  };
-}
+      return () => canceled = true;
+    };
 
 /// Listens to a [Future] and exposes its result to `child` and its descendants.
 ///

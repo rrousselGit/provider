@@ -36,7 +36,7 @@ class ValueBuilderMock<T> extends Mock {
 }
 
 class TransitionBuilderMock extends Mock {
-  TransitionBuilderMock([Widget cb(BuildContext c, Widget child)]) {
+  TransitionBuilderMock([Widget Function(BuildContext c, Widget child) cb]) {
     if (cb != null) {
       when(this(any, any)).thenAnswer((i) {
         final context = i.positionalArguments.first as BuildContext;
@@ -67,7 +67,8 @@ class DisposeMock<T> extends Mock {
 class MockNotifier extends Mock implements ChangeNotifier {}
 
 class ValueWidgetBuilderMock<T> extends Mock {
-  ValueWidgetBuilderMock([Widget cb(BuildContext c, T value, Widget child)]) {
+  ValueWidgetBuilderMock(
+      [Widget Function(BuildContext c, T value, Widget child) cb]) {
     if (cb != null) {
       when(this(any, any, any)).thenAnswer((i) {
         final context = i.positionalArguments.first as BuildContext;
@@ -81,7 +82,7 @@ class ValueWidgetBuilderMock<T> extends Mock {
 }
 
 class BuilderMock extends Mock {
-  BuilderMock([Widget cb(BuildContext c)]) {
+  BuilderMock([Widget Function(BuildContext c) cb]) {
     if (cb != null) {
       when(this(any)).thenAnswer((i) {
         final context = i.positionalArguments.first as BuildContext;
@@ -107,7 +108,7 @@ class UpdateShouldNotifyMock<T> extends Mock {
 }
 
 class TextOf<T> extends StatelessWidget {
-  const TextOf();
+  const TextOf({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -120,12 +121,13 @@ class TextOf<T> extends StatelessWidget {
 
 class DeferredStartListeningMock<T, R> extends Mock {
   DeferredStartListeningMock(
-      [VoidCallback call(
+      [VoidCallback Function(
         InheritedContext<R> context,
         void Function(R value) setState,
         T controller,
         R value,
-      )]) {
+      )
+          call]) {
     if (call != null) {
       when(this(any, any, any, any)).thenAnswer((invoc) {
         return Function.apply(
@@ -173,7 +175,11 @@ class ProviderBuilderMock extends Mock {
   Widget call(BuildContext context, Combined value, Widget child);
 }
 
+@immutable
 class Combined extends DiagnosticableTree {
+  const Combined(this.context, this.previous, this.a,
+      [this.b, this.c, this.d, this.e, this.f]);
+
   final A a;
   final B b;
   final C c;
@@ -182,9 +188,6 @@ class Combined extends DiagnosticableTree {
   final F f;
   final Combined previous;
   final BuildContext context;
-
-  Combined(this.context, this.previous, this.a,
-      [this.b, this.c, this.d, this.e, this.f]);
 
   @override
   // ignore: hash_and_equals
@@ -238,6 +241,12 @@ class BuildCount extends StatefulWidget {
 
   @override
   _BuildCountState createState() => _BuildCountState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ObjectFlagProperty<WidgetBuilder>.has('builder', builder));
+  }
 }
 
 class _BuildCountState extends State<BuildCount> {
