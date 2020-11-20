@@ -6,8 +6,9 @@ import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
 void mockImplementation<T extends Function>(VoidCallback when, T mock) {
-  mockito.when(when()).thenAnswer((invo) =>
-      Function.apply(mock, invo.positionalArguments, invo.namedArguments));
+  mockito.when(when()).thenAnswer((invo) {
+    return Function.apply(mock, invo.positionalArguments, invo.namedArguments);
+  });
 }
 
 void main() {

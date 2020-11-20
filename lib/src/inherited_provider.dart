@@ -93,7 +93,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
         ),
         super(key: key, child: child);
 
-  const InheritedProvider._constructor({
+  InheritedProvider._constructor({
     Key key,
     _Delegate<T> delegate,
     bool lazy,
@@ -143,8 +143,6 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     _delegate.debugFillProperties(properties);
-    properties
-        .add(ObjectFlagProperty<TransitionBuilder>.has('builder', builder));
   }
 
   @override
@@ -470,7 +468,8 @@ If you're in this situation, consider passing a `key` unique to each individual 
       value; // this will force the value to be computed.
     }
     _delegateState.build(
-        isBuildFromExternalSources: _isBuildFromExternalSources);
+      isBuildFromExternalSources: _isBuildFromExternalSources,
+    );
     _isBuildFromExternalSources = false;
     if (_shouldNotifyDependents) {
       _shouldNotifyDependents = false;
@@ -570,7 +569,7 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
 
   bool get hasValue;
 
-  bool debugSetInheritedLock({bool value}) {
+  bool debugSetInheritedLock(bool value) {
     return element._debugSetInheritedLock(value);
   }
 
@@ -580,7 +579,7 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
 
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {}
 
-  void build({bool isBuildFromExternalSources}) {}
+  void build({@required bool isBuildFromExternalSources}) {}
 }
 
 class _CreateInheritedProvider<T> extends _Delegate<T> {
@@ -637,7 +636,7 @@ class _CreateInheritedProviderState<T>
     if (!_didInitValue) {
       _didInitValue = true;
       if (delegate.create != null) {
-        assert(debugSetInheritedLock(value: true));
+        assert(debugSetInheritedLock(true));
         try {
           assert(() {
             debugIsInInheritedProviderCreate = true;
@@ -654,7 +653,7 @@ class _CreateInheritedProviderState<T>
             return true;
           }());
         }
-        assert(debugSetInheritedLock(value: false));
+        assert(debugSetInheritedLock(false));
 
         assert(() {
           delegate.debugCheckInvalidValueType?.call(_value);

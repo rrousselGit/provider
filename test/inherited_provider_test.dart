@@ -2435,13 +2435,6 @@ class Test<T> extends StatefulWidget {
 
   @override
   _TestState<T> createState() => _TestState<T>();
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<ValueBuilderMock<T>>(
-        'didChangeDependencies', didChangeDependencies));
-    properties.add(DiagnosticsProperty<ValueBuilderMock<T>>('build', build));
-  }
 }
 
 class _TestState<T> extends State<Test<T>> {
@@ -2502,6 +2495,7 @@ class StateNotifier<T> extends ValueNotifier<T> {
   StateNotifier(T value) : super(value);
 
   Locator read;
+
   void update(Locator watch) {}
 }
 
@@ -2579,13 +2573,5 @@ class StateNotifierProvider<Controller extends StateNotifier<Value>, Value>
         child: child,
       ),
     );
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-        .add(ObjectFlagProperty<Create<Controller>>.has('create', create));
-    properties.add(DiagnosticsProperty<bool>('lazy', lazy));
   }
 }

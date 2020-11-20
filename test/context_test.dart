@@ -936,18 +936,6 @@ class StatefulTest extends StatefulWidget {
 
   @override
   _StatefulTestState createState() => _StatefulTestState();
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<void Function(BuildContext c)>(
-        'initState', initState));
-    properties.add(DiagnosticsProperty<void Function(BuildContext c)>(
-        'didChangeDependencies', didChangeDependencies));
-    properties.add(ObjectFlagProperty<WidgetBuilder>.has('builder', builder));
-    properties.add(
-        DiagnosticsProperty<void Function(BuildContext c)>('dispose', dispose));
-  }
 }
 
 class _StatefulTestState extends State<StatefulTest> {

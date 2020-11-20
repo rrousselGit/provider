@@ -158,7 +158,7 @@ class Consumer<T> extends SingleChildStatelessWidget {
   /// {@template provider.consumer.constructor}
   /// Consumes a [Provider<T>]
   /// {@endtemplate}
-  const Consumer({
+  Consumer({
     Key key,
     @required this.builder,
     Widget child,
@@ -180,20 +180,12 @@ class Consumer<T> extends SingleChildStatelessWidget {
       child,
     );
   }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<
-        Widget Function(
-            BuildContext context, T value, Widget child)>('builder', builder));
-  }
 }
 
 /// {@macro provider.consumer}
 class Consumer2<A, B> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
-  const Consumer2({
+  Consumer2({
     Key key,
     @required this.builder,
     Widget child,
@@ -213,20 +205,12 @@ class Consumer2<A, B> extends SingleChildStatelessWidget {
       child,
     );
   }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<
-        Widget Function(BuildContext context, A value, B value2,
-            Widget child)>('builder', builder));
-  }
 }
 
 /// {@macro provider.consumer}
 class Consumer3<A, B, C> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
-  const Consumer3({
+  Consumer3({
     Key key,
     @required this.builder,
     Widget child,
@@ -247,20 +231,12 @@ class Consumer3<A, B, C> extends SingleChildStatelessWidget {
       child,
     );
   }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<
-        Widget Function(BuildContext context, A value, B value2, C value3,
-            Widget child)>('builder', builder));
-  }
 }
 
 /// {@macro provider.consumer}
 class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
-  const Consumer4({
+  Consumer4({
     Key key,
     @required this.builder,
     Widget child,
@@ -276,6 +252,7 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
     D value4,
     Widget child,
   ) builder;
+
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
     return builder(
@@ -287,20 +264,12 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
       child,
     );
   }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<
-        Widget Function(BuildContext context, A value, B value2, C value3,
-            D value4, Widget child)>('builder', builder));
-  }
 }
 
 /// {@macro provider.consumer}
 class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
-  const Consumer5({
+  Consumer5({
     Key key,
     @required this.builder,
     Widget child,
@@ -330,20 +299,12 @@ class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
       child,
     );
   }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<
-        Widget Function(BuildContext context, A value, B value2, C value3,
-            D value4, E value5, Widget child)>('builder', builder));
-  }
 }
 
 /// {@macro provider.consumer}
 class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
   /// {@macro provider.consumer.constructor}
-  const Consumer6({
+  Consumer6({
     Key key,
     @required this.builder,
     Widget child,
@@ -374,13 +335,5 @@ class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
       Provider.of<F>(context),
       child,
     );
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<
-        Widget Function(BuildContext context, A value, B value2, C value3,
-            D value4, E value5, F value6, Widget child)>('builder', builder));
   }
 }

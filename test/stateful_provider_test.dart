@@ -31,11 +31,11 @@ void main() {
   });
   test('asserts', () {
     expect(
-      () => Provider<dynamic>(create: null),
+      () => Provider<dynamic>(create: null, child: null),
       throwsAssertionError,
     );
     // don't throw
-    Provider<dynamic>(create: (_) => null);
+    Provider<dynamic>(create: (_) => null, child: null);
   });
 
   testWidgets('calls create only once', (tester) async {

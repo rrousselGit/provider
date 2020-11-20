@@ -11,8 +11,16 @@ class ConsumerBuilderMock extends Mock {
 
 @immutable
 class Combined {
-  const Combined(this.context, this.child, this.a,
-      [this.b, this.c, this.d, this.e, this.f]);
+  const Combined(
+    this.context,
+    this.child,
+    this.a, [
+    this.b,
+    this.c,
+    this.d,
+    this.e,
+    this.f,
+  ]);
 
   final A a;
   final B b;

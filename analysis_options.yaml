@@ -73,3 +73,9 @@ linter:
     one_member_abstracts: false # 1 problem
     comment_references: false # 2 problems
     prefer_constructors_over_static_methods: false # 1 problem
+    diagnostic_describe_all_properties: false
+    void_checks: false
+    avoid_positional_boolean_parameters: false
+    avoid_redundant_argument_values: false
+    prefer_const_constructors_in_immutables: false
+    

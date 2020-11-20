@@ -22,6 +22,7 @@ void main() {
 // ignore: prefer_mixin
 class Counter with ChangeNotifier, DiagnosticableTreeMixin {
   int _count = 0;
+
   int get count => _count;
 
   void increment() {

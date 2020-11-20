@@ -29,7 +29,7 @@ typedef ShouldRebuild<T> = bool Function(T previous, T next);
 /// will still call `builder` again, even if `value` didn't change.
 class Selector0<T> extends SingleChildStatefulWidget {
   /// Both `builder` and `selector` must not be `null`.
-  const Selector0({
+  Selector0({
     Key key,
     @required this.builder,
     @required this.selector,
@@ -62,15 +62,6 @@ class Selector0<T> extends SingleChildStatefulWidget {
 
   @override
   _Selector0State<T> createState() => _Selector0State<T>();
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-        .add(ObjectFlagProperty<ValueWidgetBuilder<T>>.has('builder', builder));
-    properties.add(
-        DiagnosticsProperty<T Function(BuildContext p1)>('selector', selector));
-  }
 }
 
 class _Selector0State<T> extends SingleChildState<Selector0<T>> {
