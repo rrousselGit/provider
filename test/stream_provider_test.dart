@@ -110,7 +110,7 @@ Exception:
       (tester) async {
     final controller = StreamController<int>(sync: true);
     final catchError = ErrorBuilderMock<int>();
-    when(catchError(any, 42)).thenReturn(42);
+    when(catchError(any!, 42)).thenReturn(42);
 
     await tester.pumpWidget(StreamProvider.value(
       value: controller.stream,
@@ -125,7 +125,7 @@ Exception:
     await Future.microtask(tester.pump);
 
     expect(find.text('42'), findsOneWidget);
-    verify(catchError(argThat(isNotNull), 42)).called(1);
+    verify(catchError(argThat(isNotNull)!, 42)).called(1);
     verifyNoMoreInteractions(catchError);
 
     // ignore: unawaited_futures
@@ -145,21 +145,7 @@ Exception:
     await tester.pumpWidget(Container());
   });
 
-  test('StreamProvider() crashes if builder is null', () {
-    expect(
-      () => StreamProvider<int>(create: null),
-      throwsAssertionError,
-    );
-  });
-
   group('StreamProvider()', () {
-    test('crashes if builder is null', () {
-      expect(
-        () => StreamProvider<int>(create: null),
-        throwsAssertionError,
-      );
-    });
-
     testWidgets('create and dispose stream with builder', (tester) async {
       final stream = StreamMock<int>();
       final sub = StreamSubscriptionMock<int>();
@@ -174,7 +160,7 @@ Exception:
         ),
       );
 
-      verify(builder(argThat(isNotNull))).called(1);
+      verify(builder(argThat(isNotNull)!)).called(1);
 
       verify(stream.listen(any, onError: anyNamed('onError'))).called(1);
       verifyNoMoreInteractions(stream);

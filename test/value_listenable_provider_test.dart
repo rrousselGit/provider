@@ -36,7 +36,7 @@ void main() {
       );
 
       final listener =
-          verify(mock.addListener(captureAny)).captured.first as VoidCallback;
+          verify(mock.addListener(captureAny!)).captured.first as VoidCallback;
 
       clearInteractions(mock);
       await tester.pumpWidget(Container());
@@ -68,7 +68,7 @@ void main() {
 
     testWidgets("don't rebuild dependents by default", (tester) async {
       final builder = BuilderMock();
-      when(builder(any)).thenAnswer((invocation) {
+      when(builder(any!)).thenAnswer((invocation) {
         final context = invocation.positionalArguments.first as BuildContext;
         Provider.of<int>(context);
         return Container();
@@ -83,7 +83,7 @@ void main() {
           child: child,
         ),
       );
-      verify(builder(any)).called(1);
+      verify(builder(any!)).called(1);
 
       await tester.pumpWidget(
         ValueListenableProvider.value(
@@ -123,7 +123,7 @@ void main() {
         ),
       );
 
-      verify(valueNotifier.addListener(any)).called(1);
+      verify(valueNotifier.addListener(any!)).called(1);
       verify(valueNotifier.value);
       verifyNoMoreInteractions(valueNotifier);
     });

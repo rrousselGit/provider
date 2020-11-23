@@ -329,7 +329,7 @@ void main() {
       ChangeNotifierProvider<ValueNotifier<int>>(
         create: (context) => myNotifier,
         builder: (context, _) {
-          final notifier = context.watch<ValueNotifier<int>>();
+          final notifier = context.watch<ValueNotifier<int>>()!;
           return Text(
             '${notifier.value}',
             textDirection: TextDirection.ltr,

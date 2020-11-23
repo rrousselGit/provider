@@ -19,7 +19,7 @@ void main() {
   final f = F();
 
   final combinedConsumerMock = MockCombinedBuilder();
-  setUp(() => when(combinedConsumerMock(any)).thenReturn(Container()));
+  setUp(() => when(combinedConsumerMock(any!)).thenReturn(Container()));
   tearDown(() {
     clearInteractions(combinedConsumerMock);
   });
@@ -172,7 +172,7 @@ void main() {
       ' and update dependents',
       (tester) async {
         final builder = MockConsumerBuilder<MockNotifier>();
-        when(builder(any, any, any)).thenReturn(Container());
+        when(builder(any!, any!, any!)).thenReturn(Container());
         final child = Consumer<MockNotifier>(builder: builder);
 
         final dispose = DisposeMock<MockNotifier>();
@@ -211,21 +211,21 @@ void main() {
           ),
         );
 
-        verify(builder(argThat(isNotNull), notifier2, null)).called(1);
+        verify(builder(argThat(isNotNull)!, notifier2, null)).called(1);
         verifyNoMoreInteractions(builder);
-        verify(dispose(argThat(isNotNull), notifier)).called(1);
+        verify(dispose(argThat(isNotNull)!, notifier)).called(1);
         verifyNoMoreInteractions(dispose);
         verifyNoMoreInteractions(dispose2);
 
         await tester.pumpWidget(Container());
 
-        verify(dispose2(argThat(isNotNull), notifier2)).called(1);
+        verify(dispose2(argThat(isNotNull)!, notifier2)).called(1);
         verifyNoMoreInteractions(dispose);
         verifyNoMoreInteractions(dispose2);
       },
     );
     testWidgets('disposes of created value', (tester) async {
-      final dispose = DisposeMock<ValueNotifier<int>>();
+      final dispose = DisposeMock<ValueNotifier<int?>>();
       final notifier = ValueNotifier(0);
       final key = GlobalKey();
 
@@ -233,7 +233,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: 0),
-            ListenableProxyProvider<int, ValueNotifier<int>>(
+            ListenableProxyProvider<int, ValueNotifier<int?>>(
               key: key,
               create: (_) => notifier,
               update: (_, count, value) => value..value = count,
@@ -248,7 +248,7 @@ void main() {
 
       await tester.pumpWidget(Container());
 
-      verify(dispose(argThat(isNotNull), notifier)).called(1);
+      verify(dispose(argThat(isNotNull)!, notifier)).called(1);
       verifyNoMoreInteractions(dispose);
     });
   });

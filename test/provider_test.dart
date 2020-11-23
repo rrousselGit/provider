@@ -213,8 +213,8 @@ void main() {
 
     testWidgets('simple usage', (tester) async {
       var buildCount = 0;
-      int value;
-      double second;
+      int? value;
+      double? second;
 
       // We voluntarily reuse the builder instance so that later call to
       // pumpWidget don't call builder again unless subscribed to an
@@ -299,10 +299,10 @@ void main() {
     });
 
     testWidgets('update should notify', (tester) async {
-      int old;
-      int curr;
+      int? old;
+      int? curr;
       var callCount = 0;
-      final updateShouldNotify = (int o, int c) {
+      final updateShouldNotify = (int? o, int? c) {
         callCount++;
         old = o;
         curr = c;
@@ -310,7 +310,7 @@ void main() {
       };
 
       var buildCount = 0;
-      int buildValue;
+      int? buildValue;
       final builder = Builder(builder: (BuildContext context) {
         buildValue = Provider.of(context);
         buildCount++;

@@ -23,13 +23,13 @@ class Combined {
   ]);
 
   final A a;
-  final B b;
-  final C c;
-  final D d;
-  final E e;
-  final F f;
-  final Widget child;
-  final BuildContext context;
+  final B? b;
+  final C? c;
+  final D? d;
+  final E? e;
+  final F? f;
+  final Widget? child;
+  final BuildContext? context;
 
   @override
   // ignore: hash_and_equals
@@ -63,7 +63,7 @@ void main() {
 
   final mock = ConsumerBuilderMock();
   setUp(() {
-    when(mock(any)).thenReturn(Container());
+    when(mock(any!)).thenReturn(Container());
   });
   tearDown(() {
     clearInteractions(mock);
@@ -89,12 +89,7 @@ void main() {
 
       verify(mock(Combined(key.currentContext, child, a)));
     });
-    testWidgets('crashed with no builder', (tester) async {
-      expect(
-        () => Consumer<int>(builder: null),
-        throwsAssertionError,
-      );
-    });
+
     testWidgets('can be used inside MultiProvider', (tester) async {
       final key = GlobalKey();
 
@@ -135,12 +130,6 @@ void main() {
       );
 
       verify(mock(Combined(key.currentContext, child, a, b)));
-    });
-    testWidgets('crashed with no builder', (tester) async {
-      expect(
-        () => Consumer2<A, B>(builder: null),
-        throwsAssertionError,
-      );
     });
 
     testWidgets('can be used inside MultiProvider', (tester) async {
@@ -183,12 +172,6 @@ void main() {
 
       verify(mock(Combined(key.currentContext, child, a, b, c)));
     });
-    testWidgets('crashed with no builder', (tester) async {
-      expect(
-        () => Consumer3<A, B, C>(builder: null),
-        throwsAssertionError,
-      );
-    });
 
     testWidgets('can be used inside MultiProvider', (tester) async {
       final key = GlobalKey();
@@ -229,12 +212,6 @@ void main() {
       );
 
       verify(mock(Combined(key.currentContext, child, a, b, c, d)));
-    });
-    testWidgets('crashed with no builder', (tester) async {
-      expect(
-        () => Consumer4<A, B, C, D>(builder: null),
-        throwsAssertionError,
-      );
     });
 
     testWidgets('can be used inside MultiProvider', (tester) async {
@@ -277,12 +254,6 @@ void main() {
 
       verify(mock(Combined(key.currentContext, child, a, b, c, d, e)));
     });
-    testWidgets('crashed with no builder', (tester) async {
-      expect(
-        () => Consumer5<A, B, C, D, E>(builder: null),
-        throwsAssertionError,
-      );
-    });
 
     testWidgets('can be used inside MultiProvider', (tester) async {
       final key = GlobalKey();
@@ -323,12 +294,6 @@ void main() {
       );
 
       verify(mock(Combined(key.currentContext, child, a, b, c, d, e, f)));
-    });
-    testWidgets('crashed with no builder', (tester) async {
-      expect(
-        () => Consumer6<A, B, C, D, E, F>(builder: null),
-        throwsAssertionError,
-      );
     });
 
     testWidgets('can be used inside MultiProvider', (tester) async {

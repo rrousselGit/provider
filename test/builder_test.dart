@@ -14,7 +14,7 @@ void main() {
           builder: (context, child) {
             assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
                 null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -29,7 +29,7 @@ void main() {
           builder: (context, child) {
             assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
                 null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -46,7 +46,7 @@ void main() {
           builder: (context, child) {
             assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
                 null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -61,7 +61,7 @@ void main() {
           builder: (context, child) {
             assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
                 null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -77,7 +77,7 @@ void main() {
           create: (_) => 0,
           builder: (context, child) {
             assert(Provider.of<int>(context, listen: false) != null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -91,7 +91,7 @@ void main() {
           value: 0,
           builder: (context, child) {
             assert(Provider.of<int>(context, listen: false) != null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -111,7 +111,7 @@ void main() {
               builder: (context, child) {
                 buildCount++;
                 assert(Provider.of<int>(context, listen: false) != null);
-                return child;
+                return child!;
               },
             ),
           ],
@@ -133,7 +133,7 @@ void main() {
               builder: (context, child) {
                 buildCount++;
                 assert(Provider.of<int>(context, listen: false) != null);
-                return child;
+                return child!;
               },
             ),
           ],
@@ -156,7 +156,7 @@ void main() {
               builder: (context, child) {
                 buildCount++;
                 assert(Provider.of<int>(context, listen: false) != null);
-                return child;
+                return child!;
               },
             ),
           ],
@@ -180,7 +180,7 @@ void main() {
               builder: (context, child) {
                 buildCount++;
                 assert(Provider.of<int>(context, listen: false) != null);
-                return child;
+                return child!;
               },
             ),
           ],
@@ -205,7 +205,7 @@ void main() {
               builder: (context, child) {
                 buildCount++;
                 assert(Provider.of<int>(context, listen: false) != null);
-                return child;
+                return child!;
               },
             ),
           ],
@@ -231,7 +231,7 @@ void main() {
               builder: (context, child) {
                 buildCount++;
                 assert(Provider.of<int>(context, listen: false) != null);
-                return child;
+                return child!;
               },
             ),
           ],
@@ -258,7 +258,7 @@ void main() {
               builder: (context, child) {
                 buildCount++;
                 assert(Provider.of<int>(context, listen: false) != null);
-                return child;
+                return child!;
               },
             ),
           ],
@@ -282,7 +282,7 @@ void main() {
           builder: (context, child) {
             assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
                 null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -306,7 +306,7 @@ void main() {
                 null);
             assert(Provider.of<ValueNotifier<String>>(context, listen: false) !=
                 null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -325,7 +325,7 @@ void main() {
           builder: (context, child) {
             assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
                 null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -343,7 +343,7 @@ void main() {
           ],
           builder: (context, child) {
             assert(Provider.of<int>(context, listen: false) != null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -363,7 +363,7 @@ void main() {
           builder: (context, child) {
             buildCount++;
             assert(Provider.of<int>(context, listen: false) != null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -385,7 +385,7 @@ void main() {
           builder: (context, child) {
             buildCount++;
             assert(Provider.of<int>(context, listen: false) != null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -408,7 +408,7 @@ void main() {
           builder: (context, child) {
             buildCount++;
             assert(Provider.of<int>(context, listen: false) != null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -432,7 +432,7 @@ void main() {
           builder: (context, child) {
             buildCount++;
             assert(Provider.of<int>(context, listen: false) != null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -457,7 +457,7 @@ void main() {
           builder: (context, child) {
             buildCount++;
             assert(Provider.of<int>(context, listen: false) != null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -483,7 +483,7 @@ void main() {
           builder: (context, child) {
             buildCount++;
             assert(Provider.of<int>(context, listen: false) != null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),
@@ -510,7 +510,7 @@ void main() {
           builder: (context, child) {
             buildCount++;
             assert(Provider.of<int>(context, listen: false) != null);
-            return child;
+            return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
         ),

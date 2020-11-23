@@ -21,41 +21,39 @@ InheritedContext<T> findInheritedContext<T>() {
 Type typeOf<T>() => T;
 
 class InitialValueBuilderMock<T> extends Mock {
-  InitialValueBuilderMock([T value]) {
-    when(this(any)).thenAnswer((_) => value);
+  InitialValueBuilderMock([T? value]) {
+    when(this(any!)).thenAnswer(((_) => value!));
   }
 
   T call(BuildContext context);
 }
 
 class ValueBuilderMock<T> extends Mock {
-  ValueBuilderMock([T value]) {
-    when(this(any, any)).thenReturn(value);
+  ValueBuilderMock([T? value]) {
+    when(this(any!, any!)).thenReturn(value!);
   }
-
-  T call(BuildContext context, T previous);
+  T call(BuildContext context, T? previous);
 }
 
 class TransitionBuilderMock extends Mock {
-  TransitionBuilderMock([Widget Function(BuildContext c, Widget child) cb]) {
+  TransitionBuilderMock([Widget cb(BuildContext c, Widget? child)?]) {
     if (cb != null) {
-      when(this(any, any)).thenAnswer((i) {
+      when(this(any!, any!)).thenAnswer((i) {
         final context = i.positionalArguments.first as BuildContext;
-        final child = i.positionalArguments[1] as Widget;
+        final child = i.positionalArguments[1] as Widget?;
         return cb(context, child);
       });
     }
   }
-
-  Widget call(BuildContext context, Widget child);
+  Widget call(BuildContext context, Widget? child);
 }
 
 class StartListeningMock<T> extends Mock {
-  StartListeningMock([VoidCallback value]) {
-    when(this(any, any)).thenReturn(value);
+  StartListeningMock([VoidCallback? value]) {
+    when(this(any!, any!)).thenReturn(value!);
   }
 
-  VoidCallback call(InheritedContext<T> context, T value);
+  VoidCallback call(InheritedContext<T?>? context, T? value);
 }
 
 class StopListeningMock extends Mock {
@@ -69,12 +67,13 @@ class DisposeMock<T> extends Mock {
 class MockNotifier extends Mock implements ChangeNotifier {}
 
 class ValueWidgetBuilderMock<T> extends Mock {
-  ValueWidgetBuilderMock([Widget cb(BuildContext c, T value, Widget child)]) {
+  ValueWidgetBuilderMock(
+      [Widget cb(BuildContext c, T? value, Widget? child)?]) {
     if (cb != null) {
-      when(this(any, any, any)).thenAnswer((i) {
+      when(this(any!, any!, any!)).thenAnswer((i) {
         final context = i.positionalArguments.first as BuildContext;
-        final value = i.positionalArguments[1] as T;
-        final child = i.positionalArguments[2] as Widget;
+        final value = i.positionalArguments[1] as T?;
+        final child = i.positionalArguments[2] as Widget?;
         return cb(context, value, child);
       });
     }
@@ -83,9 +82,9 @@ class ValueWidgetBuilderMock<T> extends Mock {
 }
 
 class BuilderMock extends Mock {
-  BuilderMock([Widget cb(BuildContext c)]) {
+  BuilderMock([Widget cb(BuildContext c)?]) {
     if (cb != null) {
-      when(this(any)).thenAnswer((i) {
+      when(this(any!)).thenAnswer((i) {
         final context = i.positionalArguments.first as BuildContext;
         return cb(context);
       });
@@ -101,11 +100,11 @@ class FutureMock<T> extends Mock implements Future<T> {}
 class StreamSubscriptionMock<T> extends Mock implements StreamSubscription<T> {}
 
 class MockConsumerBuilder<T> extends Mock {
-  Widget call(BuildContext context, T value, Widget child);
+  Widget call(BuildContext context, T? value, Widget? child);
 }
 
 class UpdateShouldNotifyMock<T> extends Mock {
-  bool call(T old, T newValue);
+  bool call(T? old, T? newValue);
 }
 
 class TextOf<T> extends StatelessWidget {
@@ -122,20 +121,19 @@ class TextOf<T> extends StatelessWidget {
 
 class DeferredStartListeningMock<T, R> extends Mock {
   DeferredStartListeningMock(
-      [VoidCallback Function(
-        InheritedContext<R> context,
-        void Function(R value) setState,
+      [VoidCallback call(
+        InheritedContext<R?>? context,
+        void Function(R? value) setState,
         T controller,
         R value,
-      )
-          call]) {
+      )?]) {
     if (call != null) {
-      when(this(any, any, any, any)).thenAnswer((invoc) {
-        return Function.apply(
+      when(this(any!, any!, any!, any!)).thenAnswer((invoc) {
+        return (Function.apply(
           call,
           invoc.positionalArguments,
           invoc.namedArguments,
-        ) as VoidCallback;
+        ) as VoidCallback?)!;
       });
     }
   }
@@ -169,7 +167,7 @@ class MockCombinedBuilder extends Mock {
 }
 
 class CombinerMock extends Mock {
-  Combined call(BuildContext context, A a, Combined foo);
+  Combined call(BuildContext context, A? a, Combined? foo);
 }
 
 class ProviderBuilderMock extends Mock {
@@ -178,25 +176,14 @@ class ProviderBuilderMock extends Mock {
 
 @immutable
 class Combined extends DiagnosticableTree {
-  const Combined(
-    this.context,
-    this.previous,
-    this.a, [
-    this.b,
-    this.c,
-    this.d,
-    this.e,
-    this.f,
-  ]);
-
-  final A a;
-  final B b;
-  final C c;
-  final D d;
-  final E e;
-  final F f;
-  final Combined previous;
-  final BuildContext context;
+  final A? a;
+  final B? b;
+  final C? c;
+  final D? d;
+  final E? e;
+  final F? f;
+  final Combined? previous;
+  final BuildContext? context;
 
   @override
   // ignore: hash_and_equals
@@ -231,9 +218,9 @@ class MyListenable extends ChangeNotifier {}
 
 class MyStream extends Stream<void> {
   @override
-  StreamSubscription<void> listen(void Function(void event) onData,
-      {Function onError, void Function() onDone, bool cancelOnError}) {
-    return null;
+  StreamSubscription<void> listen(void Function(void event)? onData,
+      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+    return StreamSubscriptionMock();
   }
 }
 
@@ -244,7 +231,7 @@ int buildCountOf(BuildCount widget) {
 }
 
 class BuildCount extends StatefulWidget {
-  const BuildCount(this.builder, {Key key}) : super(key: key);
+  const BuildCount(this.builder, {Key? key}) : super(key: key);
 
   final WidgetBuilder builder;
 

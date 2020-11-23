@@ -173,7 +173,7 @@ Exception:
       (tester) async {
     final controller = Completer<int>();
     final catchError = ErrorBuilderMock<int>();
-    when(catchError(any, 42)).thenReturn(42);
+    when(catchError(any!, 42)).thenReturn(42);
 
     await tester.pumpWidget(
       FutureProvider.value(
@@ -190,7 +190,7 @@ Exception:
     await Future.microtask(tester.pump);
 
     expect(find.text('42'), findsOneWidget);
-    verify(catchError(argThat(isNotNull), 42)).called(1);
+    verify(catchError(argThat(isNotNull)!, 42)).called(1);
     verifyNoMoreInteractions(catchError);
   });
   testWidgets('works with null', (tester) async {
@@ -207,21 +207,6 @@ Exception:
     await tester.pumpWidget(Container());
   });
 
-  test('FutureProvider() crashes if builder is null', () {
-    expect(
-      () => FutureProvider<int>(create: null),
-      throwsAssertionError,
-    );
-  });
-
-  group('FutureProvider()', () {
-    test('crashes if builder is null', () {
-      expect(
-        () => FutureProvider<int>(create: null),
-        throwsAssertionError,
-      );
-    });
-  });
   testWidgets('create and dispose future with builder', (tester) async {
     final completer = Completer<int>();
 

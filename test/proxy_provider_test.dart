@@ -22,7 +22,7 @@ void main() {
   final f = F();
 
   final combinedConsumerMock = MockCombinedBuilder();
-  setUp(() => when(combinedConsumerMock(any)).thenReturn(Container()));
+  setUp(() => when(combinedConsumerMock(any!)).thenReturn(Container()));
   tearDown(() {
     clearInteractions(combinedConsumerMock);
   });
@@ -37,11 +37,11 @@ void main() {
   group('ProxyProvider', () {
     final combiner = CombinerMock();
     setUp(() {
-      when(combiner(any, any, any)).thenAnswer((Invocation invocation) {
+      when(combiner(any!, any!, any!)).thenAnswer((Invocation invocation) {
         return Combined(
           invocation.positionalArguments.first as BuildContext,
-          invocation.positionalArguments[2] as Combined,
-          invocation.positionalArguments[1] as A,
+          invocation.positionalArguments[2] as Combined?,
+          invocation.positionalArguments[1] as A?,
         );
       });
     });
@@ -110,7 +110,7 @@ void main() {
     testWidgets('create creates initial value', (tester) async {
       final create = InitialValueBuilderMock<Combined>();
 
-      when(create(any)).thenReturn(const Combined(null, null, null));
+      when(create(any!)).thenReturn(Combined(null, null, null));
 
       await tester.pumpWidget(
         MultiProvider(
@@ -125,9 +125,9 @@ void main() {
         ),
       );
 
-      verify(create(argThat(isNotNull))).called(1);
+      verify(create(argThat(isNotNull)!))..called(1);
 
-      verify(combiner(argThat(isNotNull), a, const Combined(null, null, null)));
+      verify(combiner(argThat(isNotNull)!, a, Combined(null, null, null)));
     });
     testWidgets('consume another providers', (tester) async {
       await tester.pumpWidget(
@@ -149,23 +149,6 @@ void main() {
 
       verify(combiner(context, a, null)).called(1);
       verifyNoMoreInteractions(combiner);
-    });
-
-    test('throws if update is null', () {
-      expect(
-          () => ProxyProvider<A, Combined>(update: null), throwsAssertionError);
-      expect(
-          () => ProxyProvider0<Combined>(update: null), throwsAssertionError);
-      expect(() => ProxyProvider2<A, B, Combined>(update: null),
-          throwsAssertionError);
-      expect(() => ProxyProvider3<A, B, C, Combined>(update: null),
-          throwsAssertionError);
-      expect(() => ProxyProvider4<A, B, C, D, Combined>(update: null),
-          throwsAssertionError);
-      expect(() => ProxyProvider5<A, B, C, D, E, Combined>(update: null),
-          throwsAssertionError);
-      expect(() => ProxyProvider6<A, B, C, D, E, F, Combined>(update: null),
-          throwsAssertionError);
     });
 
     testWidgets('rebuild descendants if value change', (tester) async {
@@ -253,8 +236,8 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: a),
-            ProxyProvider<A, Combined>(
-              update: (c, a, p) => combiner(c, a, null),
+            ProxyProvider<A, Combined?>(
+              update: (c, a, p) => combiner(c, a!, null),
             )
           ],
           child: mockConsumer,
@@ -266,11 +249,11 @@ void main() {
           providers: [
             Provider.value(
               value: a,
-              updateShouldNotify: (A _, A __) => true,
+              updateShouldNotify: (A? _, A? __) => true,
             ),
             ProxyProvider<A, Combined>(
               update: (c, a, p) {
-                combiner(c, a, p);
+                combiner(c, a!, p);
                 return p;
               },
             )
@@ -309,7 +292,7 @@ void main() {
           providers: [
             Provider<String>.value(
                 value: 'Hello', updateShouldNotify: (_, __) => true),
-            ProxyProvider<String, String>(
+            ProxyProvider<String, String?>(
               update: (_, value, __) => value,
               updateShouldNotify: shouldNotify,
             ),
@@ -323,7 +306,7 @@ void main() {
           providers: [
             Provider<String>.value(
                 value: 'Hello', updateShouldNotify: (_, __) => true),
-            ProxyProvider<String, String>(
+            ProxyProvider<String, String?>(
               update: (_, value, __) => value,
               updateShouldNotify: shouldNotify,
             ),
@@ -353,7 +336,7 @@ void main() {
       final context = findProxyProvider();
 
       expect(
-        Provider.of<Combined>(key.currentContext, listen: false),
+        Provider.of<Combined>(key.currentContext!, listen: false),
         Combined(context, null, a),
       );
     });
@@ -364,7 +347,7 @@ void main() {
         'update callback can trigger descendants setState synchronously',
         (tester) async {
       var statefulBuildCount = 0;
-      void Function(VoidCallback) setState;
+      late void Function(VoidCallback) setState;
 
       final statefulBuilder = StatefulBuilder(builder: (context, s) {
         // force update to be called

@@ -21,66 +21,13 @@ void main() {
   });
 
   void mockBuilder(ValueWidgetBuilder<int> implementation) {
-    mockImplementation(() => builder(any, any, any), implementation);
+    mockImplementation(() => builder(any!, any!, any!), implementation);
   }
 
-  test('asserts that builder/selector are not null', () {
-    expect(
-      () => Selector0<int>(
-        selector: null,
-        builder: (_, __, ___) => Container(),
-      ),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector<A, int>(selector: null, builder: (_, __, ___) => null),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector2<A, B, int>(selector: null, builder: (_, __, ___) => null),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector3<A, B, C, int>(
-        selector: null,
-        builder: (_, __, ___) => null,
-      ),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector4<A, B, C, D, int>(
-        selector: null,
-        builder: (_, __, ___) => null,
-      ),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector5<A, B, C, D, E, int>(
-        selector: null,
-        builder: (_, __, ___) => null,
-      ),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector6<A, B, C, D, E, F, int>(
-        selector: null,
-        builder: (_, __, ___) => null,
-      ),
-      throwsAssertionError,
-    );
-
-    expect(
-      () => Selector0<int>(
-        selector: (_) => 42,
-        builder: null,
-      ),
-      throwsAssertionError,
-    );
-  });
   testWidgets('Deep compare maps by default', (tester) async {
     var value = <int, int>{};
     final builder = MockBuilder<Map<int, int>>();
-    when(builder(any, any, any)).thenReturn(Container());
+    when(builder(any!, any!, any!)).thenReturn(Container());
 
     final selector = Selector0<Map<int, int>>(
       selector: (_) => value,
@@ -88,7 +35,7 @@ void main() {
     );
     await tester.pumpWidget(selector);
 
-    verify(builder(argThat(isNotNull), value, null)).called(1);
+    verify(builder(argThat(isNotNull)!, value, null)).called(1);
     verifyNoMoreInteractions(builder);
 
     final element = tester.element(find.byWidget(selector));
@@ -97,7 +44,7 @@ void main() {
     element.markNeedsBuild();
     await tester.pump();
 
-    verify(builder(argThat(isNotNull), value, null)).called(1);
+    verify(builder(argThat(isNotNull)!, value, null)).called(1);
     verifyNoMoreInteractions(builder);
 
     value = {0: 0, 1: 1};
@@ -109,7 +56,7 @@ void main() {
   testWidgets('Deep compare iterables by default', (tester) async {
     var value = <int>[].whereType<int>();
     final builder = MockBuilder<Iterable<int>>();
-    when(builder(any, any, any)).thenReturn(Container());
+    when(builder(any!, any!, any!)).thenReturn(Container());
 
     final selector = Selector0<Iterable<int>>(
       selector: (_) => value,
@@ -117,7 +64,7 @@ void main() {
     );
     await tester.pumpWidget(selector);
 
-    verify(builder(argThat(isNotNull), value, null)).called(1);
+    verify(builder(argThat(isNotNull)!, value, null)).called(1);
     verifyNoMoreInteractions(builder);
 
     final element = tester.element(find.byWidget(selector));
@@ -126,7 +73,7 @@ void main() {
     element.markNeedsBuild();
     await tester.pump();
 
-    verify(builder(argThat(isNotNull), value, null)).called(1);
+    verify(builder(argThat(isNotNull)!, value, null)).called(1);
     verifyNoMoreInteractions(builder);
 
     value = [1, 2].whereType<int>();
@@ -138,7 +85,7 @@ void main() {
   testWidgets('Deep compare sets by default', (tester) async {
     var value = <int>{};
     final builder = MockBuilder<Set<int>>();
-    when(builder(any, any, any)).thenReturn(Container());
+    when(builder(any!, any!, any!)).thenReturn(Container());
 
     final selector = Selector0<Set<int>>(
       selector: (_) => value,
@@ -146,7 +93,7 @@ void main() {
     );
     await tester.pumpWidget(selector);
 
-    verify(builder(argThat(isNotNull), value, null)).called(1);
+    verify(builder(argThat(isNotNull)!, value, null)).called(1);
     verifyNoMoreInteractions(builder);
 
     final element = tester.element(find.byWidget(selector));
@@ -155,7 +102,7 @@ void main() {
     element.markNeedsBuild();
     await tester.pump();
 
-    verify(builder(argThat(isNotNull), value, null)).called(1);
+    verify(builder(argThat(isNotNull)!, value, null)).called(1);
     verifyNoMoreInteractions(builder);
 
     value = {1, 2};
@@ -167,7 +114,7 @@ void main() {
   testWidgets('Deep compare lists by default', (tester) async {
     var value = <int>[];
     final builder = MockBuilder<List<int>>();
-    when(builder(any, any, any)).thenReturn(Container());
+    when(builder(any!, any!, any!)).thenReturn(Container());
 
     final selector = Selector0<List<int>>(
       selector: (_) => value,
@@ -175,7 +122,7 @@ void main() {
     );
     await tester.pumpWidget(selector);
 
-    verify(builder(argThat(isNotNull), value, null)).called(1);
+    verify(builder(argThat(isNotNull)!, value, null)).called(1);
     verifyNoMoreInteractions(builder);
 
     final element = tester.element(find.byWidget(selector));
@@ -184,7 +131,7 @@ void main() {
     element.markNeedsBuild();
     await tester.pump();
 
-    verify(builder(argThat(isNotNull), value, null)).called(1);
+    verify(builder(argThat(isNotNull)!, value, null)).called(1);
     verifyNoMoreInteractions(builder);
 
     value = [1, 2];
@@ -197,10 +144,10 @@ void main() {
     var value = 0;
     var shouldRebuild = true;
     final mockShouldRebuild = MockShouldRebuild<int>();
-    when(mockShouldRebuild(any, any)).thenAnswer((_) => shouldRebuild);
+    when(mockShouldRebuild(any!, any!)).thenAnswer((_) => shouldRebuild);
 
     final builder = MockBuilder<int>();
-    when(builder(any, any, any)).thenReturn(Container());
+    when(builder(any!, any!, any!)).thenReturn(Container());
 
     final selector = Selector0<int>(
       selector: (_) => value,
@@ -210,7 +157,7 @@ void main() {
     await tester.pumpWidget(selector);
 
     verifyZeroInteractions(mockShouldRebuild);
-    verify(builder(argThat(isNotNull), 0, null)).called(1);
+    verify(builder(argThat(isNotNull)!, 0, null)).called(1);
     verifyNoMoreInteractions(builder);
 
     final element = tester.element(find.byWidget(selector));
@@ -221,7 +168,7 @@ void main() {
 
     verify(mockShouldRebuild(0, 1)).called(1);
     verifyNoMoreInteractions(mockShouldRebuild);
-    verify(builder(argThat(isNotNull), 1, null)).called(1);
+    verify(builder(argThat(isNotNull)!, 1, null)).called(1);
     verifyNoMoreInteractions(builder);
 
     shouldRebuild = false;
@@ -239,7 +186,7 @@ void main() {
       Selector0<void>(
         key: key,
         selector: (_) => null,
-        builder: (_, __, child) => child,
+        builder: (_, __, child) => child!,
         child: const Text('42', textDirection: TextDirection.ltr),
       ),
     );
@@ -271,9 +218,9 @@ void main() {
   });
   testWidgets('works with MultiProvider', (tester) async {
     final key = GlobalKey();
-    final selector = (BuildContext _) => 42;
-    final builder = (BuildContext _, int __, Widget child) => child;
-    const child = Text('foo', textDirection: TextDirection.ltr);
+    var selector = (BuildContext _) => 42;
+    var builder = (BuildContext _, int? __, Widget? child) => child!;
+    final child = const Text('foo', textDirection: TextDirection.ltr);
 
     await tester.pumpWidget(
       MultiProvider(
@@ -306,7 +253,7 @@ void main() {
   testWidgets(
       "don't call builder again if it rebuilds "
       'but selector returns the same thing', (tester) async {
-    when(selector(any)).thenReturn(42);
+    when(selector(any!)).thenReturn(42);
 
     mockBuilder((_, value, ___) {
       return Text(value.toString(), textDirection: TextDirection.ltr);
@@ -319,10 +266,10 @@ void main() {
       ),
     );
 
-    verify(selector(argThat(isNotNull))).called(1);
+    verify(selector(argThat(isNotNull)!)).called(1);
     verifyNoMoreInteractions(selector);
 
-    verify(builder(argThat(isNotNull), 42, null)).called(1);
+    verify(builder(argThat(isNotNull)!, 42, null)).called(1);
     verifyNoMoreInteractions(selector);
 
     expect(find.text('42'), findsOneWidget);
@@ -333,7 +280,7 @@ void main() {
 
     await tester.pump();
 
-    verify(selector(argThat(isNotNull))).called(1);
+    verify(selector(argThat(isNotNull)!)).called(1);
     verifyNoMoreInteractions(builder);
     verifyNoMoreInteractions(selector);
     expect(find.text('42'), findsOneWidget);
@@ -341,7 +288,7 @@ void main() {
   testWidgets(
       'call builder again if it rebuilds '
       'abd selector returns the a different variable', (tester) async {
-    when(selector(any)).thenReturn(42);
+    when(selector(any!)).thenReturn(42);
 
     mockBuilder((_, value, ___) {
       return Text(value.toString(), textDirection: TextDirection.ltr);
@@ -354,10 +301,10 @@ void main() {
       ),
     );
 
-    verify(selector(argThat(isNotNull))).called(1);
+    verify(selector(argThat(isNotNull)!)).called(1);
     verifyNoMoreInteractions(selector);
 
-    verify(builder(argThat(isNotNull), 42, null)).called(1);
+    verify(builder(argThat(isNotNull)!, 42, null)).called(1);
     verifyNoMoreInteractions(selector);
 
     expect(find.text('42'), findsOneWidget);
@@ -366,12 +313,12 @@ void main() {
         .element(find.byWidgetPredicate((w) => w is Selector0))
         .markNeedsBuild();
 
-    when(selector(any)).thenReturn(24);
+    when(selector(any!)).thenReturn(24);
 
     await tester.pump();
 
-    verify(selector(argThat(isNotNull))).called(1);
-    verify(builder(argThat(isNotNull), 24, null)).called(1);
+    verify(selector(argThat(isNotNull)!)).called(1);
+    verify(builder(argThat(isNotNull)!, 24, null)).called(1);
     verifyNoMoreInteractions(selector);
     verifyNoMoreInteractions(builder);
     expect(find.text('24'), findsOneWidget);
@@ -518,5 +465,5 @@ class MockShouldRebuild<T> extends Mock {
 }
 
 class MockBuilder<T> extends Mock {
-  Widget call(BuildContext context, T value, Widget child);
+  Widget call(BuildContext context, T value, Widget? child);
 }

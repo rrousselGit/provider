@@ -109,19 +109,18 @@ class MultiProvider extends Nested {
   /// For an explanation on the `child` parameter that `builder` receives,
   /// see the "Performance optimizations" section of [AnimatedBuilder].
   MultiProvider({
-    Key key,
-    @required List<SingleChildWidget> providers,
-    Widget child,
-    TransitionBuilder builder,
-  })  : assert(providers != null),
-        super(
+    Key? key,
+    required List<SingleChildWidget> providers,
+    Widget? child,
+    TransitionBuilder? builder,
+  }) : super(
           key: key,
           children: providers,
           child: builder != null
               ? Builder(
                   builder: (context) => builder(context, child),
                 )
-              : child,
+              : child!,
         );
 }
 
@@ -193,14 +192,13 @@ class Provider<T> extends InheritedProvider<T> {
   /// This callback which will be called when [Provider] is unmounted from the
   /// widget tree.
   Provider({
-    Key key,
-    @required Create<T> create,
-    Dispose<T> dispose,
-    bool lazy,
-    ValueWidgetBuilder<T> builder,
-    Widget child,
-  })  : assert(create != null),
-        super(
+    Key? key,
+    required Create<T> create,
+    Dispose<T>? dispose,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super(
           key: key,
           lazy: lazy,
           builder: builder,
@@ -223,21 +221,21 @@ class Provider<T> extends InheritedProvider<T> {
   /// See [InheritedWidget.updateShouldNotify] for more information.
   /// {@endtemplate}
   Provider.value({
-    Key key,
-    @required T value,
-    UpdateShouldNotify<T> updateShouldNotify,
-    ValueWidgetBuilder<T> builder,
-    Widget child,
+    Key? key,
+    required T value,
+    UpdateShouldNotify<T>? updateShouldNotify,
+    TransitionBuilder? builder,
+    Widget? child,
   })  : assert(() {
           Provider.debugCheckInvalidValueType?.call<T>(value);
           return true;
         }()),
         super.value(
-          key: key,
+          key: key!,
           builder: builder,
           value: value,
           updateShouldNotify: updateShouldNotify,
-          child: child,
+          child: child!,
         );
 
   /// Obtains the nearest [Provider<T>] up its widget tree and returns its
@@ -257,12 +255,11 @@ class Provider<T> extends InheritedProvider<T> {
   ///   },
   /// )
   /// ```
-  static T of<T>(BuildContext context, {bool listen = true}) {
-    assert(context != null);
+  static T? of<T>(BuildContext context, {bool listen = true}) {
     assert(
-      context.owner.debugBuilding ||
+      context.owner!.debugBuilding ||
           listen == false ||
-          debugIsInInheritedProviderUpdate,
+          debugIsInInheritedProviderUpdate!,
       '''
 Tried to listen to a value exposed with provider, from outside of the widget tree.
 
@@ -279,7 +276,7 @@ The context used was: $context
 ''',
     );
 
-    final inheritedElement = _inheritedElementOf<T>(context);
+    final inheritedElement = _inheritedElementOf<T>(context)!;
 
     if (listen) {
       context.dependOnInheritedElement(inheritedElement);
@@ -288,42 +285,22 @@ The context used was: $context
     return inheritedElement.value;
   }
 
-  static _InheritedProviderScopeElement<T> _inheritedElementOf<T>(
+  static _InheritedProviderScopeElement<T>? _inheritedElementOf<T>(
     BuildContext context,
   ) {
-    assert(context != null, '''
-Tried to call context.read/watch/select or similar on a `context` that is null.
-
-This can happen if you used the context of a StatefulWidget and that
-StatefulWidget was disposed.
-''');
-    assert(
-      _debugIsSelecting == false,
-      'Cannot call context.read/watch/select inside the callback of a context.select',
-    );
-    assert(
-      T != dynamic,
-      '''
-Tried to call Provider.of<dynamic>. This is likely a mistake and is therefore
-unsupported.
-
-If you want to expose a variable that can be anything, consider changing
-`dynamic` to `Object` instead.
-''',
-    );
-    _InheritedProviderScopeElement<T> inheritedElement;
+    _InheritedProviderScopeElement<T>? inheritedElement;
 
     if (context.widget is _InheritedProviderScope<T>) {
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
       // the same type.
       context.visitAncestorElements((parent) {
         inheritedElement = parent.getElementForInheritedWidgetOfExactType<
-            _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>;
+            _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>?;
         return false;
       });
     } else {
       inheritedElement = context.getElementForInheritedWidgetOfExactType<
-          _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>;
+          _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>?;
     }
 
     if (inheritedElement == null) {
@@ -367,7 +344,7 @@ If you want to expose a variable that can be anything, consider changing
   ///   runApp(MyApp());
   /// }
   /// ```
-  static void Function<T>(T value) debugCheckInvalidValueType = <T>(T value) {
+  static void Function<T>(T value)? debugCheckInvalidValueType = <T>(T value) {
     assert(() {
       if (value is Listenable || value is Stream) {
         throw FlutterError('''
@@ -600,7 +577,19 @@ extension ReadProvider on BuildContext {
   /// - [WatchProvider] and its `watch` method, similar to [read], but
   ///   will make the widget tree rebuild when the obtained value changes.
   /// - [Locator], a typedef to make it easier to pass [read] to objects.
-  T read<T>() => Provider.of<T>(this, listen: false);
+  T? read<T>() {
+    assert(
+        debugIsInInheritedProviderCreate! ||
+            (!debugDoingBuild && !debugIsInInheritedProviderUpdate!),
+        '''
+Tried to use `context.read<$T>` inside either a `build` method or the `update` callback of a provider.
+
+This is unsafe to do so. Instead, consider using `context.watch<$T>`.
+If you used `context.read` voluntarily as a performance optimisation, the solution
+is instead to use `context.select`.
+''');
+    return Provider.of<T>(this, listen: false);
+  }
 }
 
 /// Exposes the [watch] method.
@@ -618,12 +607,12 @@ extension WatchProvider on BuildContext {
   ///
   /// - [ReadProvider] and its `read` method, similar to [watch], but doesn't make
   ///   widgets rebuild if the value obtained changes.
-  T watch<T>() {
+  T? watch<T>() {
     assert(
         widget is LayoutBuilder ||
             widget is SliverWithKeepAliveWidget ||
             debugDoingBuild ||
-            debugIsInInheritedProviderUpdate,
+            debugIsInInheritedProviderUpdate!,
         '''
 Tried to use `context.watch<$T>` ouside of the `build` method or `update` callback of a provider.
 
@@ -647,4 +636,4 @@ Consider using `context.read<$T> instead.
 /// ```
 ///
 /// This function
-typedef Locator = T Function<T>();
+typedef Locator = T? Function<T>();

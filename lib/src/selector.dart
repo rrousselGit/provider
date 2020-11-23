@@ -30,14 +30,12 @@ typedef ShouldRebuild<T> = bool Function(T previous, T next);
 class Selector0<T> extends SingleChildStatefulWidget {
   /// Both `builder` and `selector` must not be `null`.
   Selector0({
-    Key key,
-    @required this.builder,
-    @required this.selector,
-    ShouldRebuild<T> shouldRebuild,
-    Widget child,
-  })  : assert(builder != null),
-        assert(selector != null),
-        _shouldRebuild = shouldRebuild,
+    Key? key,
+    required this.builder,
+    required this.selector,
+    ShouldRebuild<T>? shouldRebuild,
+    Widget? child,
+  })  : _shouldRebuild = shouldRebuild,
         super(key: key, child: child);
 
   /// A function that builds a widget tree from `child` and the last result of
@@ -58,24 +56,24 @@ class Selector0<T> extends SingleChildStatefulWidget {
   /// Must not be `null`
   final T Function(BuildContext) selector;
 
-  final ShouldRebuild<T> _shouldRebuild;
+  final ShouldRebuild<T>? _shouldRebuild;
 
   @override
   _Selector0State<T> createState() => _Selector0State<T>();
 }
 
-class _Selector0State<T> extends SingleChildState<Selector0<T>> {
-  T value;
-  Widget cache;
-  Widget oldWidget;
+class _Selector0State<T> extends SingleChildState<Selector0<T?>> {
+  T? value;
+  late Widget cache;
+  Widget? oldWidget;
 
   @override
-  Widget buildWithChild(BuildContext context, Widget child) {
+  Widget buildWithChild(BuildContext context, Widget? child) {
     final selected = widget.selector(context);
 
     final shouldInvalidateCache = oldWidget != widget ||
         (widget._shouldRebuild != null &&
-            widget._shouldRebuild.call(value, selected)) ||
+            widget._shouldRebuild!.call(value, selected)) ||
         (widget._shouldRebuild == null &&
             !const DeepCollectionEquality().equals(value, selected));
     if (shouldInvalidateCache) {
@@ -138,13 +136,12 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
 class Selector<A, S> extends Selector0<S> {
   /// {@macro provider.selector}
   Selector({
-    Key key,
-    @required ValueWidgetBuilder<S> builder,
-    @required S Function(BuildContext, A) selector,
-    ShouldRebuild<S> shouldRebuild,
-    Widget child,
-  })  : assert(selector != null),
-        super(
+    Key? key,
+    required ValueWidgetBuilder<S> builder,
+    required S Function(BuildContext, A?) selector,
+    ShouldRebuild<S>? shouldRebuild,
+    Widget? child,
+  }) : super(
           key: key,
           shouldRebuild: shouldRebuild,
           builder: builder,
@@ -157,13 +154,12 @@ class Selector<A, S> extends Selector0<S> {
 class Selector2<A, B, S> extends Selector0<S> {
   /// {@macro provider.selector}
   Selector2({
-    Key key,
-    @required ValueWidgetBuilder<S> builder,
-    @required S Function(BuildContext, A, B) selector,
-    ShouldRebuild<S> shouldRebuild,
-    Widget child,
-  })  : assert(selector != null),
-        super(
+    Key? key,
+    required ValueWidgetBuilder<S> builder,
+    required S Function(BuildContext, A?, B?) selector,
+    ShouldRebuild<S>? shouldRebuild,
+    Widget? child,
+  }) : super(
           key: key,
           shouldRebuild: shouldRebuild,
           builder: builder,
@@ -180,13 +176,12 @@ class Selector2<A, B, S> extends Selector0<S> {
 class Selector3<A, B, C, S> extends Selector0<S> {
   /// {@macro provider.selector}
   Selector3({
-    Key key,
-    @required ValueWidgetBuilder<S> builder,
-    @required S Function(BuildContext, A, B, C) selector,
-    ShouldRebuild<S> shouldRebuild,
-    Widget child,
-  })  : assert(selector != null),
-        super(
+    Key? key,
+    required ValueWidgetBuilder<S> builder,
+    required S Function(BuildContext, A?, B?, C?) selector,
+    ShouldRebuild<S>? shouldRebuild,
+    Widget? child,
+  }) : super(
           key: key,
           shouldRebuild: shouldRebuild,
           builder: builder,
@@ -204,13 +199,12 @@ class Selector3<A, B, C, S> extends Selector0<S> {
 class Selector4<A, B, C, D, S> extends Selector0<S> {
   /// {@macro provider.selector}
   Selector4({
-    Key key,
-    @required ValueWidgetBuilder<S> builder,
-    @required S Function(BuildContext, A, B, C, D) selector,
-    ShouldRebuild<S> shouldRebuild,
-    Widget child,
-  })  : assert(selector != null),
-        super(
+    Key? key,
+    required ValueWidgetBuilder<S> builder,
+    required S Function(BuildContext, A?, B?, C?, D?) selector,
+    ShouldRebuild<S>? shouldRebuild,
+    Widget? child,
+  }) : super(
           key: key,
           shouldRebuild: shouldRebuild,
           builder: builder,
@@ -229,13 +223,12 @@ class Selector4<A, B, C, D, S> extends Selector0<S> {
 class Selector5<A, B, C, D, E, S> extends Selector0<S> {
   /// {@macro provider.selector}
   Selector5({
-    Key key,
-    @required ValueWidgetBuilder<S> builder,
-    @required S Function(BuildContext, A, B, C, D, E) selector,
-    ShouldRebuild<S> shouldRebuild,
-    Widget child,
-  })  : assert(selector != null),
-        super(
+    Key? key,
+    required ValueWidgetBuilder<S> builder,
+    required S Function(BuildContext, A?, B?, C?, D?, E?) selector,
+    ShouldRebuild<S>? shouldRebuild,
+    Widget? child,
+  }) : super(
           key: key,
           shouldRebuild: shouldRebuild,
           builder: builder,
@@ -255,13 +248,12 @@ class Selector5<A, B, C, D, E, S> extends Selector0<S> {
 class Selector6<A, B, C, D, E, F, S> extends Selector0<S> {
   /// {@macro provider.selector}
   Selector6({
-    Key key,
-    @required ValueWidgetBuilder<S> builder,
-    @required S Function(BuildContext, A, B, C, D, E, F) selector,
-    ShouldRebuild<S> shouldRebuild,
-    Widget child,
-  })  : assert(selector != null),
-        super(
+    Key? key,
+    required ValueWidgetBuilder<S> builder,
+    required S Function(BuildContext, A?, B?, C?, D?, E?, F?) selector,
+    ShouldRebuild<S>? shouldRebuild,
+    Widget? child,
+  }) : super(
           key: key,
           shouldRebuild: shouldRebuild,
           builder: builder,

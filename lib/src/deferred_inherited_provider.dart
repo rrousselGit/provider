@@ -10,8 +10,8 @@ part of 'provider.dart';
 /// - [DeferredInheritedProvider]
 /// - [StartListening], a simpler version of this typedef.
 typedef DeferredStartListening<T, R> = VoidCallback Function(
-  InheritedContext<R> context,
-  void Function(R value) setState,
+  InheritedContext<R?> context,
+  void Function(R? value) setState,
   T controller,
   R value,
 );
@@ -33,14 +33,14 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
   /// The object create will be listened using `startListening`, and its content
   /// will be exposed to `child` and its descendants.
   DeferredInheritedProvider({
-    Key key,
-    @required Create<T> create,
-    Dispose<T> dispose,
-    @required DeferredStartListening<T, R> startListening,
-    UpdateShouldNotify<R> updateShouldNotify,
-    bool lazy,
-    ValueWidgetBuilder<R> builder,
-    Widget child,
+    Key? key,
+    required Create<T> create,
+    Dispose<T>? dispose,
+    required DeferredStartListening<T?, R> startListening,
+    UpdateShouldNotify<R?>? updateShouldNotify,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
   }) : super._constructor(
           key: key,
           child: child,
@@ -56,18 +56,18 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
 
   /// Listens to `value` and expose its content to `child` and its descendants.
   DeferredInheritedProvider.value({
-    Key key,
-    @required T value,
-    @required DeferredStartListening<T, R> startListening,
-    UpdateShouldNotify<R> updateShouldNotify,
-    bool lazy,
-    ValueWidgetBuilder<R> builder,
-    Widget child,
+    Key? key,
+    required T? value,
+    required DeferredStartListening<T?, R?> startListening,
+    UpdateShouldNotify<R?>? updateShouldNotify,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
   }) : super._constructor(
           key: key,
           lazy: lazy,
           builder: builder,
-          delegate: _ValueDeferredInheritedProvider<T, R>(
+          delegate: _ValueDeferredInheritedProvider<T?, R?>(
             value,
             updateShouldNotify,
             startListening,
@@ -76,30 +76,29 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
         );
 }
 
-abstract class _DeferredDelegate<T, R> extends _Delegate<R> {
+abstract class _DeferredDelegate<T, R> extends _Delegate<R?> {
   _DeferredDelegate(this.updateShouldNotify, this.startListening);
 
-  final UpdateShouldNotify<R> updateShouldNotify;
-  final DeferredStartListening<T, R> startListening;
+  final UpdateShouldNotify<R>? updateShouldNotify;
+  final DeferredStartListening<T, R>? startListening;
 
   @override
-  _DeferredDelegateState<T, R, _DeferredDelegate<T, R>> createState();
+  _DeferredDelegateState<T, R, _DeferredDelegate<T, R>?> createState();
 }
 
-abstract class _DeferredDelegateState<T, R, W extends _DeferredDelegate<T, R>>
-    extends _DelegateState<R, W> {
-  VoidCallback _removeListener;
+abstract class _DeferredDelegateState<T, R, W extends _DeferredDelegate<T, R?>?>
+    extends _DelegateState<R?, W> {
+  VoidCallback? _removeListener;
 
   T get controller;
 
-  R _value;
-
+  R? _value;
   @override
-  R get value {
+  R? get value {
     // setState should be no-op inside startListening, as it's lazy-loaded
     // otherwise Flutter will throw an exception for no reason.
     element._isNotifyDependentsEnabled = false;
-    _removeListener ??= delegate.startListening(
+    _removeListener ??= delegate!.startListening!(
       element,
       setState,
       controller,
@@ -142,10 +141,10 @@ DeferredInheritedProvider(
   @override
   bool get hasValue => _hasValue;
 
-  void setState(R value) {
+  void setState(R? value) {
     if (_hasValue) {
-      final shouldNotify = delegate.updateShouldNotify != null
-          ? delegate.updateShouldNotify(_value, value)
+      final shouldNotify = delegate!.updateShouldNotify != null
+          ? delegate!.updateShouldNotify!(_value, value)
           : _value != value;
       if (shouldNotify) {
         element.markNeedsNotifyDependents();
@@ -156,16 +155,16 @@ DeferredInheritedProvider(
   }
 }
 
-class _CreateDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
+class _CreateDeferredInheritedProvider<T, R> extends _DeferredDelegate<T?, R> {
   _CreateDeferredInheritedProvider({
-    @required this.create,
+    required this.create,
     this.dispose,
-    UpdateShouldNotify<R> updateShouldNotify,
-    DeferredStartListening<T, R> startListening,
+    UpdateShouldNotify<R>? updateShouldNotify,
+    DeferredStartListening<T?, R>? startListening,
   }) : super(updateShouldNotify, startListening);
 
   final Create<T> create;
-  final Dispose<T> dispose;
+  final Dispose<T>? dispose;
 
   @override
   _CreateDeferredInheritedProviderElement<T, R> createState() {
@@ -174,18 +173,17 @@ class _CreateDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
 }
 
 class _CreateDeferredInheritedProviderElement<T, R>
-    extends _DeferredDelegateState<T, R,
-        _CreateDeferredInheritedProvider<T, R>> {
+    extends _DeferredDelegateState<T?, R,
+        _CreateDeferredInheritedProvider<T?, R>?> {
   bool _didBuild = false;
 
-  T _controller;
-
+  T? _controller;
   @override
-  T get controller {
+  T? get controller {
     if (!_didBuild) {
       assert(debugSetInheritedLock(true));
-      bool _debugPreviousIsInInheritedProviderCreate;
-      bool _debugPreviousIsInInheritedProviderUpdate;
+      bool? _debugPreviousIsInInheritedProviderCreate;
+      bool? _debugPreviousIsInInheritedProviderUpdate;
 
       assert(() {
         _debugPreviousIsInInheritedProviderCreate =
@@ -201,7 +199,7 @@ class _CreateDeferredInheritedProviderElement<T, R>
           debugIsInInheritedProviderUpdate = false;
           return true;
         }());
-        _controller = delegate.create(element);
+        _controller = delegate!.create(element);
       } finally {
         assert(() {
           debugIsInInheritedProviderCreate =
@@ -220,7 +218,7 @@ class _CreateDeferredInheritedProviderElement<T, R>
   void dispose() {
     super.dispose();
     if (_didBuild) {
-      delegate.dispose?.call(element, _controller);
+      delegate!.dispose?.call(element, _controller);
     }
   }
 
@@ -256,7 +254,7 @@ class _CreateDeferredInheritedProviderElement<T, R>
 class _ValueDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
   _ValueDeferredInheritedProvider(
     this.value,
-    UpdateShouldNotify<R> updateShouldNotify,
+    UpdateShouldNotify<R>? updateShouldNotify,
     DeferredStartListening<T, R> startListening,
   ) : super(updateShouldNotify, startListening);
 
@@ -275,12 +273,12 @@ class _ValueDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
 }
 
 class _ValueDeferredInheritedProviderState<T, R> extends _DeferredDelegateState<
-    T, R, _ValueDeferredInheritedProvider<T, R>> {
+    T, R, _ValueDeferredInheritedProvider<T, R>?> {
   @override
-  bool willUpdateDelegate(_ValueDeferredInheritedProvider<T, R> oldDelegate) {
-    if (delegate.value != oldDelegate.value) {
+  bool willUpdateDelegate(_ValueDeferredInheritedProvider<T, R>? oldDelegate) {
+    if (delegate!.value != oldDelegate!.value) {
       if (_removeListener != null) {
-        _removeListener();
+        _removeListener!();
         _removeListener = null;
       }
       return true;
@@ -289,7 +287,7 @@ class _ValueDeferredInheritedProviderState<T, R> extends _DeferredDelegateState<
   }
 
   @override
-  T get controller => delegate.value;
+  T get controller => delegate!.value;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

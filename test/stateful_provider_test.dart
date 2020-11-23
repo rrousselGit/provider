@@ -29,14 +29,6 @@ void main() {
 
     expect(find.text('42'), findsOneWidget);
   });
-  test('asserts', () {
-    expect(
-      () => Provider<dynamic>(create: null, child: null),
-      throwsAssertionError,
-    );
-    // don't throw
-    Provider<dynamic>(create: (_) => null, child: null);
-  });
 
   testWidgets('calls create only once', (tester) async {
     final create = ValueBuilder();
@@ -50,7 +42,7 @@ void main() {
     ));
     await tester.pumpWidget(Container());
 
-    verify(create(any)).called(1);
+    verify(create(any!)).called(1);
   });
 
   testWidgets('dispose', (tester) async {
