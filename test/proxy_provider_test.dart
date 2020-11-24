@@ -40,8 +40,8 @@ void main() {
       when(combiner(any!, any!, any!)).thenAnswer((Invocation invocation) {
         return Combined(
           invocation.positionalArguments.first as BuildContext,
-          invocation.positionalArguments[2] as Combined?,
-          invocation.positionalArguments[1] as A?,
+          invocation.positionalArguments[2] as Combined,
+          invocation.positionalArguments[1] as A,
         );
       });
     });
