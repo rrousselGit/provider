@@ -19,6 +19,7 @@ void main() {
 }
 
 /// Mix-in [DiagnosticableTreeMixin] to have access to [debugFillProperties] for the devtool
+// ignore: prefer_mixin
 class Counter with ChangeNotifier, DiagnosticableTreeMixin {
   int _count = 0;
 
@@ -39,6 +40,7 @@ class Counter with ChangeNotifier, DiagnosticableTreeMixin {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -84,15 +86,13 @@ class MyHomePage extends StatelessWidget {
 }
 
 class Count extends StatelessWidget {
-  const Count({
-    Key key,
-  }) : super(key: key);
+  const Count({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Text(
 
-        /// Calls `context.watch` to make [MyHomePage] rebuild when [Counter] changes.
+        /// Calls `context.watch` to make [Count] rebuild when [Counter] changes.
         '${context.watch<Counter>().count}',
         style: Theme.of(context).textTheme.headline4);
   }

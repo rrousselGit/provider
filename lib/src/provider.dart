@@ -232,11 +232,11 @@ class Provider<T> extends InheritedProvider<T> {
           return true;
         }()),
         super.value(
-          key: key!,
+          key: key,
           builder: builder,
           value: value,
           updateShouldNotify: updateShouldNotify,
-          child: child!,
+          child: child,
         );
 
   /// Obtains the nearest [Provider<T>] up its widget tree and returns its
@@ -410,7 +410,7 @@ of your choice. There are a few common scenarios:
 - You used a `BuildContext` that is an ancestor of the provider you are trying to read.
 
   Make sure that $widgetType is under your MultiProvider/Provider<$valueType>.
-  This usually happen when you are creating a provider and trying to read it immediatly.
+  This usually happens when you are creating a provider and trying to read it immediately.
 
   For example, instead of:
 
@@ -432,7 +432,7 @@ of your choice. There are a few common scenarios:
     return Provider<Example>(
       create: (_) => Example(),
       // we use `builder` to obtain a new `BuildContext` that has access to the provider
-      builer: (context) {
+      builder: (context) {
         // No longer throws
         return Text(context.watch<Example>()),
       }
@@ -447,16 +447,16 @@ https://stackoverflow.com/questions/tagged/flutter
 }
 
 /// Exposes the [read] method.
-extension ReadProvider on BuildContext {
+extension ReadContext on BuildContext {
   /// Obtain a value from the nearest ancestor provider of type [T].
   ///
-  /// This method will _not_ make widget rebuild when the value changes.
+  /// This method is the opposite of [watch].\
+  /// It will _not_ make widget rebuild when the value changes and cannot be
+  /// called inside [StatelessWidget.build]/[State.build].\
+  /// On the other hand, it can be freely called _outside_ of these methods.
   ///
-  /// Calling this method is equivalent to calling:
-  ///
-  /// ```dart
-  /// Provider.of<T>(context, listen: false)
-  /// ```
+  /// If that is incompatible with your criteria, consider using `Provider.of(context, listen: false)`.\
+  /// It does the same thing, but without these added restrictions (but unsafe).
   ///
   /// **DON'T** call [read] inside build if the value is used only for events:
   ///
@@ -575,7 +575,7 @@ extension ReadProvider on BuildContext {
   ///
   /// See also:
   ///
-  /// - [WatchProvider] and its `watch` method, similar to [read], but
+  /// - [WatchContext] and its `watch` method, similar to [read], but
   ///   will make the widget tree rebuild when the obtained value changes.
   /// - [Locator], a typedef to make it easier to pass [read] to objects.
   T? read<T>() {
@@ -584,7 +584,6 @@ extension ReadProvider on BuildContext {
             (!debugDoingBuild && !debugIsInInheritedProviderUpdate!),
         '''
 Tried to use `context.read<$T>` inside either a `build` method or the `update` callback of a provider.
-
 This is unsafe to do so. Instead, consider using `context.watch<$T>`.
 If you used `context.read` voluntarily as a performance optimisation, the solution
 is instead to use `context.select`.
@@ -594,7 +593,7 @@ is instead to use `context.select`.
 }
 
 /// Exposes the [watch] method.
-extension WatchProvider on BuildContext {
+extension WatchContext on BuildContext {
   /// Obtain a value from the nearest ancestor provider of type [T], and subscribe
   /// to the provider.
   ///
@@ -604,9 +603,15 @@ extension WatchProvider on BuildContext {
   /// Provider.of<T>(context)
   /// ```
   ///
+  /// This method is accessible only inside [StatelessWidget.build] and
+  /// [State.build].\
+  /// If you need need to use it outside of these methods, consider using [Provider.of]
+  /// instead, which doesn't have this restriction.\
+  /// The only exception to this rule is Providers's `update` method.
+  ///
   /// See also:
   ///
-  /// - [ReadProvider] and its `read` method, similar to [watch], but doesn't make
+  /// - [ReadContext] and its `read` method, similar to [watch], but doesn't make
   ///   widgets rebuild if the value obtained changes.
   T? watch<T>() {
     assert(
@@ -615,11 +620,9 @@ extension WatchProvider on BuildContext {
             debugDoingBuild ||
             debugIsInInheritedProviderUpdate!,
         '''
-Tried to use `context.watch<$T>` ouside of the `build` method or `update` callback of a provider.
-
+Tried to use `context.watch<$T>` outside of the `build` method or `update` callback of a provider.
 This is likely a mistake, as it doesn't make sense to rebuild a widget when the value
 obtained changes, if that value is not used to build other widgets.
-
 Consider using `context.read<$T> instead.
 ''');
     return Provider.of<T>(this);
@@ -637,4 +640,4 @@ Consider using `context.read<$T> instead.
 /// ```
 ///
 /// This function
-typedef Locator = T? Function<T>();
+typedef Locator = T Function<T>();

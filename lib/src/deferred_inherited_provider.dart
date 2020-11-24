@@ -155,7 +155,7 @@ DeferredInheritedProvider(
   }
 }
 
-class _CreateDeferredInheritedProvider<T, R> extends _DeferredDelegate<T?, R> {
+class _CreateDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
   _CreateDeferredInheritedProvider({
     required this.create,
     this.dispose,
@@ -173,13 +173,14 @@ class _CreateDeferredInheritedProvider<T, R> extends _DeferredDelegate<T?, R> {
 }
 
 class _CreateDeferredInheritedProviderElement<T, R>
-    extends _DeferredDelegateState<T?, R,
-        _CreateDeferredInheritedProvider<T?, R>?> {
+    extends _DeferredDelegateState<T, R,
+        _CreateDeferredInheritedProvider<T, R>?> {
   bool _didBuild = false;
 
-  T? _controller;
+  late T _controller;
+
   @override
-  T? get controller {
+  T get controller {
     if (!_didBuild) {
       assert(debugSetInheritedLock(true));
       bool? _debugPreviousIsInInheritedProviderCreate;
