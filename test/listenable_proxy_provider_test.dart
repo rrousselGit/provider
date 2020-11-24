@@ -271,7 +271,7 @@ void main() {
               update: (context, previous) => _ListenableCombined(
                 context,
                 previous,
-                Provider.of<A>(context),
+                Provider.of<A>(context)!,
                 Provider.of<B>(context),
                 Provider.of<C>(context),
                 Provider.of<D>(context),

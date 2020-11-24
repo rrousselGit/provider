@@ -108,7 +108,7 @@ class UpdateShouldNotifyMock<T> extends Mock {
 }
 
 class TextOf<T> extends StatelessWidget {
-  const TextOf({Key key}) : super(key: key);
+  const TextOf({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -176,14 +176,25 @@ class ProviderBuilderMock extends Mock {
 
 @immutable
 class Combined extends DiagnosticableTree {
-  final A? a;
+  const Combined(
+    this.context,
+    this.previous,
+    this.a, [
+    this.b,
+    this.c,
+    this.d,
+    this.e,
+    this.f,
+  ]);
+
+  final A a;
   final B? b;
   final C? c;
   final D? d;
   final E? e;
   final F? f;
-  final Combined? previous;
-  final BuildContext? context;
+  final Combined previous;
+  final BuildContext context;
 
   @override
   // ignore: hash_and_equals

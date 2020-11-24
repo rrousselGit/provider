@@ -9,7 +9,7 @@ import 'package:provider/src/provider.dart';
 import 'common.dart';
 
 class Context extends StatelessWidget {
-  const Context({Key key}) : super(key: key);
+  const Context({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
