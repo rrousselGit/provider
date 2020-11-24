@@ -136,11 +136,15 @@ DeferredStartListening<Future<T>, T> _futureStartListening<T>({
     var canceled = false;
     controller?.then(
       (value) {
-        if (canceled) return;
+        if (canceled) {
+          return;
+        }
         setState(value);
       },
       onError: (dynamic error) {
-        if (canceled) return;
+        if (canceled) {
+          return;
+        }
         if (catchError != null) {
           setState(catchError(e, error));
         } else {

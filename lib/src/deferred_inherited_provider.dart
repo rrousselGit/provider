@@ -93,6 +93,7 @@ abstract class _DeferredDelegateState<T, R, W extends _DeferredDelegate<T, R>>
   T get controller;
 
   R _value;
+
   @override
   R get value {
     // setState should be no-op inside startListening, as it's lazy-loaded
@@ -178,6 +179,7 @@ class _CreateDeferredInheritedProviderElement<T, R>
   bool _didBuild = false;
 
   T _controller;
+
   @override
   T get controller {
     if (!_didBuild) {

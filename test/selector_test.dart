@@ -236,7 +236,7 @@ void main() {
   testWidgets('passes `child` and `key`', (tester) async {
     final key = GlobalKey();
     await tester.pumpWidget(
-      Selector0<Null>(
+      Selector0<void>(
         key: key,
         selector: (_) => null,
         builder: (_, __, child) => child,
@@ -271,9 +271,9 @@ void main() {
   });
   testWidgets('works with MultiProvider', (tester) async {
     final key = GlobalKey();
-    var selector = (BuildContext _) => 42;
-    var builder = (BuildContext _, int __, Widget child) => child;
-    final child = const Text('foo', textDirection: TextDirection.ltr);
+    final selector = (BuildContext _) => 42;
+    final builder = (BuildContext _, int __, Widget child) => child;
+    const child = Text('foo', textDirection: TextDirection.ltr);
 
     await tester.pumpWidget(
       MultiProvider(
@@ -304,7 +304,7 @@ void main() {
     );
   });
   testWidgets(
-      "don't call builder again if it rebuilds"
+      "don't call builder again if it rebuilds "
       'but selector returns the same thing', (tester) async {
     when(selector(any)).thenReturn(42);
 
@@ -339,7 +339,7 @@ void main() {
     expect(find.text('42'), findsOneWidget);
   });
   testWidgets(
-      'call builder again if it rebuilds'
+      'call builder again if it rebuilds '
       'abd selector returns the a different variable', (tester) async {
     when(selector(any)).thenReturn(42);
 

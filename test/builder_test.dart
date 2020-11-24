@@ -150,7 +150,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: ''),
-            Provider.value(value: .0),
+            Provider<double>.value(value: 0),
             ProxyProvider2<String, double, int>(
               update: (a, b, c, d) => 0,
               builder: (context, child) {
@@ -173,7 +173,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: ''),
-            Provider.value(value: .0),
+            Provider<double>.value(value: 0),
             Provider.value(value: A()),
             ProxyProvider3<String, double, A, int>(
               update: (a, b, c, d, e) => 0,
@@ -197,7 +197,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: ''),
-            Provider.value(value: .0),
+            Provider<double>.value(value: 0),
             Provider.value(value: A()),
             Provider.value(value: B()),
             ProxyProvider4<String, double, A, B, int>(
@@ -222,7 +222,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: ''),
-            Provider.value(value: .0),
+            Provider<double>.value(value: 0),
             Provider.value(value: A()),
             Provider.value(value: B()),
             Provider.value(value: C()),
@@ -248,7 +248,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: ''),
-            Provider.value(value: .0),
+            Provider<double>.value(value: 0),
             Provider.value(value: A()),
             Provider.value(value: B()),
             Provider.value(value: C()),
@@ -400,7 +400,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: ''),
-            Provider.value(value: .0),
+            Provider<double>.value(value: 0),
             ProxyProvider2<String, double, int>(
               update: (a, b, c, d) => 0,
             ),
@@ -423,7 +423,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: ''),
-            Provider.value(value: .0),
+            Provider<double>.value(value: 0),
             Provider.value(value: A()),
             ProxyProvider3<String, double, A, int>(
               update: (a, b, c, d, e) => 0,
@@ -447,7 +447,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: ''),
-            Provider.value(value: .0),
+            Provider<double>.value(value: 0),
             Provider.value(value: A()),
             Provider.value(value: B()),
             ProxyProvider4<String, double, A, B, int>(
@@ -472,7 +472,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: ''),
-            Provider.value(value: .0),
+            Provider<double>.value(value: 0),
             Provider.value(value: A()),
             Provider.value(value: B()),
             Provider.value(value: C()),
@@ -498,7 +498,7 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: ''),
-            Provider.value(value: .0),
+            Provider<double>.value(value: 0),
             Provider.value(value: A()),
             Provider.value(value: B()),
             Provider.value(value: C()),

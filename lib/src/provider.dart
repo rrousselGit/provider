@@ -403,17 +403,17 @@ void main() {
 /// The error that will be thrown if [Provider.of] fails to find a [Provider]
 /// as an ancestor of the [BuildContext] used.
 class ProviderNotFoundException implements Exception {
-  /// The type of the value being retrieved
-  final Type valueType;
-
-  /// The type of the Widget requesting the value
-  final Type widgetType;
-
   /// Create a ProviderNotFound error with the type represented as a String.
   ProviderNotFoundException(
     this.valueType,
     this.widgetType,
   );
+
+  /// The type of the value being retrieved
+  final Type valueType;
+
+  /// The type of the Widget requesting the value
+  final Type widgetType;
 
   @override
   String toString() {

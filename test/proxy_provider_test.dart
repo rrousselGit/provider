@@ -110,7 +110,7 @@ void main() {
     testWidgets('create creates initial value', (tester) async {
       final create = InitialValueBuilderMock<Combined>();
 
-      when(create(any)).thenReturn(Combined(null, null, null));
+      when(create(any)).thenReturn(const Combined(null, null, null));
 
       await tester.pumpWidget(
         MultiProvider(
@@ -125,9 +125,9 @@ void main() {
         ),
       );
 
-      verify(create(argThat(isNotNull)))..called(1);
+      verify(create(argThat(isNotNull))).called(1);
 
-      verify(combiner(argThat(isNotNull), a, Combined(null, null, null)));
+      verify(combiner(argThat(isNotNull), a, const Combined(null, null, null)));
     });
     testWidgets('consume another providers', (tester) async {
       await tester.pumpWidget(
@@ -152,7 +152,6 @@ void main() {
     });
 
     test('throws if update is null', () {
-      // ignore: prefer_const_constructors
       expect(
           () => ProxyProvider<A, Combined>(update: null), throwsAssertionError);
       expect(
@@ -425,7 +424,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider2<A, B, Combined>(
-              create: (_) => Combined(null, null, null),
+              create: (_) => const Combined(null, null, null),
               update: (context, a, b, previous) =>
                   Combined(context, previous, a, b),
             )
@@ -438,7 +437,7 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          Combined(context, Combined(null, null, null), a, b),
+          Combined(context, const Combined(null, null, null), a, b),
         ),
       ).called(1);
     });
@@ -453,7 +452,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider3<A, B, C, Combined>(
-              create: (_) => Combined(null, null, null),
+              create: (_) => const Combined(null, null, null),
               update: (context, a, b, c, previous) =>
                   Combined(context, previous, a, b, c),
             )
@@ -466,7 +465,7 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          Combined(context, Combined(null, null, null), a, b, c),
+          Combined(context, const Combined(null, null, null), a, b, c),
         ),
       ).called(1);
     });
@@ -481,7 +480,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider4<A, B, C, D, Combined>(
-              create: (_) => Combined(null, null, null),
+              create: (_) => const Combined(null, null, null),
               update: (context, a, b, c, d, previous) =>
                   Combined(context, previous, a, b, c, d),
             )
@@ -494,7 +493,7 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          Combined(context, Combined(null, null, null), a, b, c, d),
+          Combined(context, const Combined(null, null, null), a, b, c, d),
         ),
       ).called(1);
     });
@@ -509,7 +508,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider5<A, B, C, D, E, Combined>(
-              create: (_) => Combined(null, null, null),
+              create: (_) => const Combined(null, null, null),
               update: (context, a, b, c, d, e, previous) =>
                   Combined(context, previous, a, b, c, d, e),
             )
@@ -522,7 +521,7 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          Combined(context, Combined(null, null, null), a, b, c, d, e, null),
+          Combined(context, const Combined(null, null, null), a, b, c, d, e),
         ),
       ).called(1);
     });
@@ -537,7 +536,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider6<A, B, C, D, E, F, Combined>(
-              create: (_) => Combined(null, null, null),
+              create: (_) => const Combined(null, null, null),
               update: (context, a, b, c, d, e, f, previous) =>
                   Combined(context, previous, a, b, c, d, e, f),
             )
@@ -550,7 +549,7 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          Combined(context, Combined(null, null, null), a, b, c, d, e, f),
+          Combined(context, const Combined(null, null, null), a, b, c, d, e, f),
         ),
       ).called(1);
     });

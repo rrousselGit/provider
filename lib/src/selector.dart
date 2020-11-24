@@ -1,9 +1,9 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
-import 'package:provider/src/provider.dart';
-import 'package:collection/collection.dart';
 
-import 'consumer.dart';
+import 'provider.dart';
 
 typedef ShouldRebuild<T> = bool Function(T previous, T next);
 
@@ -73,7 +73,7 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
   Widget buildWithChild(BuildContext context, Widget child) {
     final selected = widget.selector(context);
 
-    var shouldInvalidateCache = oldWidget != widget ||
+    final shouldInvalidateCache = oldWidget != widget ||
         (widget._shouldRebuild != null &&
             widget._shouldRebuild.call(value, selected)) ||
         (widget._shouldRebuild == null &&
@@ -88,6 +88,12 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
       );
     }
     return cache;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<T>('value', value));
   }
 }
 
