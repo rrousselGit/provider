@@ -625,8 +625,8 @@ extension WatchContext on BuildContext {
   /// Provider.of<T>(context)
   /// ```
   ///
-  /// This method is accessible only inside [StatelessWidget.build] and
-  /// [State.build].\
+  /// This method is accessible only inside [StatelessWidget.build],
+  /// [State.build] and [State.didChangeDependencies].\
   /// If you need need to use it outside of these methods, consider using [Provider.of]
   /// instead, which doesn't have this restriction.\
   /// The only exception to this rule is Providers's `update` method.
@@ -637,7 +637,8 @@ extension WatchContext on BuildContext {
   ///   widgets rebuild if the value obtained changes.
   T watch<T>() {
     assert(
-        widget is LayoutBuilder ||
+            owner.debugBuilding ||
+            widget is LayoutBuilder ||
             widget is SliverWithKeepAliveWidget ||
             debugDoingBuild ||
             debugIsInInheritedProviderUpdate,
@@ -665,3 +666,4 @@ Consider using `context.read<$T> instead.
 ///
 /// This function
 typedef Locator = T Function<T>();
+
