@@ -302,12 +302,12 @@ void main() {
       int old;
       int curr;
       var callCount = 0;
-      final updateShouldNotify = (int o, int c) {
+      bool updateShouldNotify(int o, int c) {
         callCount++;
         old = o;
         curr = c;
         return o != c;
-      };
+      }
 
       var buildCount = 0;
       int buildValue;

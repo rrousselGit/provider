@@ -3,8 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
 
+import 'consumer.dart';
 import 'provider.dart';
 
+/// Used by providers to determine whether dependents needs to be updated
+/// when the value exposed changes
 typedef ShouldRebuild<T> = bool Function(T previous, T next);
 
 /// A base class for custom [Selector].

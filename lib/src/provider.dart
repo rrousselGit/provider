@@ -366,6 +366,7 @@ If you want to expose a variable that can be anything, consider changing
   ///   runApp(MyApp());
   /// }
   /// ```
+  // ignore: prefer_function_declarations_over_variables, false positive
   static void Function<T>(T value) debugCheckInvalidValueType = <T>(T value) {
     assert(() {
       if (value is Listenable || value is Stream) {

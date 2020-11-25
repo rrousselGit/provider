@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart' show Element;
 /// ```dart
 /// class MyChangeNotifier extends ChangeNotifier with ReassembleHandler {}
 /// ```
+// ignore: one_member_abstracts
 abstract class ReassembleHandler {
   /// Called when 'Hot Reload' occurs
   ///

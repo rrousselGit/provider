@@ -2566,7 +2566,7 @@ class StateNotifierProvider<Controller extends StateNotifier<Value>, Value>
         },
         startListening: (context, setState, controller, _) {
           setState(controller.value);
-          final listener = () => setState(controller.value);
+          void listener() => setState(controller.value);
           controller.addListener(listener);
           return () => controller.removeListener(listener);
         },

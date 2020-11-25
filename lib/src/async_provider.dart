@@ -128,6 +128,7 @@ DeferredStartListening<Future<T>, T> _futureStartListening<T>({
   T initialData,
   ErrorBuilder<T> catchError,
 }) {
+  // ignore: void_checks, false positive
   return (e, setState, controller, __) {
     if (!e.hasValue) {
       setState(initialData);

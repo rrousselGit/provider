@@ -1,12 +1,11 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart' as mockito show when;
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
-void mockImplementation<T extends Function>(VoidCallback when, T mock) {
-  mockito.when(when()).thenAnswer((invo) {
+void mockImplementation<T extends Function>(dynamic Function() when, T mock) {
+  mockito.when<dynamic>(when()).thenAnswer((invo) {
     return Function.apply(mock, invo.positionalArguments, invo.namedArguments);
   });
 }
@@ -271,8 +270,8 @@ void main() {
   });
   testWidgets('works with MultiProvider', (tester) async {
     final key = GlobalKey();
-    final selector = (BuildContext _) => 42;
-    final builder = (BuildContext _, int __, Widget child) => child;
+    int selector(BuildContext _) => 42;
+    Widget builder(BuildContext _, int __, Widget child) => child;
     const child = Text('foo', textDirection: TextDirection.ltr);
 
     await tester.pumpWidget(

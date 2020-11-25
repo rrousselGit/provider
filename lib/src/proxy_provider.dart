@@ -3,18 +3,21 @@ import 'package:flutter/widgets.dart';
 
 import 'provider.dart';
 
+// ignore: public_member_api_docs
 typedef ProviderBuilder<R> = Widget Function(
   BuildContext context,
   R value,
   Widget child,
 );
 
+// ignore: public_member_api_docs
 typedef ProxyProviderBuilder<T, R> = R Function(
   BuildContext context,
   T value,
   R previous,
 );
 
+// ignore: public_member_api_docs
 typedef ProxyProviderBuilder2<T, T2, R> = R Function(
   BuildContext context,
   T value,
@@ -22,6 +25,7 @@ typedef ProxyProviderBuilder2<T, T2, R> = R Function(
   R previous,
 );
 
+// ignore: public_member_api_docs
 typedef ProxyProviderBuilder3<T, T2, T3, R> = R Function(
   BuildContext context,
   T value,
@@ -30,6 +34,7 @@ typedef ProxyProviderBuilder3<T, T2, T3, R> = R Function(
   R previous,
 );
 
+// ignore: public_member_api_docs
 typedef ProxyProviderBuilder4<T, T2, T3, T4, R> = R Function(
   BuildContext context,
   T value,
@@ -39,6 +44,7 @@ typedef ProxyProviderBuilder4<T, T2, T3, T4, R> = R Function(
   R previous,
 );
 
+// ignore: public_member_api_docs
 typedef ProxyProviderBuilder5<T, T2, T3, T4, T5, R> = R Function(
   BuildContext context,
   T value,
@@ -49,6 +55,7 @@ typedef ProxyProviderBuilder5<T, T2, T3, T4, T5, R> = R Function(
   R previous,
 );
 
+// ignore: public_member_api_docs
 typedef ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> = R Function(
   BuildContext context,
   T value,
