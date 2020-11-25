@@ -637,8 +637,8 @@ extension WatchContext on BuildContext {
   ///   widgets rebuild if the value obtained changes.
   T watch<T>() {
     assert(
+        widget is LayoutBuilder ||
             owner.debugBuilding ||
-            widget is LayoutBuilder ||
             widget is SliverWithKeepAliveWidget ||
             debugDoingBuild ||
             debugIsInInheritedProviderUpdate,
@@ -666,4 +666,3 @@ Consider using `context.read<$T> instead.
 ///
 /// This function
 typedef Locator = T Function<T>();
-
