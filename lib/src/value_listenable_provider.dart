@@ -77,7 +77,7 @@ class ValueListenableProvider<T>
     return (_, setState, controller, __) {
       setState(controller!.value);
 
-      final listener = () => setState(controller.value);
+      void listener() => setState(controller.value);
       controller.addListener(listener);
       return () => controller.removeListener(listener);
     };

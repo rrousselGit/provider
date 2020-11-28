@@ -67,15 +67,17 @@ linter:
     # Disabled for now until we have NNBD as it otherwise conflicts with `missing_return`
     no_default_cases: false
 
-    prefer_asserts_with_message: false # 145 problems
-    avoid_types_on_closure_parameters: false # 38 problems
-    prefer_function_declarations_over_variables: false # 6 problems
-    one_member_abstracts: false # 1 problem
-    comment_references: false # 2 problems
-    prefer_constructors_over_static_methods: false # 1 problem
+    # False positive, null checks don't need a message
+    prefer_asserts_with_message: false
+
+    # Cumbersome with `context.select`
+    avoid_types_on_closure_parameters: false
+
+    # Too many false positive (builders)
     diagnostic_describe_all_properties: false
-    void_checks: false
+
+    # false positives (setter-like functions)
     avoid_positional_boolean_parameters: false
-    avoid_redundant_argument_values: false
+
+    # Does not apply to providers
     prefer_const_constructors_in_immutables: false
-    
