@@ -1,7 +1,7 @@
 [English](https://github.com/rrousselGit/provider/blob/master/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md) | [简体中文](./resources/translations/zh-CN/README.md)
 
-[![Build Status](https://travis-ci.org/rrousselGit/provider.svg?branch=master)](https://travis-ci.org/rrousselGit/provider)
-[![pub package](https://img.shields.io/pub/v/provider.svg)](https://pub.dev/packages/provider) [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider) [![Gitter](https://badges.gitter.im/flutter_provider/community.svg)](https://gitter.im/flutter_provider/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+<a href="https://github.com/rrousselGit/provider/actions"><img src="https://github.com/rrousselGit/provider/workflows/Build/badge.svg" alt="Build Status"></a>
+[![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider) [![Gitter](https://badges.gitter.im/flutter_provider/community.svg)](https://gitter.im/flutter_provider/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 [<img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
 
@@ -187,10 +187,10 @@ The easiest way to read a value is by using the extension methods on [BuildConte
 - `context.read<T>()`, which returns `T` without listening to it
 - `context.select<T, R>(R cb(T value))`, which allows a widget to listen to only a small part of `T`.
 
-Or to use the static method `Provider.of<T>(context)`, which will behave similarly to `watch` and when you pass `false` 
+Or to use the static method `Provider.of<T>(context)`, which will behave similarly to `watch` and when you pass `false`
 to the `listen` parameter like `Provider.of<T>(context,listen: false)` it will behave similar to `read`.
 
-It's worth noting that `context.read<T>()` won't make widget rebuild when the value changes and cannot be 
+It's worth noting that `context.read<T>()` won't make widget rebuild when the value changes and cannot be
 called inside `StatelessWidget.build`/`State.build`. On the other hand, it can be freely called outside of these methods.
 
 These methods will look up in the widget tree starting from the widget associated

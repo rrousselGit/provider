@@ -1,0 +1,26 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  schedule:
+    # runs the CI everyday at 10AM
+    - cron: "0 10 * * *"
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    container: cirrusci/flutter:${{matrix.channel}}
+
+    strategy:
+      matrix:
+        channel:
+          - dev
+          - beta
+          - stable
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Execute test script
+        run: curl -s https://raw.githubusercontent.com/rrousselGit/ci/master/scripts/ci.sh | bash
