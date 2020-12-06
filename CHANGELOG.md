@@ -1,3 +1,11 @@
+# 5.0.0-nullsafety.0
+
+Migrated Provider to non-nullable types:
+
+- `StreamProvider.initialData` is now required
+- `FutureProvider.initialData` is now required
+- `ValueListenableProvider` is removed
+
 # 4.3.2+2
 
 Improve pub score
@@ -70,7 +78,7 @@ Fixed typo in the error message of `ProviderNotFoundException`
 # 4.1.0
 
 - Now requires:
-  - Flutter >= 1.6.0 
+  - Flutter >= 1.6.0
   - Dart >= 2.7.0
 - Added a `select` extension on `BuildContext`. It behaves similarly to `Selector`,
   but is a lot less verbose to write:
@@ -297,4 +305,4 @@ Fixed typo in the error message of `ProviderNotFoundException`
 - `onDispose` has been added to `StatefulProvider`
 - [BuildContext] is now passed to `valueBuilder` callback
 
-[BuildContext]: https://api.flutter.dev/flutter/widgets/BuildContext-class.html
+[buildcontext]: https://api.flutter.dev/flutter/widgets/BuildContext-class.html
