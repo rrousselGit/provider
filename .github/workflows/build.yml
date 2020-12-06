@@ -21,7 +21,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: export NNBD=true
-
       - name: Execute test script
-        run: curl -s https://raw.githubusercontent.com/rrousselGit/ci/master/scripts/ci.sh | bash
+        run: curl -s https://raw.githubusercontent.com/rrousselGit/ci/master/scripts/ci.sh | bash -s nnbd
