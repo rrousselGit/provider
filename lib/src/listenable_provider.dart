@@ -85,11 +85,11 @@ ChangeNotifierProvider(
         );
 
   static VoidCallback _startListening(
-    InheritedContext<Listenable?>? e,
+    InheritedContext e,
     Listenable? value,
   ) {
-    value?.addListener(e!.markNeedsNotifyDependents);
-    return () => value?.removeListener(e!.markNeedsNotifyDependents);
+    value?.addListener(e.markNeedsNotifyDependents);
+    return () => value?.removeListener(e.markNeedsNotifyDependents);
   }
 }
 
@@ -99,15 +99,14 @@ class ListenableProxyProvider0<R extends Listenable?>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider0({
     Key? key,
-    required Create<R>? create,
-    required R Function(BuildContext, R previous)? update,
+    Create<R>? create,
+    required R Function(BuildContext, R previous) update,
     Dispose<R>? dispose,
     UpdateShouldNotify<R>? updateShouldNotify,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
-  })  : assert(create != null || update != null),
-        super(
+  }) : super(
           key: key,
           create: create,
           update: update,
@@ -147,19 +146,18 @@ class ListenableProxyProvider<T, R extends Listenable?>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider({
     Key? key,
-    required Create<R>? create,
-    required ProxyProviderBuilder<T?, R>? update,
+    Create<R>? create,
+    required ProxyProviderBuilder<T, R> update,
     Dispose<R>? dispose,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
-  })  : assert(create != null || update != null),
-        super(
+  }) : super(
           key: key,
           create: create,
           lazy: lazy,
           builder: builder,
-          update: (context, previous) => update!(
+          update: (context, previous) => update(
             context,
             Provider.of(context),
             previous,
@@ -175,19 +173,18 @@ class ListenableProxyProvider2<T, T2, R extends Listenable?>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider2({
     Key? key,
-    required Create<R>? create,
-    required ProxyProviderBuilder2<T?, T2?, R>? update,
+    Create<R>? create,
+    required ProxyProviderBuilder2<T, T2, R> update,
     Dispose<R>? dispose,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
-  })  : assert(create != null || update != null),
-        super(
+  }) : super(
           key: key,
           create: create,
           lazy: lazy,
           builder: builder,
-          update: (context, previous) => update!(
+          update: (context, previous) => update(
             context,
             Provider.of(context),
             Provider.of(context),
@@ -204,19 +201,18 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable?>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider3({
     Key? key,
-    required Create<R>? create,
-    required ProxyProviderBuilder3<T?, T2?, T3?, R>? update,
+    Create<R>? create,
+    required ProxyProviderBuilder3<T, T2, T3, R> update,
     Dispose<R>? dispose,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
-  })  : assert(create != null || update != null),
-        super(
+  }) : super(
           key: key,
           create: create,
           lazy: lazy,
           builder: builder,
-          update: (context, previous) => update!(
+          update: (context, previous) => update(
             context,
             Provider.of(context),
             Provider.of(context),
@@ -234,19 +230,18 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable?>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider4({
     Key? key,
-    required Create<R>? create,
-    required ProxyProviderBuilder4<T?, T2?, T3?, T4?, R>? update,
+    Create<R>? create,
+    required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     Dispose<R>? dispose,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
-  })  : assert(create != null || update != null),
-        super(
+  }) : super(
           key: key,
           create: create,
           lazy: lazy,
           builder: builder,
-          update: (context, previous) => update!(
+          update: (context, previous) => update(
             context,
             Provider.of(context),
             Provider.of(context),
@@ -265,19 +260,18 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable?>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider5({
     Key? key,
-    required Create<R>? create,
-    required ProxyProviderBuilder5<T?, T2?, T3?, T4?, T5?, R>? update,
+    Create<R>? create,
+    required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     Dispose<R>? dispose,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
-  })  : assert(create != null || update != null),
-        super(
+  }) : super(
           key: key,
           create: create,
           lazy: lazy,
           builder: builder,
-          update: (context, previous) => update!(
+          update: (context, previous) => update(
             context,
             Provider.of(context),
             Provider.of(context),
@@ -297,19 +291,18 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable?>
   /// Initializes [key] for subclasses.
   ListenableProxyProvider6({
     Key? key,
-    required Create<R>? create,
-    required ProxyProviderBuilder6<T?, T2?, T3?, T4?, T5?, T6?, R>? update,
+    Create<R>? create,
+    required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     Dispose<R>? dispose,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
-  })  : assert(create != null || update != null),
-        super(
+  }) : super(
           key: key,
           create: create,
           lazy: lazy,
           builder: builder,
-          update: (context, previous) => update!(
+          update: (context, previous) => update(
             context,
             Provider.of(context),
             Provider.of(context),

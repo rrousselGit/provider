@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
 import 'common.dart';
 
 class ConsumerBuilderMock extends Mock {
-  Widget call(Combined foo);
+  void call(Combined? foo);
 }
 
 @immutable
@@ -22,7 +23,7 @@ class Combined {
     this.f,
   ]);
 
-  final A a;
+  final A? a;
   final B? b;
   final C? c;
   final D? d;
@@ -62,9 +63,6 @@ void main() {
   ];
 
   final mock = ConsumerBuilderMock();
-  setUp(() {
-    when(mock(any!)).thenReturn(Container());
-  });
   tearDown(() {
     clearInteractions(mock);
   });
@@ -80,7 +78,8 @@ void main() {
           child: Consumer<A>(
             key: key,
             builder: (context, value, child) {
-              return mock(Combined(context, child, value));
+              mock(Combined(context, child, value));
+              return Container();
             },
             child: child,
           ),
@@ -122,8 +121,10 @@ void main() {
           providers: multiProviderNodes,
           child: Consumer2<A, B>(
             key: key,
-            builder: (context, value, v2, child) =>
-                mock(Combined(context, child, value, v2)),
+            builder: (context, value, v2, child) {
+              mock(Combined(context, child, value, v2));
+              return Container();
+            },
             child: child,
           ),
         ),
@@ -153,6 +154,7 @@ void main() {
       expect(key.currentContext, isNotNull);
     });
   });
+
   group('consumer3', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
       final key = GlobalKey();
@@ -163,8 +165,10 @@ void main() {
           providers: multiProviderNodes,
           child: Consumer3<A, B, C>(
             key: key,
-            builder: (context, value, v2, v3, child) =>
-                mock(Combined(context, child, value, v2, v3)),
+            builder: (context, value, v2, v3, child) {
+              mock(Combined(context, child, value, v2, v3));
+              return Container();
+            },
             child: child,
           ),
         ),
@@ -194,6 +198,7 @@ void main() {
       expect(key.currentContext, isNotNull);
     });
   });
+
   group('consumer4', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
       final key = GlobalKey();
@@ -204,8 +209,10 @@ void main() {
           providers: multiProviderNodes,
           child: Consumer4<A, B, C, D>(
             key: key,
-            builder: (context, value, v2, v3, v4, child) =>
-                mock(Combined(context, child, value, v2, v3, v4)),
+            builder: (context, value, v2, v3, v4, child) {
+              mock(Combined(context, child, value, v2, v3, v4));
+              return Container();
+            },
             child: child,
           ),
         ),
@@ -235,6 +242,7 @@ void main() {
       expect(key.currentContext, isNotNull);
     });
   });
+
   group('consumer5', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
       final key = GlobalKey();
@@ -245,8 +253,10 @@ void main() {
           providers: multiProviderNodes,
           child: Consumer5<A, B, C, D, E>(
             key: key,
-            builder: (context, value, v2, v3, v4, v5, child) =>
-                mock(Combined(context, child, value, v2, v3, v4, v5)),
+            builder: (context, value, v2, v3, v4, v5, child) {
+              mock(Combined(context, child, value, v2, v3, v4, v5));
+              return Container();
+            },
             child: child,
           ),
         ),
@@ -276,6 +286,7 @@ void main() {
       expect(key.currentContext, isNotNull);
     });
   });
+
   group('consumer6', () {
     testWidgets('obtains value from Provider<T>', (tester) async {
       final key = GlobalKey();
@@ -286,8 +297,10 @@ void main() {
           providers: multiProviderNodes,
           child: Consumer6<A, B, C, D, E, F>(
             key: key,
-            builder: (context, value, v2, v3, v4, v5, v6, child) =>
-                mock(Combined(context, child, value, v2, v3, v4, v5, v6)),
+            builder: (context, value, v2, v3, v4, v5, v6, child) {
+              mock(Combined(context, child, value, v2, v3, v4, v5, v6));
+              return Container();
+            },
             child: child,
           ),
         ),

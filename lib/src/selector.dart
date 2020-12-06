@@ -65,9 +65,9 @@ class Selector0<T> extends SingleChildStatefulWidget {
   _Selector0State<T> createState() => _Selector0State<T>();
 }
 
-class _Selector0State<T> extends SingleChildState<Selector0<T?>> {
+class _Selector0State<T> extends SingleChildState<Selector0<T>> {
   T? value;
-  late Widget cache;
+  Widget? cache;
   Widget? oldWidget;
 
   @override
@@ -76,7 +76,7 @@ class _Selector0State<T> extends SingleChildState<Selector0<T?>> {
 
     final shouldInvalidateCache = oldWidget != widget ||
         (widget._shouldRebuild != null &&
-            widget._shouldRebuild!.call(value, selected)) ||
+            widget._shouldRebuild!(value as T, selected)) ||
         (widget._shouldRebuild == null &&
             !const DeepCollectionEquality().equals(value, selected));
     if (shouldInvalidateCache) {
@@ -88,7 +88,7 @@ class _Selector0State<T> extends SingleChildState<Selector0<T?>> {
         child,
       );
     }
-    return cache;
+    return cache!;
   }
 
   @override
@@ -141,7 +141,7 @@ class Selector<A, S> extends Selector0<S> {
   Selector({
     Key? key,
     required ValueWidgetBuilder<S> builder,
-    required S Function(BuildContext, A?) selector,
+    required S Function(BuildContext, A) selector,
     ShouldRebuild<S>? shouldRebuild,
     Widget? child,
   }) : super(
@@ -159,7 +159,7 @@ class Selector2<A, B, S> extends Selector0<S> {
   Selector2({
     Key? key,
     required ValueWidgetBuilder<S> builder,
-    required S Function(BuildContext, A?, B?) selector,
+    required S Function(BuildContext, A, B) selector,
     ShouldRebuild<S>? shouldRebuild,
     Widget? child,
   }) : super(
@@ -181,7 +181,7 @@ class Selector3<A, B, C, S> extends Selector0<S> {
   Selector3({
     Key? key,
     required ValueWidgetBuilder<S> builder,
-    required S Function(BuildContext, A?, B?, C?) selector,
+    required S Function(BuildContext, A, B, C) selector,
     ShouldRebuild<S>? shouldRebuild,
     Widget? child,
   }) : super(
@@ -204,7 +204,7 @@ class Selector4<A, B, C, D, S> extends Selector0<S> {
   Selector4({
     Key? key,
     required ValueWidgetBuilder<S> builder,
-    required S Function(BuildContext, A?, B?, C?, D?) selector,
+    required S Function(BuildContext, A, B, C, D) selector,
     ShouldRebuild<S>? shouldRebuild,
     Widget? child,
   }) : super(
@@ -228,7 +228,7 @@ class Selector5<A, B, C, D, E, S> extends Selector0<S> {
   Selector5({
     Key? key,
     required ValueWidgetBuilder<S> builder,
-    required S Function(BuildContext, A?, B?, C?, D?, E?) selector,
+    required S Function(BuildContext, A, B, C, D, E) selector,
     ShouldRebuild<S>? shouldRebuild,
     Widget? child,
   }) : super(
@@ -253,7 +253,7 @@ class Selector6<A, B, C, D, E, F, S> extends Selector0<S> {
   Selector6({
     Key? key,
     required ValueWidgetBuilder<S> builder,
-    required S Function(BuildContext, A?, B?, C?, D?, E?, F?) selector,
+    required S Function(BuildContext, A, B, C, D, E, F) selector,
     ShouldRebuild<S>? shouldRebuild,
     Widget? child,
   }) : super(

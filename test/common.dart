@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
@@ -21,39 +22,62 @@ InheritedContext<T> findInheritedContext<T>() {
 Type typeOf<T>() => T;
 
 class InitialValueBuilderMock<T> extends Mock {
-  InitialValueBuilderMock([T? value]) {
-    when(this(any!)).thenAnswer(((_) => value!));
+  InitialValueBuilderMock(this._value) {
+    when(this(any)).thenAnswer((_) => _value);
   }
 
-  T call(BuildContext context);
+  final T _value;
+
+  T call(BuildContext? context) {
+    return super.noSuchMethod(Invocation.method(#call, [context]), _value) as T;
+  }
 }
 
 class ValueBuilderMock<T> extends Mock {
-  ValueBuilderMock([T? value]) {
-    when(this(any!, any!)).thenReturn(value!);
+  ValueBuilderMock(this._value) {
+    when(this(any, any)).thenReturn(_value);
   }
-  T call(BuildContext context, T? previous);
+
+  final T _value;
+
+  T call(BuildContext? context, T? previous) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, previous]),
+      _value,
+    ) as T;
+  }
 }
 
 class TransitionBuilderMock extends Mock {
-  TransitionBuilderMock([Widget cb(BuildContext c, Widget? child)?]) {
+  TransitionBuilderMock([Widget Function(BuildContext c, Widget child)? cb]) {
     if (cb != null) {
-      when(this(any!, any!)).thenAnswer((i) {
+      when(this(any, any)).thenAnswer((i) {
         final context = i.positionalArguments.first as BuildContext;
-        final child = i.positionalArguments[1] as Widget?;
+        final child = i.positionalArguments[1] as Widget;
         return cb(context, child);
       });
     }
   }
-  Widget call(BuildContext context, Widget? child);
+
+  Widget call(BuildContext? context, Widget? child) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, child]),
+      Container(),
+    ) as Widget;
+  }
 }
 
 class StartListeningMock<T> extends Mock {
-  StartListeningMock([VoidCallback? value]) {
-    when(this(any!, any!)).thenReturn(value!);
+  StartListeningMock(VoidCallback value) {
+    when(this(any, any)).thenReturn(value);
   }
 
-  VoidCallback call(InheritedContext<T?>? context, T? value);
+  VoidCallback call(InheritedContext<T>? context, T? value) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, value]),
+      () {},
+    ) as VoidCallback;
+  }
 }
 
 class StopListeningMock extends Mock {
@@ -61,36 +85,59 @@ class StopListeningMock extends Mock {
 }
 
 class DisposeMock<T> extends Mock {
-  void call(BuildContext context, T value);
+  void call(BuildContext? context, T? value) {
+    super.noSuchMethod(
+      Invocation.method(#call, [context, value]),
+    );
+  }
 }
 
-class MockNotifier extends Mock implements ChangeNotifier {}
+class MockNotifier extends Mock implements ChangeNotifier {
+  @override
+  void addListener(VoidCallback? listener);
+
+  @override
+  void removeListener(VoidCallback? listener);
+}
 
 class ValueWidgetBuilderMock<T> extends Mock {
-  ValueWidgetBuilderMock(
-      [Widget cb(BuildContext c, T? value, Widget? child)?]) {
+  ValueWidgetBuilderMock([
+    Widget Function(BuildContext c, T value, Widget child)? cb,
+  ]) {
     if (cb != null) {
-      when(this(any!, any!, any!)).thenAnswer((i) {
+      when(this(any, any, any)).thenAnswer((i) {
         final context = i.positionalArguments.first as BuildContext;
-        final value = i.positionalArguments[1] as T?;
-        final child = i.positionalArguments[2] as Widget?;
+        final value = i.positionalArguments[1] as T;
+        final child = i.positionalArguments[2] as Widget;
         return cb(context, value, child);
       });
     }
   }
-  Widget call(BuildContext context, T value, Widget child);
+
+  Widget call(BuildContext? context, T? value, Widget? child) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, value, child]),
+      Container(),
+    ) as Widget;
+  }
 }
 
 class BuilderMock extends Mock {
-  BuilderMock([Widget cb(BuildContext c)?]) {
+  BuilderMock([Widget Function(BuildContext c)? cb]) {
     if (cb != null) {
-      when(this(any!)).thenAnswer((i) {
+      when(this(any)).thenAnswer((i) {
         final context = i.positionalArguments.first as BuildContext;
         return cb(context);
       });
     }
   }
-  Widget call(BuildContext context);
+
+  Widget call(BuildContext? context) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context]),
+      Container(),
+    ) as Widget;
+  }
 }
 
 class StreamMock<T> extends Mock implements Stream<T> {}
@@ -100,15 +147,25 @@ class FutureMock<T> extends Mock implements Future<T> {}
 class StreamSubscriptionMock<T> extends Mock implements StreamSubscription<T> {}
 
 class MockConsumerBuilder<T> extends Mock {
-  Widget call(BuildContext context, T? value, Widget? child);
+  Widget call(BuildContext? context, T? value, Widget? child) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, value, child]),
+      Container(),
+    ) as Widget;
+  }
 }
 
 class UpdateShouldNotifyMock<T> extends Mock {
-  bool call(T? old, T? newValue);
+  bool call(T? old, T? newValue) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [old, newValue]),
+      false,
+    ) as bool;
+  }
 }
 
 class TextOf<T> extends StatelessWidget {
-  const TextOf({Key? key}) : super(key: key);
+  TextOf({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -120,30 +177,39 @@ class TextOf<T> extends StatelessWidget {
 }
 
 class DeferredStartListeningMock<T, R> extends Mock {
-  DeferredStartListeningMock(
-      [VoidCallback call(
-        InheritedContext<R?>? context,
-        void Function(R? value) setState,
-        T controller,
-        R value,
-      )?]) {
+  DeferredStartListeningMock([
+    VoidCallback Function(
+      InheritedContext<R> context,
+      void Function(R value) setState,
+      T controller,
+      R value,
+    )?
+        call,
+  ]) {
     if (call != null) {
-      when(this(any!, any!, any!, any!)).thenAnswer((invoc) {
-        return (Function.apply(
+      when(this(any, any, any, any)).thenAnswer((invoc) {
+        return Function.apply(
           call,
           invoc.positionalArguments,
           invoc.namedArguments,
-        ) as VoidCallback?)!;
+        ) as VoidCallback;
       });
     }
   }
 
   VoidCallback call(
-    InheritedContext<R> context,
-    void Function(R value) setState,
-    T controller,
-    R value,
-  );
+    InheritedContext<R>? context,
+    void Function(R value)? setState,
+    T? controller,
+    R? value,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #start,
+          [context, setState, controller, value],
+        ),
+        () {},
+      ) as VoidCallback;
 }
 
 class DebugCheckValueTypeMock<T> extends Mock {
@@ -163,23 +229,35 @@ class E with DiagnosticableTreeMixin {}
 class F with DiagnosticableTreeMixin {}
 
 class MockCombinedBuilder extends Mock {
-  Widget call(Combined foo);
+  Widget call(Combined? foo) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [foo]),
+      Container(),
+    ) as Widget;
+  }
 }
 
 class CombinerMock extends Mock {
-  Combined call(BuildContext context, A? a, Combined? foo);
+  Combined call(BuildContext? context, A? a, Combined? foo) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, a, foo]),
+      const Combined(),
+    ) as Combined;
+  }
 }
 
 class ProviderBuilderMock extends Mock {
   Widget call(BuildContext context, Combined value, Widget child);
 }
 
+class MyStream extends Fake implements Stream<int> {}
+
 @immutable
 class Combined extends DiagnosticableTree {
-  const Combined(
+  const Combined([
     this.context,
     this.previous,
-    this.a, [
+    this.a,
     this.b,
     this.c,
     this.d,
@@ -187,14 +265,14 @@ class Combined extends DiagnosticableTree {
     this.f,
   ]);
 
-  final A a;
+  final A? a;
   final B? b;
   final C? c;
   final D? d;
   final E? e;
   final F? f;
-  final Combined previous;
-  final BuildContext context;
+  final Combined? previous;
+  final BuildContext? context;
 
   @override
   // ignore: hash_and_equals
@@ -226,14 +304,6 @@ class Combined extends DiagnosticableTree {
 }
 
 class MyListenable extends ChangeNotifier {}
-
-class MyStream extends Stream<void> {
-  @override
-  StreamSubscription<void> listen(void Function(void event)? onData,
-      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
-    return StreamSubscriptionMock();
-  }
-}
 
 int buildCountOf(BuildCount widget) {
   return ((find.byWidget(widget).evaluate().single as StatefulElement).state

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -121,7 +119,7 @@ class MultiProvider extends Nested {
               ? Builder(
                   builder: (context) => builder(context, child),
                 )
-              : child!,
+              : child,
         );
 }
 
@@ -256,11 +254,11 @@ class Provider<T> extends InheritedProvider<T> {
   ///   },
   /// )
   /// ```
-  static T? of<T>(BuildContext context, {bool listen = true}) {
+  static T of<T>(BuildContext context, {bool listen = true}) {
     assert(
       context.owner!.debugBuilding ||
           listen == false ||
-          debugIsInInheritedProviderUpdate!,
+          debugIsInInheritedProviderUpdate,
       '''
 Tried to listen to a value exposed with provider, from outside of the widget tree.
 
@@ -277,7 +275,7 @@ The context used was: $context
 ''',
     );
 
-    final inheritedElement = _inheritedElementOf<T>(context)!;
+    final inheritedElement = _inheritedElementOf<T>(context);
 
     if (listen) {
       context.dependOnInheritedElement(inheritedElement);
@@ -286,9 +284,30 @@ The context used was: $context
     return inheritedElement.value;
   }
 
-  static _InheritedProviderScopeElement<T>? _inheritedElementOf<T>(
+  static _InheritedProviderScopeElement<T> _inheritedElementOf<T>(
     BuildContext context,
   ) {
+    // ignore: unnecessary_null_comparison, can happen if the application depends on a non-migrated code
+    assert(context != null, '''
+Tried to call context.read/watch/select or similar on a `context` that is null.
+
+This can happen if you used the context of a StatefulWidget and that
+StatefulWidget was disposed.
+''');
+    assert(
+      _debugIsSelecting == false,
+      'Cannot call context.read/watch/select inside the callback of a context.select',
+    );
+    assert(
+      T != dynamic,
+      '''
+Tried to call Provider.of<dynamic>. This is likely a mistake and is therefore
+unsupported.
+
+If you want to expose a variable that can be anything, consider changing
+`dynamic` to `Object` instead.
+''',
+    );
     _InheritedProviderScopeElement<T>? inheritedElement;
 
     if (context.widget is _InheritedProviderScope<T>) {
@@ -308,7 +327,7 @@ The context used was: $context
       throw ProviderNotFoundException(T, context.widget.runtimeType);
     }
 
-    return inheritedElement;
+    return inheritedElement!;
   }
 
   /// A sanity check to prevent misuse of [Provider] when a variant should be
@@ -579,12 +598,13 @@ extension ReadContext on BuildContext {
   /// - [WatchContext] and its `watch` method, similar to [read], but
   ///   will make the widget tree rebuild when the obtained value changes.
   /// - [Locator], a typedef to make it easier to pass [read] to objects.
-  T? read<T>() {
+  T read<T>() {
     assert(
-        debugIsInInheritedProviderCreate! ||
-            (!debugDoingBuild && !debugIsInInheritedProviderUpdate!),
+        debugIsInInheritedProviderCreate ||
+            (!debugDoingBuild && !debugIsInInheritedProviderUpdate),
         '''
 Tried to use `context.read<$T>` inside either a `build` method or the `update` callback of a provider.
+
 This is unsafe to do so. Instead, consider using `context.watch<$T>`.
 If you used `context.read` voluntarily as a performance optimisation, the solution
 is instead to use `context.select`.
@@ -614,16 +634,18 @@ extension WatchContext on BuildContext {
   ///
   /// - [ReadContext] and its `read` method, similar to [watch], but doesn't make
   ///   widgets rebuild if the value obtained changes.
-  T? watch<T>() {
+  T watch<T>() {
     assert(
         widget is LayoutBuilder ||
             widget is SliverWithKeepAliveWidget ||
             debugDoingBuild ||
-            debugIsInInheritedProviderUpdate!,
+            debugIsInInheritedProviderUpdate,
         '''
 Tried to use `context.watch<$T>` outside of the `build` method or `update` callback of a provider.
+
 This is likely a mistake, as it doesn't make sense to rebuild a widget when the value
 obtained changes, if that value is not used to build other widgets.
+
 Consider using `context.read<$T> instead.
 ''');
     return Provider.of<T>(this);

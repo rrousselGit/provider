@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
@@ -19,7 +20,7 @@ void main() {
   final f = F();
 
   final combinedConsumerMock = MockCombinedBuilder();
-  setUp(() => when(combinedConsumerMock(any!)).thenReturn(Container()));
+  setUp(() => when(combinedConsumerMock(any)).thenReturn(Container()));
   tearDown(() {
     clearInteractions(combinedConsumerMock);
   });
@@ -29,57 +30,6 @@ void main() {
   );
 
   group('ListenableProxyProvider', () {
-    test('throws if update is missing', () {
-      expect(
-        () => ListenableProxyProvider0<_ListenableCombined>(
-          create: null,
-          update: null,
-        ),
-        throwsAssertionError,
-      );
-      expect(
-        () => ListenableProxyProvider<A, _ListenableCombined>(
-          create: null,
-          update: null,
-        ),
-        throwsAssertionError,
-      );
-      expect(
-        () => ListenableProxyProvider2<A, B, _ListenableCombined>(
-          create: null,
-          update: null,
-        ),
-        throwsAssertionError,
-      );
-      expect(
-        () => ListenableProxyProvider3<A, B, C, _ListenableCombined>(
-          create: null,
-          update: null,
-        ),
-        throwsAssertionError,
-      );
-      expect(
-        () => ListenableProxyProvider4<A, B, C, D, _ListenableCombined>(
-          create: null,
-          update: null,
-        ),
-        throwsAssertionError,
-      );
-      expect(
-        () => ListenableProxyProvider5<A, B, C, D, E, _ListenableCombined>(
-          create: null,
-          update: null,
-        ),
-        throwsAssertionError,
-      );
-      expect(
-        () => ListenableProxyProvider6<A, B, C, D, E, F, _ListenableCombined>(
-          create: null,
-          update: null,
-        ),
-        throwsAssertionError,
-      );
-    });
     testWidgets(
       'asserts that the created notifier has no listener',
       (tester) async {
@@ -90,12 +40,11 @@ void main() {
             providers: [
               Provider.value(value: 0),
               ListenableProxyProvider<int, ValueNotifier<int>>(
-                create: null,
                 update: (_, __, ___) => notifier,
                 dispose: (_, __) {},
               )
             ],
-            child: const TextOf<ValueNotifier<int>>(),
+            child: TextOf<ValueNotifier<int>>(),
           ),
         );
 
@@ -110,12 +59,11 @@ void main() {
             providers: [
               Provider.value(value: 0),
               ListenableProxyProvider<int, ValueNotifier<int>>(
-                create: null,
                 update: (_, __, ___) => ValueNotifier(0),
                 dispose: (_, __) {},
               )
             ],
-            child: const TextOf<ValueNotifier<int>>(),
+            child: TextOf<ValueNotifier<int>>(),
           ),
         );
 
@@ -125,12 +73,11 @@ void main() {
             providers: [
               Provider.value(value: 1),
               ListenableProxyProvider<int, ValueNotifier<int>>(
-                create: null,
                 update: (_, __, ___) => notifier,
                 dispose: (_, __) {},
               )
             ],
-            child: const TextOf<ValueNotifier<int>>(),
+            child: TextOf<ValueNotifier<int>>(),
           ),
         );
 
@@ -167,12 +114,13 @@ void main() {
       expect(find.text('1'), findsOneWidget);
       expect(find.text('0'), findsNothing);
     });
+
     testWidgets(
       'update returning a new Listenable disposes the previously created value'
       ' and update dependents',
       (tester) async {
         final builder = MockConsumerBuilder<MockNotifier>();
-        when(builder(any!, any!, any!)).thenReturn(Container());
+        when(builder(any, any, any)).thenReturn(Container());
         final child = Consumer<MockNotifier>(builder: builder);
 
         final dispose = DisposeMock<MockNotifier>();
@@ -183,7 +131,6 @@ void main() {
             providers: [
               Provider.value(value: 0),
               ListenableProxyProvider<int, MockNotifier>(
-                create: null,
                 update: (_, count, value) => notifier,
                 dispose: dispose,
               )
@@ -202,7 +149,6 @@ void main() {
             providers: [
               Provider.value(value: 1),
               ListenableProxyProvider<int, MockNotifier>(
-                create: null,
                 update: (_, count, value) => notifier2,
                 dispose: dispose2,
               )
@@ -211,21 +157,21 @@ void main() {
           ),
         );
 
-        verify(builder(argThat(isNotNull)!, notifier2, null)).called(1);
+        verify(builder(argThat(isNotNull), notifier2, null)).called(1);
         verifyNoMoreInteractions(builder);
-        verify(dispose(argThat(isNotNull)!, notifier)).called(1);
+        verify(dispose(argThat(isNotNull), notifier)).called(1);
         verifyNoMoreInteractions(dispose);
         verifyNoMoreInteractions(dispose2);
 
         await tester.pumpWidget(Container());
 
-        verify(dispose2(argThat(isNotNull)!, notifier2)).called(1);
+        verify(dispose2(argThat(isNotNull), notifier2)).called(1);
         verifyNoMoreInteractions(dispose);
         verifyNoMoreInteractions(dispose2);
       },
     );
     testWidgets('disposes of created value', (tester) async {
-      final dispose = DisposeMock<ValueNotifier<int?>>();
+      final dispose = DisposeMock<ValueNotifier<int>>();
       final notifier = ValueNotifier(0);
       final key = GlobalKey();
 
@@ -233,14 +179,14 @@ void main() {
         MultiProvider(
           providers: [
             Provider.value(value: 0),
-            ListenableProxyProvider<int, ValueNotifier<int?>>(
+            ListenableProxyProvider<int, ValueNotifier<int>>(
               key: key,
               create: (_) => notifier,
               update: (_, count, value) => value..value = count,
               dispose: dispose,
             )
           ],
-          child: const TextOf<ValueNotifier<int>>(),
+          child: TextOf<ValueNotifier<int>>(),
         ),
       );
 
@@ -248,7 +194,7 @@ void main() {
 
       await tester.pumpWidget(Container());
 
-      verify(dispose(argThat(isNotNull)!, notifier)).called(1);
+      verify(dispose(argThat(isNotNull), notifier)).called(1);
       verifyNoMoreInteractions(dispose);
     });
   });
@@ -271,7 +217,7 @@ void main() {
               update: (context, previous) => _ListenableCombined(
                 context,
                 previous,
-                Provider.of<A>(context)!,
+                Provider.of<A>(context),
                 Provider.of<B>(context),
                 Provider.of<C>(context),
                 Provider.of<D>(context),
@@ -301,6 +247,7 @@ void main() {
         ),
       ).called(1);
     });
+
     testWidgets('ListenableProxyProvider2', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -330,6 +277,7 @@ void main() {
         ),
       ).called(1);
     });
+
     testWidgets('ListenableProxyProvider3', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -359,6 +307,7 @@ void main() {
         ),
       ).called(1);
     });
+
     testWidgets('ListenableProxyProvider4', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -388,6 +337,7 @@ void main() {
         ),
       ).called(1);
     });
+
     testWidgets('ListenableProxyProvider5', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -417,6 +367,7 @@ void main() {
         ),
       ).called(1);
     });
+
     testWidgets('ListenableProxyProvider6', (tester) async {
       await tester.pumpWidget(
         MultiProvider(

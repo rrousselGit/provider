@@ -13,57 +13,57 @@ typedef ProviderBuilder<R> = Widget Function(
 // ignore: public_member_api_docs
 typedef ProxyProviderBuilder<T, R> = R Function(
   BuildContext context,
-  T? value,
+  T value,
   R previous,
 );
 
 // ignore: public_member_api_docs
 typedef ProxyProviderBuilder2<T, T2, R> = R Function(
   BuildContext context,
-  T? value,
-  T2? value2,
+  T value,
+  T2 value2,
   R previous,
 );
 
 // ignore: public_member_api_docs
 typedef ProxyProviderBuilder3<T, T2, T3, R> = R Function(
   BuildContext context,
-  T? value,
-  T2? value2,
-  T3? value3,
+  T value,
+  T2 value2,
+  T3 value3,
   R previous,
 );
 
 // ignore: public_member_api_docs
 typedef ProxyProviderBuilder4<T, T2, T3, T4, R> = R Function(
   BuildContext context,
-  T? value,
-  T2? value2,
-  T3? value3,
-  T4? value4,
+  T value,
+  T2 value2,
+  T3 value3,
+  T4 value4,
   R previous,
 );
 
 // ignore: public_member_api_docs
 typedef ProxyProviderBuilder5<T, T2, T3, T4, T5, R> = R Function(
   BuildContext context,
-  T? value,
-  T2? value2,
-  T3? value3,
-  T4? value4,
-  T5? value5,
+  T value,
+  T2 value2,
+  T3 value3,
+  T4 value4,
+  T5 value5,
   R previous,
 );
 
 // ignore: public_member_api_docs
 typedef ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> = R Function(
   BuildContext context,
-  T? value,
-  T2? value2,
-  T3? value3,
-  T4? value4,
-  T5? value5,
-  T6? value6,
+  T value,
+  T2 value2,
+  T3 value3,
+  T4 value4,
+  T5 value5,
+  T6 value6,
   R previous,
 );
 
@@ -146,7 +146,7 @@ class ProxyProvider<T, R> extends ProxyProvider0<R> {
   ProxyProvider({
     Key? key,
     Create<R>? create,
-    required ProxyProviderBuilder<T?, R> update,
+    required ProxyProviderBuilder<T, R> update,
     UpdateShouldNotify<R>? updateShouldNotify,
     Dispose<R>? dispose,
     bool? lazy,
@@ -174,7 +174,7 @@ class ProxyProvider2<T, T2, R> extends ProxyProvider0<R> {
   ProxyProvider2({
     Key? key,
     Create<R>? create,
-    required ProxyProviderBuilder2<T?, T2?, R> update,
+    required ProxyProviderBuilder2<T, T2, R> update,
     UpdateShouldNotify<R>? updateShouldNotify,
     Dispose<R>? dispose,
     bool? lazy,
@@ -203,7 +203,7 @@ class ProxyProvider3<T, T2, T3, R> extends ProxyProvider0<R> {
   ProxyProvider3({
     Key? key,
     Create<R>? create,
-    required ProxyProviderBuilder3<T?, T2?, T3?, R> update,
+    required ProxyProviderBuilder3<T, T2, T3, R> update,
     UpdateShouldNotify<R>? updateShouldNotify,
     Dispose<R>? dispose,
     bool? lazy,
@@ -233,7 +233,7 @@ class ProxyProvider4<T, T2, T3, T4, R> extends ProxyProvider0<R> {
   ProxyProvider4({
     Key? key,
     Create<R>? create,
-    required ProxyProviderBuilder4<T?, T2?, T3?, T4?, R> update,
+    required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     UpdateShouldNotify<R>? updateShouldNotify,
     Dispose<R>? dispose,
     bool? lazy,
@@ -264,7 +264,7 @@ class ProxyProvider5<T, T2, T3, T4, T5, R> extends ProxyProvider0<R> {
   ProxyProvider5({
     Key? key,
     Create<R>? create,
-    required ProxyProviderBuilder5<T?, T2?, T3?, T4?, T5?, R> update,
+    required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     UpdateShouldNotify<R>? updateShouldNotify,
     Dispose<R>? dispose,
     bool? lazy,
@@ -296,7 +296,7 @@ class ProxyProvider6<T, T2, T3, T4, T5, T6, R> extends ProxyProvider0<R> {
   ProxyProvider6({
     Key? key,
     Create<R>? create,
-    required ProxyProviderBuilder6<T?, T2?, T3?, T4?, T5?, T6?, R> update,
+    required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     UpdateShouldNotify<R>? updateShouldNotify,
     Dispose<R>? dispose,
     bool? lazy,

@@ -12,8 +12,7 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => ValueNotifier(0),
           builder: (context, child) {
-            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
-                null);
+            context.watch<ValueNotifier<int>>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -22,13 +21,13 @@ void main() {
 
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('.value', (tester) async {
       await tester.pumpWidget(
         ChangeNotifierProvider.value(
           value: ValueNotifier(0),
           builder: (context, child) {
-            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
-                null);
+            context.watch<ValueNotifier<int>>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -38,14 +37,14 @@ void main() {
       expect(find.text('child'), findsOneWidget);
     });
   });
+
   group('ListenableProvider', () {
     testWidgets('default', (tester) async {
       await tester.pumpWidget(
         ListenableProvider(
           create: (_) => ValueNotifier(0),
           builder: (context, child) {
-            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
-                null);
+            context.watch<ValueNotifier<int>>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -54,13 +53,13 @@ void main() {
 
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('.value', (tester) async {
       await tester.pumpWidget(
         ListenableProvider.value(
           value: ValueNotifier(0),
           builder: (context, child) {
-            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
-                null);
+            context.watch<ValueNotifier<int>>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -70,13 +69,14 @@ void main() {
       expect(find.text('child'), findsOneWidget);
     });
   });
+
   group('Provider', () {
     testWidgets('default', (tester) async {
       await tester.pumpWidget(
         Provider(
           create: (_) => 0,
           builder: (context, child) {
-            assert(Provider.of<int>(context, listen: false) != null);
+            context.watch<int>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -85,12 +85,13 @@ void main() {
 
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('.value', (tester) async {
       await tester.pumpWidget(
         Provider.value(
           value: 0,
           builder: (context, child) {
-            assert(Provider.of<int>(context, listen: false) != null);
+            context.watch<int>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -100,6 +101,7 @@ void main() {
       expect(find.text('child'), findsOneWidget);
     });
   });
+
   group('ProxyProvider', () {
     testWidgets('0', (tester) async {
       var buildCount = 0;
@@ -110,7 +112,7 @@ void main() {
               update: (_, __) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(Provider.of<int>(context, listen: false) != null);
+                context.watch<int>();
                 return child!;
               },
             ),
@@ -122,6 +124,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('1', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -132,7 +135,7 @@ void main() {
               update: (_, __, ___) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(Provider.of<int>(context, listen: false) != null);
+                context.watch<int>();
                 return child!;
               },
             ),
@@ -144,6 +147,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('2', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -155,7 +159,7 @@ void main() {
               update: (a, b, c, d) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(Provider.of<int>(context, listen: false) != null);
+                context.watch<int>();
                 return child!;
               },
             ),
@@ -167,6 +171,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('3', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -179,7 +184,7 @@ void main() {
               update: (a, b, c, d, e) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(Provider.of<int>(context, listen: false) != null);
+                context.watch<int>();
                 return child!;
               },
             ),
@@ -191,6 +196,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('4', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -204,7 +210,7 @@ void main() {
               update: (a, b, c, d, e, f) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(Provider.of<int>(context, listen: false) != null);
+                context.watch<int>();
                 return child!;
               },
             ),
@@ -216,6 +222,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('5', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -230,7 +237,7 @@ void main() {
               update: (a, b, c, d, e, f, g) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(Provider.of<int>(context, listen: false) != null);
+                context.watch<int>();
                 return child!;
               },
             ),
@@ -242,6 +249,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('6', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -257,7 +265,7 @@ void main() {
               update: (a, b, c, d, e, f, g, h) => 0,
               builder: (context, child) {
                 buildCount++;
-                assert(Provider.of<int>(context, listen: false) != null);
+                context.watch<int>();
                 return child!;
               },
             ),
@@ -270,6 +278,7 @@ void main() {
       expect(find.text('child'), findsOneWidget);
     });
   });
+
   group('MultiProvider', () {
     testWidgets('with 1 ChangeNotifierProvider default', (tester) async {
       await tester.pumpWidget(
@@ -280,8 +289,7 @@ void main() {
             ),
           ],
           builder: (context, child) {
-            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
-                null);
+            context.watch<ValueNotifier<int>>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -290,6 +298,7 @@ void main() {
 
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('with 2 ChangeNotifierProvider default', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -302,10 +311,8 @@ void main() {
             ),
           ],
           builder: (context, child) {
-            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
-                null);
-            assert(Provider.of<ValueNotifier<String>>(context, listen: false) !=
-                null);
+            context.watch<ValueNotifier<int>>();
+            context.watch<ValueNotifier<String>>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -314,6 +321,7 @@ void main() {
 
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('with ListenableProvider default', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -323,8 +331,7 @@ void main() {
             ),
           ],
           builder: (context, child) {
-            assert(Provider.of<ValueNotifier<int>>(context, listen: false) !=
-                null);
+            context.watch<ValueNotifier<int>>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -333,6 +340,7 @@ void main() {
 
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('with Provider default', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -342,7 +350,7 @@ void main() {
             ),
           ],
           builder: (context, child) {
-            assert(Provider.of<int>(context, listen: false) != null);
+            context.watch<int>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -351,6 +359,7 @@ void main() {
 
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('with ProxyProvider0', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -362,7 +371,7 @@ void main() {
           ],
           builder: (context, child) {
             buildCount++;
-            assert(Provider.of<int>(context, listen: false) != null);
+            context.watch<int>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -372,6 +381,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('with ProxyProvider1', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -384,7 +394,7 @@ void main() {
           ],
           builder: (context, child) {
             buildCount++;
-            assert(Provider.of<int>(context, listen: false) != null);
+            context.watch<int>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -394,6 +404,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('with ProxyProvider2', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -407,7 +418,7 @@ void main() {
           ],
           builder: (context, child) {
             buildCount++;
-            assert(Provider.of<int>(context, listen: false) != null);
+            context.watch<int>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -417,6 +428,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('with ProxyProvider3', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -431,7 +443,7 @@ void main() {
           ],
           builder: (context, child) {
             buildCount++;
-            assert(Provider.of<int>(context, listen: false) != null);
+            context.watch<int>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -441,6 +453,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('with ProxyProvider4', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -456,7 +469,7 @@ void main() {
           ],
           builder: (context, child) {
             buildCount++;
-            assert(Provider.of<int>(context, listen: false) != null);
+            context.watch<int>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -466,6 +479,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('with ProxyProvider5', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -482,7 +496,7 @@ void main() {
           ],
           builder: (context, child) {
             buildCount++;
-            assert(Provider.of<int>(context, listen: false) != null);
+            context.watch<int>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),
@@ -492,6 +506,7 @@ void main() {
       expect(buildCount, 1);
       expect(find.text('child'), findsOneWidget);
     });
+
     testWidgets('with ProxyProvider6', (tester) async {
       var buildCount = 0;
       await tester.pumpWidget(
@@ -509,7 +524,7 @@ void main() {
           ],
           builder: (context, child) {
             buildCount++;
-            assert(Provider.of<int>(context, listen: false) != null);
+            context.watch<int>();
             return child!;
           },
           child: const Text('child', textDirection: TextDirection.ltr),

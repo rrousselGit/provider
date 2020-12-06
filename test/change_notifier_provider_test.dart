@@ -68,6 +68,7 @@ void main() {
 
       expect(myNotifier.notifyListeners, throwsAssertionError);
     });
+
     testWidgets('builder1', (tester) async {
       final myNotifier = ValueNotifier<int>(0);
 
@@ -75,15 +76,15 @@ void main() {
         MultiProvider(
           providers: [
             Provider(create: (_) => A()),
-            ChangeNotifierProxyProvider<A, ValueNotifier<int>>(
+            ChangeNotifierProxyProvider<A, ValueNotifier<int>?>(
               create: (_) => null,
               update: (_, __, ___) => myNotifier,
             ),
           ],
-          child: Consumer<ValueNotifier<int>>(
+          child: Consumer<ValueNotifier<int>?>(
             builder: (_, value, __) {
               return Text(
-                value.value.toString(),
+                value!.value.toString(),
                 textDirection: TextDirection.ltr,
               );
             },
@@ -102,6 +103,7 @@ void main() {
 
       expect(myNotifier.notifyListeners, throwsAssertionError);
     });
+
     testWidgets('builder2', (tester) async {
       final myNotifier = ValueNotifier<int>(0);
 
@@ -110,15 +112,15 @@ void main() {
           providers: [
             Provider(create: (_) => A()),
             Provider(create: (_) => B()),
-            ChangeNotifierProxyProvider2<A, B, ValueNotifier<int>>(
+            ChangeNotifierProxyProvider2<A, B, ValueNotifier<int>?>(
               create: (_) => null,
               update: (_, _a, _b, ___) => myNotifier,
             ),
           ],
-          child: Consumer<ValueNotifier<int>>(
+          child: Consumer<ValueNotifier<int>?>(
             builder: (_, value, __) {
               return Text(
-                value.value.toString(),
+                value!.value.toString(),
                 textDirection: TextDirection.ltr,
               );
             },
@@ -137,6 +139,7 @@ void main() {
 
       expect(myNotifier.notifyListeners, throwsAssertionError);
     });
+
     testWidgets('builder3', (tester) async {
       final myNotifier = ValueNotifier<int>(0);
 
@@ -146,15 +149,15 @@ void main() {
             Provider(create: (_) => A()),
             Provider(create: (_) => B()),
             Provider(create: (_) => C()),
-            ChangeNotifierProxyProvider3<A, B, C, ValueNotifier<int>>(
+            ChangeNotifierProxyProvider3<A, B, C, ValueNotifier<int>?>(
               create: (_) => null,
               update: (_, _a, _b, _c, ___) => myNotifier,
             ),
           ],
-          child: Consumer<ValueNotifier<int>>(
+          child: Consumer<ValueNotifier<int>?>(
             builder: (_, value, __) {
               return Text(
-                value.value.toString(),
+                value!.value.toString(),
                 textDirection: TextDirection.ltr,
               );
             },
@@ -173,6 +176,7 @@ void main() {
 
       expect(myNotifier.notifyListeners, throwsAssertionError);
     });
+
     testWidgets('builder4', (tester) async {
       final myNotifier = ValueNotifier<int>(0);
 
@@ -183,15 +187,15 @@ void main() {
             Provider(create: (_) => B()),
             Provider(create: (_) => C()),
             Provider(create: (_) => D()),
-            ChangeNotifierProxyProvider4<A, B, C, D, ValueNotifier<int>>(
+            ChangeNotifierProxyProvider4<A, B, C, D, ValueNotifier<int>?>(
               create: (_) => null,
               update: (_, _a, _b, _c, _d, ___) => myNotifier,
             ),
           ],
-          child: Consumer<ValueNotifier<int>>(
+          child: Consumer<ValueNotifier<int>?>(
             builder: (_, value, __) {
               return Text(
-                value.value.toString(),
+                value!.value.toString(),
                 textDirection: TextDirection.ltr,
               );
             },
@@ -210,6 +214,7 @@ void main() {
 
       expect(myNotifier.notifyListeners, throwsAssertionError);
     });
+
     testWidgets('builder5', (tester) async {
       final myNotifier = ValueNotifier<int>(0);
 
@@ -221,15 +226,15 @@ void main() {
             Provider(create: (_) => C()),
             Provider(create: (_) => D()),
             Provider(create: (_) => E()),
-            ChangeNotifierProxyProvider5<A, B, C, D, E, ValueNotifier<int>>(
+            ChangeNotifierProxyProvider5<A, B, C, D, E, ValueNotifier<int>?>(
               create: (_) => null,
               update: (_, _a, _b, _c, _d, _e, ___) => myNotifier,
             ),
           ],
-          child: Consumer<ValueNotifier<int>>(
+          child: Consumer<ValueNotifier<int>?>(
             builder: (_, value, __) {
               return Text(
-                value.value.toString(),
+                value!.value.toString(),
                 textDirection: TextDirection.ltr,
               );
             },
@@ -248,6 +253,7 @@ void main() {
 
       expect(myNotifier.notifyListeners, throwsAssertionError);
     });
+
     testWidgets('builder6', (tester) async {
       final myNotifier = ValueNotifier<int>(0);
 
@@ -260,15 +266,15 @@ void main() {
             Provider(create: (_) => D()),
             Provider(create: (_) => E()),
             Provider(create: (_) => F()),
-            ChangeNotifierProxyProvider6<A, B, C, D, E, F, ValueNotifier<int>>(
+            ChangeNotifierProxyProvider6<A, B, C, D, E, F, ValueNotifier<int>?>(
               create: (_) => null,
               update: (_, _a, _b, _c, _d, _e, _f, ___) => myNotifier,
             ),
           ],
-          child: Consumer<ValueNotifier<int>>(
+          child: Consumer<ValueNotifier<int>?>(
             builder: (_, value, __) {
               return Text(
-                value.value.toString(),
+                value!.value.toString(),
                 textDirection: TextDirection.ltr,
               );
             },
@@ -287,21 +293,22 @@ void main() {
 
       expect(myNotifier.notifyListeners, throwsAssertionError);
     });
+
     testWidgets('builder0', (tester) async {
       final myNotifier = ValueNotifier<int>(0);
 
       await tester.pumpWidget(
         MultiProvider(
           providers: [
-            ChangeNotifierProxyProvider0<ValueNotifier<int>>(
+            ChangeNotifierProxyProvider0<ValueNotifier<int>?>(
               create: (_) => null,
               update: (_, ___) => myNotifier,
             ),
           ],
-          child: Consumer<ValueNotifier<int>>(
+          child: Consumer<ValueNotifier<int>?>(
             builder: (_, value, __) {
               return Text(
-                value.value.toString(),
+                value!.value.toString(),
                 textDirection: TextDirection.ltr,
               );
             },
@@ -329,7 +336,7 @@ void main() {
       ChangeNotifierProvider<ValueNotifier<int>>(
         create: (context) => myNotifier,
         builder: (context, _) {
-          final notifier = context.watch<ValueNotifier<int>>()!;
+          final notifier = context.watch<ValueNotifier<int>>();
           return Text(
             '${notifier.value}',
             textDirection: TextDirection.ltr,

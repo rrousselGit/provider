@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -19,7 +20,7 @@ class Context extends StatelessWidget {
 
 BuildContext get context => find.byType(Context).evaluate().single;
 
-T? of<T>([BuildContext? c]) => Provider.of<T>(c ?? context, listen: false);
+T of<T>([BuildContext? c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
   testWidgets('regression test #377', (tester) async {
@@ -41,13 +42,14 @@ void main() {
       ),
     );
   });
+
   testWidgets('rebuild on dependency flags update', (tester) async {
     await tester.pumpWidget(
       InheritedProvider<int>(
         lazy: false,
         update: (context, value) {
-          assert(!debugIsInInheritedProviderCreate!);
-          assert(debugIsInInheritedProviderUpdate!);
+          assert(!debugIsInInheritedProviderCreate);
+          assert(debugIsInInheritedProviderUpdate);
           return 0;
         },
         child: Container(),
@@ -58,14 +60,15 @@ void main() {
       InheritedProvider<int>(
         lazy: false,
         update: (context, value) {
-          assert(!debugIsInInheritedProviderCreate!);
-          assert(debugIsInInheritedProviderUpdate!);
+          assert(!debugIsInInheritedProviderCreate);
+          assert(debugIsInInheritedProviderUpdate);
           return 0;
         },
         child: Container(),
       ),
     );
   });
+
   testWidgets(
       'properly update debug flags if a create triggers another deferred create',
       (tester) async {
@@ -74,8 +77,8 @@ void main() {
         providers: [
           DeferredInheritedProvider<double, double>(
             create: (context) {
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
               return 42.0;
             },
             startListening: (_, setState, c, __) {
@@ -85,9 +88,9 @@ void main() {
           ),
           DeferredInheritedProvider<int, int>(
             create: (context) {
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
-              return context.read<double>()!.round();
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return context.read<double>().round();
             },
             startListening: (_, setState, c, __) {
               setState(c);
@@ -97,12 +100,12 @@ void main() {
           InheritedProvider<String>(
             lazy: false,
             update: (context, value) {
-              assert(!debugIsInInheritedProviderCreate!);
-              assert(debugIsInInheritedProviderUpdate!);
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
               context.watch<double>();
 
-              assert(!debugIsInInheritedProviderCreate!);
-              assert(debugIsInInheritedProviderUpdate!);
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
               return context.watch<int>().toString();
             },
           ),
@@ -111,6 +114,7 @@ void main() {
       ),
     );
   });
+
   testWidgets(
       'properly update debug flags if a create triggers another deferred create',
       (tester) async {
@@ -119,8 +123,8 @@ void main() {
         providers: [
           DeferredInheritedProvider<double, double>(
             create: (context) {
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
               return 42.0;
             },
             startListening: (_, setState, c, __) {
@@ -130,9 +134,9 @@ void main() {
           ),
           DeferredInheritedProvider<int, int>(
             create: (context) {
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
-              return context.read<double>()!.round();
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return context.read<double>().round();
             },
             startListening: (_, setState, c, __) {
               setState(c);
@@ -142,11 +146,11 @@ void main() {
           InheritedProvider<String>(
             lazy: false,
             create: (context) {
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
               context.read<double>();
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
 
               return context.read<int>().toString();
             },
@@ -165,37 +169,37 @@ void main() {
         providers: [
           InheritedProvider<double>(
             create: (context) {
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
               return 42.0;
             },
             update: (context, _) {
-              assert(!debugIsInInheritedProviderCreate!);
-              assert(debugIsInInheritedProviderUpdate!);
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
               return 42.0;
             },
           ),
           InheritedProvider<int>(
             create: (context) {
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
-              return context.read<double>()!.round();
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return context.read<double>().round();
             },
             update: (context, _) {
-              assert(!debugIsInInheritedProviderCreate!);
-              assert(debugIsInInheritedProviderUpdate!);
-              return context.watch<double>()!.round();
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              return context.watch<double>().round();
             },
           ),
           InheritedProvider<String>(
             lazy: false,
             update: (context, value) {
-              assert(!debugIsInInheritedProviderCreate!);
-              assert(debugIsInInheritedProviderUpdate!);
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
               context.watch<double>();
 
-              assert(!debugIsInInheritedProviderCreate!);
-              assert(debugIsInInheritedProviderUpdate!);
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
               return context.watch<int>().toString();
             },
           ),
@@ -213,46 +217,46 @@ void main() {
         providers: [
           InheritedProvider<double>(
             create: (context) {
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
               return 42.0;
             },
             update: (context, _) {
-              assert(!debugIsInInheritedProviderCreate!);
-              assert(debugIsInInheritedProviderUpdate!);
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
               return 42.0;
             },
           ),
           InheritedProvider<int>(
             create: (context) {
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
-              return context.read<double>()!.round();
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
+              return context.read<double>().round();
             },
             update: (context, _) {
-              assert(!debugIsInInheritedProviderCreate!);
-              assert(debugIsInInheritedProviderUpdate!);
-              return context.watch<double>()!.round();
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
+              return context.watch<double>().round();
             },
           ),
           InheritedProvider<String>(
             lazy: false,
             create: (context) {
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
               context.read<double>();
-              assert(debugIsInInheritedProviderCreate!);
-              assert(!debugIsInInheritedProviderUpdate!);
+              assert(debugIsInInheritedProviderCreate);
+              assert(!debugIsInInheritedProviderUpdate);
 
               return context.read<int>().toString();
             },
             update: (context, value) {
-              assert(!debugIsInInheritedProviderCreate!);
-              assert(debugIsInInheritedProviderUpdate!);
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
               context.watch<double>();
 
-              assert(!debugIsInInheritedProviderCreate!);
-              assert(debugIsInInheritedProviderUpdate!);
+              assert(!debugIsInInheritedProviderCreate);
+              assert(debugIsInInheritedProviderUpdate);
               return context.watch<int>().toString();
             },
           ),
@@ -269,8 +273,10 @@ void main() {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          ValueListenableProvider.value(value: notifier),
-          ProxyProvider<int, String>(update: (a, b, c) => '$b'),
+          ChangeNotifierProvider.value(value: notifier),
+          ProxyProvider<ValueNotifier<int>, String>(update: (a, b, c) {
+            return '${b.value}';
+          }),
         ],
         child: const Context(),
       ),
@@ -283,10 +289,11 @@ void main() {
 
     expect(Provider.of<String>(context, listen: false), '21');
   });
+
   testWidgets('new value is available in didChangeDependencies',
       (tester) async {
-    final didChangeDependencies = ValueBuilderMock<int>();
-    final build = ValueBuilderMock<int>();
+    final didChangeDependencies = ValueBuilderMock<int>(-1);
+    final build = ValueBuilderMock<int>(-1);
 
     await tester.pumpWidget(
       InheritedProvider.value(
@@ -297,8 +304,8 @@ void main() {
         ),
       ),
     );
-    verify(didChangeDependencies(argThat(isNotNull)!, 0)).called(1);
-    verify(build(argThat(isNotNull)!, 0)).called(1);
+    verify(didChangeDependencies(argThat(isNotNull), 0)).called(1);
+    verify(build(argThat(isNotNull), 0)).called(1);
 
     verifyNoMoreInteractions(didChangeDependencies);
     verifyNoMoreInteractions(build);
@@ -312,21 +319,22 @@ void main() {
         ),
       ),
     );
-    verify(didChangeDependencies(argThat(isNotNull)!, 1)).called(1);
-    verify(build(argThat(isNotNull)!, 1)).called(1);
+    verify(didChangeDependencies(argThat(isNotNull), 1)).called(1);
+    verify(build(argThat(isNotNull), 1)).called(1);
     verifyNoMoreInteractions(didChangeDependencies);
     verifyNoMoreInteractions(build);
   });
+
   testWidgets(
       'builder receives the current value and updates independently from `update`',
       (tester) async {
     final child = Container();
 
-    var notifier = ValueNotifier(0);
+    final notifier = ValueNotifier(0);
     final builder = TransitionBuilderMock((c, child) {
-      final notifier = Provider.of<ValueNotifier<int>>(c)!;
+      final notifier = Provider.of<ValueNotifier<int>>(c);
       return Text(
-        'notifier: ${notifier.value} value: $value',
+        '${notifier.value}',
         textDirection: TextDirection.ltr,
       );
     });
@@ -339,22 +347,23 @@ void main() {
       ),
     );
 
-    verify(builder(argThat(isNotNull)!, child)).called(1);
+    verify(builder(argThat(isNotNull), child)).called(1);
     verifyNoMoreInteractions(builder);
     expect(find.text('0'), findsOneWidget);
 
     notifier.value++;
     await tester.pump();
 
-    verify(builder(argThat(isNotNull)!, child)).called(1);
+    verify(builder(argThat(isNotNull), child)).called(1);
     verifyNoMoreInteractions(builder);
     expect(find.text('1'), findsOneWidget);
   });
+
   testWidgets('builder can _not_ rebuild when provider updates',
       (tester) async {
     final child = Container();
 
-    var notifier = ValueNotifier(0);
+    final notifier = ValueNotifier(0);
     final builder = TransitionBuilderMock((c, child) {
       return const Text('foo', textDirection: TextDirection.ltr);
     });
@@ -367,16 +376,13 @@ void main() {
       ),
     );
 
-    verify(builder(argThat(isNotNull)!, child)).called(1);
+    verify(builder(argThat(isNotNull), child)).called(1);
     verifyNoMoreInteractions(builder);
-    verify(update(any, any)).called(1);
-    verifyNoMoreInteractions(update);
+    expect(find.text('foo'), findsOneWidget);
 
     notifier.value++;
     await tester.pump();
 
-    expect(find.text('notifier: 1 value: 0'), findsOneWidget);
-    verify(builder(argThat(isNotNull), 0, child)).called(1);
     verifyNoMoreInteractions(builder);
     expect(find.text('foo'), findsOneWidget);
   });
@@ -384,12 +390,11 @@ void main() {
   testWidgets('builder rebuilds if provider is recreated', (tester) async {
     final child = Container();
 
-    var notifier = ValueNotifier(0);
+    final notifier = ValueNotifier(0);
     final builder = TransitionBuilderMock((c, child) {
       return const Text('foo', textDirection: TextDirection.ltr);
     });
 
-    when(update(any, any)).thenReturn(1);
     await tester.pumpWidget(
       ChangeNotifierProvider.value(
         value: notifier,
@@ -398,7 +403,7 @@ void main() {
       ),
     );
 
-    verify(builder(argThat(isNotNull)!, child)).called(1);
+    verify(builder(argThat(isNotNull), child)).called(1);
     verifyNoMoreInteractions(builder);
     expect(find.text('foo'), findsOneWidget);
 
@@ -410,11 +415,11 @@ void main() {
       ),
     );
 
-    verify(builder(argThat(isNotNull)!, child)).called(1);
+    verify(builder(argThat(isNotNull), child)).called(1);
     verifyNoMoreInteractions(builder);
-    verify(update(any, any)).called(1);
-    verifyNoMoreInteractions(update);
+    expect(find.text('foo'), findsOneWidget);
   });
+
   testWidgets('provider.of throws if listen:true outside of the widget tree',
       (tester) async {
     await tester.pumpWidget(
@@ -465,7 +470,7 @@ The context used was: Context
       isA<AssertionError>().having(
         (source) => source.toString(),
         'toString',
-        endsWith(
+        contains(
             'InheritedProvider<int> used outside of MultiProvider must specify a child'),
       ),
     );
@@ -485,7 +490,7 @@ The context used was: Context
       isA<AssertionError>().having(
         (source) => source.toString(),
         'toString',
-        endsWith(
+        contains(
             'InheritedProvider<int> used outside of MultiProvider must specify a child'),
       ),
     );
@@ -508,7 +513,7 @@ The context used was: Context
       isA<AssertionError>().having(
         (source) => source.toString(),
         'toString',
-        endsWith(
+        contains(
             'DeferredInheritedProvider<int, int> used outside of MultiProvider must specify a child'),
       ),
     );
@@ -531,11 +536,12 @@ The context used was: Context
       isA<AssertionError>().having(
         (source) => source.toString(),
         'toString',
-        endsWith(
+        contains(
             'DeferredInheritedProvider<int, int> used outside of MultiProvider must specify a child'),
       ),
     );
   });
+
   group('diagnostics', () {
     testWidgets('InheritedProvider.value', (tester) async {
       await tester.pumpWidget(
@@ -557,7 +563,7 @@ The context used was: Context
         InheritedProvider<int>.value(
           value: 42,
           startListening: (_, __) => () {},
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -566,6 +572,7 @@ The context used was: Context
         contains('InheritedProvider<int>(value: 42, listening to value)'),
       );
     });
+
     testWidgets("InheritedProvider doesn't break lazy loading", (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>(
@@ -588,6 +595,7 @@ The context used was: Context
         contains('InheritedProvider<int>(value: 42)'),
       );
     });
+
     testWidgets('InheritedProvider show if listening', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>(
@@ -611,6 +619,7 @@ The context used was: Context
         contains('InheritedProvider<int>(value: 24, listening to value)'),
       );
     });
+
     testWidgets('DeferredInheritedProvider.value', (tester) async {
       await tester.pumpWidget(
         DeferredInheritedProvider<int, int>.value(
@@ -641,6 +650,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: <not yet loaded>)''',
 DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       );
     });
+
     testWidgets('DeferredInheritedProvider', (tester) async {
       await tester.pumpWidget(
         DeferredInheritedProvider<int, int>(
@@ -680,13 +690,14 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         InheritedProvider<int>.value(
           value: 42,
           startListening: (e, value) {
-            e!.markNeedsNotifyDependents();
+            e.markNeedsNotifyDependents();
             return () {};
           },
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
     });
+
     testWidgets('startListening called again when create returns new value',
         (tester) async {
       final stopListening = StopListeningMock();
@@ -696,7 +707,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         InheritedProvider<int>.value(
           value: 42,
           startListening: startListening,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -713,7 +724,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         InheritedProvider<int>.value(
           value: 24,
           startListening: startListening2,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -730,6 +741,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verifyNoMoreInteractions(startListening);
       verify(stopListening2()).called(1);
     });
+
     testWidgets('startListening', (tester) async {
       final stopListening = StopListeningMock();
       final startListening = StartListeningMock<int>(stopListening);
@@ -748,7 +760,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         InheritedProvider<int>.value(
           value: 42,
           startListening: startListening,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -762,7 +774,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         InheritedProvider<int>.value(
           value: 42,
           startListening: startListening,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -774,6 +786,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verifyNoMoreInteractions(startListening);
       verify(stopListening()).called(1);
     });
+
     testWidgets(
       "stopListening not called twice if rebuild doesn't have listeners",
       (tester) async {
@@ -784,10 +797,10 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           InheritedProvider<int>.value(
             value: 42,
             startListening: startListening,
-            child: const TextOf<int>(),
+            child: TextOf<int>(),
           ),
         );
-        verify(startListening(argThat(isNotNull)!, 42)).called(1);
+        verify(startListening(argThat(isNotNull), 42)).called(1);
         verifyZeroInteractions(stopListening);
 
         final stopListening2 = StopListeningMock();
@@ -814,18 +827,6 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       },
     );
 
-    testWidgets('removeListener cannot be null', (tester) async {
-      await tester.pumpWidget(
-        InheritedProvider<int>.value(
-          value: 42,
-          startListening: (_, __) => null,
-          child: const TextOf<int>(),
-        ),
-      );
-
-      expect(tester.takeException(), isAssertionError);
-    });
-
     testWidgets('pass down current value', (tester) async {
       int? value;
       final child = Consumer<int>(
@@ -847,6 +848,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(value, equals(43));
     });
+
     testWidgets('default updateShouldNotify', (tester) async {
       var buildCount = 0;
 
@@ -870,6 +872,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       );
       expect(buildCount, equals(2));
     });
+
     testWidgets('custom updateShouldNotify', (tester) async {
       var buildCount = 0;
       final updateShouldNotify = UpdateShouldNotifyMock<int>();
@@ -889,7 +892,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(buildCount, equals(1));
       verifyZeroInteractions(updateShouldNotify);
 
-      when(updateShouldNotify(any!, any!)).thenReturn(false);
+      when(updateShouldNotify(any, any)).thenReturn(false);
       await tester.pumpWidget(
         InheritedProvider<int>.value(
           value: 43,
@@ -900,7 +903,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(buildCount, equals(1));
       verify(updateShouldNotify(42, 43)).called(1);
 
-      when(updateShouldNotify(any!, any!)).thenReturn(true);
+      when(updateShouldNotify(any, any)).thenReturn(true);
       await tester.pumpWidget(
         InheritedProvider<int>.value(
           value: 44,
@@ -914,11 +917,12 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verifyNoMoreInteractions(updateShouldNotify);
     });
   });
+
   group('InheritedProvider()', () {
     testWidgets('hasValue', (tester) async {
       await tester.pumpWidget(InheritedProvider(
         create: (_) => 42,
-        child: Context(),
+        child: const Context(),
       ));
 
       final inheritedContext = tester.element(find.byElementPredicate((e) {
@@ -938,26 +942,27 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       final mock = ValueBuilderMock<String>('');
 
       final provider = ProxyProvider0<String>(
-        create: ((_) => ''),
+        create: (_) => '',
         update: (c, p) {
           mock(c, p);
           return c.watch<int>().toString();
         },
-        child: const TextOf<String>(),
+        child: TextOf<String>(),
       );
 
       await tester.pumpWidget(Provider.value(value: 0, child: provider));
 
       expect(find.text('0'), findsOneWidget);
-      verify(mock(any!, '')).called(1);
+      verify(mock(any, '')).called(1);
       verifyNoMoreInteractions(mock);
 
       await tester.pumpWidget(Provider.value(value: 1, child: provider));
 
       expect(find.text('1'), findsOneWidget);
-      verify(mock(any!, '0')).called(1);
+      verify(mock(any, '0')).called(1);
       verifyNoMoreInteractions(mock);
     });
+
     testWidgets("provider notifying dependents doesn't call update",
         (tester) async {
       final notifier = ValueNotifier(0);
@@ -967,11 +972,11 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         ChangeNotifierProxyProvider0<ValueNotifier<int>>(
           create: (_) => notifier,
           update: mock,
-          child: const TextOf<ValueNotifier<int>>(),
+          child: TextOf<ValueNotifier<int>>(),
         ),
       );
 
-      verify(mock(any!, notifier)).called(1);
+      verify(mock(any, notifier)).called(1);
       verifyNoMoreInteractions(mock);
 
       notifier.value++;
@@ -983,20 +988,21 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         ChangeNotifierProxyProvider0<ValueNotifier<int>>(
           create: (_) => notifier,
           update: mock,
-          child: const TextOf<ValueNotifier<int>>(),
+          child: TextOf<ValueNotifier<int>>(),
         ),
       );
 
-      verify(mock(any!, notifier)).called(1);
+      verify(mock(any, notifier)).called(1);
       verifyNoMoreInteractions(mock);
     });
+
     testWidgets('update can call Provider.of with listen:true', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>.value(
           value: 42,
           child: InheritedProvider<String>(
             update: (context, __) => Provider.of<int>(context).toString(),
-            child: const TextOf<String>(),
+            child: TextOf<String>(),
           ),
         ),
       );
@@ -1018,30 +1024,32 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(Provider.of<String>(context, listen: false), equals('42'));
     });
+
     testWidgets('markNeedsNotifyDependents during startListening is noop',
         (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>(
           update: (_, __) => 24,
           startListening: (e, value) {
-            e!.markNeedsNotifyDependents();
+            e.markNeedsNotifyDependents();
             return () {};
           },
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
     });
+
     testWidgets(
       'update can obtain parent of the same type than self',
       (tester) async {
         await tester.pumpWidget(
           InheritedProvider<String>.value(
             value: 'root',
-            child: InheritedProvider<String?>(
+            child: InheritedProvider<String>(
               update: (context, _) {
                 return Provider.of(context);
               },
-              child: const TextOf<String>(),
+              child: TextOf<String>(),
             ),
           ),
         );
@@ -1057,7 +1065,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           create: (_) => 0,
           update: (_, __) => 1,
           debugCheckInvalidValueType: checkType,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -1072,7 +1080,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           create: (_) => 0,
           update: (_, __) => 1,
           debugCheckInvalidValueType: checkType,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -1083,13 +1091,14 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           create: (_) => 0,
           update: (_, __) => 2,
           debugCheckInvalidValueType: checkType,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
       verify(checkType(2)).called(1);
       verifyNoMoreInteractions(checkType);
     });
+
     testWidgets('startListening', (tester) async {
       final stopListening = StopListeningMock();
       final startListening = StartListeningMock<int>(stopListening);
@@ -1100,7 +1109,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           update: (_, __) => 42,
           startListening: startListening,
           dispose: dispose,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -1116,7 +1125,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           update: (_, __) => 42,
           startListening: startListening,
           dispose: dispose,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -1144,7 +1153,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         InheritedProvider<int>(
           update: (_, __) => 42,
           startListening: startListening,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -1161,7 +1170,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         InheritedProvider<int>(
           update: (_, __) => 24,
           startListening: startListening2,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -1189,10 +1198,10 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           InheritedProvider<int>(
             update: (_, __) => 42,
             startListening: startListening,
-            child: const TextOf<int>(),
+            child: TextOf<int>(),
           ),
         );
-        verify(startListening(argThat(isNotNull)!, 42)).called(1);
+        verify(startListening(argThat(isNotNull), 42)).called(1);
         verifyZeroInteractions(stopListening);
 
         final stopListening2 = StopListeningMock();
@@ -1219,17 +1228,6 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       },
     );
 
-    testWidgets('removeListener cannot be null', (tester) async {
-      await tester.pumpWidget(
-        InheritedProvider<int>(
-          update: (_, __) => 42,
-          startListening: (_, __) => null,
-          child: const TextOf<int>(),
-        ),
-      );
-
-      expect(tester.takeException(), isAssertionError);
-    });
     testWidgets(
       'fails if initialValueBuilder calls inheritFromElement/inheritFromWiggetOfExactType',
       (tester) async {
@@ -1237,7 +1235,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           InheritedProvider<int>.value(
             value: 42,
             child: InheritedProvider<double>(
-              create: (context) => Provider.of<int>(context)!.toDouble(),
+              create: (context) => Provider.of<int>(context).toDouble(),
               child: Consumer<double>(
                 builder: (_, __, ___) => Container(),
               ),
@@ -1259,8 +1257,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
             return Container();
           },
         );
-        final update = ValueBuilderMock<int>();
-        when(update(any!, any!))
+        final update = ValueBuilderMock<int>(-1);
+        when(update(any, any))
             .thenAnswer((i) => (i.positionalArguments[1] as int) * 2);
 
         await tester.pumpWidget(
@@ -1304,7 +1302,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       (tester) async {
         int? lastValue;
         var buildCount = 0;
-        final child = Consumer<int>(
+        final child = Consumer<int?>(
           builder: (_, value, __) {
             lastValue = value;
             buildCount++;
@@ -1418,18 +1416,19 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(of<int>(), equals(42));
       expect(lastValue, equals(0));
     });
-    testWidgets('calls builder again if dependencies change', (tester) async {
-      final valueBuilder = ValueBuilderMock<int>();
 
-      when(valueBuilder(any!, any!)).thenAnswer((invocation) {
+    testWidgets('calls builder again if dependencies change', (tester) async {
+      final valueBuilder = ValueBuilderMock<int>(-1);
+
+      when(valueBuilder(any, any)).thenAnswer((invocation) {
         return int.parse(Provider.of<String>(
           invocation.positionalArguments.first as BuildContext,
-        )!);
+        ));
       });
 
       var buildCount = 0;
       final child = InheritedProvider<int>(
-        create: ((_) => 0),
+        create: (_) => 0,
         update: valueBuilder,
         child: Consumer<int>(
           builder: (_, value, __) {
@@ -1473,6 +1472,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(buildCount, equals(2));
       expect(find.text('24'), findsOneWidget);
     });
+
     testWidgets('exposes initialValue if valueBuilder is null', (tester) async {
       await tester.pumpWidget(
         InheritedProvider<int>(
@@ -1483,6 +1483,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(of<int>(), equals(42));
     });
+
     testWidgets('call dispose on unmount', (tester) async {
       final dispose = DisposeMock<int>();
       await tester.pumpWidget(
@@ -1504,6 +1505,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verify(dispose(context, 42)).called(1);
       verifyNoMoreInteractions(dispose);
     });
+
     testWidgets('builder unmount, dispose not called if value never read',
         (tester) async {
       final dispose = DisposeMock<int>();
@@ -1520,6 +1522,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       verifyZeroInteractions(dispose);
     });
+
     testWidgets('call dispose after new value', (tester) async {
       final dispose = DisposeMock<int>();
       await tester.pumpWidget(
@@ -1595,9 +1598,10 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         throwsAssertionError,
       );
     });
+
     testWidgets('calls initialValueBuilder lazily once', (tester) async {
-      final initialValueBuilder = InitialValueBuilderMock<int>();
-      when(initialValueBuilder(any!)).thenReturn(42);
+      final initialValueBuilder = InitialValueBuilderMock<int>(-1);
+      when(initialValueBuilder(any)).thenReturn(42);
 
       await tester.pumpWidget(
         InheritedProvider<int>(
@@ -1642,13 +1646,13 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(inheritedContext.hasValue, isTrue);
     });
-    // TODO: stopListening cannot be null
+
     testWidgets('startListening', (tester) async {
       final stopListening = StopListeningMock();
       final startListening =
-          DeferredStartListeningMock<ValueNotifier<int>?, int?>(
+          DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
-          setState(controller?.value);
+          setState(controller.value);
           return stopListening;
         },
       );
@@ -1667,8 +1671,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(of<int>(), equals(0));
 
       verify(startListening(
-        argThat(isNotNull)!,
-        argThat(isNotNull)!,
+        argThat(isNotNull),
+        argThat(isNotNull),
         controller,
         null,
       )).called(1);
@@ -1694,42 +1698,12 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verify(stopListening()).called(1);
     });
 
-    testWidgets('stopListening cannot be null', (tester) async {
-      final controller = ValueNotifier<int>(0);
-
-      await tester.pumpWidget(
-        DeferredInheritedProvider<ValueNotifier<int>, int>.value(
-          value: controller,
-          startListening: (_, setState, __, ___) {
-            setState(0);
-            return () {};
-          },
-          child: const TextOf<int>(),
-        ),
-      );
-
-      expect(find.text('0'), findsOneWidget);
-
-      final controller2 = ValueNotifier<int>(0);
-
-      await tester.pumpWidget(
-        DeferredInheritedProvider<ValueNotifier<int>, int>.value(
-          value: controller2,
-          startListening: ((_, setState, __, ___) {
-            return StopListeningMock();
-          }),
-          child: const TextOf<int>(),
-        ),
-      );
-
-      expect(tester.takeException(), isAssertionError);
-    });
     testWidgets("startListening doesn't need setState if already initialized",
         (tester) async {
       final startListening =
-          DeferredStartListeningMock<ValueNotifier<int?>?, int?>(
+          DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
-          setState(controller?.value);
+          setState(controller.value);
           return () {};
         },
       );
@@ -1739,22 +1713,22 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         DeferredInheritedProvider<ValueNotifier<int>, int>.value(
           value: controller,
           startListening: startListening,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
       expect(find.text('0'), findsOneWidget);
 
       final startListening2 =
-          DeferredStartListeningMock<ValueNotifier<int?>?, int?>();
-      when(startListening2(any!, any!, any!, any!)).thenReturn(() {});
+          DeferredStartListeningMock<ValueNotifier<int>, int>();
+      when(startListening2(any, any, any, any)).thenReturn(() {});
       final controller2 = ValueNotifier<int>(0);
 
       await tester.pumpWidget(
         DeferredInheritedProvider<ValueNotifier<int>, int>.value(
           value: controller2,
           startListening: startListening2,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -1764,8 +1738,9 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         reason: 'startListening2 did not call setState but startListening did',
       );
     });
+
     testWidgets('setState without updateShouldNotify', (tester) async {
-      late void Function(int value) setState;
+      void Function(int value)? setState;
       var buildCount = 0;
 
       await tester.pumpWidget(
@@ -1773,7 +1748,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           value: 0,
           startListening: (_, s, __, ___) {
             setState = s;
-            setState(0);
+            setState!(0);
             return () {};
           },
           child: Consumer<int>(
@@ -1788,30 +1763,31 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(find.text('0'), findsOneWidget);
       expect(buildCount, equals(1));
 
-      setState(0);
+      setState!(0);
       await tester.pump();
 
       expect(buildCount, equals(1));
       expect(find.text('0'), findsOneWidget);
 
-      setState(1);
+      setState!(1);
       await tester.pump();
 
       expect(find.text('1'), findsOneWidget);
       expect(buildCount, equals(2));
 
-      setState(1);
+      setState!(1);
       await tester.pump();
 
       expect(find.text('1'), findsOneWidget);
       expect(buildCount, equals(2));
     });
+
     testWidgets('setState with updateShouldNotify', (tester) async {
       final updateShouldNotify = UpdateShouldNotifyMock<int>();
       when(updateShouldNotify(any, any)).thenAnswer((i) {
         return i.positionalArguments[0] != i.positionalArguments[1];
       });
-      late void Function(int value) setState;
+      void Function(int value)? setState;
       var buildCount = 0;
 
       await tester.pumpWidget(
@@ -1820,7 +1796,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           updateShouldNotify: updateShouldNotify,
           startListening: (_, s, __, ___) {
             setState = s;
-            setState(0);
+            setState!(0);
             return () {};
           },
           child: Consumer<int>(
@@ -1836,7 +1812,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(buildCount, equals(1));
       verifyZeroInteractions(updateShouldNotify);
 
-      setState(0);
+      setState!(0);
       await tester.pump();
 
       verify(updateShouldNotify(0, 0)).called(1);
@@ -1844,7 +1820,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(buildCount, equals(1));
       expect(find.text('0'), findsOneWidget);
 
-      setState(1);
+      setState!(1);
       await tester.pump();
 
       verify(updateShouldNotify(0, 1)).called(1);
@@ -1852,7 +1828,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(find.text('1'), findsOneWidget);
       expect(buildCount, equals(2));
 
-      setState(1);
+      setState!(1);
       await tester.pump();
 
       verify(updateShouldNotify(1, 1)).called(1);
@@ -1860,18 +1836,19 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(find.text('1'), findsOneWidget);
       expect(buildCount, equals(2));
     });
+
     testWidgets('startListening never leave the widget uninitialized',
         (tester) async {
       final startListening =
-          DeferredStartListeningMock<ValueNotifier<int?>?, int?>();
-      when(startListening(any!, any!, any!, any!)).thenReturn(() {});
+          DeferredStartListeningMock<ValueNotifier<int>, int>();
+      when(startListening(any, any, any, any)).thenReturn(() {});
       final controller = ValueNotifier<int>(0);
 
       await tester.pumpWidget(
         DeferredInheritedProvider<ValueNotifier<int>, int>.value(
           value: controller,
           startListening: startListening,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -1892,9 +1869,9 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       final stopListening = StopListeningMock();
       final startListening =
-          DeferredStartListeningMock<ValueNotifier<int>?, int?>(
+          DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
-          setState(controller?.value);
+          setState(controller.value);
           return stopListening;
         },
       );
@@ -1910,14 +1887,14 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(buildCount, equals(1));
       expect(find.text('0'), findsOneWidget);
-      verify(startListening(any!, any!, controller, null)).called(1);
+      verify(startListening(any, any, controller, null)).called(1);
       verifyZeroInteractions(stopListening);
 
       final stopListening2 = StopListeningMock();
       final startListening2 =
-          DeferredStartListeningMock<ValueNotifier<int>?, int?>(
+          DeferredStartListeningMock<ValueNotifier<int>, int>(
         (e, setState, controller, value) {
-          setState(controller?.value);
+          setState(controller.value);
           return stopListening2;
         },
       );
@@ -1935,8 +1912,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       expect(find.text('1'), findsOneWidget);
       verifyInOrder([
         stopListening(),
-        startListening2(
-            argThat(isNotNull)!, argThat(isNotNull)!, controller2, 0),
+        startListening2(argThat(isNotNull), argThat(isNotNull), controller2, 0),
       ]);
       verifyNoMoreInteractions(startListening);
       verifyNoMoreInteractions(stopListening);
@@ -1950,6 +1926,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verify(stopListening2()).called(1);
     });
   });
+
   group('DeferredInheritedProvider()', () {
     testWidgets("create can't call inherited widgets", (tester) async {
       await tester.pumpWidget(
@@ -1964,17 +1941,18 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
               setState(0);
               return () {};
             },
-            child: const TextOf<int>(),
+            child: TextOf<int>(),
           ),
         ),
       );
 
       expect(tester.takeException(), isFlutterError);
     });
+
     testWidgets('creates the value lazily', (tester) async {
       final create = InitialValueBuilderMock<String>('0');
       final stopListening = StopListeningMock();
-      final startListening = DeferredStartListeningMock<String?, int?>(
+      final startListening = DeferredStartListeningMock<String, int>(
         (_, setState, __, ___) {
           setState(0);
           return stopListening;
@@ -1995,9 +1973,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(of<int>(), equals(0));
 
-      verify(create(argThat(isNotNull)!)).called(1);
-      verify(startListening(
-              argThat(isNotNull)!, argThat(isNotNull)!, '0', null))
+      verify(create(argThat(isNotNull))).called(1);
+      verify(startListening(argThat(isNotNull), argThat(isNotNull), '0', null))
           .called(1);
 
       expect(of<int>(), equals(0));
@@ -2006,6 +1983,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       verifyNoMoreInteractions(startListening);
       verifyZeroInteractions(stopListening);
     });
+
     testWidgets('dispose', (tester) async {
       final dispose = DisposeMock<String>();
       final stopListening = StopListeningMock();
@@ -2030,10 +2008,11 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       verifyInOrder([
         stopListening(),
-        dispose(argThat(isNotNull)!, '42'),
+        dispose(argThat(isNotNull), '42'),
       ]);
       verifyNoMoreInteractions(dispose);
     });
+
     testWidgets('dispose no-op if never built', (tester) async {
       final dispose = DisposeMock<String>();
 
@@ -2110,6 +2089,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
     expect(of<int>(), equals(24));
   });
+
   testWidgets('DeferredInheritedProvider can be subclassed', (tester) async {
     await tester.pumpWidget(
       DeferredSubclassProvider(
@@ -2177,7 +2157,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         child: Container(),
       ),
     );
-    verify(startListening(argThat(isNotNull)!, 42)).called(1);
+    verify(startListening(argThat(isNotNull), 42)).called(1);
   });
 
   testWidgets('InheritedProvider.value lazy loading can be disabled',
@@ -2194,9 +2174,10 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    verify(startListening(argThat(isNotNull)!, 42)).called(1);
+    verify(startListening(argThat(isNotNull), 42)).called(1);
     verifyNoMoreInteractions(startListening);
   });
+
   testWidgets(
     "InheritedProvider subclass don't have to specify default lazy value",
     (tester) async {
@@ -2212,14 +2193,14 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       verifyZeroInteractions(create);
       expect(of<int>(), equals(42));
-      verify(create(argThat(isNotNull)!)).called(1);
+      verify(create(argThat(isNotNull))).called(1);
       verifyNoMoreInteractions(create);
     },
   );
   testWidgets('DeferredInheritedProvider lazy loading can be disabled',
       (tester) async {
     final startListening =
-        DeferredStartListeningMock<int?, int?>((a, setState, c, d) {
+        DeferredStartListeningMock<int, int>((a, setState, c, d) {
       setState(0);
       return () {};
     });
@@ -2234,14 +2215,15 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    verify(startListening(argThat(isNotNull)!, argThat(isNotNull)!, 42, null))
+    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null))
         .called(1);
     verifyNoMoreInteractions(startListening);
   });
+
   testWidgets('DeferredInheritedProvider.value lazy loading can be disabled',
       (tester) async {
     final startListening =
-        DeferredStartListeningMock<int?, int?>((a, setState, c, d) {
+        DeferredStartListeningMock<int, int>((a, setState, c, d) {
       setState(0);
       return () {};
     });
@@ -2256,7 +2238,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    verify(startListening(argThat(isNotNull)!, argThat(isNotNull)!, 42, null))
+    verify(startListening(argThat(isNotNull), argThat(isNotNull), 42, null))
         .called(1);
     verifyNoMoreInteractions(startListening);
   });
@@ -2270,8 +2252,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         create: (_) => notifier,
         child: Builder(builder: (context) {
           buildCount++;
-          final isEven = context
-              .select((ValueNotifier<int>? value) => value!.value.isEven);
+          final isEven =
+              context.select((ValueNotifier<int> value) => value.value.isEven);
 
           return Text('$isEven', textDirection: TextDirection.ltr);
         }),
@@ -2297,25 +2279,26 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
   testWidgets('can select multiple types from same provider', (tester) async {
     var buildCount = 0;
 
-    var builder = Builder(builder: (context) {
+    final builder = Builder(builder: (context) {
       buildCount++;
       final isNotNull = context.select((int? value) => value != null);
-      final isAbove0 = context
-          .select((int? value) => (value == null || value > 0).toString());
+      final isAbove0 = context.select((int? value) {
+        return (value == null || value > 0).toString();
+      });
 
       return Text('$isNotNull $isAbove0', textDirection: TextDirection.ltr);
     });
 
-    await tester.pumpWidget(Provider.value(value: 0, child: builder));
+    await tester.pumpWidget(Provider<int?>.value(value: 0, child: builder));
 
     expect(buildCount, 1);
     expect(find.text('true false'), findsOneWidget);
 
-    await tester.pumpWidget(Provider.value(value: -1, child: builder));
+    await tester.pumpWidget(Provider<int?>.value(value: -1, child: builder));
 
     expect(buildCount, 1);
 
-    await tester.pumpWidget(Provider.value(value: 1, child: builder));
+    await tester.pumpWidget(Provider<int?>.value(value: 1, child: builder));
 
     expect(buildCount, 2);
     expect(find.text('true true'), findsOneWidget);
@@ -2325,14 +2308,15 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     expect(buildCount, 3);
     expect(find.text('false true'), findsOneWidget);
   });
+
   testWidgets('can select same type on two different providers',
       (tester) async {
     var buildCount = 0;
 
-    var builder = Builder(builder: (context) {
+    final builder = Builder(builder: (context) {
       buildCount++;
-      final intValue = context.select((int? value) => value.toString());
-      final stringValue = context.select((String? value) => value);
+      final intValue = context.select((int value) => value.toString());
+      final stringValue = context.select((String value) => value);
 
       return Text('$intValue $stringValue', textDirection: TextDirection.ltr);
     });
@@ -2375,14 +2359,13 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     expect(buildCount, 2);
     expect(find.text('1 a'), findsOneWidget);
   });
-  testWidgets(
-      'can give a key to selectors to select same type twice on same provider',
-      (tester) async {
+
+  testWidgets('can select same type twice on same provider', (tester) async {
     var buildCount = 0;
-    var child = Builder(builder: (context) {
+    final child = Builder(builder: (context) {
       buildCount++;
-      final value = context.select((int? value) => value!.isEven);
-      final value2 = context.select((int? value) => value!.isNegative);
+      final value = context.select((int value) => value.isEven);
+      final value2 = context.select((int value) => value.isNegative);
 
       return Text('$value $value2', textDirection: TextDirection.ltr);
     });
@@ -2417,25 +2400,6 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     expect(find.text('true true'), findsOneWidget);
     expect(buildCount, 4);
   });
-  testWidgets(
-      'selecting same provider + same type twice is not allowed without keys',
-      (tester) async {
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          Provider(create: (_) => 42),
-        ],
-        child: Builder(builder: (context) {
-          final value = context.select((int value) => value);
-          final value2 = context.select((int value) => value);
-
-          return Text('$value $value2', textDirection: TextDirection.ltr);
-        }),
-      ),
-    );
-
-    expect(tester.takeException(), isAssertionError);
-  });
 }
 
 class Model {
@@ -2444,17 +2408,22 @@ class Model {
 }
 
 class Example extends StatelessWidget {
+  const Example({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final a = context.select((Model? model) => model!.a);
-    final b = context.select((Model? model) => model!.b);
+    final a = context.select((Model model) => model.a);
+    final b = context.select((Model model) => model.b);
     return Text('$a $b');
   }
 }
 
 class Test<T> extends StatefulWidget {
-  const Test({Key? key, this.didChangeDependencies, this.build})
-      : super(key: key);
+  const Test({
+    Key? key,
+    this.didChangeDependencies,
+    this.build,
+  }) : super(key: key);
 
   final ValueBuilderMock<T>? didChangeDependencies;
   final ValueBuilderMock<T>? build;
@@ -2463,7 +2432,7 @@ class Test<T> extends StatefulWidget {
   _TestState<T> createState() => _TestState<T>();
 }
 
-class _TestState<T> extends State<Test<T?>> {
+class _TestState<T> extends State<Test<T>> {
   @override
   void didChangeDependencies() {
     widget.didChangeDependencies
@@ -2478,42 +2447,48 @@ class _TestState<T> extends State<Test<T?>> {
   }
 }
 
-class SubclassProvider extends InheritedProvider<int?> {
+class SubclassProvider extends InheritedProvider<int> {
   SubclassProvider({
     Key? key,
-    int create(BuildContext c)?,
+    required int Function(BuildContext c) create,
     bool? lazy,
     Widget? child,
   }) : super(key: key, create: create, lazy: lazy, child: child);
 
   SubclassProvider.value({
     Key? key,
-    int? value,
+    required int value,
     Widget? child,
   }) : super.value(key: key, value: value, child: child);
 }
 
-class DeferredSubclassProvider extends DeferredInheritedProvider<int?, int?> {
-  DeferredSubclassProvider({Key? key, int? value, Widget? child})
-      : super(
+class DeferredSubclassProvider extends DeferredInheritedProvider<int, int> {
+  DeferredSubclassProvider({
+    Key? key,
+    required int value,
+    Widget? child,
+  }) : super(
           key: key,
           create: (_) => value,
           startListening: (_, setState, ___, ____) {
             setState(value);
             return () {};
           },
-          child: child!,
+          child: child,
         );
 
-  DeferredSubclassProvider.value({Key? key, int? value, Widget? child})
-      : super.value(
+  DeferredSubclassProvider.value({
+    Key? key,
+    required int value,
+    Widget? child,
+  }) : super.value(
           key: key,
           value: value,
           startListening: (_, setState, ___, ____) {
             setState(value);
             return () {};
           },
-          child: child!,
+          child: child,
         );
 }
 
@@ -2521,6 +2496,7 @@ class StateNotifier<T> extends ValueNotifier<T> {
   StateNotifier(T value) : super(value);
 
   Locator? read;
+
   void update(Locator watch) {}
 }
 
@@ -2542,7 +2518,7 @@ class _Controller2 extends StateNotifier<Counter2> {
   void increment() => value = Counter2(value.count + 1);
 
   @override
-  void update(T? Function<T>() watch) {
+  void update(T Function<T>() watch) {
     watch<Counter1>();
     watch<_Controller1>();
   }
@@ -2557,8 +2533,7 @@ class Counter2 {
 // A stripped version of StateNotifierProvider
 class StateNotifierProvider<Controller extends StateNotifier<Value>, Value>
     extends SingleChildStatelessWidget {
-  // ignore: prefer_const_constructors_in_immutables
-  StateNotifierProvider({
+  const StateNotifierProvider({
     Key? key,
     required this.create,
     this.lazy,
@@ -2572,25 +2547,25 @@ class StateNotifierProvider<Controller extends StateNotifier<Value>, Value>
   Widget buildWithChild(BuildContext context, Widget? child) {
     return InheritedProvider<Controller>(
       create: (context) {
-        assert(debugIsInInheritedProviderCreate!);
-        assert(!debugIsInInheritedProviderUpdate!);
+        assert(debugIsInInheritedProviderCreate);
+        assert(!debugIsInInheritedProviderUpdate);
         return create(context)..read = context.read;
       },
       update: (context, controller) {
-        assert(!debugIsInInheritedProviderCreate!);
-        assert(debugIsInInheritedProviderUpdate!);
+        assert(!debugIsInInheritedProviderCreate);
+        assert(debugIsInInheritedProviderUpdate);
         return controller..update(context.watch);
       },
       dispose: (_, controller) => controller.dispose(),
-      child: DeferredInheritedProvider<Controller?, Value>(
+      child: DeferredInheritedProvider<Controller, Value>(
         lazy: lazy,
         create: (context) {
-          assert(debugIsInInheritedProviderCreate!);
-          assert(!debugIsInInheritedProviderUpdate!);
+          assert(debugIsInInheritedProviderCreate);
+          assert(!debugIsInInheritedProviderUpdate);
           return context.read<Controller>();
         },
         startListening: (context, setState, controller, _) {
-          setState(controller!.value);
+          setState(controller.value);
           void listener() => setState(controller.value);
           controller.addListener(listener);
           return () => controller.removeListener(listener);

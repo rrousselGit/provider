@@ -169,15 +169,19 @@ class Consumer<T> extends SingleChildStatelessWidget {
   ///
   /// Must not be `null`.
   /// {@endtemplate}
-  final Widget? Function(BuildContext context, T value, Widget? child) builder;
+  final Widget Function(
+    BuildContext context,
+    T value,
+    Widget? child,
+  ) builder;
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<T>(context)!,
+      Provider.of<T>(context),
       child,
-    )!;
+    );
   }
 }
 
@@ -191,17 +195,21 @@ class Consumer2<A, B> extends SingleChildStatelessWidget {
   }) : super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget? Function(BuildContext context, A value, B value2, Widget? child)
-      builder;
+  final Widget Function(
+    BuildContext context,
+    A value,
+    B value2,
+    Widget? child,
+  ) builder;
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<A>(context)!,
-      Provider.of<B>(context)!,
+      Provider.of<A>(context),
+      Provider.of<B>(context),
       child,
-    )!;
+    );
   }
 }
 
@@ -215,18 +223,23 @@ class Consumer3<A, B, C> extends SingleChildStatelessWidget {
   }) : super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget? Function(
-      BuildContext context, A value, B value2, C value3, Widget? child) builder;
+  final Widget Function(
+    BuildContext context,
+    A value,
+    B value2,
+    C value3,
+    Widget? child,
+  ) builder;
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<A>(context)!,
-      Provider.of<B>(context)!,
-      Provider.of<C>(context)!,
+      Provider.of<A>(context),
+      Provider.of<B>(context),
+      Provider.of<C>(context),
       child,
-    )!;
+    );
   }
 }
 
@@ -240,7 +253,7 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
   }) : super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget? Function(
+  final Widget Function(
     BuildContext context,
     A value,
     B value2,
@@ -253,12 +266,12 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<A>(context)!,
-      Provider.of<B>(context)!,
-      Provider.of<C>(context)!,
-      Provider.of<D>(context)!,
+      Provider.of<A>(context),
+      Provider.of<B>(context),
+      Provider.of<C>(context),
+      Provider.of<D>(context),
       child,
-    )!;
+    );
   }
 }
 
@@ -272,7 +285,7 @@ class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
   }) : super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget? Function(
+  final Widget Function(
     BuildContext context,
     A value,
     B value2,
@@ -286,13 +299,13 @@ class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<A>(context)!,
-      Provider.of<B>(context)!,
-      Provider.of<C>(context)!,
-      Provider.of<D>(context)!,
-      Provider.of<E>(context)!,
+      Provider.of<A>(context),
+      Provider.of<B>(context),
+      Provider.of<C>(context),
+      Provider.of<D>(context),
+      Provider.of<E>(context),
       child,
-    )!;
+    );
   }
 }
 
@@ -306,7 +319,7 @@ class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
   }) : super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
-  final Widget? Function(
+  final Widget Function(
     BuildContext context,
     A value,
     B value2,
@@ -321,13 +334,13 @@ class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<A>(context)!,
-      Provider.of<B>(context)!,
-      Provider.of<C>(context)!,
-      Provider.of<D>(context)!,
-      Provider.of<E>(context)!,
-      Provider.of<F>(context)!,
+      Provider.of<A>(context),
+      Provider.of<B>(context),
+      Provider.of<C>(context),
+      Provider.of<D>(context),
+      Provider.of<E>(context),
+      Provider.of<F>(context),
       child,
-    )!;
+    );
   }
 }

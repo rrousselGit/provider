@@ -9,4 +9,3 @@ export 'src/provider.dart'
 export 'src/proxy_provider.dart';
 export 'src/reassemble_handler.dart';
 export 'src/selector.dart';
-export 'src/value_listenable_provider.dart';
