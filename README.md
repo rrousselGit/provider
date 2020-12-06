@@ -26,50 +26,55 @@ See also:
 - [flutter architecture sample](https://github.com/brianegan/flutter_architecture_samples/tree/master/change_notifier_provider), which contains an implementation of that app using `provider` + [ChangeNotifier]
 - [flutter_bloc](https://github.com/felangel/bloc) and [Mobx](https://github.com/mobxjs/mobx.dart), which use `provider` in their architecture
 
-## Migration from v3.x.0 to v4.0.0
+## Migration from 4.x.x to 5.0.0-nullsafety
 
-- The parameters `builder` and `initialBuilder` of providers are removed.
+- `initialData` for both `FutureProvider` and `StreamProvider` is now required.
 
-  - `initialBuilder` should be replaced by `create`.
-  - `builder` of "proxy" providers should be replaced by `update`
-  - `builder` of classical providers should be replaced by `create`.
-
-- The new `create`/`update` callbacks are lazy-loaded, which means they are called
-  the first time the value is read instead of the first time the provider is created.
-
-  If this is undesired, you can disable lazy-loading by passing `lazy: false` to
-  the provider of your choice:
+  To migrate, what used to be:
 
   ```dart
-  FutureProvider(
-    create: (_) async => doSomeHttpRequest(),
-    lazy: false,
-    child: ...
+  FutureProvider<int>(
+    create: (context) => Future.value(42),
+    child: MyApp(),
   )
+
+  Widget build(BuildContext context) {
+    final value = context.watch<int>();
+    return Text('$value');
+  }
   ```
 
-- `ProviderNotFoundError` is renamed to `ProviderNotFoundException`.
-
-- The `SingleChildCloneableWidget` interface is removed and replaced by a new kind
-  of widget `SingleChildWidget`.
-
-  See [this issue](https://github.com/rrousselGit/provider/issues/237) for details
-  on how to migrate.
-
-- [Selector] now deeply compares the previous and new values if they are collections.
-
-  If this is undesired, you can revert to the old behavior by passing a `shouldRebuild`
-  parameter to [Selector]:
+  is now:
 
   ```dart
-  Selector<Selected, Consumed>(
-    shouldRebuild: (previous, next) => previous == next,
-    builder: ...,
+  FutureProvider<int?>(
+    initialValue: null,
+    create: (context) => Future.value(42),
+    child: MyApp(),
   )
+
+  Widget build(BuildContext context) {
+    // be sure to specify the ? in watch<int?>
+    final value = context.watch<int?>();
+    return Text('$value');
+  }
   ```
 
-- `DelegateWidget` and its family is removed. Instead, for custom providers,
-  directly subclass [InheritedProvider] or an existing provider.
+- `ValueListenableProvider` is removed
+
+  To migrate, you can instead use `Provider` combined with `ValueListenableBuilder`:
+
+  ```dart
+  ValueListenableBuilder<int>(
+    valueListenable: myValueListenable,
+    builder: (context, value, _) {
+      return Provider<int>.value(
+        value: value,
+        child: MyApp(),
+      );
+    }
+  )
+  ```
 
 ## Usage
 

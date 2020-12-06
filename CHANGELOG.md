@@ -2,9 +2,53 @@
 
 Migrated Provider to non-nullable types:
 
-- `StreamProvider.initialData` is now required
-- `FutureProvider.initialData` is now required
+- `initialData` for both `FutureProvider` and `StreamProvider` is now required.
+
+  To migrate, what used to be:
+
+  ```dart
+  FutureProvider<int>(
+    create: (context) => Future.value(42),
+    child: MyApp(),
+  )
+
+  Widget build(BuildContext context) {
+    final value = context.watch<int>();
+    return Text('$value');
+  }
+  ```
+
+  is now:
+
+  ```dart
+  FutureProvider<int?>(
+    initialValue: null,
+    create: (context) => Future.value(42),
+    child: MyApp(),
+  )
+
+  Widget build(BuildContext context) {
+    // be sure to specify the ? in watch<int?>
+    final value = context.watch<int?>();
+    return Text('$value');
+  }
+  ```
+
 - `ValueListenableProvider` is removed
+
+  To migrate, you can instead use `Provider` combined with `ValueListenableBuilder`:
+
+  ```dart
+  ValueListenableBuilder<int>(
+    valueListenable: myValueListenable,
+    builder: (context, value, _) {
+      return Provider<int>.value(
+        value: value,
+        child: MyApp(),
+      );
+    }
+  )
+  ```
 
 # 4.3.2+2
 
