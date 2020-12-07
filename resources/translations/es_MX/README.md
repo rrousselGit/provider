@@ -6,7 +6,7 @@
 [<img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
 
 Un wrapper alrededor de [InheritedWidget] 
-para hacerlo más fácil de user y usable.
+para hacerlo más fácil de user y más utilizable.
 
 Al utilizar `provider` en lugar de escribir manualmente los [InheritedWidget], obtendrás:
 
