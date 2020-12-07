@@ -26,7 +26,7 @@ Ver también:
 - [Ejemplos de arquitectura en Flutter](https://github.com/brianegan/flutter_architecture_samples/tree/master/change_notifier_provider), la cual contiene una implementación de una app usando `provider` + [ChangeNotifier]
 - [flutter_bloc](https://github.com/felangel/bloc) y [Mobx](https://github.com/mobxjs/mobx.dart), los cuales usan `provider`  en su arquitectura.
 
-## Migration from v3.x.0 to v4.0.0
+## Migrar de v3.x.0 a v4.0.0
 
 - Los parámetros `builder` e `initialBuilder` de providers son eliminados.
 
@@ -54,7 +54,7 @@ Ver también:
   de widget `SingleChildWidget`.
 
   Ve [este issue](https://github.com/rrousselGit/provider/issues/237) para detalles
-  acerca de como migrarlo.
+  acerca de como migrar.
 
 - [Selector] ahora comprara más profundamente el valor anterior y nuevo si estas son colecciones.
 
@@ -68,8 +68,8 @@ Ver también:
   )
   ```
 
-- `DelegateWidget` y su familia han sido eliminados. En su lugar, para providers personalizados,
-  subclasses directamente [InheritedProvider] o un provider existente 
+- `DelegateWidget` y su familia han sido eliminados. En su lugar, para providers personalizados tendran
+  subclasses directas [InheritedProvider] o un provider existente.
 
 ## Uso
 
@@ -77,7 +77,7 @@ Ver también:
 
 #### Exponiendo una nueva instancia del objeto
 
-Los providers permiten no sólo exponer un valor, sino también crear/escuchar/eliminarlo.
+Los providers permiten no solo exponer un valor, sino también crear/escuchar/eliminarlo.
 
 Para exponer un objeto recién creado, utilice el constructor por defecto de un provider.
 _No uses_ el constructor `.value` si quieres **crear** un objeto, o
