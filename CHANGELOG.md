@@ -49,6 +49,9 @@ Migrated Provider to non-nullable types:
     }
   )
   ```
+# 4.3.2+3
+
+Marked `ValueListenableProvider` as deprecated
 
 # 4.3.2+2
 
