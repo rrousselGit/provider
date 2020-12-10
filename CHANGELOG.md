@@ -1,3 +1,7 @@
+# 5.0.0-nullsafety.1
+
+- Reintroduced `ValueListenableProvider.value` (the default constructor is still removed).
+
 # 5.0.0-nullsafety.0
 
 Migrated Provider to non-nullable types:
@@ -49,6 +53,7 @@ Migrated Provider to non-nullable types:
     }
   )
   ```
+
 # 4.3.2+3
 
 Marked `ValueListenableProvider` as deprecated
