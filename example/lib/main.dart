@@ -75,6 +75,8 @@ class MyHomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        key: const Key('increment_floatingActionButton'),
+
         /// Calls `context.read` instead of `context.watch` so that it does not rebuild
         /// when [Counter] changes.
         onPressed: () => context.read<Counter>().increment(),
@@ -94,6 +96,7 @@ class Count extends StatelessWidget {
 
         /// Calls `context.watch` to make [Count] rebuild when [Counter] changes.
         '${context.watch<Counter>().count}',
+        key: const Key('counterState'),
         style: Theme.of(context).textTheme.headline4);
   }
 }
