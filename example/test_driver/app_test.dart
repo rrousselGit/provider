@@ -1,10 +1,10 @@
-// Imports the Flutter Driver API.
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('counter app', () {
-    FlutterDriver _driver;
+    FlutterDriver? _driver;
 
     final incrementFloatingButton =
         find.byValueKey('increment_floatingActionButton');
@@ -22,21 +22,21 @@ void main() {
     });
 
     test('AppBar is Flutter Demo Home Page', () async {
-      expect(await _driver.getText(appBarText), 'Example');
+      expect(await _driver!.getText(appBarText), 'Example');
     });
 
     test('counterText is started with 0', () async {
-      expect(await _driver.getText(counterState), '0');
+      expect(await _driver!.getText(counterState), '0');
     });
 
     test('pressed increment floating action button twice', () async {
       // tap floating action button
-      await _driver.tap(incrementFloatingButton);
-      expect(await _driver.getText(counterState), '1');
+      await _driver!.tap(incrementFloatingButton);
+      expect(await _driver!.getText(counterState), '1');
 
       // tap floating action button
-      await _driver.tap(incrementFloatingButton);
-      expect(await _driver.getText(counterState), '2');
+      await _driver!.tap(incrementFloatingButton);
+      expect(await _driver!.getText(counterState), '2');
     });
   });
 }
