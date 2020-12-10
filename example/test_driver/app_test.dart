@@ -2,34 +2,41 @@
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 
-import 'screens/app_screen.dart';
-
 void main() {
   group('counter app', () {
-    FlutterDriver driver;
-    AppScreen appScreen;
+    FlutterDriver _driver;
+
+    final incrementFloatingButton =
+        find.byValueKey('increment_floatingActionButton');
+    final appBarText = find.text('Example');
+    final counterState = find.byValueKey('counterState');
 
     /// connect to [FlutterDriver]
     setUpAll(() async {
-      driver = await FlutterDriver.connect();
-      appScreen = AppScreen(driver);
+      _driver = await FlutterDriver.connect();
     });
 
     /// close the driver
     tearDownAll(() async {
-      await driver?.close();
+      await _driver?.close();
     });
 
     test('AppBar is Flutter Demo Home Page', () async {
-      await appScreen.verifyTheAppBarText();
+      expect(await _driver.getText(appBarText), 'Example');
     });
 
     test('counterText is started with 0', () async {
-      await appScreen.verifyCounterTextIsZero();
+      expect(await _driver.getText(counterState), '0');
     });
 
     test('pressed increment floating action button twice', () async {
-      await appScreen.pressIncrementFloatingActionButtonTwice();
+      // tap floating action button
+      await _driver.tap(incrementFloatingButton);
+      expect(await _driver.getText(counterState), '1');
+
+      // tap floating action button
+      await _driver.tap(incrementFloatingButton);
+      expect(await _driver.getText(counterState), '2');
     });
   });
 }
