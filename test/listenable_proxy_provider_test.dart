@@ -7,6 +7,7 @@ import 'package:provider/src/provider.dart';
 
 import 'common.dart';
 
+// ignore: prefer_mixin, must_be_immutable
 class _ListenableCombined = Combined with ChangeNotifier;
 
 void main() {

@@ -73,6 +73,12 @@ void main() {
       await tester.pump();
 
       expect(find.text('2'), findsOneWidget);
+
+      await tester.pump();
+      // ignore: unawaited_futures
+      controller.close();
+      // ignore: unawaited_futures
+      controller2.close();
     },
   );
   testWidgets('throws if stream has error and catchError is missing',
@@ -96,6 +102,9 @@ StreamProvider<int>, but no `catchError` was provided.
 Exception:
 42
 '''));
+
+    // ignore: unawaited_futures
+    controller.close();
   });
   testWidgets('calls catchError if present and stream has error',
       (tester) async {
@@ -118,6 +127,9 @@ Exception:
     expect(find.text('42'), findsOneWidget);
     verify(catchError(argThat(isNotNull), 42)).called(1);
     verifyNoMoreInteractions(catchError);
+
+    // ignore: unawaited_futures
+    controller.close();
   });
   testWidgets('works with null', (tester) async {
     await tester.pumpWidget(

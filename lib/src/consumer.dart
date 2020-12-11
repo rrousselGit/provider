@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
+
 import 'provider.dart';
 import 'selector.dart' show Selector;
 
@@ -250,6 +252,7 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
     D value4,
     Widget child,
   ) builder;
+
   @override
   Widget buildWithChild(BuildContext context, Widget child) {
     return builder(

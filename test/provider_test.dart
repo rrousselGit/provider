@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart' hide TypeMatcher;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-// ignore: deprecated_member_use
-import 'package:test_api/test_api.dart' show TypeMatcher;
+import 'package:test/test.dart' show TypeMatcher;
 
 import 'common.dart';
 
@@ -231,7 +230,7 @@ void main() {
 
       await tester.pumpWidget(
         Provider<double>.value(
-          value: 24.0,
+          value: 24,
           child: Provider<int>.value(
             value: 42,
             child: builder,
@@ -246,7 +245,7 @@ void main() {
       // nothing changed
       await tester.pumpWidget(
         Provider<double>.value(
-          value: 24.0,
+          value: 24,
           child: Provider<int>.value(
             value: 42,
             child: builder,
@@ -259,7 +258,7 @@ void main() {
       // changed a value we are subscribed to
       await tester.pumpWidget(
         Provider<double>.value(
-          value: 24.0,
+          value: 24,
           child: Provider<int>.value(
             value: 43,
             child: builder,
@@ -274,7 +273,7 @@ void main() {
       // changed a value we are _not_ subscribed to
       await tester.pumpWidget(
         Provider<double>.value(
-          value: 20.0,
+          value: 20,
           child: Provider<int>.value(
             value: 43,
             child: builder,
@@ -303,12 +302,12 @@ void main() {
       int old;
       int curr;
       var callCount = 0;
-      final updateShouldNotify = (int o, int c) {
+      bool updateShouldNotify(int o, int c) {
         callCount++;
         old = o;
         curr = c;
         return o != c;
-      };
+      }
 
       var buildCount = 0;
       int buildValue;

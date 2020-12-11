@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+
 import 'common.dart';
 
 class ValueNotifierMock<T> extends Mock implements ValueNotifier<T> {}
@@ -24,7 +25,7 @@ void main() {
       expect(find.text('0'), findsOneWidget);
     });
     testWidgets(
-        'disposing ValueListenableProvider on a create constructor disposes of'
+        'disposing ValueListenableProvider on a create constructor disposes of '
         'the ValueNotifier', (tester) async {
       final mock = ValueNotifierMock<int>();
       await tester.pumpWidget(
@@ -130,7 +131,7 @@ void main() {
       final shouldNotify = UpdateShouldNotifyMock<int>();
       when(shouldNotify(0, 1)).thenReturn(true);
 
-      var notifier = ValueNotifier(0);
+      final notifier = ValueNotifier(0);
       await tester.pumpWidget(
         ValueListenableProvider.value(
           value: notifier,

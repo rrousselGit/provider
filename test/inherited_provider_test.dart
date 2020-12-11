@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -8,6 +9,8 @@ import 'package:provider/src/provider.dart';
 import 'common.dart';
 
 class Context extends StatelessWidget {
+  const Context({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container();
@@ -269,7 +272,7 @@ void main() {
           ValueListenableProvider.value(value: notifier),
           ProxyProvider<int, String>(update: (a, b, c) => '$b'),
         ],
-        child: Context(),
+        child: const Context(),
       ),
     );
 
@@ -319,7 +322,7 @@ void main() {
       (tester) async {
     final child = Container();
 
-    var notifier = ValueNotifier(0);
+    final notifier = ValueNotifier(0);
     final builder = TransitionBuilderMock((c, child) {
       final notifier = Provider.of<ValueNotifier<int>>(c);
       return Text(
@@ -351,7 +354,7 @@ void main() {
       (tester) async {
     final child = Container();
 
-    var notifier = ValueNotifier(0);
+    final notifier = ValueNotifier(0);
     final builder = TransitionBuilderMock((c, child) {
       return const Text('foo', textDirection: TextDirection.ltr);
     });
@@ -380,7 +383,7 @@ void main() {
   testWidgets('builder rebuilds if provider is recreated', (tester) async {
     final child = Container();
 
-    var notifier = ValueNotifier(0);
+    final notifier = ValueNotifier(0);
     final builder = TransitionBuilderMock((c, child) {
       return const Text('foo', textDirection: TextDirection.ltr);
     });
@@ -414,7 +417,7 @@ void main() {
     await tester.pumpWidget(
       InheritedProvider<int>.value(
         value: 42,
-        child: Context(),
+        child: const Context(),
       ),
     );
 
@@ -892,7 +895,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         ),
       );
       expect(buildCount, equals(1));
-      verify(updateShouldNotify(42, 43))..called(1);
+      verify(updateShouldNotify(42, 43)).called(1);
 
       when(updateShouldNotify(any, any)).thenReturn(true);
       await tester.pumpWidget(
@@ -903,7 +906,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         ),
       );
       expect(buildCount, equals(2));
-      verify(updateShouldNotify(43, 44))..called(1);
+      verify(updateShouldNotify(43, 44)).called(1);
 
       verifyNoMoreInteractions(updateShouldNotify);
     });
@@ -912,7 +915,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     testWidgets('hasValue', (tester) async {
       await tester.pumpWidget(InheritedProvider(
         create: (_) => 42,
-        child: Context(),
+        child: const Context(),
       ));
 
       final inheritedContext = tester.element(find.byElementPredicate((e) {
@@ -1005,7 +1008,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           value: 42,
           child: InheritedProvider<String>(
             update: (context, __) => Provider.of<int>(context).toString(),
-            child: Context(),
+            child: const Context(),
           ),
         ),
       );
@@ -1243,7 +1246,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       },
     );
     testWidgets(
-      'builder is called on every rebuild'
+      'builder is called on every rebuild '
       'and after a dependency change',
       (tester) async {
         int lastValue;
@@ -1405,7 +1408,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
             lastValue = last;
             return 42;
           },
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -1459,8 +1462,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       await tester.pumpWidget(
         InheritedProvider<String>.value(
           value: '24',
-          child: child,
           updateShouldNotify: (_, __) => true,
+          child: child,
         ),
       );
 
@@ -1471,7 +1474,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       await tester.pumpWidget(
         InheritedProvider<int>(
           create: (_) => 42,
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -1483,7 +1486,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         InheritedProvider<int>(
           update: (_, __) => 42,
           dispose: dispose,
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -1520,7 +1523,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         InheritedProvider<int>(
           update: (_, __) => 42,
           dispose: dispose,
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -1563,7 +1566,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
             lastValue = last;
             return 42;
           },
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -1576,7 +1579,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
             lastValue = last;
             return 24;
           },
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -1596,7 +1599,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       await tester.pumpWidget(
         InheritedProvider<int>(
           create: initialValueBuilder,
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -1610,7 +1613,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       await tester.pumpWidget(
         InheritedProvider<int>(
           create: initialValueBuilder,
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -1652,7 +1655,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         DeferredInheritedProvider<ValueNotifier<int>, int>.value(
           value: controller,
           startListening: startListening,
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -1675,7 +1678,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         DeferredInheritedProvider<ValueNotifier<int>, int>.value(
           value: controller,
           startListening: startListening,
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -1976,7 +1979,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         DeferredInheritedProvider<String, int>(
           create: create,
           startListening: startListening,
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -2008,7 +2011,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
             return stopListening;
           },
           dispose: dispose,
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -2035,7 +2038,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
             return () {};
           },
           dispose: dispose,
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -2084,7 +2087,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       SubclassProvider(
         key: UniqueKey(),
         create: (_) => 42,
-        child: Context(),
+        child: const Context(),
       ),
     );
 
@@ -2094,7 +2097,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       SubclassProvider.value(
         key: UniqueKey(),
         value: 24,
-        child: Context(),
+        child: const Context(),
       ),
     );
 
@@ -2105,7 +2108,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       DeferredSubclassProvider(
         key: UniqueKey(),
         value: 42,
-        child: Context(),
+        child: const Context(),
       ),
     );
 
@@ -2115,7 +2118,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       DeferredSubclassProvider.value(
         key: UniqueKey(),
         value: 24,
-        child: Context(),
+        child: const Context(),
       ),
     );
 
@@ -2128,7 +2131,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         providers: [
           InheritedProvider.value(value: 42),
         ],
-        child: Context(),
+        child: const Context(),
       ),
     );
 
@@ -2196,7 +2199,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         SubclassProvider(
           key: UniqueKey(),
           create: create,
-          child: Context(),
+          child: const Context(),
         ),
       );
 
@@ -2287,7 +2290,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
   testWidgets('can select multiple types from same provider', (tester) async {
     var buildCount = 0;
 
-    var builder = Builder(builder: (context) {
+    final builder = Builder(builder: (context) {
       buildCount++;
       final isNotNull = context.select((int value) => value != null);
       final isAbove0 = context
@@ -2319,7 +2322,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       (tester) async {
     var buildCount = 0;
 
-    var builder = Builder(builder: (context) {
+    final builder = Builder(builder: (context) {
       buildCount++;
       final intValue = context.select((int value) => value.toString());
       final stringValue = context.select((String value) => value);
@@ -2367,7 +2370,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
   });
   testWidgets('can select same type twice on same provider', (tester) async {
     var buildCount = 0;
-    var child = Builder(builder: (context) {
+    final child = Builder(builder: (context) {
       buildCount++;
       final value = context.select((int value) => value.isEven);
       final value2 = context.select((int value) => value.isNegative);
@@ -2413,6 +2416,8 @@ class Model {
 }
 
 class Example extends StatelessWidget {
+  const Example({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final a = context.select((Model model) => model.a);
@@ -2450,7 +2455,7 @@ class _TestState<T> extends State<Test<T>> {
 class SubclassProvider extends InheritedProvider<int> {
   SubclassProvider({
     Key key,
-    int create(BuildContext c),
+    int Function(BuildContext c) create,
     bool lazy,
     Widget child,
   }) : super(key: key, create: create, lazy: lazy, child: child);
@@ -2490,6 +2495,7 @@ class StateNotifier<T> extends ValueNotifier<T> {
   StateNotifier(T value) : super(value);
 
   Locator read;
+
   void update(Locator watch) {}
 }
 
@@ -2526,8 +2532,7 @@ class Counter2 {
 // A stripped version of StateNotifierProvider
 class StateNotifierProvider<Controller extends StateNotifier<Value>, Value>
     extends SingleChildStatelessWidget {
-  // ignore: prefer_const_constructors_in_immutables
-  StateNotifierProvider({
+  const StateNotifierProvider({
     Key key,
     @required this.create,
     this.lazy,
@@ -2561,7 +2566,7 @@ class StateNotifierProvider<Controller extends StateNotifier<Value>, Value>
         },
         startListening: (context, setState, controller, _) {
           setState(controller.value);
-          final listener = () => setState(controller.value);
+          void listener() => setState(controller.value);
           controller.addListener(listener);
           return () => controller.removeListener(listener);
         },

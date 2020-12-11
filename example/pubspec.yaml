@@ -1,7 +1,8 @@
 name: example
 version: 1.0.0
-homepage: https://github.com/rrousselGit/provider	
+homepage: https://github.com/rrousselGit/provider
 author: Remi Rousselet <darky12s@gmail.com>
+publish_to: "none"
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -14,6 +15,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_driver:
+    sdk: flutter
+  test: ^1.15.7
 
 dependency_overrides:
   provider:

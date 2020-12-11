@@ -5,6 +5,7 @@ import 'listenable_provider.dart' show ListenableProvider;
 import 'provider.dart';
 
 /// Listens to a [ValueListenable] and expose its current value.
+@Deprecated('Will be removed in 5.0.0')
 class ValueListenableProvider<T>
     extends DeferredInheritedProvider<ValueListenable<T>, T> {
   /// Creates a [ValueNotifier] using [create] and automatically dispose it
@@ -80,7 +81,7 @@ class ValueListenableProvider<T>
     return (_, setState, controller, __) {
       setState(controller.value);
 
-      final listener = () => setState(controller.value);
+      void listener() => setState(controller.value);
       controller.addListener(listener);
       return () => controller.removeListener(listener);
     };
