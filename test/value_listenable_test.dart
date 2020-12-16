@@ -120,5 +120,19 @@ void main() {
       verify(shouldNotify(0, 1)).called(1);
       verifyNoMoreInteractions(shouldNotify);
     });
+
+    test('has correct debugFillProperties', () {
+      final builder = DiagnosticPropertiesBuilder();
+      final notifier = ValueNotifier(0);
+      ValueListenableProvider.value(value: notifier, child: const SizedBox())
+          .debugFillProperties(builder);
+      final description = builder.properties
+          .where(
+            (DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info),
+          )
+          .map((DiagnosticsNode node) => node.toString())
+          .toList();
+      expect(description, <String>['value: 0']);
+    });
   });
 }

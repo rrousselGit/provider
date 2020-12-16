@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -5,6 +6,7 @@ import 'package:mockito/mockito.dart' as mockito show when;
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 void mockImplementation<T extends Function>(dynamic Function() when, T mock) {
   mockito.when<dynamic>(when()).thenAnswer((invo) {
@@ -332,6 +334,29 @@ void main() {
     verifyNoMoreInteractions(selector);
     verifyNoMoreInteractions(builder);
     expect(find.text('24'), findsOneWidget);
+  });
+
+  testWidgets('debugFillProperties', (tester) async {
+    final builder = DiagnosticPropertiesBuilder();
+    final key = UniqueKey();
+    final selector = Selector0<int>(
+      key: key,
+      selector: (_) => 0,
+      builder: (_, __, ___) => const SizedBox(),
+    );
+
+    await tester.pumpWidget(selector);
+
+    final element = tester.element(find.byKey(key)) as StatefulElement;
+    final selectorState = element.state as SingleChildState<Selector0<int>>;
+    selectorState.debugFillProperties(builder);
+    final description = builder.properties
+        .where(
+          (DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info),
+        )
+        .map((DiagnosticsNode node) => node.toString())
+        .toList();
+    expect(description, <String>['value: 0']);
   });
 
   testWidgets('Selector', (tester) async {
