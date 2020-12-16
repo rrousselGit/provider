@@ -280,8 +280,7 @@ The context used was: $context
     if (listen) {
       context.dependOnInheritedElement(inheritedElement);
     }
-
-    return inheritedElement.value;
+    return inheritedElement.value as T;
   }
 
   static _InheritedProviderScopeElement<T> _inheritedElementOf<T>(
