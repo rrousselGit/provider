@@ -253,7 +253,7 @@ Any usage other than inside the `build` method of a widget are not supported.
         _debugIsSelecting = true;
         return true;
       }());
-      final selected = selector(value as T);
+      final selected = selector(value);
       dependOnInheritedElement(
         inheritedElement,
         aspect: (T newValue) => !const DeepCollectionEquality()
@@ -277,7 +277,7 @@ abstract class InheritedContext<T> extends BuildContext {
   ///
   /// This property is lazy loaded, and reading it the first time may trigger
   /// some side-effects such as creating a [T] instance or start a subscription.
-  T? get value;
+  T get value;
 
   /// Marks the [InheritedProvider] as needing to update dependents.
   ///
@@ -396,7 +396,7 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
               _debugIsSelecting = true;
               return true;
             }());
-            shouldNotify = updateShouldNotify(value as T);
+            shouldNotify = updateShouldNotify(value);
           } finally {
             assert(() {
               _debugIsSelecting = false;
@@ -506,7 +506,7 @@ If you're in this situation, consider passing a `key` unique to each individual 
   }
 
   @override
-  T? get value => _delegateState.value;
+  T get value => _delegateState.value;
 
   @override
   InheritedWidget dependOnInheritedElement(
@@ -563,7 +563,7 @@ abstract class _Delegate<T> {
 abstract class _DelegateState<T, D extends _Delegate<T>> {
   _InheritedProviderScopeElement<T>? element;
 
-  T? get value;
+  T get value;
 
   D get delegate => element!.widget.owner._delegate as D;
 
@@ -621,7 +621,13 @@ class _CreateInheritedProviderState<T>
   _CreateInheritedProvider<T>? _previousWidget;
 
   @override
-  T? get value {
+  T get value {
+    if (_didInitValue && _value is! T) {
+      throw StateError(
+        'Tried to read a provider that threw during the creation of its value.\n'
+        'The exception occurred during the creation of type $T.',
+      );
+    }
     bool? _debugPreviousIsInInheritedProviderCreate;
     bool? _debugPreviousIsInInheritedProviderUpdate;
 
@@ -679,28 +685,24 @@ class _CreateInheritedProviderState<T>
         }
 
         assert(() {
-          if (_value is T) {
-            delegate.debugCheckInvalidValueType?.call(_value as T);
-          }
+          delegate.debugCheckInvalidValueType?.call(_value as T);
           return true;
         }());
       }
     }
 
     element!._isNotifyDependentsEnabled = false;
-    if (_value is T) {
-      _removeListener ??= delegate.startListening?.call(element!, _value as T);
-      element!._isNotifyDependentsEnabled = true;
-      assert(delegate.startListening == null || _removeListener != null);
-    }
-    return _value;
+    _removeListener ??= delegate.startListening?.call(element!, _value as T);
+    element!._isNotifyDependentsEnabled = true;
+    assert(delegate.startListening == null || _removeListener != null);
+    return _value as T;
   }
 
   @override
   void dispose() {
     super.dispose();
     _removeListener?.call();
-    if (_didInitValue && _value is T) {
+    if (_didInitValue) {
       delegate.dispose?.call(element!, _value as T);
     }
   }

@@ -2401,36 +2401,102 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     expect(buildCount, 4);
   });
 
-  testWidgets('throws ProviderNotFoundException if lookup fails within create',
+  testWidgets('StateError is thrown when lookup fails within create',
       (tester) async {
-    await tester.pumpWidget(Provider(
-      lazy: false,
-      create: (context) {
-        context.read<String>();
-        return 42;
-      },
-      child: const SizedBox(),
-    ));
-    final dynamic exception = tester.takeException();
-    expect(
-      exception,
-      isA<ProviderNotFoundException>().having(
-        (e) => e.valueType,
-        'valueType',
-        String,
+    const expected =
+        'Tried to read a provider that threw during the creation of its value.\n'
+        'The exception occurred during the creation of type int.';
+    final onError = FlutterError.onError;
+    final flutterErrors = <FlutterErrorDetails>[];
+    FlutterError.onError = flutterErrors.add;
+
+    await tester.pumpWidget(
+      Provider(
+        lazy: false,
+        create: (context) {
+          context.read<String>();
+          return 42;
+        },
+        child: const SizedBox(),
       ),
     );
+
+    expect(
+      flutterErrors,
+      contains(
+        isA<FlutterErrorDetails>().having(
+          (e) => e.exception,
+          'exception',
+          isA<StateError>().having((s) => s.message, 'message', expected),
+        ),
+      ),
+    );
+
+    FlutterError.onError = onError;
   });
 
-  testWidgets('propagates exceptions within create', (tester) async {
-    final e = Exception('oops');
-    await tester.pumpWidget(Provider(
-      lazy: false,
-      create: (context) => throw e,
-      child: const SizedBox(),
-    ));
-    final dynamic exception = tester.takeException();
-    expect(exception, equals(e));
+  testWidgets('StateError is thrown when exception occurs in create',
+      (tester) async {
+    const expected =
+        'Tried to read a provider that threw during the creation of its value.\n'
+        'The exception occurred during the creation of type String.';
+    final onError = FlutterError.onError;
+    final flutterErrors = <FlutterErrorDetails>[];
+    FlutterError.onError = flutterErrors.add;
+
+    await tester.pumpWidget(
+      Provider<String>(
+        lazy: false,
+        create: (_) => throw Exception('oops'),
+        child: const SizedBox(),
+      ),
+    );
+
+    expect(
+      flutterErrors,
+      contains(
+        isA<FlutterErrorDetails>().having(
+          (e) => e.exception,
+          'exception',
+          isA<StateError>().having((s) => s.message, 'message', expected),
+        ),
+      ),
+    );
+
+    FlutterError.onError = onError;
+  });
+
+  testWidgets(
+      'Exception is propagated when context.watch is called after a provider threw',
+      (tester) async {
+    final onError = FlutterError.onError;
+    final flutterErrors = <FlutterErrorDetails>[];
+    final exception = Exception('oops');
+    FlutterError.onError = flutterErrors.add;
+
+    await tester.pumpWidget(
+      Provider<String>(
+        create: (_) => throw exception,
+        child: Builder(
+          builder: (context) {
+            return Text(context.watch<String>());
+          },
+        ),
+      ),
+    );
+
+    expect(
+      flutterErrors,
+      contains(
+        isA<FlutterErrorDetails>().having(
+          (e) => e.exception,
+          'exception',
+          exception,
+        ),
+      ),
+    );
+
+    FlutterError.onError = onError;
   });
 }
 
