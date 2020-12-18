@@ -1,3 +1,7 @@
+# 5.0.0-nullsafety.2
+
+- Improved the error message when an exception is thrown inside `create` of a provider`
+
 # 5.0.0-nullsafety.1
 
 - Reintroduced `ValueListenableProvider.value` (the default constructor is still removed).
