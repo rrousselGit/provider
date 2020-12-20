@@ -5,6 +5,7 @@
 
 [<img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
 
+
 Un wrapper alrededor de [InheritedWidget]
 para hacerlo más fácil de usar y más utilizable.
 
@@ -15,7 +16,7 @@ Al utilizar `provider` en lugar de escribir manualmente los [InheritedWidget], o
 - un boilerplate muy reducido en lugar de hacer una nueva clase cada vez.
 - compatibilidad con devtools
 - una manera común de consumir esto [InheritedWidget]s (ver  [Provider.of]/[Consumer]/[Selector])
-- incrementa la escalabilidad de tus clases con un mecanismo de escucha (listener) que crece exponencialmente
+- incrementa la escalabilidad de tus clases con un mecanismo de escucha (listener) que crece exponencialmente 
   en complejidad (tales como [ChangeNotifier], el cual es O(N²) al enviar notificaciones)
 
 Para leer más acerca de `provider`, leé su [documentación](https://pub.dev/documentation/provider/latest/provider/provider-library.html).
@@ -29,7 +30,6 @@ Ver también:
 ## Migrar de v3.x.0 a v4.0.0
 
 - Los parámetros `builder` e `initialBuilder` de providers son eliminados.
-
   - `initialBuilder` deberá ser reemplazado por `create`.
   - `builder` de "proxy" providers deberá ser reemplazado por `update`
   - `builder` de providers clásicos deberá ser reemplazado por `create`.
@@ -215,7 +215,7 @@ class Home extends StatelessWidget {
 
 Otra opción, en lugar de utilizar estos métodos, podemos usar [Consumer] y [Selector].
 
-Estos pueden ayudar a optimizar el desempeño o cuando es difícil de obtener
+Estos pueden ayudar a optimizar el desempeño o cuando es difícil de obtener 
 el `BuildContext` descendiente del provider
 
 Ve las [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do) o la documentación de [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
@@ -310,7 +310,6 @@ Flutter viene con [devtools](https://github.com/flutter/devtools), el cual muest
 cómo el árbol de widgets, está en un momento determinado.
 
 Ya que los providers son widgets, también son visibles en las devtools:
-
 
 <img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/devtools_providers.jpg" width="200" />
 
@@ -581,7 +580,6 @@ Widget build(BuildContext context) {
 }
 ```
 
-
 De esta manera, el widget no realizará rebuilds innecesarios si algo aparte de `name` cambia.
 
 Similarmente, puedes utilizar [Consumer]/[Selector].
@@ -636,7 +634,6 @@ Provider<Country>(
 #### Puedo consumir una interfaz y proveer una implementación?
 
 Sí, se debe dar una pista del tipo al compilador para indicar que la interfaz se consumirá, con la implementación prevista en create.
-
 
 ```dart
 abstract class ProviderInterface with ChangeNotifier {
