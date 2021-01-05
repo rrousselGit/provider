@@ -500,7 +500,7 @@ extension ReadContext on BuildContext {
   /// Widget build(BuildContext context) {
   ///   return RaisedButton(
   ///     onPressed: () {
-  ///       // as performant as the previous previous solution, but resilient to refactoring
+  ///       // as performant as the previous solution, but resilient to refactoring
   ///       context.read<Counter>().increment(),
   ///     },
   ///   );
