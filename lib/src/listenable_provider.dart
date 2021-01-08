@@ -35,35 +35,6 @@ class ListenableProvider<T extends Listenable> extends InheritedProvider<T> {
           startListening: _startListening,
           create: create,
           dispose: dispose,
-          debugCheckInvalidValueType: kReleaseMode
-              ? null
-              : (value) {
-                  if (value is ChangeNotifier) {
-                    // ignore: invalid_use_of_protected_member
-                    assert(!value.hasListeners, '''
-The default constructor of ListenableProvider/ChangeNotifierProvider
-must create a new, unused Listenable.
-
-If you want to reuse an existing Listenable, use the second constructor:
-
-- DO use ChangeNotifierProvider.value to provider an existing ChangeNotifier:
-
-MyChangeNotifier variable;
-ChangeNotifierProvider.value(
-  value: variable,
-  child: ...
-)
-
-- DON'T reuse an existing ChangeNotifier using the default constructor.
-
-MyChangeNotifier variable;
-ChangeNotifierProvider(
-  create: (_) => variable,
-  child: ...
-)
-''');
-                  }
-                },
           lazy: lazy,
           builder: builder,
           child: child,

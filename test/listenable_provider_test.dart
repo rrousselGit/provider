@@ -27,18 +27,22 @@ void main() {
           listenable);
     });
     testWidgets(
-      'asserts that the created notifier has no listener',
+      'asserts that the created notifier can have listeners',
       (tester) async {
+        final key = GlobalKey();
         final notifier = ValueNotifier(0)..addListener(() {});
 
         await tester.pumpWidget(
           ListenableProvider(
             create: (_) => notifier,
-            child: const TextOf<ValueNotifier<int>>(),
+            child: Container(key: key),
           ),
         );
 
-        expect(tester.takeException(), isAssertionError);
+        expect(
+          Provider.of<ValueNotifier<int>>(key.currentContext, listen: false),
+          notifier,
+        );
       },
     );
 
