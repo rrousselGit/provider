@@ -5,13 +5,13 @@ homepage: https://github.com/rrousselGit/provider
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
-  flutter: ">= 1.16.0"
+  flutter: ">=1.16.0 <2.0.0"
 
 dependencies:
   collection: ^1.14.13
   flutter:
     sdk: flutter
-  nested: ">= 0.0.4 < 2.0.0"
+  nested: ">=0.0.4 <2.0.0"
 
 dev_dependencies:
   flutter_test:
