@@ -1,10 +1,15 @@
 # 4.3.3
 
-- Improved the error message of `ProviderNotFoundException` to mention hot-reload.
+- Improved the error message of `ProviderNotFoundException` to mention hot-reload. (#595)
+- Removed the asserts that prevented `ChangeNotifier`s in `ChangeNotifierProvider()`
+  to have listeners (#596)
+- Removed the opinionated asserts in `context.watch`/`context.read`
+  that prevented them to be used inside specific conditions (#585)
 
 # 4.3.2+4
 
-`ValueListenableProvider` is no-longer deprecated. Only its default constructor is deprecated (the `.value` constructor is kept)
+`ValueListenableProvider` is no-longer deprecated.
+Only its default constructor is deprecated (the `.value` constructor is kept)
 
 # 4.3.2+3
 
