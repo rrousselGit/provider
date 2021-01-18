@@ -421,9 +421,11 @@ class ProviderNotFoundException implements Exception {
     return '''
 Error: Could not find the correct Provider<$valueType> above this $widgetType Widget
 
-This likely happens because you created a new provider but did not performed a 'Hot Restart'
-on the device. Another possibility is you used a `BuildContext` that does not include the provider
+This happens because you used a `BuildContext` that does not include the provider
 of your choice. There are a few common scenarios:
+
+- You added a new provider in your `main.dart` and performed a hot-reload.
+  To fix, perform a hot-restart.
 
 - The provider you are trying to read is in a different route.
 

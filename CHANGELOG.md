@@ -1,3 +1,7 @@
+# 4.3.3
+
+- Improved the error message of `ProviderNotFoundException` to mention hot-reload.
+
 # 4.3.2+3
 
 Marked `ValueListenableProvider` as deprecated
