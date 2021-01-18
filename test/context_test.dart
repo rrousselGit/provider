@@ -233,38 +233,7 @@ void main() {
 
       expect(find.text('42'), findsOneWidget);
     });
-    testWidgets("read can't be used inside update", (tester) async {
-      await tester.pumpWidget(
-        Provider.value(
-          value: 42,
-          child: InheritedProvider<String>(
-            update: (c, _) {
-              return c.read<int>().toString();
-            },
-            child: Consumer<String>(
-              builder: (c, value, _) {
-                return Text(value, textDirection: TextDirection.ltr);
-              },
-            ),
-          ),
-        ),
-      );
 
-      expect(tester.takeException(), isAssertionError);
-    });
-    testWidgets("read can't be used inside build", (tester) async {
-      await tester.pumpWidget(
-        Provider.value(
-          value: 42,
-          child: Builder(builder: (c) {
-            c.read<int>();
-            return Container();
-          }),
-        ),
-      );
-
-      expect(tester.takeException(), isAssertionError);
-    });
     testWidgets('watch can be used inside InheritedProvider.update',
         (tester) async {
       await tester.pumpWidget(
@@ -283,41 +252,7 @@ void main() {
         ),
       );
     });
-    testWidgets('watch throws if used outside of build', (tester) async {
-      await tester.pumpWidget(
-        Provider.value(
-          value: 42,
-          child: Builder(
-            builder: (parentContext) {
-              return Builder(
-                builder: (_) {
-                  parentContext.watch<int>();
-                  return Container();
-                },
-              );
-            },
-          ),
-        ),
-      );
 
-      expect(tester.takeException(), isAssertionError);
-    });
-    testWidgets('watch throws if used inside didChangeDependencies',
-        (tester) async {
-      await tester.pumpWidget(
-        Provider.value(
-          value: 42,
-          child: StatefulTest(
-            didChangeDependencies: (c) {
-              c.watch<int>();
-            },
-            child: Container(),
-          ),
-        ),
-      );
-
-      expect(tester.takeException(), isAssertionError);
-    });
     testWidgets(
         "select doesn't fail if it loads a provider that depends on other providers",
         (tester) async {
