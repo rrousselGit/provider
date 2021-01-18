@@ -1,3 +1,11 @@
+# 5.0.0-nullsafety.3
+
+- Improved the error message of `ProviderNotFoundException` to mention hot-reload. (#595)
+- Removed the asserts that prevented `ChangeNotifier`s in `ChangeNotifierProvider()`
+  to have listeners (#596)
+- Removed the opinionated asserts in `context.watch`/`context.read`
+  that prevented them to be used inside specific conditions (#585)
+
 # 5.0.0-nullsafety.2
 
 - Improved the error message when an exception is thrown inside `create` of a provider`
