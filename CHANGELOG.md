@@ -2,6 +2,10 @@
 
 - Improved the error message of `ProviderNotFoundException` to mention hot-reload.
 
+# 4.3.2+4
+
+`ValueListenableProvider` is no-longer deprecated. Only its default constructor is deprecated (the `.value` constructor is kept)
+
 # 4.3.2+3
 
 Marked `ValueListenableProvider` as deprecated

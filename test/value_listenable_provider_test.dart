@@ -10,42 +10,6 @@ class ValueNotifierMock<T> extends Mock implements ValueNotifier<T> {}
 
 void main() {
   group('valueListenableProvider', () {
-    testWidgets('works with MultiProvider', (tester) async {
-      await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            ValueListenableProvider(
-              create: (_) => ValueNotifier(0),
-            ),
-          ],
-          child: const TextOf<int>(),
-        ),
-      );
-
-      expect(find.text('0'), findsOneWidget);
-    });
-    testWidgets(
-        'disposing ValueListenableProvider on a create constructor disposes of '
-        'the ValueNotifier', (tester) async {
-      final mock = ValueNotifierMock<int>();
-      await tester.pumpWidget(
-        ValueListenableProvider<int>(
-          create: (_) => mock,
-          child: const TextOf<int>(),
-        ),
-      );
-
-      final listener =
-          verify(mock.addListener(captureAny)).captured.first as VoidCallback;
-
-      clearInteractions(mock);
-      await tester.pumpWidget(Container());
-      verifyInOrder([
-        mock.removeListener(listener),
-        mock.dispose(),
-      ]);
-      verifyNoMoreInteractions(mock);
-    });
     testWidgets('rebuilds when value change', (tester) async {
       final listenable = ValueNotifier(0);
 
