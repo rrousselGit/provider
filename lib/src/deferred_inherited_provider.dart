@@ -40,6 +40,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     UpdateShouldNotify<R> updateShouldNotify,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super._constructor(
           key: key,
@@ -52,6 +53,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
             updateShouldNotify: updateShouldNotify,
             startListening: startListening,
           ),
+          restorationId: restorationId,
         );
 
   /// Listens to `value` and expose its content to `child` and its descendants.
@@ -62,6 +64,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     UpdateShouldNotify<R> updateShouldNotify,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super._constructor(
           key: key,
@@ -72,6 +75,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
             updateShouldNotify,
             startListening,
           ),
+          restorationId: restorationId,
           child: child,
         );
 }

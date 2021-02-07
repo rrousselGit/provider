@@ -78,6 +78,7 @@ class ProxyProvider0<R> extends InheritedProvider<R> {
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(update != null),
         super(
@@ -92,6 +93,7 @@ class ProxyProvider0<R> extends InheritedProvider<R> {
               ? null
               : (R value) =>
                   Provider.debugCheckInvalidValueType?.call<R>(value),
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -152,6 +154,7 @@ class ProxyProvider<T, R> extends ProxyProvider0<R> {
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(update != null),
         super(
@@ -166,6 +169,7 @@ class ProxyProvider<T, R> extends ProxyProvider0<R> {
           ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -181,6 +185,7 @@ class ProxyProvider2<T, T2, R> extends ProxyProvider0<R> {
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(update != null),
         super(
@@ -196,6 +201,7 @@ class ProxyProvider2<T, T2, R> extends ProxyProvider0<R> {
           ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -211,6 +217,7 @@ class ProxyProvider3<T, T2, T3, R> extends ProxyProvider0<R> {
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(update != null),
         super(
@@ -227,6 +234,7 @@ class ProxyProvider3<T, T2, T3, R> extends ProxyProvider0<R> {
           ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -242,6 +250,7 @@ class ProxyProvider4<T, T2, T3, T4, R> extends ProxyProvider0<R> {
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(update != null),
         super(
@@ -259,6 +268,7 @@ class ProxyProvider4<T, T2, T3, T4, R> extends ProxyProvider0<R> {
           ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -274,6 +284,7 @@ class ProxyProvider5<T, T2, T3, T4, T5, R> extends ProxyProvider0<R> {
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(update != null),
         super(
@@ -292,6 +303,7 @@ class ProxyProvider5<T, T2, T3, T4, T5, R> extends ProxyProvider0<R> {
           ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -307,6 +319,7 @@ class ProxyProvider6<T, T2, T3, T4, T5, T6, R> extends ProxyProvider0<R> {
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(update != null),
         super(
@@ -326,6 +339,7 @@ class ProxyProvider6<T, T2, T3, T4, T5, T6, R> extends ProxyProvider0<R> {
           ),
           updateShouldNotify: updateShouldNotify,
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }

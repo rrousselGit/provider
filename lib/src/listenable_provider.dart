@@ -28,6 +28,7 @@ class ListenableProvider<T extends Listenable> extends InheritedProvider<T> {
     Dispose<T> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(create != null),
         super(
@@ -37,6 +38,7 @@ class ListenableProvider<T extends Listenable> extends InheritedProvider<T> {
           dispose: dispose,
           lazy: lazy,
           builder: builder,
+          restorationId: restorationId,
           child: child,
         );
 
@@ -46,6 +48,7 @@ class ListenableProvider<T extends Listenable> extends InheritedProvider<T> {
     @required T value,
     UpdateShouldNotify<T> updateShouldNotify,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   }) : super.value(
           key: key,
@@ -53,6 +56,7 @@ class ListenableProvider<T extends Listenable> extends InheritedProvider<T> {
           value: value,
           updateShouldNotify: updateShouldNotify,
           startListening: _startListening,
+          restorationId: restorationId,
           child: child,
         );
 
@@ -77,6 +81,7 @@ class ListenableProxyProvider0<R extends Listenable>
     UpdateShouldNotify<R> updateShouldNotify,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -96,6 +101,7 @@ class ListenableProxyProvider0<R extends Listenable>
                     assert(value.hasListeners != true);
                   }
                 },
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -124,6 +130,7 @@ class ListenableProxyProvider<T, R extends Listenable>
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -137,6 +144,7 @@ class ListenableProxyProvider<T, R extends Listenable>
             previous,
           ),
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -152,6 +160,7 @@ class ListenableProxyProvider2<T, T2, R extends Listenable>
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -166,6 +175,7 @@ class ListenableProxyProvider2<T, T2, R extends Listenable>
             previous,
           ),
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -181,6 +191,7 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -196,6 +207,7 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable>
             previous,
           ),
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -211,6 +223,7 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -227,6 +240,7 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable>
             previous,
           ),
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -242,6 +256,7 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -259,6 +274,7 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable>
             previous,
           ),
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }
@@ -274,6 +290,7 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
     Dispose<R> dispose,
     bool lazy,
     TransitionBuilder builder,
+    String restorationId,
     Widget child,
   })  : assert(create != null || update != null),
         super(
@@ -292,6 +309,7 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable>
             previous,
           ),
           dispose: dispose,
+          restorationId: restorationId,
           child: child,
         );
 }
