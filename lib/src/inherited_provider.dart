@@ -158,6 +158,8 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     );
     return _InheritedProviderScope<T>(
       owner: this,
+      // ignore: no_runtimetype_tostring
+      debugType: kDebugMode ? '$runtimeType' : '',
       child: builder != null
           ? Builder(
               builder: (context) => builder(context, child),
@@ -296,9 +298,11 @@ class _InheritedProviderScope<T> extends InheritedWidget {
   const _InheritedProviderScope({
     this.owner,
     @required Widget child,
+    @required this.debugType,
   }) : super(child: child);
 
   final InheritedProvider<T> owner;
+  final String debugType;
 
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) {
@@ -322,6 +326,8 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
   _InheritedProviderScopeElement(_InheritedProviderScope<T> widget)
       : super(widget);
 
+  static int _nextProviderId = 0;
+
   bool _shouldNotifyDependents = false;
   bool _debugInheritLocked = false;
   bool _isNotifyDependentsEnabled = true;
@@ -329,6 +335,27 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
   bool _updatedShouldNotify = false;
   bool _isBuildFromExternalSources = false;
   _DelegateState<T, _Delegate<T>> _delegateState;
+
+  String _debugId;
+
+  @override
+  void mount(Element parent, dynamic newSlot) {
+    if (kDebugMode) {
+      _debugId = '${_nextProviderId++}';
+      ProviderBinding.debugInstance.providerDetails = {
+        ...ProviderBinding.debugInstance.providerDetails,
+        _debugId: _ProviderNode(
+          id: _debugId,
+          childrenNodeIds: const [],
+          // ignore: no_runtimetype_tostring
+          type: widget.debugType,
+          element: this,
+        )
+      };
+    }
+
+    super.mount(parent, newSlot);
+  }
 
   @override
   _InheritedProviderScope<T> get widget =>
@@ -379,6 +406,10 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
   @override
   void notifyDependent(InheritedWidget oldWidget, Element dependent) {
     final dependencies = getDependencies(dependent);
+
+    if (kDebugMode) {
+      ProviderBinding.debugInstance.providerDidChange(_debugId);
+    }
 
     var shouldNotify = false;
     if (dependencies != null) {
@@ -481,6 +512,11 @@ If you're in this situation, consider passing a `key` unique to each individual 
   @override
   void unmount() {
     _delegateState.dispose();
+    if (kDebugMode) {
+      ProviderBinding.debugInstance.providerDetails = {
+        ...ProviderBinding.debugInstance.providerDetails,
+      }..remove(_debugId);
+    }
     super.unmount();
   }
 
