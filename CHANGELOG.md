@@ -1,3 +1,7 @@
+# 5.0.0-nullsafety.4
+
+- Upgraded `nested` dependency to 1.0.0 and `collection` to 1.15.0
+
 # 5.0.0-nullsafety.3
 
 - Improved the error message of `ProviderNotFoundException` to mention hot-reload. (#595)
