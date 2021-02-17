@@ -17,10 +17,9 @@ jobs:
         channel:
           - dev
           - beta
-          - stable
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Execute test script
-        run: curl -s https://raw.githubusercontent.com/rrousselGit/ci/master/scripts/ci.sh | bash
+        run: curl -s https://raw.githubusercontent.com/rrousselGit/ci/master/scripts/ci.sh | bash -s nnbd

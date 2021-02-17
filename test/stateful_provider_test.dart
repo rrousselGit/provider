@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
@@ -7,7 +8,7 @@ import 'package:provider/src/provider.dart';
 import 'common.dart';
 
 class ValueBuilder extends Mock {
-  int call(BuildContext context);
+  int? call(BuildContext? context);
 }
 
 class Dispose extends Mock {
@@ -23,31 +24,26 @@ void main() {
             create: (_) => 42,
           ),
         ],
-        child: const TextOf<int>(),
+        child: TextOf<int>(),
       ),
     );
 
     expect(find.text('42'), findsOneWidget);
   });
-  test('asserts', () {
-    expect(
-      () => Provider<dynamic>(create: null),
-      throwsAssertionError,
-    );
-    // don't throw
-    Provider<dynamic>(create: (_) => null);
-  });
 
   testWidgets('calls create only once', (tester) async {
     final create = ValueBuilder();
-    await tester.pumpWidget(Provider<int>(
+
+    await tester.pumpWidget(Provider<int?>(
       create: create,
-      child: const TextOf<int>(),
+      child: TextOf<int?>(),
     ));
-    await tester.pumpWidget(Provider<int>(
+
+    await tester.pumpWidget(Provider<int?>(
       create: create,
-      child: const TextOf<int>(),
+      child: TextOf<int?>(),
     ));
+
     await tester.pumpWidget(Container());
 
     verify(create(any)).called(1);
@@ -60,7 +56,7 @@ void main() {
       Provider<int>(
         create: (_) => 42,
         dispose: dispose,
-        child: const TextOf<int>(),
+        child: TextOf<int>(),
       ),
     );
 

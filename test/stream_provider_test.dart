@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
 import 'common.dart';
 
 class ErrorBuilderMock<T> extends Mock {
-  T call(BuildContext context, Object error);
+  T call(BuildContext? context, Object? error);
 }
 
 void main() {
@@ -21,7 +22,7 @@ void main() {
             create: (_) => Stream.value(42),
           ),
         ],
-        child: const TextOf<int>(),
+        child: TextOf<int>(),
       ),
     );
 
@@ -42,7 +43,7 @@ void main() {
         StreamProvider.value(
           initialData: 0,
           value: controller.stream,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -58,7 +59,7 @@ void main() {
         StreamProvider.value(
           initialData: 0,
           value: controller2.stream,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -85,10 +86,13 @@ void main() {
       (tester) async {
     final controller = StreamController<int>();
 
-    await tester.pumpWidget(StreamProvider.value(
-      value: controller.stream,
-      child: const TextOf<int>(),
-    ));
+    await tester.pumpWidget(
+      StreamProvider.value(
+        initialData: -1,
+        value: controller.stream,
+        child: TextOf<int>(),
+      ),
+    );
 
     controller.addError(42);
     await Future.microtask(tester.pump);
@@ -106,19 +110,23 @@ Exception:
     // ignore: unawaited_futures
     controller.close();
   });
+
   testWidgets('calls catchError if present and stream has error',
       (tester) async {
     final controller = StreamController<int>(sync: true);
     final catchError = ErrorBuilderMock<int>();
     when(catchError(any, 42)).thenReturn(42);
 
-    await tester.pumpWidget(StreamProvider.value(
-      value: controller.stream,
-      catchError: catchError,
-      child: const TextOf<int>(),
-    ));
+    await tester.pumpWidget(
+      StreamProvider.value(
+        initialData: -1,
+        value: controller.stream,
+        catchError: catchError,
+        child: TextOf<int>(),
+      ),
+    );
 
-    expect(find.text('null'), findsOneWidget);
+    expect(find.text('-1'), findsOneWidget);
 
     controller.addError(42);
 
@@ -131,12 +139,13 @@ Exception:
     // ignore: unawaited_futures
     controller.close();
   });
+
   testWidgets('works with null', (tester) async {
     await tester.pumpWidget(
       StreamProvider<int>.value(
         initialData: 42,
         value: null,
-        child: const TextOf<int>(),
+        child: TextOf<int>(),
       ),
     );
 
@@ -145,21 +154,7 @@ Exception:
     await tester.pumpWidget(Container());
   });
 
-  test('StreamProvider() crashes if builder is null', () {
-    expect(
-      () => StreamProvider<int>(create: null),
-      throwsAssertionError,
-    );
-  });
-
   group('StreamProvider()', () {
-    test('crashes if builder is null', () {
-      expect(
-        () => StreamProvider<int>(create: null),
-        throwsAssertionError,
-      );
-    });
-
     testWidgets('create and dispose stream with builder', (tester) async {
       final stream = StreamMock<int>();
       final sub = StreamSubscriptionMock<int>();
@@ -169,8 +164,9 @@ Exception:
 
       await tester.pumpWidget(
         StreamProvider<int>(
+          initialData: -1,
           create: builder,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 

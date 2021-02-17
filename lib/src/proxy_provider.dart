@@ -71,16 +71,15 @@ typedef ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> = R Function(
 class ProxyProvider0<R> extends InheritedProvider<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider0({
-    Key key,
-    Create<R> create,
-    @required R Function(BuildContext context, R value) update,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Dispose<R> dispose,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
-  })  : assert(update != null),
-        super(
+    Key? key,
+    Create<R>? create,
+    required R Function(BuildContext context, R value) update,
+    UpdateShouldNotify<R>? updateShouldNotify,
+    Dispose<R>? dispose,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super(
           key: key,
           lazy: lazy,
           builder: builder,
@@ -145,16 +144,15 @@ class ProxyProvider0<R> extends InheritedProvider<R> {
 class ProxyProvider<T, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider({
-    Key key,
-    Create<R> create,
-    @required ProxyProviderBuilder<T, R> update,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Dispose<R> dispose,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
-  })  : assert(update != null),
-        super(
+    Key? key,
+    Create<R>? create,
+    required ProxyProviderBuilder<T, R> update,
+    UpdateShouldNotify<R>? updateShouldNotify,
+    Dispose<R>? dispose,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super(
           key: key,
           lazy: lazy,
           builder: builder,
@@ -174,16 +172,15 @@ class ProxyProvider<T, R> extends ProxyProvider0<R> {
 class ProxyProvider2<T, T2, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider2({
-    Key key,
-    Create<R> create,
-    @required ProxyProviderBuilder2<T, T2, R> update,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Dispose<R> dispose,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
-  })  : assert(update != null),
-        super(
+    Key? key,
+    Create<R>? create,
+    required ProxyProviderBuilder2<T, T2, R> update,
+    UpdateShouldNotify<R>? updateShouldNotify,
+    Dispose<R>? dispose,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super(
           key: key,
           lazy: lazy,
           builder: builder,
@@ -204,16 +201,15 @@ class ProxyProvider2<T, T2, R> extends ProxyProvider0<R> {
 class ProxyProvider3<T, T2, T3, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider3({
-    Key key,
-    Create<R> create,
-    @required ProxyProviderBuilder3<T, T2, T3, R> update,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Dispose<R> dispose,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
-  })  : assert(update != null),
-        super(
+    Key? key,
+    Create<R>? create,
+    required ProxyProviderBuilder3<T, T2, T3, R> update,
+    UpdateShouldNotify<R>? updateShouldNotify,
+    Dispose<R>? dispose,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super(
           key: key,
           lazy: lazy,
           builder: builder,
@@ -235,16 +231,15 @@ class ProxyProvider3<T, T2, T3, R> extends ProxyProvider0<R> {
 class ProxyProvider4<T, T2, T3, T4, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider4({
-    Key key,
-    Create<R> create,
-    @required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Dispose<R> dispose,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
-  })  : assert(update != null),
-        super(
+    Key? key,
+    Create<R>? create,
+    required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
+    UpdateShouldNotify<R>? updateShouldNotify,
+    Dispose<R>? dispose,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super(
           key: key,
           lazy: lazy,
           builder: builder,
@@ -267,16 +262,15 @@ class ProxyProvider4<T, T2, T3, T4, R> extends ProxyProvider0<R> {
 class ProxyProvider5<T, T2, T3, T4, T5, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider5({
-    Key key,
-    Create<R> create,
-    @required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Dispose<R> dispose,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
-  })  : assert(update != null),
-        super(
+    Key? key,
+    Create<R>? create,
+    required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
+    UpdateShouldNotify<R>? updateShouldNotify,
+    Dispose<R>? dispose,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super(
           key: key,
           lazy: lazy,
           builder: builder,
@@ -300,16 +294,15 @@ class ProxyProvider5<T, T2, T3, T4, T5, R> extends ProxyProvider0<R> {
 class ProxyProvider6<T, T2, T3, T4, T5, T6, R> extends ProxyProvider0<R> {
   /// Initializes [key] for subclasses.
   ProxyProvider6({
-    Key key,
-    Create<R> create,
-    @required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
-    UpdateShouldNotify<R> updateShouldNotify,
-    Dispose<R> dispose,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
-  })  : assert(update != null),
-        super(
+    Key? key,
+    Create<R>? create,
+    required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
+    UpdateShouldNotify<R>? updateShouldNotify,
+    Dispose<R>? dispose,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super(
           key: key,
           lazy: lazy,
           builder: builder,

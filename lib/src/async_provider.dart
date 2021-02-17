@@ -10,11 +10,11 @@ import 'provider.dart';
 ///
 ///   * [StreamProvider] and [FutureProvider], which both uses [ErrorBuilder] to
 ///     handle respectively [Stream.catchError] and [Future.catch].
-typedef ErrorBuilder<T> = T Function(BuildContext context, Object error);
+typedef ErrorBuilder<T> = T Function(BuildContext context, Object? error);
 
-DeferredStartListening<Stream<T>, T> _streamStartListening<T>({
-  T initialData,
-  ErrorBuilder<T> catchError,
+DeferredStartListening<Stream<T>?, T> _streamStartListening<T>({
+  required T initialData,
+  ErrorBuilder<T>? catchError,
 }) {
   return (e, setState, controller, __) {
     if (!e.hasValue) {
@@ -25,7 +25,7 @@ DeferredStartListening<Stream<T>, T> _streamStartListening<T>({
     }
     final sub = controller.listen(
       setState,
-      onError: (dynamic error) {
+      onError: (Object? error) {
         if (catchError != null) {
           setState(catchError(e, error));
         } else {
@@ -73,21 +73,20 @@ $error
 ///
 ///   * [Stream], which is listened by [StreamProvider].
 ///   * [StreamController], to create a [Stream].
-class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
+class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>?, T> {
   /// Creates a [Stream] using `create` and subscribes to it.
   ///
   /// The parameter `create` must not be `null`.
   StreamProvider({
-    Key key,
-    @required Create<Stream<T>> create,
-    T initialData,
-    ErrorBuilder<T> catchError,
-    UpdateShouldNotify<T> updateShouldNotify,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
-  })  : assert(create != null),
-        super(
+    Key? key,
+    required Create<Stream<T>?> create,
+    required T initialData,
+    ErrorBuilder<T>? catchError,
+    UpdateShouldNotify<T>? updateShouldNotify,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super(
           key: key,
           lazy: lazy,
           builder: builder,
@@ -102,14 +101,14 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
 
   /// Listens to `value` and expose it to all of [StreamProvider] descendants.
   StreamProvider.value({
-    Key key,
-    @required Stream<T> value,
-    T initialData,
-    ErrorBuilder<T> catchError,
-    UpdateShouldNotify<T> updateShouldNotify,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
+    Key? key,
+    required Stream<T>? value,
+    required T initialData,
+    ErrorBuilder<T>? catchError,
+    UpdateShouldNotify<T>? updateShouldNotify,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
   }) : super.value(
           key: key,
           lazy: lazy,
@@ -124,9 +123,9 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>, T> {
         );
 }
 
-DeferredStartListening<Future<T>, T> _futureStartListening<T>({
-  T initialData,
-  ErrorBuilder<T> catchError,
+DeferredStartListening<Future<T>?, T> _futureStartListening<T>({
+  required T initialData,
+  ErrorBuilder<T>? catchError,
 }) {
   // ignore: void_checks, false positive
   return (e, setState, controller, __) {
@@ -142,7 +141,7 @@ DeferredStartListening<Future<T>, T> _futureStartListening<T>({
         }
         setState(value);
       },
-      onError: (dynamic error) {
+      onError: (Object? error) {
         if (canceled) {
           return;
         }
@@ -179,21 +178,20 @@ $error
 /// See also:
 ///
 ///   * [Future], which is listened by [FutureProvider].
-class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
+class FutureProvider<T> extends DeferredInheritedProvider<Future<T>?, T> {
   /// Creates a [Future] from `create` and subscribes to it.
   ///
   /// `create` must not be `null`.
   FutureProvider({
-    Key key,
-    @required Create<Future<T>> create,
-    T initialData,
-    ErrorBuilder<T> catchError,
-    UpdateShouldNotify<T> updateShouldNotify,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
-  })  : assert(create != null),
-        super(
+    Key? key,
+    required Create<Future<T>?> create,
+    required T initialData,
+    ErrorBuilder<T>? catchError,
+    UpdateShouldNotify<T>? updateShouldNotify,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super(
           key: key,
           lazy: lazy,
           builder: builder,
@@ -208,13 +206,13 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>, T> {
 
   /// Listens to `value` and expose it to all of [FutureProvider] descendants.
   FutureProvider.value({
-    Key key,
-    @required Future<T> value,
-    T initialData,
-    ErrorBuilder<T> catchError,
-    UpdateShouldNotify<T> updateShouldNotify,
-    TransitionBuilder builder,
-    Widget child,
+    Key? key,
+    required Future<T>? value,
+    required T initialData,
+    ErrorBuilder<T>? catchError,
+    UpdateShouldNotify<T>? updateShouldNotify,
+    TransitionBuilder? builder,
+    Widget? child,
   }) : super.value(
           key: key,
           builder: builder,
