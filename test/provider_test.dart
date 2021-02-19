@@ -1,7 +1,7 @@
-import 'package:flutter/widgets.dart' hide TypeMatcher;
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:test/test.dart' show TypeMatcher;
+import 'package:test/test.dart' as test_matcher show TypeMatcher;
 
 import 'common.dart';
 
@@ -296,7 +296,7 @@ void main() {
 
       expect(
         tester.takeException(),
-        const TypeMatcher<ProviderNotFoundException>()
+        const test_matcher.TypeMatcher<ProviderNotFoundException>()
             .having((err) => err.valueType, 'valueType', String)
             .having((err) => err.widgetType, 'widgetType', Builder),
       );
