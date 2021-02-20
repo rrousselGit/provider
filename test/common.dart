@@ -29,7 +29,11 @@ class InitialValueBuilderMock<T> extends Mock {
   final T _value;
 
   T call(BuildContext? context) {
-    return super.noSuchMethod(Invocation.method(#call, [context]), _value) as T;
+    return super.noSuchMethod(
+      Invocation.method(#call, [context]),
+      returnValue: _value,
+      returnValueForMissingStub: _value,
+    ) as T;
   }
 }
 
@@ -43,7 +47,8 @@ class ValueBuilderMock<T> extends Mock {
   T call(BuildContext? context, T? previous) {
     return super.noSuchMethod(
       Invocation.method(#call, [context, previous]),
-      _value,
+      returnValue: _value,
+      returnValueForMissingStub: _value,
     ) as T;
   }
 }
@@ -62,7 +67,7 @@ class TransitionBuilderMock extends Mock {
   Widget call(BuildContext? context, Widget? child) {
     return super.noSuchMethod(
       Invocation.method(#call, [context, child]),
-      Container(),
+      returnValue: Container(),
     ) as Widget;
   }
 }
@@ -75,7 +80,7 @@ class StartListeningMock<T> extends Mock {
   VoidCallback call(InheritedContext<T>? context, T? value) {
     return super.noSuchMethod(
       Invocation.method(#call, [context, value]),
-      () {},
+      returnValue: () {},
     ) as VoidCallback;
   }
 }
@@ -98,6 +103,13 @@ class MockNotifier extends Mock implements ChangeNotifier {
 
   @override
   void removeListener(VoidCallback? listener);
+
+  @override
+  bool get hasListeners => super.noSuchMethod(
+        Invocation.getter(#hasListeners),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool;
 }
 
 class ValueWidgetBuilderMock<T> extends Mock {
@@ -117,7 +129,8 @@ class ValueWidgetBuilderMock<T> extends Mock {
   Widget call(BuildContext? context, T? value, Widget? child) {
     return super.noSuchMethod(
       Invocation.method(#call, [context, value, child]),
-      Container(),
+      returnValue: Container(),
+      returnValueForMissingStub: Container(),
     ) as Widget;
   }
 }
@@ -135,22 +148,53 @@ class BuilderMock extends Mock {
   Widget call(BuildContext? context) {
     return super.noSuchMethod(
       Invocation.method(#call, [context]),
-      Container(),
+      returnValue: Container(),
+      returnValueForMissingStub: Container(),
     ) as Widget;
   }
 }
 
-class StreamMock<T> extends Mock implements Stream<T> {}
+class StreamMock<T> extends Mock implements Stream<T> {
+  @override
+  StreamSubscription<T> listen(
+    void Function(T event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return super.noSuchMethod(
+      Invocation.method(#listen, [
+        onData
+      ], {
+        #onError: onError,
+        #onDone: onDone,
+        #cancelOnError: cancelOnError,
+      }),
+      returnValue: StreamSubscriptionMock<T>(),
+      returnValueForMissingStub: StreamSubscriptionMock<T>(),
+    ) as StreamSubscription<T>;
+  }
+}
 
 class FutureMock<T> extends Mock implements Future<T> {}
 
-class StreamSubscriptionMock<T> extends Mock implements StreamSubscription<T> {}
+class StreamSubscriptionMock<T> extends Mock implements StreamSubscription<T> {
+  @override
+  Future<void> cancel() {
+    return super.noSuchMethod(
+      Invocation.method(#cancel, []),
+      returnValue: Future<void>.value(),
+      returnValueForMissingStub: Future<void>.value(),
+    ) as Future<void>;
+  }
+}
 
 class MockConsumerBuilder<T> extends Mock {
   Widget call(BuildContext? context, T? value, Widget? child) {
     return super.noSuchMethod(
       Invocation.method(#call, [context, value, child]),
-      Container(),
+      returnValue: Container(),
+      returnValueForMissingStub: Container(),
     ) as Widget;
   }
 }
@@ -159,7 +203,8 @@ class UpdateShouldNotifyMock<T> extends Mock {
   bool call(T? old, T? newValue) {
     return super.noSuchMethod(
       Invocation.method(#call, [old, newValue]),
-      false,
+      returnValue: false,
+      returnValueForMissingStub: false,
     ) as bool;
   }
 }
@@ -182,7 +227,7 @@ class DeferredStartListeningMock<T, R> extends Mock {
       InheritedContext<R> context,
       void Function(R value) setState,
       T controller,
-      R value,
+      R? value,
     )?
         call,
   ]) {
@@ -205,10 +250,11 @@ class DeferredStartListeningMock<T, R> extends Mock {
   ) =>
       super.noSuchMethod(
         Invocation.method(
-          #start,
+          #call,
           [context, setState, controller, value],
         ),
-        () {},
+        returnValue: () {},
+        returnValueForMissingStub: () {},
       ) as VoidCallback;
 }
 
@@ -232,7 +278,8 @@ class MockCombinedBuilder extends Mock {
   Widget call(Combined? foo) {
     return super.noSuchMethod(
       Invocation.method(#call, [foo]),
-      Container(),
+      returnValue: Container(),
+      returnValueForMissingStub: Container(),
     ) as Widget;
   }
 }
@@ -241,7 +288,8 @@ class CombinerMock extends Mock {
   Combined call(BuildContext? context, A? a, Combined? foo) {
     return super.noSuchMethod(
       Invocation.method(#call, [context, a, foo]),
-      const Combined(),
+      returnValue: const Combined(),
+      returnValueForMissingStub: const Combined(),
     ) as Combined;
   }
 }

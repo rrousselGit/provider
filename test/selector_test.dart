@@ -504,7 +504,7 @@ class MockSelector<T> extends Mock {
   T call(BuildContext? context) {
     return super.noSuchMethod(
       Invocation.method(#call, [context]),
-      _fallback,
+      returnValue: _fallback,
     ) as T;
   }
 }
@@ -513,7 +513,7 @@ class MockShouldRebuild<T> extends Mock {
   bool call(T? prev, T? next) {
     return super.noSuchMethod(
       Invocation.method(#call, [prev, next]),
-      false,
+      returnValue: false,
     ) as bool;
   }
 }
@@ -522,7 +522,7 @@ class MockBuilder<T> extends Mock {
   Widget call(BuildContext? context, T? value, Widget? child) {
     return super.noSuchMethod(
       Invocation.method(#call, [context, value, child]),
-      Container(),
+      returnValue: Container(),
     ) as Widget;
   }
 }

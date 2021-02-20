@@ -13,7 +13,7 @@ typedef DeferredStartListening<T, R> = VoidCallback Function(
   InheritedContext<R> context,
   void Function(R value) setState,
   T controller,
-  R value,
+  R? value,
 );
 
 /// An [InheritedProvider] where the object listened is _not_ the object
@@ -103,7 +103,7 @@ abstract class _DeferredDelegateState<T, R, W extends _DeferredDelegate<T, R>>
       element!,
       setState,
       controller,
-      _value as R,
+      _value,
     );
     element!._isNotifyDependentsEnabled = true;
     assert(element!.hasValue, '''
