@@ -9,7 +9,17 @@ import 'package:provider/provider.dart';
 import 'common.dart';
 
 class ErrorBuilderMock<T> extends Mock {
-  T call(BuildContext? context, Object? error);
+  ErrorBuilderMock(this.fallback);
+
+  final T fallback;
+
+  T call(BuildContext? context, Object? error) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, error]),
+      returnValue: fallback,
+      returnValueForMissingStub: fallback,
+    ) as T;
+  }
 }
 
 void main() {
@@ -114,7 +124,7 @@ Exception:
   testWidgets('calls catchError if present and stream has error',
       (tester) async {
     final controller = StreamController<int>(sync: true);
-    final catchError = ErrorBuilderMock<int>();
+    final catchError = ErrorBuilderMock<int>(0);
     when(catchError(any, 42)).thenReturn(42);
 
     await tester.pumpWidget(

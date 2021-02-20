@@ -71,7 +71,7 @@ class ListenableProxyProvider0<R extends Listenable?>
   ListenableProxyProvider0({
     Key? key,
     Create<R>? create,
-    required R Function(BuildContext, R previous) update,
+    required R Function(BuildContext, R? previous) update,
     Dispose<R>? dispose,
     UpdateShouldNotify<R>? updateShouldNotify,
     bool? lazy,

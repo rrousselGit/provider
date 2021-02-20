@@ -93,7 +93,7 @@ void main() {
             Provider.value(value: 0),
             ListenableProxyProvider<int, ValueNotifier<int>>(
               create: (_) => notifier,
-              update: (_, count, value) => value,
+              update: (_, count, value) => value!,
             )
           ],
           child: Consumer<ValueNotifier<int>>(builder: (_, value, __) {
@@ -182,7 +182,7 @@ void main() {
             ListenableProxyProvider<int, ValueNotifier<int>>(
               key: key,
               create: (_) => notifier,
-              update: (_, count, value) => value..value = count,
+              update: (_, count, value) => value!..value = count,
               dispose: dispose,
             )
           ],

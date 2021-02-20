@@ -23,6 +23,9 @@ BuildContext get context => find.byType(Context).evaluate().single;
 T of<T>([BuildContext? c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
+  testWidgets('DeferredInheritedProvider accepts non-nullable values',
+      (tester) async {});
+
   testWidgets('regression test #377', (tester) async {
     await tester.pumpWidget(
       MultiProvider(
@@ -2652,7 +2655,7 @@ class StateNotifierProvider<Controller extends StateNotifier<Value>, Value>
       update: (context, controller) {
         assert(!debugIsInInheritedProviderCreate);
         assert(debugIsInInheritedProviderUpdate);
-        return controller..update(context.watch);
+        return controller!..update(context.watch);
       },
       dispose: (_, controller) => controller.dispose(),
       child: DeferredInheritedProvider<Controller, Value>(

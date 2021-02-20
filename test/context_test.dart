@@ -286,7 +286,8 @@ void main() {
       final notifier = ValueNotifier(0);
 
       var buildCount = 0;
-      final selector = MockSelector.identity<ValueNotifier<int>>();
+      final selector =
+          MockSelector.identity<ValueNotifier<int>>(ValueNotifier(0));
       final child = Builder(builder: (c) {
         buildCount++;
         c.select<ValueNotifier<int>, ValueNotifier<int>>(selector);
@@ -608,7 +609,7 @@ void main() {
 
     testWidgets('consumer can be removed and selector stops to be called',
         (tester) async {
-      final selector = MockSelector.identity<int>();
+      final selector = MockSelector.identity<int>(0);
 
       final child = Builder(builder: (c) {
         c.select<int, int>(selector);
@@ -651,7 +652,7 @@ void main() {
       final notifier = ValueNotifier(<int, int>{});
 
       var buildCount = 0;
-      final selector = MockSelector.identity<Map<int, int>>();
+      final selector = MockSelector.identity<Map<int, int>>({});
       final child = Builder(builder: (c) {
         buildCount++;
         c.select<Map<int, int>, Map<int, int>>(selector);
@@ -694,7 +695,7 @@ void main() {
       final notifier = ValueNotifier(<int>[]);
 
       var buildCount = 0;
-      final selector = MockSelector.identity<List<int>>();
+      final selector = MockSelector.identity<List<int>>([]);
       final child = Builder(builder: (c) {
         buildCount++;
         c.select<List<int>, List<int>>(selector);
@@ -736,7 +737,7 @@ void main() {
       final notifier = ValueNotifier<Iterable<int>>(<int>[]);
 
       var buildCount = 0;
-      final selector = MockSelector.identity<Iterable<int>>();
+      final selector = MockSelector.identity<Iterable<int>>({});
       final child = Builder(builder: (c) {
         buildCount++;
         c.select<Iterable<int>, Iterable<int>>(selector);
@@ -778,7 +779,7 @@ void main() {
       final notifier = ValueNotifier<Set<int>>(<int>{});
 
       var buildCount = 0;
-      final selector = MockSelector.identity<Set<int>>();
+      final selector = MockSelector.identity<Set<int>>({});
       final child = Builder(builder: (c) {
         buildCount++;
         c.select<Set<int>, Set<int>>(selector);
@@ -846,8 +847,8 @@ void main() {
     var buildCountChild1 = 0;
     var buildCountChild2 = 0;
 
-    final select1 = MockSelector<int, int>((v) => 0);
-    final select2 = MockSelector<int, int>((v) => 0);
+    final select1 = MockSelector<int, int>(0, (v) => 0);
+    final select2 = MockSelector<int, int>(0, (v) => 0);
 
     Widget build(int value) {
       return Provider.value(
@@ -948,13 +949,21 @@ class _StatefulTestState extends State<StatefulTest> {
 }
 
 class MockSelector<T, R> extends Mock {
-  MockSelector(R Function(T v) cb) {
+  MockSelector(this.fallback, R Function(T v) cb) {
     when(this(any)).thenAnswer((i) {
       return cb(i.positionalArguments.first as T);
     });
   }
 
-  static MockSelector<T, T> identity<T>() => MockSelector<T, T>((v) => v);
+  static MockSelector<T, T> identity<T>(T fallback) {
+    return MockSelector<T, T>(fallback, (v) => v);
+  }
 
-  R call(T? v);
+  final R fallback;
+
+  R call(T? v) => super.noSuchMethod(
+        Invocation.method(#call, [v]),
+        returnValue: fallback,
+        returnValueForMissingStub: fallback,
+      ) as R;
 }

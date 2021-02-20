@@ -236,7 +236,7 @@ class ChangeNotifierProxyProvider0<R extends ChangeNotifier?>
   ChangeNotifierProxyProvider0({
     Key? key,
     required Create<R> create,
-    required R Function(BuildContext, R value) update,
+    required R Function(BuildContext, R? value) update,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,

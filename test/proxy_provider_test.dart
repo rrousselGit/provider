@@ -40,7 +40,7 @@ void main() {
       when(combiner(any, any, any)).thenAnswer((Invocation invocation) {
         return Combined(
           invocation.positionalArguments.first as BuildContext,
-          invocation.positionalArguments[2] as Combined,
+          invocation.positionalArguments[2] as Combined?,
           invocation.positionalArguments[1] as A,
         );
       });
@@ -257,7 +257,7 @@ void main() {
             ProxyProvider<A, Combined>(
               update: (c, a, p) {
                 combiner(c, a, p);
-                return p;
+                return p!;
               },
             )
           ],

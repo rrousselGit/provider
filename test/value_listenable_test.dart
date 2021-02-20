@@ -8,10 +8,28 @@ import 'package:provider/provider.dart';
 import 'common.dart';
 
 class ValueNotifierMock<T> extends Mock implements ValueNotifier<T> {
+  ValueNotifierMock(this.fallbackValue);
+
+  final T fallbackValue;
+
+  @override
+  T get value => super.noSuchMethod(
+        Invocation.getter(#value),
+        returnValue: fallbackValue,
+        returnValueForMissingStub: fallbackValue,
+      ) as T;
+
   @override
   void addListener(VoidCallback? listener) {
     super.noSuchMethod(
       Invocation.method(#addListener, [listener]),
+    );
+  }
+
+  @override
+  void removeListener(VoidCallback? listener) {
+    super.noSuchMethod(
+      Invocation.method(#removeListener, [listener]),
     );
   }
 }
@@ -80,7 +98,7 @@ void main() {
 
     testWidgets("don't listen again if Value instance doesn't change",
         (tester) async {
-      final valueNotifier = ValueNotifierMock<int>();
+      final valueNotifier = ValueNotifierMock<int>(0);
       await tester.pumpWidget(
         ValueListenableProvider.value(
           value: valueNotifier,
