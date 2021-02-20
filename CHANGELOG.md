@@ -1,3 +1,7 @@
+# 5.0.0-nullsafety.5
+
+Fixed an issue where providers with an `update` parameter in sound null-safety mode could throw null exceptions.
+
 # 5.0.0-nullsafety.4
 
 - Upgraded `nested` dependency to 1.0.0 and `collection` to 1.15.0
