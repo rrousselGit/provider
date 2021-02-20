@@ -1,3 +1,78 @@
+# 5.0.0-nullsafety.5
+
+Fixed an issue where providers with an `update` parameter in sound null-safety mode could throw null exceptions.
+
+# 5.0.0-nullsafety.4
+
+- Upgraded `nested` dependency to 1.0.0 and `collection` to 1.15.0
+
+# 5.0.0-nullsafety.3
+
+- Improved the error message of `ProviderNotFoundException` to mention hot-reload. (#595)
+- Removed the asserts that prevented `ChangeNotifier`s in `ChangeNotifierProvider()`
+  to have listeners (#596)
+- Removed the opinionated asserts in `context.watch`/`context.read`
+  that prevented them to be used inside specific conditions (#585)
+
+# 5.0.0-nullsafety.2
+
+- Improved the error message when an exception is thrown inside `create` of a provider`
+
+# 5.0.0-nullsafety.1
+
+- Reintroduced `ValueListenableProvider.value` (the default constructor is still removed).
+
+# 5.0.0-nullsafety.0
+
+Migrated Provider to non-nullable types:
+
+- `initialData` for both `FutureProvider` and `StreamProvider` is now required.
+
+  To migrate, what used to be:
+
+  ```dart
+  FutureProvider<int>(
+    create: (context) => Future.value(42),
+    child: MyApp(),
+  )
+
+  Widget build(BuildContext context) {
+    final value = context.watch<int>();
+    return Text('$value');
+  }
+  ```
+
+  is now:
+
+  ```dart
+  FutureProvider<int?>(
+    initialValue: null,
+    create: (context) => Future.value(42),
+    child: MyApp(),
+  )
+
+  Widget build(BuildContext context) {
+    // be sure to specify the ? in watch<int?>
+    final value = context.watch<int?>();
+    return Text('$value');
+  }
+  ```
+
+- `ValueListenableProvider` is removed
+
+  To migrate, you can instead use `Provider` combined with `ValueListenableBuilder`:
+
+  ```dart
+  ValueListenableBuilder<int>(
+    valueListenable: myValueListenable,
+    builder: (context, value, _) {
+      return Provider<int>.value(
+        value: value,
+        child: MyApp(),
+      );
+    }
+  )
+  ```
 # 4.3.3
 
 - Improved the error message of `ProviderNotFoundException` to mention hot-reload. (#595)

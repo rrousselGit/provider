@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
-import 'package:provider/src/proxy_provider.dart' show ProxyProvider0;
 
 import 'common.dart';
 
@@ -40,7 +40,7 @@ void main() {
       when(combiner(any, any, any)).thenAnswer((Invocation invocation) {
         return Combined(
           invocation.positionalArguments.first as BuildContext,
-          invocation.positionalArguments[2] as Combined,
+          invocation.positionalArguments[2] as Combined?,
           invocation.positionalArguments[1] as A,
         );
       });
@@ -57,7 +57,7 @@ void main() {
               update: (_, __, ___) => MyListenable(),
             )
           ],
-          child: const TextOf<MyListenable>(),
+          child: TextOf<MyListenable>(),
         ),
       );
 
@@ -71,12 +71,13 @@ void main() {
               update: (_, __, ___) => MyStream(),
             )
           ],
-          child: const TextOf<MyStream>(),
+          child: TextOf<MyStream>(),
         ),
       );
 
       expect(tester.takeException(), isFlutterError);
     });
+
     testWidgets('debugCheckInvalidValueType can be disabled', (tester) async {
       final previous = Provider.debugCheckInvalidValueType;
       Provider.debugCheckInvalidValueType = null;
@@ -90,7 +91,7 @@ void main() {
               update: (_, __, ___) => MyListenable(),
             )
           ],
-          child: const TextOf<MyListenable>(),
+          child: TextOf<MyListenable>(),
         ),
       );
 
@@ -102,15 +103,15 @@ void main() {
               update: (_, __, ___) => MyStream(),
             )
           ],
-          child: const TextOf<MyStream>(),
+          child: TextOf<MyStream>(),
         ),
       );
     });
 
     testWidgets('create creates initial value', (tester) async {
-      final create = InitialValueBuilderMock<Combined>();
+      final create = InitialValueBuilderMock<Combined>(const Combined());
 
-      when(create(any)).thenReturn(const Combined(null, null, null));
+      when(create(any)).thenReturn(const Combined());
 
       await tester.pumpWidget(
         MultiProvider(
@@ -127,8 +128,9 @@ void main() {
 
       verify(create(argThat(isNotNull))).called(1);
 
-      verify(combiner(argThat(isNotNull), a, const Combined(null, null, null)));
+      verify(combiner(argThat(isNotNull), a, const Combined()));
     });
+
     testWidgets('consume another providers', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -149,23 +151,6 @@ void main() {
 
       verify(combiner(context, a, null)).called(1);
       verifyNoMoreInteractions(combiner);
-    });
-
-    test('throws if update is null', () {
-      expect(
-          () => ProxyProvider<A, Combined>(update: null), throwsAssertionError);
-      expect(
-          () => ProxyProvider0<Combined>(update: null), throwsAssertionError);
-      expect(() => ProxyProvider2<A, B, Combined>(update: null),
-          throwsAssertionError);
-      expect(() => ProxyProvider3<A, B, C, Combined>(update: null),
-          throwsAssertionError);
-      expect(() => ProxyProvider4<A, B, C, D, Combined>(update: null),
-          throwsAssertionError);
-      expect(() => ProxyProvider5<A, B, C, D, E, Combined>(update: null),
-          throwsAssertionError);
-      expect(() => ProxyProvider6<A, B, C, D, E, F, Combined>(update: null),
-          throwsAssertionError);
     });
 
     testWidgets('rebuild descendants if value change', (tester) async {
@@ -206,6 +191,7 @@ void main() {
       verifyNoMoreInteractions(combiner);
       verifyNoMoreInteractions(combinedConsumerMock);
     });
+
     testWidgets('call dispose when unmounted with the latest result',
         (tester) async {
       final dispose = DisposeMock<Combined>();
@@ -271,7 +257,7 @@ void main() {
             ProxyProvider<A, Combined>(
               update: (c, a, p) {
                 combiner(c, a, p);
-                return p;
+                return p!;
               },
             )
           ],
@@ -338,6 +324,7 @@ void main() {
       expect(find.text('2 Hello'), findsNothing);
       expect(find.text('1 Hello'), findsOneWidget);
     });
+
     testWidgets('works with MultiProvider', (tester) async {
       final key = GlobalKey();
 
@@ -353,7 +340,7 @@ void main() {
       final context = findProxyProvider();
 
       expect(
-        Provider.of<Combined>(key.currentContext, listen: false),
+        Provider.of<Combined>(key.currentContext!, listen: false),
         Combined(context, null, a),
       );
     });
@@ -364,7 +351,7 @@ void main() {
         'update callback can trigger descendants setState synchronously',
         (tester) async {
       var statefulBuildCount = 0;
-      void Function(VoidCallback) setState;
+      void Function(VoidCallback)? setState;
 
       final statefulBuilder = StatefulBuilder(builder: (context, s) {
         // force update to be called
@@ -396,7 +383,7 @@ void main() {
           providers: [
             Provider.value(value: A()),
             ProxyProvider<A, Combined>(update: (c, a, p) {
-              setState(() {});
+              setState!(() {});
               return Combined(c, p, a);
             }),
           ],
@@ -424,7 +411,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider2<A, B, Combined>(
-              create: (_) => const Combined(null, null, null),
+              create: (_) => const Combined(),
               update: (context, a, b, previous) =>
                   Combined(context, previous, a, b),
             )
@@ -437,10 +424,11 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          Combined(context, const Combined(null, null, null), a, b),
+          Combined(context, const Combined(), a, b),
         ),
       ).called(1);
     });
+
     testWidgets('ProxyProvider3', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -452,7 +440,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider3<A, B, C, Combined>(
-              create: (_) => const Combined(null, null, null),
+              create: (_) => const Combined(),
               update: (context, a, b, c, previous) =>
                   Combined(context, previous, a, b, c),
             )
@@ -465,10 +453,11 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          Combined(context, const Combined(null, null, null), a, b, c),
+          Combined(context, const Combined(), a, b, c),
         ),
       ).called(1);
     });
+
     testWidgets('ProxyProvider4', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -480,7 +469,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider4<A, B, C, D, Combined>(
-              create: (_) => const Combined(null, null, null),
+              create: (_) => const Combined(),
               update: (context, a, b, c, d, previous) =>
                   Combined(context, previous, a, b, c, d),
             )
@@ -493,10 +482,11 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          Combined(context, const Combined(null, null, null), a, b, c, d),
+          Combined(context, const Combined(), a, b, c, d),
         ),
       ).called(1);
     });
+
     testWidgets('ProxyProvider5', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -508,7 +498,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider5<A, B, C, D, E, Combined>(
-              create: (_) => const Combined(null, null, null),
+              create: (_) => const Combined(),
               update: (context, a, b, c, d, e, previous) =>
                   Combined(context, previous, a, b, c, d, e),
             )
@@ -521,10 +511,11 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          Combined(context, const Combined(null, null, null), a, b, c, d, e),
+          Combined(context, const Combined(), a, b, c, d, e),
         ),
       ).called(1);
     });
+
     testWidgets('ProxyProvider6', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -536,7 +527,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ProxyProvider6<A, B, C, D, E, F, Combined>(
-              create: (_) => const Combined(null, null, null),
+              create: (_) => const Combined(),
               update: (context, a, b, c, d, e, f, previous) =>
                   Combined(context, previous, a, b, c, d, e, f),
             )
@@ -549,7 +540,7 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          Combined(context, const Combined(null, null, null), a, b, c, d, e, f),
+          Combined(context, const Combined(), a, b, c, d, e, f),
         ),
       ).called(1);
     });

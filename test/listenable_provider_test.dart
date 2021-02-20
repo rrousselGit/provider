@@ -2,6 +2,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
@@ -23,9 +24,10 @@ void main() {
         ),
       );
 
-      expect(Provider.of<ChangeNotifier>(key.currentContext, listen: false),
+      expect(Provider.of<ChangeNotifier>(key.currentContext!, listen: false),
           listenable);
     });
+
     testWidgets(
       'asserts that the created notifier can have listeners',
       (tester) async {
@@ -40,7 +42,7 @@ void main() {
         );
 
         expect(
-          Provider.of<ValueNotifier<int>>(key.currentContext, listen: false),
+          Provider.of<ValueNotifier<int>>(key.currentContext!, listen: false),
           notifier,
         );
       },
@@ -105,61 +107,66 @@ void main() {
       await tester.pumpWidget(
         ListenableProvider<ChangeNotifier>.value(
           value: listenable,
-          child: const TextOf<ChangeNotifier>(),
+          child: TextOf<ChangeNotifier>(),
         ),
       );
       await tester.pumpWidget(
         ListenableProvider<ChangeNotifier>.value(
           value: listenable,
-          child: const TextOf<ChangeNotifier>(),
+          child: TextOf<ChangeNotifier>(),
         ),
       );
 
       verify(listenable.addListener(any)).called(1);
       verifyNoMoreInteractions(listenable);
     });
+
     testWidgets('works with null (default)', (tester) async {
       final key = GlobalKey();
+
       await tester.pumpWidget(
-        ListenableProvider<ChangeNotifier>.value(
+        ListenableProvider<ChangeNotifier?>.value(
           value: null,
           child: Container(key: key),
         ),
       );
 
       expect(
-          Provider.of<ChangeNotifier>(key.currentContext, listen: false), null);
+        Provider.of<ChangeNotifier?>(key.currentContext!, listen: false),
+        null,
+      );
     });
+
     testWidgets('works with null (create)', (tester) async {
       final key = GlobalKey();
+
       await tester.pumpWidget(
-        ListenableProvider<ChangeNotifier>(
+        ListenableProvider<ChangeNotifier?>(
           create: (_) => null,
           child: Container(key: key),
         ),
       );
 
       expect(
-          Provider.of<ChangeNotifier>(key.currentContext, listen: false), null);
+        Provider.of<ChangeNotifier?>(key.currentContext!, listen: false),
+        null,
+      );
     });
     group('stateful constructor', () {
       testWidgets('called with context', (tester) async {
-        final builder = InitialValueBuilderMock<ChangeNotifier>();
+        final builder = InitialValueBuilderMock<ChangeNotifier>(
+          ChangeNotifier(),
+        );
 
         await tester.pumpWidget(
           ListenableProvider<ChangeNotifier>(
             create: builder,
-            child: const TextOf<ChangeNotifier>(),
+            child: TextOf<ChangeNotifier>(),
           ),
         );
         verify(builder(argThat(isNotNull))).called(1);
       });
-      test('throws if create is null', () {
-        expect(
-          () => ListenableProvider(create: null),
-          throwsAssertionError,
-        );
-      });
+
       testWidgets('pass down key', (tester) async {
         final keyProvider = GlobalKey();
 
@@ -176,16 +183,17 @@ void main() {
         );
       });
     });
+
     testWidgets('stateful create called once', (tester) async {
       final listenable = MockNotifier();
       when(listenable.hasListeners).thenReturn(false);
-      final create = InitialValueBuilderMock<Listenable>();
+      final create = InitialValueBuilderMock<Listenable>(ChangeNotifier());
       when(create(any)).thenReturn(listenable);
 
       await tester.pumpWidget(
-        ListenableProvider(
+        ListenableProvider<Listenable>(
           create: create,
-          child: const TextOf<Listenable>(),
+          child: TextOf<Listenable>(),
         ),
       );
 
@@ -194,7 +202,7 @@ void main() {
       clearInteractions(listenable);
 
       await tester.pumpWidget(
-        ListenableProvider(
+        ListenableProvider<Listenable>(
           create: create,
           child: Container(),
         ),
@@ -203,18 +211,19 @@ void main() {
       verifyNoMoreInteractions(create);
       verifyNoMoreInteractions(listenable);
     });
+
     testWidgets('dispose called on unmount', (tester) async {
       final listenable = MockNotifier();
       when(listenable.hasListeners).thenReturn(false);
-      final create = InitialValueBuilderMock<Listenable>();
+      final create = InitialValueBuilderMock<Listenable>(ChangeNotifier());
       final dispose = DisposeMock<Listenable>();
       when(create(any)).thenReturn(listenable);
 
       await tester.pumpWidget(
-        ListenableProvider(
+        ListenableProvider<Listenable>(
           create: create,
           dispose: dispose,
-          child: const TextOf<Listenable>(),
+          child: TextOf<Listenable>(),
         ),
       );
 
@@ -235,6 +244,7 @@ void main() {
       verifyNoMoreInteractions(create);
       verifyNoMoreInteractions(listenable);
     });
+
     testWidgets('dispose can be null', (tester) async {
       await tester.pumpWidget(
         ListenableProvider(
@@ -281,6 +291,7 @@ void main() {
 
       expect(listenable.hasListeners, false);
     });
+
     testWidgets("rebuilding with the same provider don't rebuilds descendants",
         (tester) async {
       final listenable = ChangeNotifier();
@@ -338,6 +349,7 @@ void main() {
       expect(buildCount, equals(2));
       expect(Provider.of<ChangeNotifier>(context, listen: false), listenable);
     });
+
     testWidgets('notifylistener rebuilds descendants', (tester) async {
       final listenable = ChangeNotifier();
       final keyChild = GlobalKey();
@@ -364,8 +376,9 @@ void main() {
       await tester.pump();
       verify(builder(any)).called(1);
       expect(
-          Provider.of<ChangeNotifier>(keyChild.currentContext, listen: false),
-          listenable);
+        Provider.of<ChangeNotifier>(keyChild.currentContext!, listen: false),
+        listenable,
+      );
     });
   });
 }

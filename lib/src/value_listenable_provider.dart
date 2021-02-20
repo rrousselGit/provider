@@ -1,89 +1,65 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nested/nested.dart';
 
-import 'listenable_provider.dart' show ListenableProvider;
 import 'provider.dart';
 
-/// Listens to a [ValueListenable] and expose its current value.
-class ValueListenableProvider<T>
-    extends DeferredInheritedProvider<ValueListenable<T>, T> {
-  /// Creates a [ValueNotifier] using [create] and automatically dispose it
-  /// when [ValueListenableProvider] is removed from the tree.
+/// {@macro provider.valuelistenableprovider}
+class ValueListenableProvider<T> extends SingleChildStatelessWidget {
+  /// {@template provider.valuelistenableprovider}
+  /// Listens to a [ValueListenable] and exposes its current value.
   ///
-  /// [create] must not be `null`.
-  ///
-  /// {@macro provider.updateshouldnotify}
-  ///
-  /// See also:
-  ///
-  ///   * [ValueListenable]
-  ///   * [ListenableProvider], similar to [ValueListenableProvider] but for any
-  /// kind of [Listenable].
-  @Deprecated(
-    'Will be removed in 5.0.0. '
-    'Instead use a StatefulWidget and manually create/dispose the ValueNotifier, '
-    'then use ValueListenableProvider.value()',
-  )
-  ValueListenableProvider({
-    Key key,
-    @required Create<ValueNotifier<T>> create,
-    UpdateShouldNotify<T> updateShouldNotify,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
-  }) : super(
-          key: key,
-          create: create,
-          lazy: lazy,
-          builder: builder,
-          updateShouldNotify: updateShouldNotify,
-          startListening: _startListening(),
-          dispose: _dispose,
-          child: child,
-        );
-
-  /// Listens to [value] and exposes its current value.
-  ///
-  /// Changing [value] will stop listening to the previous [value] and listen
-  /// the new one.  Removing [ValueListenableProvider] from the tree will also
-  /// stop listening to [value].
+  /// This is useful for testing purpose, to easily simular a provider update:
   ///
   /// ```dart
-  /// ValueListenable<int> foo;
+  /// testWidgets('example', (tester) async {
+  ///   // Create a ValueNotifier that tests will use to drive the application
+  ///   final counter = ValueNotifier(0);
   ///
-  /// ValueListenableProvider<int>.value(
-  ///   valueListenable: foo,
-  ///   child: Container(),
-  /// );
+  ///   // Mount the application using ValueListenableProvider
+  ///   await tester.pumpWidget(
+  ///     ValueListenableProvider<int>.value(
+  ///       value: counter,
+  ///       child: MyApp(),
+  ///     ),
+  ///   );
+  ///
+  ///   // Tests can now simulate a provider update by updating the notifier
+  ///   // then calling tester.pump()
+  ///   counter.value++;
+  ///   await tester.pump();
+  /// });
   /// ```
+  /// {@endtemplate}
   ValueListenableProvider.value({
-    Key key,
-    @required ValueListenable<T> value,
-    UpdateShouldNotify<T> updateShouldNotify,
-    TransitionBuilder builder,
-    Widget child,
-  }) : super.value(
-          key: key,
-          builder: builder,
+    Key? key,
+    required ValueListenable<T> value,
+    UpdateShouldNotify<T>? updateShouldNotify,
+    Widget? child,
+  })  : _valueListenable = value,
+        _updateShouldNotify = updateShouldNotify,
+        super(key: key, child: child);
+
+  final ValueListenable<T> _valueListenable;
+  final UpdateShouldNotify<T>? _updateShouldNotify;
+
+  @override
+  Widget buildWithChild(BuildContext context, Widget? child) {
+    return ValueListenableBuilder<T>(
+      valueListenable: _valueListenable,
+      builder: (context, value, _) {
+        return Provider<T>.value(
           value: value,
-          updateShouldNotify: updateShouldNotify,
-          startListening: _startListening(),
+          updateShouldNotify: _updateShouldNotify,
           child: child,
         );
-
-  static void _dispose(BuildContext context, ValueListenable<Object> notifier) {
-    if (notifier is ValueNotifier) {
-      notifier.dispose();
-    }
+      },
+    );
   }
 
-  static DeferredStartListening<ValueListenable<T>, T> _startListening<T>() {
-    return (_, setState, controller, __) {
-      setState(controller.value);
-
-      void listener() => setState(controller.value);
-      controller.addListener(listener);
-      return () => controller.removeListener(listener);
-    };
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('value', _valueListenable.value));
   }
 }

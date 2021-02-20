@@ -28,6 +28,7 @@ void main() {
 
     expect(provider.hasReassemble, equals(true));
   });
+
   testWidgets('unevaluated create', (tester) async {
     final provider = _ReassembleHandler();
 
@@ -44,6 +45,7 @@ void main() {
 
     expect(provider.hasReassemble, equals(false));
   });
+
   testWidgets('unevaluated create', (tester) async {
     final provider = _ReassembleHandler();
 

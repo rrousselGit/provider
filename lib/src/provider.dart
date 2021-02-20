@@ -115,12 +115,11 @@ class MultiProvider extends Nested {
   /// For an explanation on the `child` parameter that `builder` receives,
   /// see the "Performance optimizations" section of [AnimatedBuilder].
   MultiProvider({
-    Key key,
-    @required List<SingleChildWidget> providers,
-    Widget child,
-    TransitionBuilder builder,
-  })  : assert(providers != null),
-        super(
+    Key? key,
+    required List<SingleChildWidget> providers,
+    Widget? child,
+    TransitionBuilder? builder,
+  }) : super(
           key: key,
           children: providers,
           child: builder != null
@@ -199,14 +198,13 @@ class Provider<T> extends InheritedProvider<T> {
   /// This callback which will be called when [Provider] is unmounted from the
   /// widget tree.
   Provider({
-    Key key,
-    @required Create<T> create,
-    Dispose<T> dispose,
-    bool lazy,
-    TransitionBuilder builder,
-    Widget child,
-  })  : assert(create != null),
-        super(
+    Key? key,
+    required Create<T> create,
+    Dispose<T>? dispose,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super(
           key: key,
           lazy: lazy,
           builder: builder,
@@ -229,11 +227,11 @@ class Provider<T> extends InheritedProvider<T> {
   /// See [InheritedWidget.updateShouldNotify] for more information.
   /// {@endtemplate}
   Provider.value({
-    Key key,
-    @required T value,
-    UpdateShouldNotify<T> updateShouldNotify,
-    TransitionBuilder builder,
-    Widget child,
+    Key? key,
+    required T value,
+    UpdateShouldNotify<T>? updateShouldNotify,
+    TransitionBuilder? builder,
+    Widget? child,
   })  : assert(() {
           Provider.debugCheckInvalidValueType?.call<T>(value);
           return true;
@@ -264,9 +262,8 @@ class Provider<T> extends InheritedProvider<T> {
   /// )
   /// ```
   static T of<T>(BuildContext context, {bool listen = true}) {
-    assert(context != null);
     assert(
-      context.owner.debugBuilding ||
+      context.owner!.debugBuilding ||
           listen == false ||
           debugIsInInheritedProviderUpdate,
       '''
@@ -290,13 +287,13 @@ The context used was: $context
     if (listen) {
       context.dependOnInheritedElement(inheritedElement);
     }
-
     return inheritedElement.value;
   }
 
   static _InheritedProviderScopeElement<T> _inheritedElementOf<T>(
     BuildContext context,
   ) {
+    // ignore: unnecessary_null_comparison, can happen if the application depends on a non-migrated code
     assert(context != null, '''
 Tried to call context.read/watch/select or similar on a `context` that is null.
 
@@ -317,26 +314,26 @@ If you want to expose a variable that can be anything, consider changing
 `dynamic` to `Object` instead.
 ''',
     );
-    _InheritedProviderScopeElement<T> inheritedElement;
+    _InheritedProviderScopeElement<T>? inheritedElement;
 
     if (context.widget is _InheritedProviderScope<T>) {
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
       // the same type.
       context.visitAncestorElements((parent) {
         inheritedElement = parent.getElementForInheritedWidgetOfExactType<
-            _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>;
+            _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>?;
         return false;
       });
     } else {
       inheritedElement = context.getElementForInheritedWidgetOfExactType<
-          _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>;
+          _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>?;
     }
 
     if (inheritedElement == null) {
       throw ProviderNotFoundException(T, context.widget.runtimeType);
     }
 
-    return inheritedElement;
+    return inheritedElement!;
   }
 
   /// A sanity check to prevent misuse of [Provider] when a variant should be
@@ -374,7 +371,7 @@ If you want to expose a variable that can be anything, consider changing
   /// }
   /// ```
   // ignore: prefer_function_declarations_over_variables, false positive
-  static void Function<T>(T value) debugCheckInvalidValueType = <T>(T value) {
+  static void Function<T>(T value)? debugCheckInvalidValueType = <T>(T value) {
     assert(() {
       if (value is Listenable || value is Stream) {
         throw FlutterError('''

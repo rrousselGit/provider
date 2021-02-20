@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
@@ -21,23 +22,39 @@ InheritedContext<T> findInheritedContext<T>() {
 Type typeOf<T>() => T;
 
 class InitialValueBuilderMock<T> extends Mock {
-  InitialValueBuilderMock([T value]) {
-    when(this(any)).thenAnswer((_) => value);
+  InitialValueBuilderMock(this._value) {
+    when(this(any)).thenAnswer((_) => _value);
   }
 
-  T call(BuildContext context);
+  final T _value;
+
+  T call(BuildContext? context) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context]),
+      returnValue: _value,
+      returnValueForMissingStub: _value,
+    ) as T;
+  }
 }
 
 class ValueBuilderMock<T> extends Mock {
-  ValueBuilderMock([T value]) {
-    when(this(any, any)).thenReturn(value);
+  ValueBuilderMock(this._value) {
+    when(this(any, any)).thenReturn(_value);
   }
 
-  T call(BuildContext context, T previous);
+  final T _value;
+
+  T call(BuildContext? context, T? previous) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, previous]),
+      returnValue: _value,
+      returnValueForMissingStub: _value,
+    ) as T;
+  }
 }
 
 class TransitionBuilderMock extends Mock {
-  TransitionBuilderMock([Widget Function(BuildContext c, Widget child) cb]) {
+  TransitionBuilderMock([Widget Function(BuildContext c, Widget child)? cb]) {
     if (cb != null) {
       when(this(any, any)).thenAnswer((i) {
         final context = i.positionalArguments.first as BuildContext;
@@ -47,15 +64,25 @@ class TransitionBuilderMock extends Mock {
     }
   }
 
-  Widget call(BuildContext context, Widget child);
+  Widget call(BuildContext? context, Widget? child) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, child]),
+      returnValue: Container(),
+    ) as Widget;
+  }
 }
 
 class StartListeningMock<T> extends Mock {
-  StartListeningMock([VoidCallback value]) {
+  StartListeningMock(VoidCallback value) {
     when(this(any, any)).thenReturn(value);
   }
 
-  VoidCallback call(InheritedContext<T> context, T value);
+  VoidCallback call(InheritedContext<T>? context, T? value) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, value]),
+      returnValue: () {},
+    ) as VoidCallback;
+  }
 }
 
 class StopListeningMock extends Mock {
@@ -63,14 +90,31 @@ class StopListeningMock extends Mock {
 }
 
 class DisposeMock<T> extends Mock {
-  void call(BuildContext context, T value);
+  void call(BuildContext? context, T? value) {
+    super.noSuchMethod(
+      Invocation.method(#call, [context, value]),
+    );
+  }
 }
 
-class MockNotifier extends Mock implements ChangeNotifier {}
+class MockNotifier extends Mock implements ChangeNotifier {
+  @override
+  void addListener(VoidCallback? listener);
+
+  @override
+  void removeListener(VoidCallback? listener);
+
+  @override
+  bool get hasListeners => super.noSuchMethod(
+        Invocation.getter(#hasListeners),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool;
+}
 
 class ValueWidgetBuilderMock<T> extends Mock {
   ValueWidgetBuilderMock([
-    Widget Function(BuildContext c, T value, Widget child) cb,
+    Widget Function(BuildContext c, T value, Widget child)? cb,
   ]) {
     if (cb != null) {
       when(this(any, any, any)).thenAnswer((i) {
@@ -82,11 +126,17 @@ class ValueWidgetBuilderMock<T> extends Mock {
     }
   }
 
-  Widget call(BuildContext context, T value, Widget child);
+  Widget call(BuildContext? context, T? value, Widget? child) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, value, child]),
+      returnValue: Container(),
+      returnValueForMissingStub: Container(),
+    ) as Widget;
+  }
 }
 
 class BuilderMock extends Mock {
-  BuilderMock([Widget Function(BuildContext c) cb]) {
+  BuilderMock([Widget Function(BuildContext c)? cb]) {
     if (cb != null) {
       when(this(any)).thenAnswer((i) {
         final context = i.positionalArguments.first as BuildContext;
@@ -95,25 +145,72 @@ class BuilderMock extends Mock {
     }
   }
 
-  Widget call(BuildContext context);
+  Widget call(BuildContext? context) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context]),
+      returnValue: Container(),
+      returnValueForMissingStub: Container(),
+    ) as Widget;
+  }
 }
 
-class StreamMock<T> extends Mock implements Stream<T> {}
+class StreamMock<T> extends Mock implements Stream<T> {
+  @override
+  StreamSubscription<T> listen(
+    void Function(T event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return super.noSuchMethod(
+      Invocation.method(#listen, [
+        onData
+      ], {
+        #onError: onError,
+        #onDone: onDone,
+        #cancelOnError: cancelOnError,
+      }),
+      returnValue: StreamSubscriptionMock<T>(),
+      returnValueForMissingStub: StreamSubscriptionMock<T>(),
+    ) as StreamSubscription<T>;
+  }
+}
 
 class FutureMock<T> extends Mock implements Future<T> {}
 
-class StreamSubscriptionMock<T> extends Mock implements StreamSubscription<T> {}
+class StreamSubscriptionMock<T> extends Mock implements StreamSubscription<T> {
+  @override
+  Future<void> cancel() {
+    return super.noSuchMethod(
+      Invocation.method(#cancel, []),
+      returnValue: Future<void>.value(),
+      returnValueForMissingStub: Future<void>.value(),
+    ) as Future<void>;
+  }
+}
 
 class MockConsumerBuilder<T> extends Mock {
-  Widget call(BuildContext context, T value, Widget child);
+  Widget call(BuildContext? context, T? value, Widget? child) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, value, child]),
+      returnValue: Container(),
+      returnValueForMissingStub: Container(),
+    ) as Widget;
+  }
 }
 
 class UpdateShouldNotifyMock<T> extends Mock {
-  bool call(T old, T newValue);
+  bool call(T? old, T? newValue) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [old, newValue]),
+      returnValue: false,
+      returnValueForMissingStub: false,
+    ) as bool;
+  }
 }
 
 class TextOf<T> extends StatelessWidget {
-  const TextOf({Key key}) : super(key: key);
+  TextOf({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -125,14 +222,15 @@ class TextOf<T> extends StatelessWidget {
 }
 
 class DeferredStartListeningMock<T, R> extends Mock {
-  DeferredStartListeningMock(
-      [VoidCallback Function(
-        InheritedContext<R> context,
-        void Function(R value) setState,
-        T controller,
-        R value,
-      )
-          call]) {
+  DeferredStartListeningMock([
+    VoidCallback Function(
+      InheritedContext<R> context,
+      void Function(R value) setState,
+      T controller,
+      R? value,
+    )?
+        call,
+  ]) {
     if (call != null) {
       when(this(any, any, any, any)).thenAnswer((invoc) {
         return Function.apply(
@@ -145,11 +243,19 @@ class DeferredStartListeningMock<T, R> extends Mock {
   }
 
   VoidCallback call(
-    InheritedContext<R> context,
-    void Function(R value) setState,
-    T controller,
-    R value,
-  );
+    InheritedContext<R>? context,
+    void Function(R value)? setState,
+    T? controller,
+    R? value,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #call,
+          [context, setState, controller, value],
+        ),
+        returnValue: () {},
+        returnValueForMissingStub: () {},
+      ) as VoidCallback;
 }
 
 class DebugCheckValueTypeMock<T> extends Mock {
@@ -169,23 +275,37 @@ class E with DiagnosticableTreeMixin {}
 class F with DiagnosticableTreeMixin {}
 
 class MockCombinedBuilder extends Mock {
-  Widget call(Combined foo);
+  Widget call(Combined? foo) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [foo]),
+      returnValue: Container(),
+      returnValueForMissingStub: Container(),
+    ) as Widget;
+  }
 }
 
 class CombinerMock extends Mock {
-  Combined call(BuildContext context, A a, Combined foo);
+  Combined call(BuildContext? context, A? a, Combined? foo) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, a, foo]),
+      returnValue: const Combined(),
+      returnValueForMissingStub: const Combined(),
+    ) as Combined;
+  }
 }
 
 class ProviderBuilderMock extends Mock {
   Widget call(BuildContext context, Combined value, Widget child);
 }
 
+class MyStream extends Fake implements Stream<int> {}
+
 @immutable
 class Combined extends DiagnosticableTree {
-  const Combined(
+  const Combined([
     this.context,
     this.previous,
-    this.a, [
+    this.a,
     this.b,
     this.c,
     this.d,
@@ -193,14 +313,14 @@ class Combined extends DiagnosticableTree {
     this.f,
   ]);
 
-  final A a;
-  final B b;
-  final C c;
-  final D d;
-  final E e;
-  final F f;
-  final Combined previous;
-  final BuildContext context;
+  final A? a;
+  final B? b;
+  final C? c;
+  final D? d;
+  final E? e;
+  final F? f;
+  final Combined? previous;
+  final BuildContext? context;
 
   @override
   // ignore: hash_and_equals
@@ -233,14 +353,6 @@ class Combined extends DiagnosticableTree {
 
 class MyListenable extends ChangeNotifier {}
 
-class MyStream extends Stream<void> {
-  @override
-  StreamSubscription<void> listen(void Function(void event) onData,
-      {Function onError, void Function() onDone, bool cancelOnError}) {
-    return null;
-  }
-}
-
 int buildCountOf(BuildCount widget) {
   return ((find.byWidget(widget).evaluate().single as StatefulElement).state
           as _BuildCountState)
@@ -248,7 +360,7 @@ int buildCountOf(BuildCount widget) {
 }
 
 class BuildCount extends StatefulWidget {
-  const BuildCount(this.builder, {Key key}) : super(key: key);
+  const BuildCount(this.builder, {Key? key}) : super(key: key);
 
   final WidgetBuilder builder;
 

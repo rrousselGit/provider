@@ -2,13 +2,24 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
 import 'common.dart';
 
 class ErrorBuilderMock<T> extends Mock {
-  T call(BuildContext context, Object error);
+  ErrorBuilderMock(this.fallback);
+
+  final T fallback;
+
+  T call(BuildContext? context, Object? error) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, error]),
+      returnValue: fallback,
+      returnValueForMissingStub: fallback,
+    ) as T;
+  }
 }
 
 void main() {
@@ -21,7 +32,7 @@ void main() {
             value: Future.value(42),
           ),
         ],
-        child: const TextOf<int>(),
+        child: TextOf<int>(),
       ),
     );
 
@@ -31,6 +42,7 @@ void main() {
 
     expect(find.text('42'), findsOneWidget);
   });
+
   testWidgets(
     '(catchError) previous future completes after transition is no-op',
     (tester) async {
@@ -41,7 +53,7 @@ void main() {
         FutureProvider.value(
           initialData: 0,
           value: controller.future,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -51,7 +63,7 @@ void main() {
         FutureProvider.value(
           initialData: 1,
           value: controller2.future,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -80,7 +92,7 @@ void main() {
         FutureProvider.value(
           initialData: 0,
           value: controller.future,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -90,7 +102,7 @@ void main() {
         FutureProvider.value(
           initialData: 1,
           value: controller2.future,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -117,7 +129,7 @@ void main() {
         FutureProvider.value(
           initialData: 0,
           value: controller.future,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -133,7 +145,7 @@ void main() {
         FutureProvider.value(
           initialData: 0,
           value: controller2.future,
-          child: const TextOf<int>(),
+          child: TextOf<int>(),
         ),
       );
 
@@ -151,8 +163,9 @@ void main() {
 
     await tester.pumpWidget(
       FutureProvider.value(
+        initialData: 0,
         value: controller.future,
-        child: const TextOf<int>(),
+        child: TextOf<int>(),
       ),
     );
 
@@ -169,17 +182,19 @@ Exception:
 42
 '''));
   });
+
   testWidgets('calls catchError if present and future has error',
       (tester) async {
     final controller = Completer<int>();
-    final catchError = ErrorBuilderMock<int>();
+    final catchError = ErrorBuilderMock<int>(0);
     when(catchError(any, 42)).thenReturn(42);
 
     await tester.pumpWidget(
       FutureProvider.value(
+        initialData: null,
         value: controller.future,
         catchError: catchError,
-        child: const TextOf<int>(),
+        child: TextOf<int?>(),
       ),
     );
 
@@ -193,12 +208,13 @@ Exception:
     verify(catchError(argThat(isNotNull), 42)).called(1);
     verifyNoMoreInteractions(catchError);
   });
+
   testWidgets('works with null', (tester) async {
     await tester.pumpWidget(
       FutureProvider<int>.value(
         initialData: 42,
         value: null,
-        child: const TextOf<int>(),
+        child: TextOf<int>(),
       ),
     );
 
@@ -207,21 +223,6 @@ Exception:
     await tester.pumpWidget(Container());
   });
 
-  test('FutureProvider() crashes if builder is null', () {
-    expect(
-      () => FutureProvider<int>(create: null),
-      throwsAssertionError,
-    );
-  });
-
-  group('FutureProvider()', () {
-    test('crashes if builder is null', () {
-      expect(
-        () => FutureProvider<int>(create: null),
-        throwsAssertionError,
-      );
-    });
-  });
   testWidgets('create and dispose future with builder', (tester) async {
     final completer = Completer<int>();
 
@@ -229,7 +230,7 @@ Exception:
       FutureProvider<int>(
         initialData: 42,
         create: (_) => completer.future,
-        child: const TextOf<int>(),
+        child: TextOf<int>(),
       ),
     );
 

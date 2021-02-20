@@ -5,10 +5,10 @@ part of 'provider.dart';
 @immutable
 class _ProviderNode {
   const _ProviderNode({
-    @required this.id,
-    @required this.childrenNodeIds,
-    @required this.type,
-    @required _InheritedProviderScopeElement element,
+    required this.id,
+    required this.childrenNodeIds,
+    required this.type,
+    required _InheritedProviderScopeElement element,
   }) : _element = element;
 
   final String id;
@@ -16,14 +16,16 @@ class _ProviderNode {
   final List<String> childrenNodeIds;
   final _InheritedProviderScopeElement _element;
 
-  Object get value => _element._delegateState.value;
+  Object? get value => _element._delegateState.value;
 }
 
 @protected
 class ProviderBinding {
   ProviderBinding._();
 
-  static final debugInstance = kDebugMode ? ProviderBinding._() : null;
+  static final debugInstance = kDebugMode
+      ? ProviderBinding._()
+      : throw UnsupportedError('Cannot use ProviderBinding in release mode');
 
   Map<String, _ProviderNode> _providerDetails = {};
   Map<String, _ProviderNode> get providerDetails => _providerDetails;

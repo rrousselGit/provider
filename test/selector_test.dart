@@ -1,8 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart' as mockito show when;
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 void mockImplementation<T extends Function>(dynamic Function() when, T mock) {
   mockito.when<dynamic>(when()).thenAnswer((invo) {
@@ -11,7 +15,7 @@ void mockImplementation<T extends Function>(dynamic Function() when, T mock) {
 }
 
 void main() {
-  final selector = MockSelector<int>();
+  final selector = MockSelector<int>(-1);
   final builder = MockBuilder<int>();
 
   tearDown(() {
@@ -23,59 +27,6 @@ void main() {
     mockImplementation(() => builder(any, any, any), implementation);
   }
 
-  test('asserts that builder/selector are not null', () {
-    expect(
-      () => Selector0<int>(
-        selector: null,
-        builder: (_, __, ___) => Container(),
-      ),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector<A, int>(selector: null, builder: (_, __, ___) => null),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector2<A, B, int>(selector: null, builder: (_, __, ___) => null),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector3<A, B, C, int>(
-        selector: null,
-        builder: (_, __, ___) => null,
-      ),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector4<A, B, C, D, int>(
-        selector: null,
-        builder: (_, __, ___) => null,
-      ),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector5<A, B, C, D, E, int>(
-        selector: null,
-        builder: (_, __, ___) => null,
-      ),
-      throwsAssertionError,
-    );
-    expect(
-      () => Selector6<A, B, C, D, E, F, int>(
-        selector: null,
-        builder: (_, __, ___) => null,
-      ),
-      throwsAssertionError,
-    );
-
-    expect(
-      () => Selector0<int>(
-        selector: (_) => 42,
-        builder: null,
-      ),
-      throwsAssertionError,
-    );
-  });
   testWidgets('Deep compare maps by default', (tester) async {
     var value = <int, int>{};
     final builder = MockBuilder<Map<int, int>>();
@@ -105,6 +56,7 @@ void main() {
 
     verifyNoMoreInteractions(builder);
   });
+
   testWidgets('Deep compare iterables by default', (tester) async {
     var value = <int>[].whereType<int>();
     final builder = MockBuilder<Iterable<int>>();
@@ -134,6 +86,7 @@ void main() {
 
     verifyNoMoreInteractions(builder);
   });
+
   testWidgets('Deep compare sets by default', (tester) async {
     var value = <int>{};
     final builder = MockBuilder<Set<int>>();
@@ -163,6 +116,7 @@ void main() {
 
     verifyNoMoreInteractions(builder);
   });
+
   testWidgets('Deep compare lists by default', (tester) async {
     var value = <int>[];
     final builder = MockBuilder<List<int>>();
@@ -192,6 +146,7 @@ void main() {
 
     verifyNoMoreInteractions(builder);
   });
+
   testWidgets('custom shouldRebuid', (tester) async {
     var value = 0;
     var shouldRebuild = true;
@@ -232,13 +187,14 @@ void main() {
     verifyNoMoreInteractions(mockShouldRebuild);
     verifyNoMoreInteractions(builder);
   });
+
   testWidgets('passes `child` and `key`', (tester) async {
     final key = GlobalKey();
     await tester.pumpWidget(
       Selector0<void>(
         key: key,
-        selector: (_) => null,
-        builder: (_, __, child) => child,
+        selector: (_) {},
+        builder: (_, __, child) => child!,
         child: const Text('42', textDirection: TextDirection.ltr),
       ),
     );
@@ -247,6 +203,7 @@ void main() {
 
     expect(find.text('42'), findsOneWidget);
   });
+
   testWidgets('calls builder if the callback changes', (tester) async {
     await tester.pumpWidget(
       Selector0<int>(
@@ -268,10 +225,11 @@ void main() {
 
     expect(find.text('bar'), findsOneWidget);
   });
+
   testWidgets('works with MultiProvider', (tester) async {
     final key = GlobalKey();
     int selector(BuildContext _) => 42;
-    Widget builder(BuildContext _, int __, Widget child) => child;
+    Widget builder(BuildContext _, int __, Widget? child) => child!;
     const child = Text('foo', textDirection: TextDirection.ltr);
 
     await tester.pumpWidget(
@@ -302,6 +260,7 @@ void main() {
       equals(builder),
     );
   });
+
   testWidgets(
       "don't call builder again if it rebuilds "
       'but selector returns the same thing', (tester) async {
@@ -337,6 +296,7 @@ void main() {
     verifyNoMoreInteractions(selector);
     expect(find.text('42'), findsOneWidget);
   });
+
   testWidgets(
       'call builder again if it rebuilds '
       'abd selector returns the a different variable', (tester) async {
@@ -376,6 +336,29 @@ void main() {
     expect(find.text('24'), findsOneWidget);
   });
 
+  testWidgets('debugFillProperties', (tester) async {
+    final builder = DiagnosticPropertiesBuilder();
+    final key = UniqueKey();
+    final selector = Selector0<int>(
+      key: key,
+      selector: (_) => 0,
+      builder: (_, __, ___) => const SizedBox(),
+    );
+
+    await tester.pumpWidget(selector);
+
+    final element = tester.element(find.byKey(key)) as StatefulElement;
+    final selectorState = element.state as SingleChildState<Selector0<int>>;
+    selectorState.debugFillProperties(builder);
+    final description = builder.properties
+        .where(
+          (DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info),
+        )
+        .map((DiagnosticsNode node) => node.toString())
+        .toList();
+    expect(description, <String>['value: 0']);
+  });
+
   testWidgets('Selector', (tester) async {
     await tester.pumpWidget(
       MultiProvider(
@@ -392,6 +375,7 @@ void main() {
 
     expect(find.text('A'), findsOneWidget);
   });
+
   testWidgets('Selector2', (tester) async {
     await tester.pumpWidget(
       MultiProvider(
@@ -409,6 +393,7 @@ void main() {
 
     expect(find.text('A B'), findsOneWidget);
   });
+
   testWidgets('Selector3', (tester) async {
     await tester.pumpWidget(
       MultiProvider(
@@ -427,6 +412,7 @@ void main() {
 
     expect(find.text('A B C'), findsOneWidget);
   });
+
   testWidgets('Selector4', (tester) async {
     await tester.pumpWidget(
       MultiProvider(
@@ -446,6 +432,7 @@ void main() {
 
     expect(find.text('A B C D'), findsOneWidget);
   });
+
   testWidgets('Selector5', (tester) async {
     await tester.pumpWidget(
       MultiProvider(
@@ -466,6 +453,7 @@ void main() {
 
     expect(find.text('A B C D E'), findsOneWidget);
   });
+
   testWidgets('Selector6', (tester) async {
     await tester.pumpWidget(
       MultiProvider(
@@ -509,13 +497,32 @@ class E with _ToString {}
 class F with _ToString {}
 
 class MockSelector<T> extends Mock {
-  T call(BuildContext context);
+  MockSelector(this._fallback);
+
+  final T _fallback;
+
+  T call(BuildContext? context) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context]),
+      returnValue: _fallback,
+    ) as T;
+  }
 }
 
 class MockShouldRebuild<T> extends Mock {
-  bool call(T prev, T next);
+  bool call(T? prev, T? next) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [prev, next]),
+      returnValue: false,
+    ) as bool;
+  }
 }
 
 class MockBuilder<T> extends Mock {
-  Widget call(BuildContext context, T value, Widget child);
+  Widget call(BuildContext? context, T? value, Widget? child) {
+    return super.noSuchMethod(
+      Invocation.method(#call, [context, value, child]),
+      returnValue: Container(),
+    ) as Widget;
+  }
 }

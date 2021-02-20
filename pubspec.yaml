@@ -1,20 +1,20 @@
 name: provider
 description: A wrapper around InheritedWidget to make them easier to use and more reusable.
-version: 4.3.3
+version: 5.0.0-nullsafety.5
 homepage: https://github.com/rrousselGit/provider
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0-0 <3.0.0"
   flutter: ">=1.16.0"
 
 dependencies:
-  collection: ^1.14.13
+  collection: ^1.15.0
   flutter:
     sdk: flutter
-  nested: ">=0.0.4 <2.0.0"
+  nested: ^1.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: ^4.1.3
+  mockito: ^5.0.0-nullsafety.7
   test: ^1.15.5

@@ -1,7 +1,6 @@
-import 'package:flutter/widgets.dart' hide TypeMatcher;
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:test/test.dart' show TypeMatcher;
 
 import 'common.dart';
 
@@ -14,12 +13,13 @@ void main() {
             value: 42,
           ),
         ],
-        child: const TextOf<int>(),
+        child: TextOf<int>(),
       ),
     );
 
     expect(find.text('42'), findsOneWidget);
   });
+
   group('Provider.of', () {
     testWidgets('throws if T is dynamic', (tester) async {
       await tester.pumpWidget(
@@ -34,6 +34,7 @@ void main() {
         throwsAssertionError,
       );
     });
+
     testWidgets(
       'listen defaults to true when building widgets',
       (tester) async {
@@ -153,13 +154,14 @@ void main() {
       },
     );
   });
+
   group('Provider', () {
     testWidgets('throws if the provided value is a Listenable/Stream',
         (tester) async {
       expect(
         () => Provider.value(
           value: MyListenable(),
-          child: const TextOf<MyListenable>(),
+          child: TextOf<MyListenable>(),
         ),
         throwsFlutterError,
       );
@@ -167,7 +169,7 @@ void main() {
       expect(
         () => Provider.value(
           value: MyStream(),
-          child: const TextOf<MyListenable>(),
+          child: TextOf<MyListenable>(),
         ),
         throwsFlutterError,
       );
@@ -176,7 +178,7 @@ void main() {
         Provider(
           key: UniqueKey(),
           create: (_) => MyListenable(),
-          child: const TextOf<MyListenable>(),
+          child: TextOf<MyListenable>(),
         ),
       );
 
@@ -186,11 +188,12 @@ void main() {
         Provider(
           key: UniqueKey(),
           create: (_) => MyStream(),
-          child: const TextOf<MyStream>(),
+          child: TextOf<MyStream>(),
         ),
       );
       expect(tester.takeException(), isFlutterError);
     });
+
     testWidgets('debugCheckInvalidValueType can be disabled', (tester) async {
       final previous = Provider.debugCheckInvalidValueType;
       Provider.debugCheckInvalidValueType = null;
@@ -199,22 +202,22 @@ void main() {
       await tester.pumpWidget(
         Provider.value(
           value: MyListenable(),
-          child: const TextOf<MyListenable>(),
+          child: TextOf<MyListenable>(),
         ),
       );
 
       await tester.pumpWidget(
         Provider.value(
           value: MyStream(),
-          child: const TextOf<MyStream>(),
+          child: TextOf<MyStream>(),
         ),
       );
     });
 
     testWidgets('simple usage', (tester) async {
       var buildCount = 0;
-      int value;
-      double second;
+      int? value;
+      double? second;
 
       // We voluntarily reuse the builder instance so that later call to
       // pumpWidget don't call builder again unless subscribed to an
@@ -292,15 +295,15 @@ void main() {
 
       expect(
         tester.takeException(),
-        const TypeMatcher<ProviderNotFoundException>()
+        isA<ProviderNotFoundException>()
             .having((err) => err.valueType, 'valueType', String)
             .having((err) => err.widgetType, 'widgetType', Builder),
       );
     });
 
     testWidgets('update should notify', (tester) async {
-      int old;
-      int curr;
+      int? old;
+      int? curr;
       var callCount = 0;
       bool updateShouldNotify(int o, int c) {
         callCount++;
@@ -310,12 +313,14 @@ void main() {
       }
 
       var buildCount = 0;
-      int buildValue;
-      final builder = Builder(builder: (BuildContext context) {
-        buildValue = Provider.of(context);
-        buildCount++;
-        return Container();
-      });
+      int? buildValue;
+      final builder = Builder(
+        builder: (context) {
+          buildValue = context.watch<int>();
+          buildCount++;
+          return Container();
+        },
+      );
 
       await tester.pumpWidget(
         Provider<int>.value(

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,7 @@ void main() {
 
     expect(find.text('42'), findsOneWidget);
   });
+
   testWidgets('select in layoutbuilder', (tester) async {
     await tester.pumpWidget(
       Provider(
@@ -35,6 +37,7 @@ void main() {
 
     expect(find.text('42'), findsOneWidget);
   });
+
   testWidgets('cannot select in listView', (tester) async {
     await tester.pumpWidget(
       Directionality(
@@ -61,6 +64,7 @@ void main() {
           )),
     );
   });
+
   testWidgets('watch in listView', (tester) async {
     final notifier = ValueNotifier([0, 0]);
 
@@ -93,6 +97,7 @@ void main() {
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsOneWidget);
   });
+
   testWidgets('watch in gridView', (tester) async {
     final notifier = ValueNotifier([0, 0]);
 
@@ -141,7 +146,7 @@ void main() {
 
       Widget buildIndex(int index) {
         return Builder(builder: (c) {
-          callCounts[index]++;
+          callCounts[index] = callCounts[index]! + 1;
           final selected =
               c.select<ValueNotifier<List<bool>>, bool>((notifier) {
             return notifier.value[index];
@@ -213,6 +218,7 @@ void main() {
       expect(find.text('2 false'), findsOneWidget);
       expect(callCounts[2], 1);
     });
+
     testWidgets('create can use read without being lazy', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
@@ -233,7 +239,6 @@ void main() {
 
       expect(find.text('42'), findsOneWidget);
     });
-
     testWidgets('watch can be used inside InheritedProvider.update',
         (tester) async {
       await tester.pumpWidget(
@@ -252,7 +257,6 @@ void main() {
         ),
       );
     });
-
     testWidgets(
         "select doesn't fail if it loads a provider that depends on other providers",
         (tester) async {
@@ -276,12 +280,14 @@ void main() {
 
       expect(find.text('84'), findsOneWidget);
     });
+
     testWidgets("don't call old selectors if the child rebuilds individually",
         (tester) async {
       final notifier = ValueNotifier(0);
 
       var buildCount = 0;
-      final selector = MockSelector.identity<ValueNotifier<int>>();
+      final selector =
+          MockSelector.identity<ValueNotifier<int>>(ValueNotifier(0));
       final child = Builder(builder: (c) {
         buildCount++;
         c.select<ValueNotifier<int>, ValueNotifier<int>>(selector);
@@ -313,6 +319,7 @@ void main() {
       verify(selector(notifier)).called(1);
       verifyNoMoreInteractions(selector);
     });
+
     testWidgets('selects throws inside click handlers', (tester) async {
       await tester.pumpWidget(
         Provider.value(
@@ -334,6 +341,7 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
+
     testWidgets('select throws if try to read dynamic', (tester) async {
       await tester.pumpWidget(
         Builder(builder: (c) {
@@ -344,6 +352,7 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
+
     testWidgets('select throws ProviderNotFoundException', (tester) async {
       await tester.pumpWidget(
         Builder(builder: (c) {
@@ -354,6 +363,7 @@ void main() {
 
       expect(tester.takeException(), isA<ProviderNotFoundException>());
     });
+
     testWidgets('select throws if watch called inside the callback from build',
         (tester) async {
       await tester.pumpWidget(
@@ -371,6 +381,7 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
+
     testWidgets('select throws if read called inside the callback from build',
         (tester) async {
       await tester.pumpWidget(
@@ -388,6 +399,7 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
+
     testWidgets('select throws if select called inside the callback from build',
         (tester) async {
       await tester.pumpWidget(
@@ -405,6 +417,7 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
+
     testWidgets(
         'select throws if read called inside the callback on dependency change',
         (tester) async {
@@ -438,6 +451,7 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
+
     testWidgets(
         'select throws if watch called inside the callback on dependency change',
         (tester) async {
@@ -471,6 +485,7 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
+
     testWidgets(
         'select throws if select called inside the callback on dependency change',
         (tester) async {
@@ -504,6 +519,7 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
+
     testWidgets('can call read inside didChangeDependencies', (tester) async {
       await tester.pumpWidget(
         Provider.value(
@@ -519,9 +535,10 @@ void main() {
 
       expect(find.text('42'), findsOneWidget);
     });
+
     testWidgets('select cannot be called inside didChangeDependencies',
         (tester) async {
-      Object error;
+      Object? error;
       await tester.pumpWidget(
         Provider.value(
           value: 42,
@@ -540,6 +557,7 @@ void main() {
 
       expect(error, isAssertionError);
     });
+
     testWidgets('select in initState throws', (tester) async {
       await tester.pumpWidget(
         Provider.value(
@@ -555,6 +573,7 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
+
     testWidgets('watch in initState throws', (tester) async {
       await tester.pumpWidget(
         Provider.value(
@@ -570,8 +589,9 @@ void main() {
 
       expect(tester.takeException(), isAssertionError);
     });
+
     testWidgets('read in initState works', (tester) async {
-      int value;
+      int? value;
       await tester.pumpWidget(
         Provider.value(
           value: 42,
@@ -586,9 +606,10 @@ void main() {
 
       expect(value, 42);
     });
+
     testWidgets('consumer can be removed and selector stops to be called',
         (tester) async {
-      final selector = MockSelector.identity<int>();
+      final selector = MockSelector.identity<int>(0);
 
       final child = Builder(builder: (c) {
         c.select<int, int>(selector);
@@ -626,11 +647,12 @@ void main() {
 
       verifyNoMoreInteractions(selector);
     });
+
     testWidgets('context.select deeply compares maps', (tester) async {
       final notifier = ValueNotifier(<int, int>{});
 
       var buildCount = 0;
-      final selector = MockSelector.identity<Map<int, int>>();
+      final selector = MockSelector.identity<Map<int, int>>({});
       final child = Builder(builder: (c) {
         buildCount++;
         c.select<Map<int, int>, Map<int, int>>(selector);
@@ -638,9 +660,14 @@ void main() {
       });
 
       await tester.pumpWidget(
-        ValueListenableProvider.value(
-          value: notifier,
-          child: child,
+        ValueListenableBuilder<Map<int, int>>(
+          valueListenable: notifier,
+          builder: (context, value, _) {
+            return Provider.value(
+              value: value,
+              child: child,
+            );
+          },
         ),
       );
 
@@ -663,11 +690,12 @@ void main() {
       verify(selector(notifier.value)).called(1);
       verifyNoMoreInteractions(selector);
     });
+
     testWidgets('context.select deeply compares lists', (tester) async {
       final notifier = ValueNotifier(<int>[]);
 
       var buildCount = 0;
-      final selector = MockSelector.identity<List<int>>();
+      final selector = MockSelector.identity<List<int>>([]);
       final child = Builder(builder: (c) {
         buildCount++;
         c.select<List<int>, List<int>>(selector);
@@ -675,9 +703,14 @@ void main() {
       });
 
       await tester.pumpWidget(
-        ValueListenableProvider.value(
-          value: notifier,
-          child: child,
+        ValueListenableBuilder<List<int>>(
+          valueListenable: notifier,
+          builder: (context, value, _) {
+            return Provider.value(
+              value: value,
+              child: child,
+            );
+          },
         ),
       );
 
@@ -699,11 +732,12 @@ void main() {
       verify(selector(notifier.value)).called(1);
       verifyNoMoreInteractions(selector);
     });
+
     testWidgets('context.select deeply compares iterables', (tester) async {
       final notifier = ValueNotifier<Iterable<int>>(<int>[]);
 
       var buildCount = 0;
-      final selector = MockSelector.identity<Iterable<int>>();
+      final selector = MockSelector.identity<Iterable<int>>({});
       final child = Builder(builder: (c) {
         buildCount++;
         c.select<Iterable<int>, Iterable<int>>(selector);
@@ -711,9 +745,14 @@ void main() {
       });
 
       await tester.pumpWidget(
-        ValueListenableProvider.value(
-          value: notifier,
-          child: child,
+        ValueListenableBuilder<Iterable<int>>(
+          valueListenable: notifier,
+          builder: (context, value, _) {
+            return Provider.value(
+              value: value,
+              child: child,
+            );
+          },
         ),
       );
 
@@ -735,11 +774,12 @@ void main() {
       verify(selector(notifier.value)).called(1);
       verifyNoMoreInteractions(selector);
     });
+
     testWidgets('context.select deeply compares sets', (tester) async {
       final notifier = ValueNotifier<Set<int>>(<int>{});
 
       var buildCount = 0;
-      final selector = MockSelector.identity<Set<int>>();
+      final selector = MockSelector.identity<Set<int>>({});
       final child = Builder(builder: (c) {
         buildCount++;
         c.select<Set<int>, Set<int>>(selector);
@@ -747,9 +787,14 @@ void main() {
       });
 
       await tester.pumpWidget(
-        ValueListenableProvider.value(
-          value: notifier,
-          child: child,
+        ValueListenableBuilder<Set<int>>(
+          valueListenable: notifier,
+          builder: (context, value, _) {
+            return Provider.value(
+              value: value,
+              child: child,
+            );
+          },
         ),
       );
 
@@ -771,6 +816,7 @@ void main() {
       verify(selector(notifier.value)).called(1);
       verifyNoMoreInteractions(selector);
     });
+
     testWidgets('context.watch listens to value changes', (tester) async {
       final child = Builder(builder: (context) {
         final value = context.watch<int>();
@@ -796,12 +842,13 @@ void main() {
       expect(find.text('24'), findsOneWidget);
     });
   });
+
   testWidgets('clears select dependencies for all dependents', (tester) async {
     var buildCountChild1 = 0;
     var buildCountChild2 = 0;
 
-    final select1 = MockSelector<int, int>((v) => 0);
-    final select2 = MockSelector<int, int>((v) => 0);
+    final select1 = MockSelector<int, int>(0, (v) => 0);
+    final select2 = MockSelector<int, int>(0, (v) => 0);
 
     Widget build(int value) {
       return Provider.value(
@@ -855,7 +902,7 @@ void main() {
 
 class StatefulTest extends StatefulWidget {
   const StatefulTest({
-    Key key,
+    Key? key,
     this.initState,
     this.child,
     this.didChangeDependencies,
@@ -863,11 +910,11 @@ class StatefulTest extends StatefulWidget {
     this.dispose,
   }) : super(key: key);
 
-  final void Function(BuildContext c) initState;
-  final void Function(BuildContext c) didChangeDependencies;
-  final WidgetBuilder builder;
-  final Widget child;
-  final void Function(BuildContext c) dispose;
+  final void Function(BuildContext c)? initState;
+  final void Function(BuildContext c)? didChangeDependencies;
+  final WidgetBuilder? builder;
+  final Widget? child;
+  final void Function(BuildContext c)? dispose;
 
   @override
   _StatefulTestState createState() => _StatefulTestState();
@@ -895,20 +942,28 @@ class _StatefulTestState extends State<StatefulTest> {
   @override
   Widget build(BuildContext context) {
     if (widget.builder != null) {
-      return widget.builder(context);
+      return widget.builder!(context);
     }
-    return widget.child;
+    return widget.child!;
   }
 }
 
 class MockSelector<T, R> extends Mock {
-  MockSelector(R Function(T v) cb) {
+  MockSelector(this.fallback, R Function(T v) cb) {
     when(this(any)).thenAnswer((i) {
       return cb(i.positionalArguments.first as T);
     });
   }
 
-  static MockSelector<T, T> identity<T>() => MockSelector<T, T>((v) => v);
+  static MockSelector<T, T> identity<T>(T fallback) {
+    return MockSelector<T, T>(fallback, (v) => v);
+  }
 
-  R call(T v);
+  final R fallback;
+
+  R call(T? v) => super.noSuchMethod(
+        Invocation.method(#call, [v]),
+        returnValue: fallback,
+        returnValueForMissingStub: fallback,
+      ) as R;
 }
