@@ -1,0 +1,19 @@
+name: Test Report
+
+on:
+  workflow_run:
+    workflows:
+    - Build
+    types:
+    - completed
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: dorny/test-reporter@v1
+      with:
+        artifact: /test-results-(.*)/
+        name: Test Report ($1)
+        path: '**/test-results.json'
+        reporter: flutter-json

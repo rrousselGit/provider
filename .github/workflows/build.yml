@@ -23,3 +23,10 @@ jobs:
 
       - name: Execute test script
         run: curl -s https://raw.githubusercontent.com/rrousselGit/ci/master/scripts/ci.sh | bash -s nnbd
+
+      - name: Upload test results
+        if: success() || failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-${{matrix.channel}}
+          path: reports/test-results.json

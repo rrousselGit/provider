@@ -1,0 +1,5 @@
+# This file should normally be at the project root
+# Due to some bug it has to be here.
+# On dev channel this is already fixed
+file_reporters:
+  json: ../reports/test-results.json
