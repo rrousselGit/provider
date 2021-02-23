@@ -1,3 +1,7 @@
+# 5.0.0
+
+- Stable, null-safe release.
+
 # 5.0.0-nullsafety.5
 
 Fixed an issue where providers with an `update` parameter in sound null-safety mode could throw null exceptions.
