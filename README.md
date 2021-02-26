@@ -190,7 +190,7 @@ The easiest way to read a value is by using the extension methods on [BuildConte
 
 - `context.watch<T>()`, which makes the widget listen to changes on `T`
 - `context.read<T>()`, which returns `T` without listening to it
-- `context.select<T, R>(R cb(T value))`, which allows a widget to listen to only a small part of `T`.
+- `context.select<T, R>(R cb(T value))`, which allows a widget to listen to only a small part of `T`. It also allows to listen conditionally if the *return* value changes (as opposed to *any* change to a varible). This can be helpful if you need a rebuild only if a variable changes to a specific value, as opposed to rebuiding on every change.
 
 Or to use the static method `Provider.of<T>(context)`, which will behave similarly to `watch` and when you pass `false`
 to the `listen` parameter like `Provider.of<T>(context,listen: false)` it will behave similar to `read`.
