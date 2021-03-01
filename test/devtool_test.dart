@@ -14,8 +14,46 @@ void main() {
 
   tearDown(() => spy.dispose());
 
-  testWidgets(
-      'ProviderContainer calls postEvent whenever it mounts/unmount a provider',
+  testWidgets('calls postEvent whenever a provider is updated', (tester) async {
+    final notifier = ValueNotifier(42);
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: notifier),
+        ],
+        child: Consumer<ValueNotifier<int>>(
+          builder: (context, value, child) {
+            return Container();
+          },
+        ),
+      ),
+    );
+
+    final notifierId =
+        ProviderBinding.debugInstance.providerDetails.keys.single;
+
+    spy.logs.clear();
+
+    notifier.notifyListeners();
+
+    expect(spy.logs, isEmpty);
+
+    await tester.pump();
+
+    expect(
+      spy.logs,
+      [
+        isPostEventCall(
+          'provider:provider_changed',
+          <String, dynamic>{'id': notifierId},
+        ),
+      ],
+    );
+    spy.logs.clear();
+  });
+
+  testWidgets('calls postEvent whenever a provider is mounted/unmounted',
       (tester) async {
     Provider.value(value: 42);
 
