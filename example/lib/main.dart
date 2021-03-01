@@ -46,9 +46,9 @@ class ComplexObject {
   double float = .42;
   String string = 'hello world';
   Type type = Counter;
-  Object plainInstance = const _SubObject('hello world');
+  Object? plainInstance = const _SubObject('hello world');
 
-  var map = <Object, Object>{
+  var map = <Object?, Object?>{
     'list': [42],
     'string': 'string',
     42: 'number_key',
@@ -56,16 +56,16 @@ class ComplexObject {
     null: null,
     const _SubObject('complex-key'): const _SubObject('complex-value'),
     _token: 'non-constant key',
-    'nested_map': <Object, Object>{
+    'nested_map': <Object?, Object?>{
       'key': 'value',
     }
   };
 
-  var list = <Object>[
+  var list = <Object?>[
     42,
     'string',
-    <Object>[],
-    <Object, Object>{},
+    <Object?>[],
+    <Object?, Object?>{},
     const _SubObject('complex-value'),
     null,
   ];

@@ -343,7 +343,7 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
       _debugId = '${_nextProviderId++}';
       ProviderBinding.debugInstance.providerDetails = {
         ...ProviderBinding.debugInstance.providerDetails,
-        _debugId: _ProviderNode(
+        _debugId: ProviderNode(
           id: _debugId,
           childrenNodeIds: const [],
           // ignore: no_runtimetype_tostring
