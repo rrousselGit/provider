@@ -18,66 +18,24 @@ void main() {
   );
 }
 
-class Counter extends ChangeNotifier {
+/// Mix-in [DiagnosticableTreeMixin] to have access to [debugFillProperties] for the devtool
+// ignore: prefer_mixin
+class Counter with ChangeNotifier, DiagnosticableTreeMixin {
   int _count = 0;
-  int get count => _count;
 
-  final complex = ComplexObject();
+  int get count => _count;
 
   void increment() {
     _count++;
     notifyListeners();
   }
 
+  /// Makes `Counter` readable inside the devtools by listing all of its properties
   @override
-  // ignore: hash_and_equals, overriding the hashcode for testing purposes
-  int get hashCode => 42;
-}
-
-enum Enum { a, b }
-
-final _token = Object();
-
-class ComplexObject {
-  Enum enumeration = Enum.a;
-  Null nill;
-  bool boolean = false;
-  int integer = 0;
-  double float = .42;
-  String string = 'hello world';
-  Type type = Counter;
-  Object? plainInstance = const _SubObject('hello world');
-
-  var map = <Object?, Object?>{
-    'list': [42],
-    'string': 'string',
-    42: 'number_key',
-    true: 'number_key',
-    null: null,
-    const _SubObject('complex-key'): const _SubObject('complex-value'),
-    _token: 'non-constant key',
-    'nested_map': <Object?, Object?>{
-      'key': 'value',
-    }
-  };
-
-  var list = <Object?>[
-    42,
-    'string',
-    <Object?>[],
-    <Object?, Object?>{},
-    const _SubObject('complex-value'),
-    null,
-  ];
-
-  @override
-  // ignore: hash_and_equals, overriding the hashcode for testing purposes
-  int get hashCode => 21;
-}
-
-class _SubObject {
-  const _SubObject(this.value);
-  final String value;
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IntProperty('count', count));
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -135,10 +93,10 @@ class Count extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      /// Calls `context.watch` to make [Count] rebuild when [Counter] changes.
-      '${context.watch<Counter>().count}',
-      key: const Key('counterState'),
-      style: Theme.of(context).textTheme.headline4,
-    );
+
+        /// Calls `context.watch` to make [Count] rebuild when [Counter] changes.
+        '${context.watch<Counter>().count}',
+        key: const Key('counterState'),
+        style: Theme.of(context).textTheme.headline4);
   }
 }
