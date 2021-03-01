@@ -1,3 +1,7 @@
+# [Unreleased]
+
+- Updated oudated doc in `StreamProvider`
+
 # 5.0.0-nullsafety.5
 
 Fixed an issue where providers with an `update` parameter in sound null-safety mode could throw null exceptions.
