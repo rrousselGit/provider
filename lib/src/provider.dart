@@ -5,7 +5,6 @@
 import 'dart:developer' as developer;
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
 import 'package:flutter/rendering.dart';
