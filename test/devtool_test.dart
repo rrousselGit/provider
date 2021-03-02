@@ -75,7 +75,8 @@ void main() {
     expect(ProviderBinding.debugInstance.providerDetails, {
       intProviderId: isA<ProviderNode>()
           .having((e) => e.id, 'id', intProviderId)
-          .having((e) => e.type, 'type', 'Provider<int>'),
+          .having((e) => e.type, 'type', 'Provider<int>')
+          .having((e) => e.value, 'value', 42),
     });
     expect(
       spy.logs,
@@ -100,10 +101,12 @@ void main() {
     expect(ProviderBinding.debugInstance.providerDetails, {
       intProviderId: isA<ProviderNode>()
           .having((e) => e.id, 'id', intProviderId)
-          .having((e) => e.type, 'type', 'Provider<int>'),
+          .having((e) => e.type, 'type', 'Provider<int>')
+          .having((e) => e.value, 'value', 42),
       stringProviderId: isA<ProviderNode>()
           .having((e) => e.id, 'id', stringProviderId)
-          .having((e) => e.type, 'type', 'Provider<String>'),
+          .having((e) => e.type, 'type', 'Provider<String>')
+          .having((e) => e.value, 'value', '42'),
     });
     expect(
       spy.logs,
@@ -123,7 +126,8 @@ void main() {
     expect(ProviderBinding.debugInstance.providerDetails, {
       intProviderId: isA<ProviderNode>()
           .having((e) => e.id, 'id', intProviderId)
-          .having((e) => e.type, 'type', 'Provider<int>'),
+          .having((e) => e.type, 'type', 'Provider<int>')
+          .having((e) => e.value, 'value', 42),
     });
     expect(
       spy.logs,
