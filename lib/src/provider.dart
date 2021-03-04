@@ -1,3 +1,8 @@
+// /!\ DO NOT MOVE THIS FILE /!\
+//
+// Flutter's devtool rely on the path to this file to be able to communicate with `provider`.
+
+import 'dart:developer' as developer;
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -9,6 +14,7 @@ import 'reassemble_handler.dart';
 
 part 'inherited_provider.dart';
 part 'deferred_inherited_provider.dart';
+part 'devtool.dart';
 
 /// A provider that merges multiple providers into a single linear widget tree.
 /// It is used to improve readability and reduce boilerplate code of having to

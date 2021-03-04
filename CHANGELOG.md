@@ -1,5 +1,6 @@
-# [Unreleased]
+# 5.0.0-dev.0
 
+- pre-release of the mechanism for state-inspection using the Flutter devtool 
 - Updated oudated doc in `StreamProvider`
 
 # 5.0.0-nullsafety.5
