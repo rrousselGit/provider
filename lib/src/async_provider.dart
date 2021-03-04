@@ -62,7 +62,6 @@ $error
 /// providing a `catchError` method.
 ///
 /// `initialData` determines the value exposed until the [Stream] emits a value.
-/// If omitted, defaults to `null`.
 ///
 /// By default, [StreamProvider] considers that the [Stream] listened uses
 /// immutable data. As such, it will not rebuild dependents if the previous and
