@@ -111,7 +111,7 @@ ChangeNotifierProvider.value(
 ```
 
 - **DON'T** create your object from variables that can change over
-  the time.
+  time.
 
   In such a situation, your object would never be updated when the
   value changes.
