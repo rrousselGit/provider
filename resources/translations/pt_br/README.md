@@ -425,9 +425,11 @@ initState() {
 }
 ```
 
-Isto não é permitido, pois a modificação é imediata.
+Isto não é permitido, pois a modificação precisa ser imediata.
 
-O que significa que alguns widgets podem ser construídos _antes_ da mutação equanto outros _depois_. Isto pode gerar inconsistências na sua interface gráfica e por isso não é permitido.
+O que significa que alguns widgets podem ser construídos _antes_ da mutação acontecer (recebendo um valor antigo),
+equanto outros serão construídos _depois_ da mutação se completar (recebendo um novo valor).
+Isto pode gerar inconsistências na sua interface gráfica e por isso não é permitido.
 
 Ao invés disso, você pode fazer a mutação em algum lugar que afeta toda a árvore igualmente:
 
