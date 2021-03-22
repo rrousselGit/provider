@@ -16,7 +16,7 @@ By using `provider` instead of manually writing [InheritedWidget], you get:
 - devtools friendly
 - a common way to consume these [InheritedWidget]s (See [Provider.of]/[Consumer]/[Selector])
 - increased scalability for classes with a listening mechanism that grows exponentially
-  in complexity (such as [ChangeNotifier], which is O(N²) for dispatching notifications).
+  in complexity (such as [ChangeNotifier], which is O(N) for dispatching notifications).
 
 To read more about `provider`, see its [documentation](https://pub.dev/documentation/provider/latest/provider/provider-library.html).
 
