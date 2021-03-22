@@ -14,7 +14,7 @@ Usando o `provider` ao invés de usar InheritedWidget, você ganha:
 - redução considerável de código desnecessário toda vez que se cria uma class
 - compatível com devtools
 - uma maneira comum de consumir InheritedWidgets (consulte [Provider.of]/[Consumer]/[Selector])
-- maior escalabilidade para classes com um mecanismo de escuta que cresce exponencialmente em complexidade (como [ChangeNotifier], que é O (N²) para notificações de despacho).
+- maior escalabilidade para classes com um mecanismo de escuta que cresce exponencialmente em complexidade (como [ChangeNotifier], que é O(N) para notificações de despacho).
 
 Para ler mais sobre o `provider`, veja a [documentação](https://pub.dev/documentation/provider/latest/provider/provider-library.html).
 
@@ -74,7 +74,7 @@ Para ler mais sobre o `provider`, veja a [documentação](https://pub.dev/docume
 
 #### Expondo a instância de um novo objeto
 
-Providers permitem não apenas expor um valor, mas também criar/escutar/dipor os mesmos.
+Providers permitem não apenas expor um valor, mas também criar/escutar/descartar os mesmos.
 
 Para expor um obejto criado, use o construtor padrão do provider.
 Não use `.value` se quiser **criar** um objeto ou terá efeitos indesejados.
@@ -425,11 +425,13 @@ initState() {
 }
 ```
 
-Isto não é permitid, pois a modificação é imediata.
+Isto não é permitido, pois a modificação precisa ser imediata.
 
-O que significa que alguns widgets podem ser construídos _antes_ da mutação equanto outros _depois_. Isto pode gerar inconsistências na sua interface gráfica e por isso não é permitido.
+O que significa que alguns widgets podem ser construídos _antes_ da mutação acontecer (recebendo um valor antigo),
+equanto outros serão construídos _depois_ da mutação se completar (recebendo um novo valor).
+Isto pode gerar inconsistências na sua interface gráfica e por isso não é permitido.
 
-Ao invés disso, você pode fazer a mutação em algum lugar que afta toda a árvore igualmente:
+Ao invés disso, você pode fazer a mutação em algum lugar que afeta toda a árvore igualmente:
 
 - diretamente dentro de `create` do seu provider/construtor do seu modelo:
 
@@ -582,7 +584,7 @@ só ira conseguir obter apenas um deles: o ancestral mais próximo.
 
 Ao invés disso, você deve dar explicitamente tipos diferentes a ambos providers.
 
-Instead of:
+Em vez de:
 
 ```dart
 Provider<String>(
@@ -594,7 +596,7 @@ Provider<String>(
 ),
 ```
 
-Prefer:
+Prefira:
 
 ```dart
 Provider<Country>(
