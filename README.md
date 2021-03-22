@@ -456,10 +456,10 @@ initState() {
 }
 ```
 
-This is not allowed, because the modification is immediate.
+This is not allowed, because the modification has to be immediate.
 
-Which means that some widgets may build _before_ the mutation, while other
-widgets will build _after_ the mutation.
+Which means that some widgets may build _before_ the mutation happens (getting an old value),
+while other widgets will build _after_ the mutation is complete (getting a new value).
 This could cause inconsistencies in your UI and is therefore not allowed.
 
 Instead, you should perform that mutation in a place that would affect the
