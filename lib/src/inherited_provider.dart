@@ -287,7 +287,7 @@ abstract class InheritedContext<T> extends BuildContext {
   /// that depends on [T] to rebuild.
   void markNeedsNotifyDependents();
 
-  /// Wether `setState` was called at least once or not.
+  /// Whether `setState` was called at least once or not.
   ///
   /// It can be used by [DeferredStartListening] to differentiate between the
   /// very first listening, and a rebuild after `controller` changed.
