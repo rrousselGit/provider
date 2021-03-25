@@ -456,7 +456,7 @@ initState() {
 }
 ```
 
-This is not allowed, because the modification has to be immediate.
+This is not allowed, because the state update is synchronous.
 
 Which means that some widgets may build _before_ the mutation happens (getting an old value),
 while other widgets will build _after_ the mutation is complete (getting a new value).
