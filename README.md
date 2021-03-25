@@ -16,7 +16,7 @@ By using `provider` instead of manually writing [InheritedWidget], you get:
 - devtools friendly
 - a common way to consume these [InheritedWidget]s (See [Provider.of]/[Consumer]/[Selector])
 - increased scalability for classes with a listening mechanism that grows exponentially
-  in complexity (such as [ChangeNotifier], which is O(N²) for dispatching notifications).
+  in complexity (such as [ChangeNotifier], which is O(N) for dispatching notifications).
 
 To read more about `provider`, see its [documentation](https://pub.dev/documentation/provider/latest/provider/provider-library.html).
 
@@ -456,10 +456,10 @@ initState() {
 }
 ```
 
-This is not allowed, because the modification is immediate.
+This is not allowed, because the state update is synchronous.
 
-Which means that some widgets may build _before_ the mutation, while other
-widgets will build _after_ the mutation.
+Which means that some widgets may build _before_ the mutation happens (getting an old value),
+while other widgets will build _after_ the mutation is complete (getting a new value).
 This could cause inconsistencies in your UI and is therefore not allowed.
 
 Instead, you should perform that mutation in a place that would affect the
