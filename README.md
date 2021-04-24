@@ -484,7 +484,7 @@ entire tree equally:
   initState() {
     super.initState();
     Future.microtask(() =>
-      context.read<MyNotifier>(context).fetchSomething(someValue);
+      context.read<MyNotifier>().fetchSomething(someValue);
     );
   }
   ```
