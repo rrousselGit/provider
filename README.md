@@ -12,19 +12,19 @@ By using `provider` instead of manually writing [InheritedWidget], you get:
 
 - simplified allocation/disposal of resources
 - lazy-loading
-- a largely reduced boilerplate over making a new class every time
-- devtools friendly
+- a vastly reduced boilerplate over making a new class every time
+- friendly to devtools
 - a common way to consume these [InheritedWidget]s (See [Provider.of]/[Consumer]/[Selector])
 - increased scalability for classes with a listening mechanism that grows exponentially
   in complexity (such as [ChangeNotifier], which is O(N) for dispatching notifications).
 
-To read more about `provider`, see its [documentation](https://pub.dev/documentation/provider/latest/provider/provider-library.html).
+To read more about a `provider`, see its [documentation](https://pub.dev/documentation/provider/latest/provider/provider-library.html).
 
 See also:
 
-- [the official Flutter state management documentation](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple), which showcase how to use `provider` + [ChangeNotifier]
+- [The official Flutter state management documentation](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple), which showcases how to use `provider` + [ChangeNotifier]
 - [flutter architecture sample](https://github.com/brianegan/flutter_architecture_samples/tree/master/change_notifier_provider), which contains an implementation of that app using `provider` + [ChangeNotifier]
-- [flutter_bloc](https://github.com/felangel/bloc) and [Mobx](https://github.com/mobxjs/mobx.dart), which use `provider` in their architecture
+- [flutter_bloc](https://github.com/felangel/bloc) and [Mobx](https://github.com/mobxjs/mobx.dart), which uses a `provider` in their architecture
 
 ## Migration from 4.x.x to 5.0.0-nullsafety
 
@@ -82,15 +82,15 @@ See also:
 
 #### Exposing a new object instance
 
-Providers allow to not only expose a value, but also create/listen/dispose it.
+Providers allow you to not only expose a value, but also create, listen, and dispose of it.
 
 To expose a newly created object, use the default constructor of a provider.
 Do _not_ use the `.value` constructor if you want to **create** an object, or you
-may otherwise have undesired side-effects.
+may otherwise have undesired side effects.
 
-See [this stackoverflow answer](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)
-which explains in further details why using the `.value` constructor to
-create values is undesired.
+See [this StackOverflow answer](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)
+which explains why using the `.value` constructor to create values is undesired.
+
 
 - **DO** create a new object inside `create`.
 
@@ -110,10 +110,9 @@ ChangeNotifierProvider.value(
 )
 ```
 
-- **DON'T** create your object from variables that can change over
-  time.
+- **DON'T** create your object from variables that can change over time.
 
-  In such a situation, your object would never be updated when the
+  In such a situation, your object would never update when the
   value changes.
 
 ```dart
@@ -142,8 +141,7 @@ ProxyProvider0(
 When using the `create`/`update` callback of a provider, it is worth noting that this callback
 is called lazily by default.
 
-What this means is, until the value is requested at least once, the `create`/`update`
-callbacks won't be called.
+This means that until the value is requested at least once, the `create`/`update` callbacks won't be called.
 
 This behavior can be disabled if you want to pre-compute some logic, using the `lazy` parameter:
 
@@ -156,10 +154,9 @@ MyProvider(
 
 #### Reusing an existing object instance:
 
-If you already have an object instance and want to expose it,
-you should use the `.value` constructor of a provider.
+If you already have an object instance and want to expose it, it would be best to use the `.value` constructor of a provider.
 
-Failing to do so may call the `dispose` method of your object when it is still in use.
+Failing to do so may call your object `dispose` method when it is still in use.
 
 - **DO** use `ChangeNotifierProvider.value` to provide an existing
   [ChangeNotifier].
@@ -192,21 +189,17 @@ The easiest way to read a value is by using the extension methods on [BuildConte
 - `context.read<T>()`, which returns `T` without listening to it
 - `context.select<T, R>(R cb(T value))`, which allows a widget to listen to only a small part of `T`.
 
-Or to use the static method `Provider.of<T>(context)`, which will behave similarly to `watch` and when you pass `false`
-to the `listen` parameter like `Provider.of<T>(context,listen: false)` it will behave similar to `read`.
+Or to use the static method `Provider.of<T>(context)`, which will behave similarly to `watch` and when you pass `false` The `listen` parameter like `Provider.of<T>(context,listen: false)` it will behave similarly to `read`.
 
-It's worth noting that `context.read<T>()` won't make widget rebuild when the value changes and cannot be
-called inside `StatelessWidget.build`/`State.build`. On the other hand, it can be freely called outside of these methods.
+It's worth noting that `context.read<T>()` won't make widget rebuild when the value changes and cannot be called inside `StatelessWidget.build`/`State.build`. On the other hand, it can be freely called outside of these methods.
 
-These methods will look up in the widget tree starting from the widget associated
-with the `BuildContext` passed, and will return the nearest variable of type
-`T` found (or throw if nothing is found).
+These methods will look up in the widget tree starting from the widget associated with the `BuildContext` passed and will return the nearest variable of type `T` found (or throw if nothing is found).
 
-It's worth noting that this operation is O(1). It doesn't involve actually walking
+It's worth noting that this operation is O(1). It doesn't involve walking
 in the widget tree.
 
 Combined with the first example of [exposing a value](#exposing-a-value), this
-widget will read the exposed `String` and render "Hello World."
+the widget will read the exposed `String` and render "Hello World."
 
 ```dart
 class Home extends StatelessWidget {
@@ -267,14 +260,11 @@ the appearance of the code.
 
 Since the 3.0.0, there is a new kind of provider: `ProxyProvider`.
 
-`ProxyProvider` is a provider that combines multiple values from other providers
-into a new object, and sends the result to `Provider`.
+`ProxyProvider` is a provider that combines multiple values from other providers into a new object and sends the result to `Provider`.
 
-That new object will then be updated whenever one of the providers it depends on
-updates.
+That new object will then be updated whenever one of the providers depends on updates.
 
-The following example uses `ProxyProvider` to build translations based on a
-counter coming from another provider.
+The following example uses `ProxyProvider` to build translations based on a counter coming from another provider.
 
 ```dart
 Widget build(BuildContext context) {
@@ -335,8 +325,7 @@ To have something more useful, you have two solutions:
 
 - use the [Diagnosticable](https://api.flutter.dev/flutter/foundation/Diagnosticable-class.html) API from Flutter.
 
-  For most cases, that will be done my using [DiagnosticableTreeMixin]
-  on your objects, followed by a custom implementation of [debugFillProperties](https://api.flutter.dev/flutter/foundation/DiagnosticableTreeMixin/debugFillProperties.html).
+  For most cases, I will use [DiagnosticableTreeMixin] on your objects, followed by a custom implementation of [debugFillProperties](https://api.flutter.dev/flutter/foundation/DiagnosticableTreeMixin/debugFillProperties.html).
 
   ```dart
   class MyClass with DiagnosticableTreeMixin {
@@ -356,10 +345,10 @@ To have something more useful, you have two solutions:
   }
   ```
 
-- override `toString`.
+- Override `toString`.
 
   If you cannot use [DiagnosticableTreeMixin] (like if your class is in a package
-  that does not depend on Flutter), then you can simply override `toString`.
+  that does not depend on Flutter), then you can override `toString`.
 
   This is easier than using [DiagnosticableTreeMixin] but is less powerful:
   You will not be able to expand/collapse the details of your object.
@@ -411,7 +400,7 @@ Widget build(BuildContext context) {
 
 which will print `value` whenever it changes (and only when it changes).
 
-Alternatively you can do:
+Alternatively, you can do:
 
 ```dart
 initState() {
@@ -435,19 +424,17 @@ class Example extends ChangeNotifier implements ReassembleHandler {
 }
 ```
 
-Then used normally with `provider`:
+Then used typically with `provider`:
 
 ```dart
 ChangeNotifierProvider(create: (_) => Example()),
 ```
 
-#### I use [ChangeNotifier] and I have an exception when I update it, what happens?
+#### I use [ChangeNotifier], and I have an exception when I update it. What happens?
 
-This likely happens because you are modifying the [ChangeNotifier] from one of
-its descendants _while the widget tree is building_.
+This likely happens because you are modifying the [ChangeNotifier] from one of its descendants _while the widget tree is building_.
 
-A typical situation where this happens is when starting an http request, where
-the future is stored inside the notifier:
+A typical situation where this happens is when starting an http request, where the future is stored inside the notifier:
 
 ```dart
 initState() {
@@ -456,11 +443,9 @@ initState() {
 }
 ```
 
-This is not allowed, because the state update is synchronous.
+This is not allowed because the state update is synchronous.
 
-Which means that some widgets may build _before_ the mutation happens (getting an old value),
-while other widgets will build _after_ the mutation is complete (getting a new value).
-This could cause inconsistencies in your UI and is therefore not allowed.
+This means that some widgets may build _before_ the mutation happens (getting an old value), while other widgets will build _after_ the mutation is complete (getting a new value). This could cause inconsistencies in your UI and is therefore not allowed.
 
 Instead, you should perform that mutation in a place that would affect the
 entire tree equally:
@@ -548,7 +533,7 @@ return FloatingActionButton(
 
 Alternatively, you can create your own provider.
 
-#### Can I make my own Provider?
+#### Can I make my Provider?
 
 Yes. `provider` exposes all the small components that make a fully-fledged provider.
 
@@ -559,13 +544,12 @@ This includes:
 
 - [InheritedProvider], the generic `InheritedWidget` obtained when doing `context.watch`.
 
-Here's an example of a custom provider to use `ValueNotifier` as state:
+Here's an example of a custom provider to use `ValueNotifier` as the state:
 https://gist.github.com/rrousselGit/4910f3125e41600df3c2577e26967c91
 
-#### My widget rebuilds too often, what can I do?
+#### My widget rebuilds too often. What can I do?
 
-Instead of `context.watch`, you can use `context.select` to listen only to a
-specific set of properties on the obtained object.
+Instead of `context.watch`, you can use `context.select` to listen only to the specific set of properties on the obtained object.
 
 For example, while you can write:
 
@@ -587,12 +571,9 @@ Widget build(BuildContext context) {
 }
 ```
 
-This way, the widget won't unnecessarily rebuild if something other than `name`
-changes.
+This way, the widget won't unnecessarily rebuild if something other than `name` changes.
 
-Similarly, you can use [Consumer]/[Selector].
-Their optional `child` argument allows to rebuild only a very specific part of
-the widget tree:
+Similarly, you can use [Consumer]/[Selector]. Their optional `child` argument allows rebuilding only a particular part of the widget tree:
 
 ```dart
 Foo(
@@ -610,10 +591,9 @@ unnecessarily rebuild.
 
 #### Can I obtain two different providers using the same type?
 
-No. While you can have multiple providers sharing the same type, a widget will
-be able to obtain only one of them: the closest ancestor.
+No. While you can have multiple providers sharing the same type, a widget will be able to obtain only one of them: the closest ancestor.
 
-Instead, you must explicitly give both providers a different type.
+Instead, it would help if you explicitly gave both providers a different type.
 
 Instead of:
 
