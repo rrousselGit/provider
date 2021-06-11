@@ -5,7 +5,6 @@
 
 [<img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
 
-
 [InheritedWidget](https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html) 组件的上层封装， 使其更易用， 更易复用。
 
 使用 `provider` 而非手动书写 [InheritedWidget](https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html)，你会获得:
@@ -67,6 +66,95 @@
 
 
 ## 使用
+
+### 插件
+
+**为了进一步提高您的生产效率，我们还为您准备了一插件**
+
+- provider_template：[Android Studio/Intellij插件](https://plugins.jetbrains.com/plugin/16821-flutter-provider)
+  - 一键生成每个页面必需的文件夹、文件、模板代码等等
+  - 支持Wrap Widget：Consumer、Selector、ChangeNotifirProvider
+  - 支持输入 **provider**  提示生成快捷代码片段
+
+### 一些用法
+
+#### 通常用法
+
+```dart
+class CounterPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => CounterProvider(),
+      child: Scaffold(
+        appBar: AppBar(title: Text('Provider')),
+        body: Center(
+          child: Consumer<ProEasyCounterProvider>(
+            builder: (context, provider, child) {
+              return Text('count ${provider.count} ');
+            },
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Provider.of<ProEasyCounterProvider>(context, listen: false).increment();
+          },
+          child: Icon(Icons.add),
+        ),
+      ),
+    );
+  }
+}
+
+class CounterProvider extends ChangeNotifier {
+  int count = 0;
+
+  void increment() {
+    count++;
+    notifyListeners();
+  }
+}
+```
+
+#### 一些技巧
+
+Provider.of使用起来有些麻烦，我们可以使用一些小技巧优化一下，ChangeNotifierProvider会存储XxxProvider对象，此处，我们也可以将其存储，以便后续使用
+
+```dart
+class CounterPage extends StatelessWidget {
+  final provider = CounterProvider();
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => provider,
+      child: Scaffold(
+        appBar: AppBar(title: Text('Provider')),
+        body: Center(
+          child: Consumer<ProEasyCounterProvider>(
+            builder: (context, provider, child) {
+              return Text('count ${provider.count} ');
+            },
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => provider.increment(),
+          child: Icon(Icons.add),
+        ),
+      ),
+    );
+  }
+}
+
+class CounterProvider extends ChangeNotifier {
+  int count = 0;
+
+  void increment() {
+    count++;
+    notifyListeners();
+  }
+}
+```
 
 ### 暴露一个值
 

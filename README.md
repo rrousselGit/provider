@@ -78,6 +78,95 @@ See also:
 
 ## Usage
 
+### Plugin
+
+**In order to further improve your production efficiency, we have also prepared plug-ins for you**
+
+- provider_template：[Android Studio/Intellij插件](https://plugins.jetbrains.com/plugin/16821-flutter-provider)
+  - one-click generation of necessary folders, files, template codes, etc. for each page
+  - support Wrap Widget: Consumer, Selector, ChangeNotifirProvider
+  - Support input **provider** prompt to generate quick code snippets
+
+### Some usage
+
+#### Usual usage
+
+```dart
+class CounterPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => CounterProvider(),
+      child: Scaffold(
+        appBar: AppBar(title: Text('Provider')),
+        body: Center(
+          child: Consumer<ProEasyCounterProvider>(
+            builder: (context, provider, child) {
+              return Text('count ${provider.count} ');
+            },
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Provider.of<ProEasyCounterProvider>(context, listen: false).increment();
+          },
+          child: Icon(Icons.add),
+        ),
+      ),
+    );
+  }
+}
+
+class CounterProvider extends ChangeNotifier {
+  int count = 0;
+
+  void increment() {
+    count++;
+    notifyListeners();
+  }
+}
+```
+
+#### Some skills
+
+`Provider.of` is a little troublesome to use, we can use some tips to optimize it, ChangeNotifierProvider will store the XxxProvider object, here, we can also store it for subsequent use
+
+```dart
+class CounterPage extends StatelessWidget {
+  final provider = CounterProvider();
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => provider,
+      child: Scaffold(
+        appBar: AppBar(title: Text('Provider')),
+        body: Center(
+          child: Consumer<ProEasyCounterProvider>(
+            builder: (context, provider, child) {
+              return Text('count ${provider.count} ');
+            },
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => provider.increment(),
+          child: Icon(Icons.add),
+        ),
+      ),
+    );
+  }
+}
+
+class CounterProvider extends ChangeNotifier {
+  int count = 0;
+
+  void increment() {
+    count++;
+    notifyListeners();
+  }
+}
+```
+
 ### Exposing a value
 
 #### Exposing a new object instance
@@ -356,10 +445,10 @@ To have something more useful, you have two solutions:
   ```dart
   class MyClass with DiagnosticableTreeMixin {
     MyClass({this.a, this.b});
-
+  
     final int a;
     final String b;
-
+  
     @override
     String toString() {
       return '$runtimeType(a: $a, b: $b)';
