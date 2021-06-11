@@ -82,7 +82,7 @@ See also:
 
 **In order to further improve your production efficiency, we have also prepared plug-ins for you**
 
-- provider_template：[Android Studio/Intellij插件](https://plugins.jetbrains.com/plugin/16821-flutter-provider)
+- provider_template：[Android Studio/Intellij   Plugin](https://plugins.jetbrains.com/plugin/16821-flutter-provider)
   - one-click generation of necessary folders, files, template codes, etc. for each page
   - support Wrap Widget: Consumer, Selector, ChangeNotifirProvider
   - Support input **provider** prompt to generate quick code snippets
