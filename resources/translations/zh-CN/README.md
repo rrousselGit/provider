@@ -76,6 +76,8 @@
   - 支持Wrap Widget：Consumer、Selector、ChangeNotifirProvider
   - 支持输入 **provider**  提示生成快捷代码片段
 
+**provider源码剖析可参考**：[Flutter Provider的另一面](https://juejin.cn/post/6968272002515894303)
+
 ### 一些用法
 
 #### 通常用法
