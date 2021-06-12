@@ -88,22 +88,24 @@ class CounterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (BuildContext context) => CounterProvider(),
-      child: Scaffold(
-        appBar: AppBar(title: Text('Provider')),
-        body: Center(
-          child: Consumer<ProEasyCounterProvider>(
-            builder: (context, provider, child) {
-              return Text('count ${provider.count} ');
-            },
+      builder: (BuildContext context, Widget? child) {
+        return Scaffold(
+          appBar: AppBar(title: Text('Provider')),
+          body: Center(
+            child: Consumer<CounterProvider>(
+              builder: (context, provider, child) {
+                return Text('count ${provider.count} ');
+              },
+            ),
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Provider.of<ProEasyCounterProvider>(context, listen: false).increment();
-          },
-          child: Icon(Icons.add),
-        ),
-      ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Provider.of<CounterProvider>(context, listen: false).increment();
+            },
+            child: Icon(Icons.add),
+          ),
+        );
+      },
     );
   }
 }
@@ -120,7 +122,11 @@ class CounterProvider extends ChangeNotifier {
 
 #### 一些技巧
 
-Provider.of使用起来有些麻烦，我们可以使用一些小技巧优化一下，ChangeNotifierProvider会存储XxxProvider对象，此处，我们也可以将其存储，以便后续使用
+上面因为Provider.of需要的context，必须是ChangeNotifierProvider或者ChangeNotifierProvider子布局的context，所以需要使用其builder拿到其context才可以有效；使用CounterPage的context是无效的
+
+Provider.of使用起来也有些麻烦
+
+我们可以使用一些小技巧优化一下，ChangeNotifierProvider会存储XxxProvider对象，此处，我们也可以将其存储，以便后续使用
 
 ```dart
 class CounterPage extends StatelessWidget {
@@ -133,7 +139,7 @@ class CounterPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(title: Text('Provider')),
         body: Center(
-          child: Consumer<ProEasyCounterProvider>(
+          child: Consumer<CounterProvider>(
             builder: (context, provider, child) {
               return Text('count ${provider.count} ');
             },

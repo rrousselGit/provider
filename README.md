@@ -84,7 +84,7 @@ See also:
 
 - provider_template：[Android Studio/Intellij   Plugin](https://plugins.jetbrains.com/plugin/16821-flutter-provider)
   - one-click generation of necessary folders, files, template codes, etc. for each page
-  - support Wrap Widget: Consumer, Selector, ChangeNotifirProvider
+  - support Wrap Widget: Consumer, Selector, ChangeNotifierProvider
   - Support input **provider** prompt to generate quick code snippets
 
 ### Some usage
@@ -97,22 +97,24 @@ class CounterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (BuildContext context) => CounterProvider(),
-      child: Scaffold(
-        appBar: AppBar(title: Text('Provider')),
-        body: Center(
-          child: Consumer<ProEasyCounterProvider>(
-            builder: (context, provider, child) {
-              return Text('count ${provider.count} ');
-            },
+      builder: (BuildContext context, Widget? child) {
+        return Scaffold(
+          appBar: AppBar(title: Text('Provider')),
+          body: Center(
+            child: Consumer<CounterProvider>(
+              builder: (context, provider, child) {
+                return Text('count ${provider.count} ');
+              },
+            ),
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Provider.of<ProEasyCounterProvider>(context, listen: false).increment();
-          },
-          child: Icon(Icons.add),
-        ),
-      ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Provider.of<CounterProvider>(context, listen: false).increment();
+            },
+            child: Icon(Icons.add),
+          ),
+        );
+      },
     );
   }
 }
@@ -129,7 +131,11 @@ class CounterProvider extends ChangeNotifier {
 
 #### Some skills
 
-`Provider.of` is a little troublesome to use, we can use some tips to optimize it, ChangeNotifierProvider will store the XxxProvider object, here, we can also store it for subsequent use
+Because the context required by **Provider.of** above must be the context of the ChangeNotifierProvider or ChangeNotifierProvider sub-layout, it needs to use its builder to get its context to be effective; using CounterPage's context is invalid
+
+**Provider.of** is also a bit troublesome to use
+
+We can use some tips to optimize it, ChangeNotifierProvider will store the XxxProvider object, here, we can also store it for subsequent use
 
 ```dart
 class CounterPage extends StatelessWidget {
@@ -142,7 +148,7 @@ class CounterPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(title: Text('Provider')),
         body: Center(
-          child: Consumer<ProEasyCounterProvider>(
+          child: Consumer<CounterProvider>(
             builder: (context, provider, child) {
               return Text('count ${provider.count} ');
             },
