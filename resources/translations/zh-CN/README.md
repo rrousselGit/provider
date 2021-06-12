@@ -69,7 +69,7 @@
 
 ### 插件
 
-**为了进一步提高您的生产效率，我们还为您准备了一插件**
+**为了进一步提高您的生产效率，我们还为您准备了插件**
 
 - provider_template：[Android Studio/Intellij插件](https://plugins.jetbrains.com/plugin/16821-flutter-provider)
   - 一键生成每个页面必需的文件夹、文件、模板代码等等

@@ -80,7 +80,7 @@ See also:
 
 ### Plugin
 
-**In order to further improve your production efficiency, we have also prepared plug-ins for you**
+**In order to further improve your production efficiency, we have also prepared plugins for you**
 
 - provider_template：[Android Studio/Intellij   Plugin](https://plugins.jetbrains.com/plugin/16821-flutter-provider)
   - one-click generation of necessary folders, files, template codes, etc. for each page
