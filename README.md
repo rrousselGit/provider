@@ -84,7 +84,7 @@ See also:
 
 - provider_template：[Android Studio/Intellij   Plugin](https://plugins.jetbrains.com/plugin/16821-flutter-provider)
   - one-click generation of necessary folders, files, template codes, etc. for each page
-  - support Wrap Widget: Consumer, Selector, ChangeNotifirProvider
+  - support Wrap Widget: Consumer, Selector, ChangeNotifierProvider
   - Support input **provider** prompt to generate quick code snippets
 
 ### Some usage
