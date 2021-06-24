@@ -328,6 +328,17 @@ If you want to expose a variable that can be anything, consider changing
           _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>?;
     }
 
+    // When running in mixed mode, a Provider<T?> is hard to access from legacy
+    // code because it cannot write T?. Fall back from looking for Provider<T>
+    // to looking for Provider<T?> to support this case.
+    //
+    // The fallback is not needed in sound mode, where all code must be correct
+    // about nullability of types.
+    if (!_isSoundMode) {
+      inheritedElement ??= context.getElementForInheritedWidgetOfExactType<
+          _InheritedProviderScope<T?>>() as _InheritedProviderScopeElement<T>?;
+    }
+
     if (inheritedElement == null) {
       throw ProviderNotFoundException(T, context.widget.runtimeType);
     }
@@ -649,3 +660,13 @@ extension WatchContext on BuildContext {
 ///
 /// This function
 typedef Locator = T Function<T>();
+
+/// Whether the runtime has null safe sound mode enabled.
+///
+/// In sound mode, all code is null safe and null safety is enforced everywhere.
+/// Nullability in generics is also enforced, which is how this code detects
+/// sound mode.
+///
+/// In unsound mode, there can be a mix of null safe and legacy code. Some null
+/// checks are not done, and generics are not compared for null safety.
+final bool _isSoundMode = <int?>[] is! List<int>;

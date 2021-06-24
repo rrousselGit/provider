@@ -2,6 +2,9 @@
 
 - Bug fix: `InheritedProvider<T>` can again provide nulls in legacy or mixed
   legacy and null safe code.
+- Support incremental migration to null safety: in unsound mode, looking up
+  `Provider<T>` will now fall back to looking for `Provider<T?>`. This allows
+  legacy code to continue to inject providers that might provide null.
 
 # 5.0.0
 

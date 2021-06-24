@@ -361,4 +361,35 @@ void main() {
       expect(buildCount, equals(2));
     });
   });
+
+  // See `provider_legacy_test.dart` for corresponding unsound mode test.
+  testWidgets('does not fall back to Provider<T?> in sound mode',
+      (tester) async {
+    final builder = Builder(
+      builder: (context) {
+        // Look up a Provider<double>.
+        Provider.of<double>(context, listen: false);
+        return Container();
+      },
+    );
+
+    await tester.pumpWidget(
+      // Install a Provider<double?>.
+      Provider<double?>.value(
+        value: 24,
+        child: Provider<int>.value(
+          value: 42,
+          child: builder,
+        ),
+      ),
+    );
+
+    // Provider<double> not found.
+    expect(
+      tester.takeException(),
+      isA<ProviderNotFoundException>()
+          .having((err) => err.valueType, 'valueType', double)
+          .having((err) => err.widgetType, 'widgetType', Builder),
+    );
+  });
 }
