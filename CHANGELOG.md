@@ -1,3 +1,8 @@
+# 5.0.1 (unreleased)
+
+- Bug fix: `InheritedProvider<T>` can again provide nulls in legacy or mixed
+  legacy and null safe code.
+
 # 5.0.0
 
 - Stable, null-safe release.

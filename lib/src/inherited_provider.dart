@@ -651,13 +651,14 @@ bool debugIsInInheritedProviderCreate = false;
 class _CreateInheritedProviderState<T>
     extends _DelegateState<T, _CreateInheritedProvider<T>> {
   VoidCallback? _removeListener;
-  bool _didInitValue = false;
+  bool _triedInitValue = false;
+  bool _succeededInitValue = false;
   T? _value;
   _CreateInheritedProvider<T>? _previousWidget;
 
   @override
   T get value {
-    if (_didInitValue && _value is! T) {
+    if (_triedInitValue && !_succeededInitValue) {
       throw StateError(
         'Tried to read a provider that threw during the creation of its value.\n'
         'The exception occurred during the creation of type $T.',
@@ -674,8 +675,8 @@ class _CreateInheritedProviderState<T>
       return true;
     }());
 
-    if (!_didInitValue) {
-      _didInitValue = true;
+    if (!_triedInitValue) {
+      _triedInitValue = true;
       if (delegate.create != null) {
         assert(debugSetInheritedLock(true));
         try {
@@ -685,6 +686,7 @@ class _CreateInheritedProviderState<T>
             return true;
           }());
           _value = delegate.create!(element!);
+          _succeededInitValue = true;
         } finally {
           assert(() {
             debugIsInInheritedProviderCreate =
@@ -709,6 +711,7 @@ class _CreateInheritedProviderState<T>
             return true;
           }());
           _value = delegate.update!(element!, _value);
+          _succeededInitValue = true;
         } finally {
           assert(() {
             debugIsInInheritedProviderCreate =
@@ -724,6 +727,7 @@ class _CreateInheritedProviderState<T>
           return true;
         }());
       }
+      _succeededInitValue = true;
     }
 
     element!._isNotifyDependentsEnabled = false;
@@ -737,7 +741,7 @@ class _CreateInheritedProviderState<T>
   void dispose() {
     super.dispose();
     _removeListener?.call();
-    if (_didInitValue) {
+    if (_triedInitValue) {
       delegate.dispose?.call(element!, _value as T);
     }
   }
@@ -745,7 +749,7 @@ class _CreateInheritedProviderState<T>
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    if (_didInitValue) {
+    if (_triedInitValue) {
       properties
         ..add(DiagnosticsProperty('value', value))
         ..add(
@@ -774,7 +778,7 @@ class _CreateInheritedProviderState<T>
     // Don't call `update` unless the build was triggered from `updated`/`didChangeDependencies`
     // otherwise `markNeedsNotifyDependents` will trigger unnecessary `update` calls
     if (isBuildFromExternalSources &&
-        _didInitValue &&
+        _triedInitValue &&
         delegate.update != null) {
       final previousValue = _value;
 
@@ -834,7 +838,7 @@ class _CreateInheritedProviderState<T>
   }
 
   @override
-  bool get hasValue => _didInitValue;
+  bool get hasValue => _triedInitValue;
 }
 
 class _ValueInheritedProvider<T> extends _Delegate<T> {
