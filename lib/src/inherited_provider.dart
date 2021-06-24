@@ -652,12 +652,13 @@ class _CreateInheritedProviderState<T>
     extends _DelegateState<T, _CreateInheritedProvider<T>> {
   VoidCallback? _removeListener;
   bool _didInitValue = false;
+  bool _didSucceedInit = false;
   T? _value;
   _CreateInheritedProvider<T>? _previousWidget;
 
   @override
   T get value {
-    if (_didInitValue && _value is! T) {
+    if (_didInitValue && !_didSucceedInit) {
       throw StateError(
         'Tried to read a provider that threw during the creation of its value.\n'
         'The exception occurred during the creation of type $T.',
@@ -685,6 +686,7 @@ class _CreateInheritedProviderState<T>
             return true;
           }());
           _value = delegate.create!(element!);
+          _didSucceedInit = true;
         } finally {
           assert(() {
             debugIsInInheritedProviderCreate =
@@ -709,6 +711,7 @@ class _CreateInheritedProviderState<T>
             return true;
           }());
           _value = delegate.update!(element!, _value);
+          _didSucceedInit = true;
         } finally {
           assert(() {
             debugIsInInheritedProviderCreate =
@@ -724,6 +727,7 @@ class _CreateInheritedProviderState<T>
           return true;
         }());
       }
+      _didSucceedInit = true;
     }
 
     element!._isNotifyDependentsEnabled = false;
