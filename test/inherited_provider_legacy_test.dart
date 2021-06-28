@@ -17,6 +17,7 @@ class Context extends StatelessWidget {
 
 void main() {
   testWidgets('allows nulls in mixed mode', (tester) async {
+    // ignore: avoid_returning_null
     int initialValueBuilder(BuildContext _) => null;
 
     await tester.pumpWidget(
