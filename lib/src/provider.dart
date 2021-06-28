@@ -17,6 +17,16 @@ part 'deferred_inherited_provider.dart';
 part 'devtool.dart';
 part 'inherited_provider.dart';
 
+/// Whether the runtime has null safe sound mode enabled.
+///
+/// In sound mode, all code is null safe and null safety is enforced everywhere.
+/// Nullability in generics is also enforced, which is how this code detects
+/// sound mode.
+///
+/// In unsound mode, there can be a mix of null safe and legacy code. Some null
+/// checks are not done, and generics are not compared for null safety.
+final bool _isSoundMode = <int?>[] is! List<int>;
+
 /// A provider that merges multiple providers into a single linear widget tree.
 /// It is used to improve readability and reduce boilerplate code of having to
 /// nest multiple layers of providers.
@@ -285,12 +295,26 @@ The context used was: $context
     final inheritedElement = _inheritedElementOf<T>(context);
 
     if (listen) {
-      context.dependOnInheritedElement(inheritedElement);
+      // bind context with the element
+      // We have to use this method instead of dependOnInheritedElement, because
+      // dependOnInheritedElement does not support relocating using GlobalKey
+      // if no provider were found previously.
+      context.dependOnInheritedWidgetOfExactType<_InheritedProviderScope<T?>>();
     }
-    return inheritedElement.value;
+
+    final value = inheritedElement?.value;
+
+    if (_isSoundMode) {
+      if (value is! T) {
+        throw ProviderNullException(T, context.widget.runtimeType);
+      }
+      return value;
+    }
+
+    return value as T;
   }
 
-  static _InheritedProviderScopeElement<T> _inheritedElementOf<T>(
+  static _InheritedProviderScopeElement<T?>? _inheritedElementOf<T>(
     BuildContext context,
   ) {
     // ignore: unnecessary_null_comparison, can happen if the application depends on a non-migrated code
@@ -314,26 +338,27 @@ If you want to expose a variable that can be anything, consider changing
 `dynamic` to `Object` instead.
 ''',
     );
-    _InheritedProviderScopeElement<T>? inheritedElement;
+    _InheritedProviderScopeElement<T?>? inheritedElement;
 
-    if (context.widget is _InheritedProviderScope<T>) {
+    if (context.widget is _InheritedProviderScope<T?>) {
       // An InheritedProvider<T>'s update tries to obtain a parent provider of
       // the same type.
       context.visitAncestorElements((parent) {
         inheritedElement = parent.getElementForInheritedWidgetOfExactType<
-            _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>?;
+                _InheritedProviderScope<T?>>()
+            as _InheritedProviderScopeElement<T?>?;
         return false;
       });
     } else {
       inheritedElement = context.getElementForInheritedWidgetOfExactType<
-          _InheritedProviderScope<T>>() as _InheritedProviderScopeElement<T>?;
+          _InheritedProviderScope<T?>>() as _InheritedProviderScopeElement<T?>?;
     }
 
-    if (inheritedElement == null) {
+    if (inheritedElement == null && null is! T) {
       throw ProviderNotFoundException(T, context.widget.runtimeType);
     }
 
-    return inheritedElement!;
+    return inheritedElement;
   }
 
   /// A sanity check to prevent misuse of [Provider] when a variant should be
@@ -403,6 +428,28 @@ void main() {
       return true;
     }());
   };
+}
+
+/// Called `Provider.of<T>` instead of `Provider.of<T?>` but the provider
+/// returned `null`.
+class ProviderNullException implements Exception {
+  /// Create a ProviderNullException error with the type represented as a String.
+  ProviderNullException(this.valueType, this.widgetType);
+
+  /// The type of the value being retrieved
+  final Type valueType;
+
+  /// The type of the Widget requesting the value
+  final Type widgetType;
+  @override
+  String toString() {
+    return '''
+Error: The widget $widgetType tried to read Provider<$valueType> but the matching
+provider returned null.
+
+To fix the error, consider changing Provider<$valueType> to Provider<$valueType?>.
+''';
+  }
 }
 
 /// The error that will be thrown if [Provider.of] fails to find a [Provider]
@@ -614,8 +661,26 @@ extension ReadContext on BuildContext {
 
 /// Exposes the [watch] method.
 extension WatchContext on BuildContext {
-  /// Obtain a value from the nearest ancestor provider of type [T], and subscribe
+  /// Obtain a value from the nearest ancestor provider of type [T] or [T?], and subscribe
   /// to the provider.
+  ///
+  /// If [T] is nullable and no matching providers are found, [watch] will
+  /// return `null`. Otherwise if [T] is non-nullable, will throw [ProviderNotFoundException].
+  /// If [T] is non-nullable and the provider obtained returned `null`, will
+  /// throw [ProviderNullException].
+  ///
+  /// This allows widgets to optionally depend on a provider:
+  ///
+  /// ```dart
+  /// runApp(
+  ///   Builder(builder: (context) {
+  ///     final value = context.watch<Movie?>();
+  ///
+  ///     if (value == null) Text('no Movie found');
+  ///     return Text(movie.title);
+  ///   }),
+  /// );
+  /// ```
   ///
   /// Calling this method is equivalent to calling:
   ///

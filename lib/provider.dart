@@ -33,6 +33,7 @@ export 'src/provider.dart'
         Provider,
         ProviderBinding,
         ProviderNotFoundException,
+        ProviderNullException,
         Create,
         DeferredStartListening,
         Dispose,

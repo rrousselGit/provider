@@ -5,7 +5,416 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
+import 'common.dart';
+
 void main() {
+  group('context.watch<T?>', () {
+    testWidgets('can watch T', (tester) async {
+      final notifier = ValueNotifier(0);
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>>.value(
+          value: notifier,
+          child: Builder(
+            builder: (context) {
+              final notifier = context.watch<ValueNotifier<int>?>();
+
+              return Text(
+                notifier?.value.toString() ?? '',
+                textDirection: TextDirection.ltr,
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('0'), findsOneWidget);
+
+      notifier.value++;
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+    });
+
+    testWidgets('can watch T?', (tester) async {
+      final notifier = ValueNotifier(0);
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>?>.value(
+          value: notifier,
+          child: Builder(
+            builder: (context) {
+              final notifier = context.watch<ValueNotifier<int>?>();
+
+              return Text(
+                notifier?.value.toString() ?? '',
+                textDirection: TextDirection.ltr,
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('0'), findsOneWidget);
+
+      notifier.value++;
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+    });
+
+    testWidgets('handles provider missing', (tester) async {
+      await tester.pumpWidget(
+        Builder(
+          builder: (context) {
+            final notifier = context.watch<ValueNotifier<int>?>();
+
+            return Text(
+              notifier?.value.toString() ?? '',
+              textDirection: TextDirection.ltr,
+            );
+          },
+        ),
+      );
+
+      expect(find.text(''), findsOneWidget);
+    });
+
+    testWidgets(
+        'supports relocating with GlobalKey from no provider to a provider',
+        (tester) async {
+      final widget = Builder(
+        key: GlobalKey(),
+        builder: (context) {
+          final notifier = context.watch<ValueNotifier<int>?>();
+
+          return Text(
+            notifier?.value.toString() ?? '',
+            textDirection: TextDirection.ltr,
+          );
+        },
+      );
+
+      await tester.pumpWidget(widget);
+
+      expect(find.text(''), findsOneWidget);
+
+      final notifier = ValueNotifier(0);
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>?>.value(
+          value: notifier,
+          child: widget,
+        ),
+      );
+
+      expect(find.text('0'), findsOneWidget);
+
+      notifier.value++;
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+    });
+  });
+
+  group('context.watch<T>', () {
+    testWidgets('can watch T?', (tester) async {
+      final notifier = ValueNotifier(0);
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>?>.value(
+          value: notifier,
+          child: Builder(
+            builder: (context) {
+              final notifier = context.watch<ValueNotifier<int>>();
+
+              return Text(
+                notifier.value.toString(),
+                textDirection: TextDirection.ltr,
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('0'), findsOneWidget);
+
+      notifier.value++;
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+    });
+
+    testWidgets('on T? will throw ProvierNullException if the result is null',
+        (tester) async {
+      Object? err;
+      final onError = FlutterError.onError;
+      FlutterError.onError = (details) {
+        err = details.exception;
+      };
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>?>.value(
+          value: null,
+          child: Builder(
+            builder: (context) {
+              final notifier = context.watch<ValueNotifier<int>>();
+
+              return Text(
+                notifier.value.toString(),
+                textDirection: TextDirection.ltr,
+              );
+            },
+          ),
+        ),
+      );
+
+      FlutterError.onError = onError;
+
+      expect(err, isA<ProviderNullException>());
+    }, skip: !isSoundMode);
+  });
+
+  group('context.select<T?>', () {
+    testWidgets('can watch T', (tester) async {
+      final notifier = ValueNotifier(0);
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>>.value(
+          value: notifier,
+          child: Builder(
+            builder: (context) {
+              final value =
+                  context.select<ValueNotifier<int>?, int?>((n) => n?.value);
+
+              return Text(
+                value?.toString() ?? '',
+                textDirection: TextDirection.ltr,
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('0'), findsOneWidget);
+
+      notifier.value++;
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+    });
+
+    testWidgets('can watch T?', (tester) async {
+      final notifier = ValueNotifier(0);
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>?>.value(
+          value: notifier,
+          child: Builder(
+            builder: (context) {
+              final value =
+                  context.select<ValueNotifier<int>?, int?>((n) => n?.value);
+
+              return Text(
+                value?.toString() ?? '',
+                textDirection: TextDirection.ltr,
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('0'), findsOneWidget);
+
+      notifier.value++;
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+    });
+
+    testWidgets('handles provider missing', (tester) async {
+      await tester.pumpWidget(
+        Builder(
+          builder: (context) {
+            final value =
+                context.select<ValueNotifier<int>?, int?>((n) => n?.value);
+
+            return Text(
+              value?.toString() ?? '',
+              textDirection: TextDirection.ltr,
+            );
+          },
+        ),
+      );
+
+      expect(find.text(''), findsOneWidget);
+    });
+
+    testWidgets(
+        'supports relocating with GlobalKey from no provider to a provider',
+        (tester) async {
+      final widget = Builder(
+        key: GlobalKey(),
+        builder: (context) {
+          final value =
+              context.select<ValueNotifier<int>?, int?>((n) => n?.value);
+
+          return Text(
+            value?.toString() ?? '',
+            textDirection: TextDirection.ltr,
+          );
+        },
+      );
+
+      await tester.pumpWidget(widget);
+
+      expect(find.text(''), findsOneWidget);
+
+      final notifier = ValueNotifier(0);
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>?>.value(
+          value: notifier,
+          child: widget,
+        ),
+      );
+
+      expect(find.text('0'), findsOneWidget);
+
+      notifier.value++;
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+    });
+  });
+
+  group('context.select<T>', () {
+    testWidgets('can watch T?', (tester) async {
+      final notifier = ValueNotifier(0);
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>?>.value(
+          value: notifier,
+          child: Builder(
+            builder: (context) {
+              final value =
+                  context.select<ValueNotifier<int>, int>((n) => n.value);
+
+              return Text(
+                value.toString(),
+                textDirection: TextDirection.ltr,
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('0'), findsOneWidget);
+
+      notifier.value++;
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+    });
+
+    testWidgets('can watch T', (tester) async {
+      final notifier = ValueNotifier(0);
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>>.value(
+          value: notifier,
+          child: Builder(
+            builder: (context) {
+              final value =
+                  context.select<ValueNotifier<int>, int>((n) => n.value);
+
+              return Text(
+                value.toString(),
+                textDirection: TextDirection.ltr,
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('0'), findsOneWidget);
+
+      notifier.value++;
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+    });
+
+    testWidgets('on T? will throw ProvierNullException if the result is null',
+        (tester) async {
+      Object? err;
+      final onError = FlutterError.onError;
+      FlutterError.onError = (details) {
+        err = details.exception;
+      };
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>?>.value(
+          value: null,
+          child: Builder(
+            builder: (context) {
+              final value =
+                  context.select<ValueNotifier<int>, int>((n) => n.value);
+
+              return Text(
+                value.toString(),
+                textDirection: TextDirection.ltr,
+              );
+            },
+          ),
+        ),
+      );
+
+      FlutterError.onError = onError;
+
+      expect(err, isA<ProviderNullException>());
+    });
+
+    testWidgets('on T? will throw ProvierNullException if new value is null',
+        (tester) async {
+      Object? err;
+
+      final child = Builder(
+        builder: (context) {
+          final value = context.select<ValueNotifier<int>, int>((n) => n.value);
+
+          return Text(
+            value.toString(),
+            textDirection: TextDirection.ltr,
+          );
+        },
+      );
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>?>.value(
+          value: ValueNotifier(0),
+          child: child,
+        ),
+      );
+
+      expect(find.text('0'), findsOneWidget);
+
+      final onError = FlutterError.onError;
+      FlutterError.onError = (details) {
+        err = details.exception;
+      };
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ValueNotifier<int>?>.value(
+          value: null,
+          child: child,
+        ),
+      );
+
+      FlutterError.onError = onError;
+
+      expect(err, isA<ProviderNullException>());
+    });
+  });
+
   testWidgets('watch in layoutbuilder', (tester) async {
     await tester.pumpWidget(
       Provider(

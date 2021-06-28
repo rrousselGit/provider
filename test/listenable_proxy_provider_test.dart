@@ -200,7 +200,7 @@ void main() {
   });
 
   group('ListenableProxyProvider variants', () {
-    InheritedContext<Combined> findInheritedProvider() =>
+    InheritedContext<Combined?> findInheritedProvider() =>
         findInheritedContext<Combined>();
     testWidgets('ListenableProxyProvider', (tester) async {
       await tester.pumpWidget(

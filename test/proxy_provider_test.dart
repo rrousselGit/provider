@@ -31,7 +31,7 @@ void main() {
     builder: (context, combined, child) => combinedConsumerMock(combined),
   );
 
-  InheritedContext<Combined> findProxyProvider() =>
+  InheritedContext<Combined?> findProxyProvider() =>
       findInheritedContext<Combined>();
 
   group('ProxyProvider', () {

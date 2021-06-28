@@ -4,6 +4,6 @@ flutter packages get
 flutter format --set-exit-if-changed lib test
 flutter analyze --no-current-package lib test/
 flutter test --no-pub --coverage $(ls test/*_test.dart | grep -v _legacy_)
-flutter test --no-pub --coverage --no-sound-null-safety $(ls test/*_legacy_test.dart)
+flutter test --no-pub --coverage --no-sound-null-safety
 # resets to the original state
 cd -

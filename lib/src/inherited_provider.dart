@@ -36,7 +36,9 @@ typedef Dispose<T> = void Function(BuildContext context, T value);
 /// - [DeferredStartListening], a variant of this typedef for more advanced
 ///   listening.
 typedef StartListening<T> = VoidCallback Function(
-    InheritedContext<T> element, T value);
+  InheritedContext<T?> element,
+  T value,
+);
 
 /// A generic implementation of an [InheritedWidget].
 ///
@@ -156,7 +158,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
       builder != null || child != null,
       '$runtimeType used outside of MultiProvider must specify a child',
     );
-    return _InheritedProviderScope<T>(
+    return _InheritedProviderScope<T?>(
       owner: this,
       // ignore: no_runtimetype_tostring
       debugType: kDebugMode ? '$runtimeType' : '',
@@ -185,6 +187,24 @@ bool _debugIsSelecting = false;
 extension SelectContext on BuildContext {
   /// Watch a value of type [T] exposed from a provider, and listen only partially
   /// to changes.
+  ///
+  /// If [T] is nullable and no matching providers are found, [watch] will
+  /// return `null`. Otherwise if [T] is non-nullable, will throw [ProviderNotFoundException].
+  /// If [T] is non-nullable and the provider obtained returned `null`, will
+  /// throw [ProviderNullException].
+  ///
+  /// This allows widgets to optionally depend on a provider:
+  ///
+  /// ```dart
+  /// runApp(
+  ///   Builder(builder: (context) {
+  ///     final title = context.select<Movie?, String>((movie) => movie?.title);
+  ///
+  ///     if (title == null) Text('no Movie found');
+  ///     return Text(title);
+  ///   }),
+  /// );
+  /// ```
   ///
   /// [select] must be used only inside the `build` method of a widget.
   /// It will not work inside other life-cycles, including [State.didChangeDependencies].
@@ -248,19 +268,37 @@ Tried to use `context.select` outside of the `build` method of a widget.
 
 Any usage other than inside the `build` method of a widget are not supported.
 ''');
+
     final inheritedElement = Provider._inheritedElementOf<T>(this);
     try {
-      final value = inheritedElement.value;
+      final value = inheritedElement?.value;
+      if (value is! T) {
+        throw ProviderNullException(T, widget.runtimeType);
+      }
+
       assert(() {
         _debugIsSelecting = true;
         return true;
       }());
       final selected = selector(value);
-      dependOnInheritedElement(
-        inheritedElement,
-        aspect: (T newValue) => !const DeepCollectionEquality()
-            .equals(selector(newValue), selected),
-      );
+
+      if (inheritedElement != null) {
+        dependOnInheritedElement(
+          inheritedElement,
+          aspect: (T? newValue) {
+            if (newValue is! T) {
+              throw ProviderNullException(T, widget.runtimeType);
+            }
+
+            return !const DeepCollectionEquality()
+                .equals(selector(newValue), selected);
+          },
+        );
+      } else {
+        // tell Flutter to rebuild the widget when relocated using GlobalKey
+        // if no provider were found before.
+        dependOnInheritedWidgetOfExactType<_InheritedProviderScope<T?>>();
+      }
       return selected;
     } finally {
       assert(() {
@@ -299,7 +337,8 @@ class _InheritedProviderScope<T> extends InheritedWidget {
     required this.owner,
     required this.debugType,
     required Widget child,
-  }) : super(child: child);
+  })  : assert(null is T),
+        super(child: child);
 
   final InheritedProvider<T> owner;
   final String debugType;
@@ -596,7 +635,7 @@ abstract class _Delegate<T> {
 }
 
 abstract class _DelegateState<T, D extends _Delegate<T>> {
-  _InheritedProviderScopeElement<T>? element;
+  _InheritedProviderScopeElement<T?>? element;
 
   T get value;
 

@@ -10,7 +10,7 @@ part of 'provider.dart';
 /// - [DeferredInheritedProvider]
 /// - [StartListening], a simpler version of this typedef.
 typedef DeferredStartListening<T, R> = VoidCallback Function(
-  InheritedContext<R> context,
+  InheritedContext<R?> context,
   void Function(R value) setState,
   T controller,
   R? value,
