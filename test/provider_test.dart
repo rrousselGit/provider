@@ -376,7 +376,7 @@ void main() {
     await tester.pumpWidget(
       // Install a Provider<double>.
       Provider<double>.value(
-        value: 24.0,
+        value: 24,
         child: Provider<int>.value(
           value: 42,
           child: builder,
@@ -402,7 +402,7 @@ void main() {
     await tester.pumpWidget(
       // Install a Provider<double>.
       Provider<double>.value(
-        value: 24.0,
+        value: 24,
         child: Provider<int>.value(
           value: 42,
           child: builder,
@@ -428,7 +428,7 @@ void main() {
     await tester.pumpWidget(
       // Install a Provider<double?>.
       Provider<double?>.value(
-        value: 24.0,
+        value: 24,
         child: Provider<int>.value(
           value: 42,
           child: builder,
@@ -454,7 +454,7 @@ void main() {
     await tester.pumpWidget(
       // Install a Provider<double?>.
       Provider<double?>.value(
-        value: 24.0,
+        value: 24,
         child: Provider<int>.value(
           value: 42,
           child: builder,

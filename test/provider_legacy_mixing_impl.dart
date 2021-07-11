@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
+// ignore: import_of_legacy_library_into_null_safe
 import 'common_legacy.dart';
 
 void main() {
@@ -73,7 +74,7 @@ void main() {
     await tester.pumpWidget(
       // Install a Provider<double>.
       Provider<double>.value(
-        value: 24.0,
+        value: 24,
         child: Provider<int>.value(
           value: 42,
           child: builder,
@@ -99,7 +100,7 @@ void main() {
     await tester.pumpWidget(
       // Install a Provider<double>.
       Provider<double>.value(
-        value: 24.0,
+        value: 24,
         child: Provider<int>.value(
           value: 42,
           child: builder,
@@ -125,7 +126,7 @@ void main() {
     await tester.pumpWidget(
       // Install a Provider<double>.
       Provider<double>.value(
-        value: 24.0,
+        value: 24,
         child: Provider<int>.value(
           value: 42,
           child: builder,
@@ -151,7 +152,7 @@ void main() {
     await tester.pumpWidget(
       // Install a Provider<double?>.
       Provider<double?>.value(
-        value: 24.0,
+        value: 24,
         child: Provider<int>.value(
           value: 42,
           child: builder,
@@ -177,7 +178,7 @@ void main() {
     await tester.pumpWidget(
       // Install a Provider<double?>.
       Provider<double?>.value(
-        value: 24.0,
+        value: 24,
         child: Provider<int>.value(
           value: 42,
           child: builder,
