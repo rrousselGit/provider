@@ -23,6 +23,25 @@ InheritedContext<T?> findInheritedContext<T>() {
 
 Type typeOf<T>() => T;
 
+/// Given `T`, returns a `Provider<T?>`.
+///
+/// For use in legacy tests: they can't instantiate a `Provider<T?>` directly
+/// because they can't write `<T?>`. But, they can pass around a `Provider<T?`>.
+Provider<T?> nullableProviderOfValue<T>(T value, Provider? child) =>
+    Provider<T?>.value(
+      value: value,
+      child: child,
+    );
+
+/// Given `T`, returns a `Provider<T>`.
+///
+/// For legacy tests to get a `Provider<T>`.
+Provider<T> nullSafeProviderOfValue<T>(T value, Provider? child) =>
+    Provider<T>.value(
+      value: value,
+      child: child,
+    );
+
 class InitialValueBuilderMock<T> extends Mock {
   InitialValueBuilderMock(this._value) {
     when(this(any)).thenAnswer((_) => _value);

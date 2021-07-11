@@ -361,4 +361,160 @@ void main() {
       expect(buildCount, equals(2));
     });
   });
+
+  testWidgets('sound provide T inject T?', (tester) async {
+    late double? value;
+
+    final builder = Builder(
+      builder: (context) {
+        // Look up a Provider<double>.
+        value = Provider.of<double?>(context, listen: false);
+        return Container();
+      },
+    );
+
+    await tester.pumpWidget(
+      // Install a Provider<double>.
+      Provider<double>.value(
+        value: 24.0,
+        child: Provider<int>.value(
+          value: 42,
+          child: builder,
+        ),
+      ),
+    );
+
+    // Provider<double> not found, uses Provider<double?> instead.
+    expect(value, equals(24.0));
+  });
+
+  testWidgets('sound provide T inject T', (tester) async {
+    late double? value;
+
+    final builder = Builder(
+      builder: (context) {
+        // Look up a Provider<double>.
+        value = Provider.of<double>(context, listen: false);
+        return Container();
+      },
+    );
+
+    await tester.pumpWidget(
+      // Install a Provider<double>.
+      Provider<double>.value(
+        value: 24.0,
+        child: Provider<int>.value(
+          value: 42,
+          child: builder,
+        ),
+      ),
+    );
+
+    // Provider<double> not found, uses Provider<double?> instead.
+    expect(value, equals(24.0));
+  });
+
+  testWidgets('sound provide T? inject T', (tester) async {
+    late double? value;
+
+    final builder = Builder(
+      builder: (context) {
+        // Look up a Provider<double>.
+        value = Provider.of<double>(context, listen: false);
+        return Container();
+      },
+    );
+
+    await tester.pumpWidget(
+      // Install a Provider<double?>.
+      Provider<double?>.value(
+        value: 24.0,
+        child: Provider<int>.value(
+          value: 42,
+          child: builder,
+        ),
+      ),
+    );
+
+    // Provider<double> not found, uses Provider<double?> instead.
+    expect(value, equals(24.0));
+  });
+
+  testWidgets('sound provide T? inject T?', (tester) async {
+    late double? value;
+
+    final builder = Builder(
+      builder: (context) {
+        // Look up a Provider<double>.
+        value = Provider.of<double?>(context, listen: false);
+        return Container();
+      },
+    );
+
+    await tester.pumpWidget(
+      // Install a Provider<double?>.
+      Provider<double?>.value(
+        value: 24.0,
+        child: Provider<int>.value(
+          value: 42,
+          child: builder,
+        ),
+      ),
+    );
+
+    // Provider<double> not found, uses Provider<double?> instead.
+    expect(value, equals(24.0));
+  });
+
+  testWidgets('sound provide null T? inject T', (tester) async {
+    late double? value;
+
+    final builder = Builder(
+      builder: (context) {
+        // Look up a Provider<double>.
+        value = Provider.of<double>(context, listen: false);
+        return Container();
+      },
+    );
+
+    await tester.pumpWidget(
+      // Install a Provider<double?>.
+      Provider<double?>.value(
+        value: null,
+        child: Provider<int>.value(
+          value: 42,
+          child: builder,
+        ),
+      ),
+    );
+
+    // Provider<double> not found, uses Provider<double?> instead.
+    expect(value, equals(24.0));
+  }, skip: true /* throws, correctly, TODO: adjust expectation */);
+
+  testWidgets('sound provide null T? inject T?', (tester) async {
+    late double? value;
+
+    final builder = Builder(
+      builder: (context) {
+        // Look up a Provider<double>.
+        value = Provider.of<double?>(context, listen: false);
+        return Container();
+      },
+    );
+
+    await tester.pumpWidget(
+      // Install a Provider<double?>.
+      Provider<double?>.value(
+        value: null,
+        child: Provider<int>.value(
+          value: 42,
+          child: builder,
+        ),
+      ),
+    );
+
+    // Provider<double> not found, uses Provider<double?> instead.
+    expect(value, equals(null));
+  });
 }
