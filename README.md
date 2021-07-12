@@ -91,7 +91,6 @@ may otherwise have undesired side effects.
 See [this StackOverflow answer](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)
 which explains why using the `.value` constructor to create values is undesired.
 
-
 - **DO** create a new object inside `create`.
 
 ```dart
@@ -189,11 +188,17 @@ The easiest way to read a value is by using the extension methods on [BuildConte
 - `context.read<T>()`, which returns `T` without listening to it
 - `context.select<T, R>(R cb(T value))`, which allows a widget to listen to only a small part of `T`.
 
-Or to use the static method `Provider.of<T>(context)`, which will behave similarly to `watch` and when you pass `false` The `listen` parameter like `Provider.of<T>(context,listen: false)` it will behave similarly to `read`.
+Or to use the static method `Provider.of<T>(context)`, which will behave similarly
+to `watch` and when you pass `false` The `listen` parameter like `Provider.of<T>(context, listen: false)`
+it will behave similarly to `read`.
 
-It's worth noting that `context.read<T>()` won't make widget rebuild when the value changes and cannot be called inside `StatelessWidget.build`/`State.build`. On the other hand, it can be freely called outside of these methods.
+It's worth noting that `context.read<T>()` won't make widget rebuild when the value
+changes and cannot be called inside `StatelessWidget.build`/`State.build`.
+On the other hand, it can be freely called outside of these methods.
 
-These methods will look up in the widget tree starting from the widget associated with the `BuildContext` passed and will return the nearest variable of type `T` found (or throw if nothing is found).
+These methods will look up in the widget tree starting from the widget associated
+with the `BuildContext` passed and will return the nearest variable of type `T`
+found (or throw if nothing is found).
 
 It's worth noting that this operation is O(1). It doesn't involve walking
 in the widget tree.
@@ -218,9 +223,33 @@ Alternatively, instead of using these methods, we can use [Consumer] and [Select
 These can be useful for performance optimizations or when it is difficult to
 obtain a `BuildContext` descendant of the provider.
 
-See the [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do) or the documentation of [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
+See the [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do)
+or the documentation of [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
 and [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html)
 for more information.
+
+### Optionally depending on a provider
+
+Sometimes, we may want to support cases where a provider does not exist. An
+example would be for reusable widgets that could be used in various locations,
+including outside of a provider.
+
+To do so, when calling `context.watch`/`context.read`, make the generic type
+nullable. Such that instead of:
+
+```dart
+context.watch<Model>()
+```
+
+which will throw a `ProviderNotFoundException` if no matching providers
+are found, do:
+
+```dart
+context.watch<Model?>()
+```
+
+which will try to obtain a matching provider. But if none are found,
+`null` will be returned instead of throwing.
 
 ### MultiProvider
 

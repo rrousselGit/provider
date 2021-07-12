@@ -1,3 +1,51 @@
+# 6.0.0-dev
+
+- **Breaking**: It is no longer possible to define providers where their
+  only difference is the nullability of the exposed value:
+
+  ```dart
+  MultiProvider(
+    providers: [
+      Provider<Model>(...),
+      Provider<Model?>(...)
+    ]
+  )
+  ```
+
+  Before, when defining those providers, doing `context.watch<Model>`
+  vs `context.watch<Model?>` would point to a different provider.
+  Now, both will always point to the deepest provider (in this example `Provider<Model?>`).
+
+  That fixes issues where a common developer mistake is to define a provider
+  as `Model?` but try to read it as `Model`. Previously, that would give a `ProviderNotFoundException`.
+  Now, this will correctly resolve the value.
+
+  That also helps large codebase migrate to null-safety progressively, as
+  they would temporarily contain both null-safe and unsound code. Previously,
+  unsound code would be unable to read a provider defined as `Provider<Model?>`,
+  as `Model?` is not a valid syntax. With this change, this is now feasible.
+
+- It is now possible to read a provider without throwing a `ProviderNotFoundException`
+  if the provider is optional.
+
+  To do so, when calling `context.watch`/`context.read`, make the generic type
+  nullable. Such that instead of:
+
+  ```dart
+  context.watch<Model>()
+  ```
+
+  which will throw a `ProviderNotFoundException` if no matching providers are found, 
+  do:
+
+
+  ```dart
+  context.watch<Model?>()
+  ```
+
+  which will try to obtain a matching provider. But if none are found,
+  `null` will be returned instead of throwing.
+
 # 5.0.0
 
 - Stable, null-safe release.
