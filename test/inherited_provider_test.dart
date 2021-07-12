@@ -23,8 +23,7 @@ BuildContext get context => find.byType(Context).evaluate().single;
 T of<T>([BuildContext? c]) => Provider.of<T>(c ?? context, listen: false);
 
 void main() {
-  testWidgets('DeferredInheritedProvider accepts non-nullable values',
-      (tester) async {});
+  // TODO DeferredInheritedProvider accepts non-nullable values
 
   testWidgets('regression test #377', (tester) async {
     await tester.pumpWidget(
@@ -2040,7 +2039,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
   });
 
   testWidgets('startListening markNeedsNotifyDependents', (tester) async {
-    InheritedContext<int>? element;
+    InheritedContext<int?>? element;
     var buildCount = 0;
 
     await tester.pumpWidget(

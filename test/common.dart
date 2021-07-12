@@ -11,15 +11,36 @@ Element findElementOfWidget<T extends Widget>() {
   return find.byType(T).first.evaluate().first;
 }
 
-InheritedContext<T> findInheritedContext<T>() {
+final bool isSoundMode = <int?>[] is! List<int>;
+
+InheritedContext<T?> findInheritedContext<T>() {
   return find
-      .byElementPredicate((e) => e is InheritedContext<T>)
+      .byElementPredicate((e) => e is InheritedContext<T?>)
       .first
       .evaluate()
-      .first as InheritedContext<T>;
+      .first as InheritedContext<T?>;
 }
 
 Type typeOf<T>() => T;
+
+/// Given `T`, returns a `Provider<T?>`.
+///
+/// For use in legacy tests: they can't instantiate a `Provider<T?>` directly
+/// because they can't write `<T?>`. But, they can pass around a `Provider<T?`>.
+Provider<T?> nullableProviderOfValue<T>(T value, Provider? child) =>
+    Provider<T?>.value(
+      value: value,
+      child: child,
+    );
+
+/// Given `T`, returns a `Provider<T>`.
+///
+/// For legacy tests to get a `Provider<T>`.
+Provider<T> nullSafeProviderOfValue<T>(T value, Provider? child) =>
+    Provider<T>.value(
+      value: value,
+      child: child,
+    );
 
 class InitialValueBuilderMock<T> extends Mock {
   InitialValueBuilderMock(this._value) {
@@ -77,7 +98,7 @@ class StartListeningMock<T> extends Mock {
     when(this(any, any)).thenReturn(value);
   }
 
-  VoidCallback call(InheritedContext<T>? context, T? value) {
+  VoidCallback call(InheritedContext<T?>? context, T? value) {
     return super.noSuchMethod(
       Invocation.method(#call, [context, value]),
       returnValue: () {},
@@ -224,7 +245,7 @@ class TextOf<T> extends StatelessWidget {
 class DeferredStartListeningMock<T, R> extends Mock {
   DeferredStartListeningMock([
     VoidCallback Function(
-      InheritedContext<R> context,
+      InheritedContext<R?> context,
       void Function(R value) setState,
       T controller,
       R? value,
@@ -243,7 +264,7 @@ class DeferredStartListeningMock<T, R> extends Mock {
   }
 
   VoidCallback call(
-    InheritedContext<R>? context,
+    InheritedContext<R?>? context,
     void Function(R value)? setState,
     T? controller,
     R? value,
