@@ -427,7 +427,7 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
       }
       if (selectorDependency.shouldClearMutationScheduled == false) {
         selectorDependency.shouldClearMutationScheduled = true;
-        SchedulerBinding.instance!.addPostFrameCallback((_) {
+        Future.microtask(() {
           selectorDependency
             ..shouldClearMutationScheduled = false
             ..shouldClearSelectors = true;
