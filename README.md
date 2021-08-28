@@ -188,20 +188,19 @@ The easiest way to read a value is by using the extension methods on [BuildConte
 - `context.read<T>()`, which returns `T` without listening to it
 - `context.select<T, R>(R cb(T value))`, which allows a widget to listen to only a small part of `T`.
 
-Or to use the static method `Provider.of<T>(context)`, which will behave similarly
-to `watch` and when you pass `false` The `listen` parameter like `Provider.of<T>(context, listen: false)`
+One can also use the static method `Provider.of<T>(context)`, which will behave similarly
+to `watch` and when the `listen` parameter is set to `false` like `Provider.of<T>(context, listen: false)`, then 
 it will behave similarly to `read`.
 
-It's worth noting that `context.read<T>()` won't make widget rebuild when the value
-changes and cannot be called inside `StatelessWidget.build`/`State.build`.
+It's worth noting that `context.read<T>()` won't make a widget rebuild when the value
+changes and it cannot be called inside `StatelessWidget.build`/`State.build`.
 On the other hand, it can be freely called outside of these methods.
 
 These methods will look up in the widget tree starting from the widget associated
 with the `BuildContext` passed and will return the nearest variable of type `T`
 found (or throw if nothing is found).
 
-It's worth noting that this operation is O(1). It doesn't involve walking
-in the widget tree.
+This operation is O(1). It doesn't involve walking in the widget tree.
 
 Combined with the first example of [exposing a value](#exposing-a-value), this
 the widget will read the exposed `String` and render "Hello World."
@@ -291,7 +290,7 @@ Since the 3.0.0, there is a new kind of provider: `ProxyProvider`.
 
 `ProxyProvider` is a provider that combines multiple values from other providers into a new object and sends the result to `Provider`.
 
-That new object will then be updated whenever one of the providers depends on updates.
+That new object will then be updated whenever one of the provider we depend on gets updated.
 
 The following example uses `ProxyProvider` to build translations based on a counter coming from another provider.
 
