@@ -1,3 +1,8 @@
+# 6.0.1
+
+Removed the assert that prevented from using `ChangeNotifierProvider`
+with notifiers that already had listeners.
+
 # 6.0.0
 
 - **Breaking**: It is no longer possible to define providers where their

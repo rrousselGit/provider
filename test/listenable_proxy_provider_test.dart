@@ -30,60 +30,6 @@ void main() {
   );
 
   group('ListenableProxyProvider', () {
-    testWidgets(
-      'asserts that the created notifier has no listener',
-      (tester) async {
-        final notifier = ValueNotifier(0)..addListener(() {});
-
-        await tester.pumpWidget(
-          MultiProvider(
-            providers: [
-              Provider.value(value: 0),
-              ListenableProxyProvider<int, ValueNotifier<int>>(
-                update: (_, __, ___) => notifier,
-                dispose: (_, __) {},
-              )
-            ],
-            child: TextOf<ValueNotifier<int>>(),
-          ),
-        );
-
-        expect(tester.takeException(), isAssertionError);
-      },
-    );
-    testWidgets(
-      'asserts that the created notifier has no listener after rebuild',
-      (tester) async {
-        await tester.pumpWidget(
-          MultiProvider(
-            providers: [
-              Provider.value(value: 0),
-              ListenableProxyProvider<int, ValueNotifier<int>>(
-                update: (_, __, ___) => ValueNotifier(0),
-                dispose: (_, __) {},
-              )
-            ],
-            child: TextOf<ValueNotifier<int>>(),
-          ),
-        );
-
-        final notifier = ValueNotifier(0)..addListener(() {});
-        await tester.pumpWidget(
-          MultiProvider(
-            providers: [
-              Provider.value(value: 1),
-              ListenableProxyProvider<int, ValueNotifier<int>>(
-                update: (_, __, ___) => notifier,
-                dispose: (_, __) {},
-              )
-            ],
-            child: TextOf<ValueNotifier<int>>(),
-          ),
-        );
-
-        expect(tester.takeException(), isAssertionError);
-      },
-    );
     testWidgets('rebuilds dependendents when listeners are called',
         (tester) async {
       final notifier = ValueNotifier(0);

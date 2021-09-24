@@ -86,14 +86,6 @@ class ListenableProxyProvider0<R extends Listenable?>
           dispose: dispose,
           updateShouldNotify: updateShouldNotify,
           startListening: ListenableProvider._startListening,
-          debugCheckInvalidValueType: kReleaseMode
-              ? null
-              : (value) {
-                  if (value is ChangeNotifier) {
-                    // ignore: invalid_use_of_protected_member
-                    assert(value.hasListeners != true);
-                  }
-                },
           child: child,
         );
 }
