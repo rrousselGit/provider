@@ -17,7 +17,7 @@
 - 提升类的可扩展性，整体的监听架构时间复杂度以指数级增长（如 [ChangeNotifier][]， 其复杂度为 O(N)）
 
 想了解更多 `provider` 相关内容，请参考
-[文档](https://pub.flutter-io/documentation/provider/latest/provider/provider-library.html)
+[文档](https://pub.flutter-io.cn/documentation/provider/latest/provider/provider-library.html)
 
 更多内容:
 
