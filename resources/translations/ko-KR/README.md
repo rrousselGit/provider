@@ -7,32 +7,30 @@
 
 [<img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
 
-A wrapper around [InheritedWidget]
-to make them easier to use and more reusable.
+[InheritedWidget]을 더 쉽게 사용하고 보다 재사용할 수 있도록 만들어진 래퍼입니다.
 
-By using `provider` instead of manually writing [InheritedWidget], you get:
+[InheritedWidget]을 직접 작성하는 것 대신 `provider`를 사용함으로써, 아래와 같은 이점을 가질 수 있습니다.
 
-- simplified allocation/disposal of resources
-- lazy-loading
-- a vastly reduced boilerplate over making a new class every time
-- devtool friendly – using Provider, the state of your application will be visible in the Flutter devtool
-- a common way to consume these [InheritedWidget]s (See [Provider.of]/[Consumer]/[Selector])
-- increased scalability for classes with a listening mechanism that grows exponentially
-  in complexity (such as [ChangeNotifier], which is O(N) for dispatching notifications).
+- 리소스의 단순화된 할당/해제 
+- 지연 로딩(lazy-loading)
+- 클래스를 새로 만들 때 마다 매번 작성해야했던 부분을 크게 줄임
+- devtool 친화적 : Provider를 사용하면 Application State가 Flutter devtool에 표시됨
+- 이러한 [InheritedWidget]들을 소비(consume)하는 일반적인 방법을 제시 ([Provider.of]/[Consumer]/[Selector] 참고)
+- 복잡성이 기하급수적으로 증가하는 수신 매커니즘(listening mechanism)을 가진 클래스에 대한 확장성 향상(예 : 알림 발송에 O(N)인 [ChangeNotifier]).
 
-To read more about a `provider`, see its [documentation](https://pub.dev/documentation/provider/latest/provider/provider-library.html).
+`provider`에 대한 자세한 내용은 [문서](https://pub.dev/documentation/provider/latest/provider/provider-library.html)를 참고해주세요.
 
-See also:
+참고 항목:
 
-- [The official Flutter state management documentation](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple), which showcases how to use `provider` + [ChangeNotifier]
-- [flutter architecture sample](https://github.com/brianegan/flutter_architecture_samples/tree/master/change_notifier_provider), which contains an implementation of that app using `provider` + [ChangeNotifier]
-- [flutter_bloc](https://github.com/felangel/bloc) and [Mobx](https://github.com/mobxjs/mobx.dart), which uses a `provider` in their architecture
+- [The official Flutter state management documentation](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple) : `provider` + [ChangeNotifier] 사용법에 대한 쇼케이스
+- [flutter architecture sample](https://github.com/brianegan/flutter_architecture_samples/tree/master/change_notifier_provider) : `provider` + [ChangeNotifier]를 사용한 앱 구현
+- `provider`를 아키텍처에 활용한 [flutter_bloc](https://github.com/felangel/bloc)와 [Mobx](https://github.com/mobxjs/mobx.dart) 
 
-## Migration from 4.x.x to 5.0.0-nullsafety
+## 4.x.x에서 5.0.0-nullsafety로의 마이그레이션
 
-- `initialData` for both `FutureProvider` and `StreamProvider` is now required.
+- 이제 `FutureProvider`와 `StreamProvider`를 위한 `initialData`가 필요합니다.
 
-  To migrate, what used to be:
+  마이그레이션을 위해 아래와 같은 내용은 
 
   ```dart
   FutureProvider<int>(
@@ -46,7 +44,7 @@ See also:
   }
   ```
 
-  is now:
+  이제 이렇게 작성합니다. 
 
   ```dart
   FutureProvider<int?>(
@@ -62,9 +60,9 @@ See also:
   }
   ```
 
-- `ValueListenableProvider` is removed
+- `ValueListenableProvider`가 삭제되었습니다.
 
-  To migrate, you can instead use `Provider` combined with `ValueListenableBuilder`:
+  마이그레이션 시, 대신 `Provider`를 `ValueListenableBuilder`와 결합하여 사용할 수 있습니다. 
 
   ```dart
   ValueListenableBuilder<int>(
@@ -78,22 +76,20 @@ See also:
   )
   ```
 
-## Usage
+## 사용법
 
-### Exposing a value
+### 값 노출하기
 
-#### Exposing a new object instance
+#### 새 객체 인스턴스 노출하기
 
-Providers allow you to not only expose a value, but also create, listen, and dispose of it.
+Providers는 단순히 값은 노출 시켜줄 뿐만 아니라, 값의 생성(create), 수신(listen) 그리고 해제(dispose)를 할 수 있도록 합니다. 
 
-To expose a newly created object, use the default constructor of a provider.
-Do _not_ use the `.value` constructor if you want to **create** an object, or you
-may otherwise have undesired side effects.
+신규 생성한 객체를 노출하기 위해 provider의 기본 생성자를 사용하세요. 
+만약 객체를 **생성**하고 싶다면 `.value` 생성자를 _사용하지마세요._ 그렇지 않으면 의도치 않은 부작용이 나타날 수 있습니다.
 
-See [this StackOverflow answer](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)
-which explains why using the `.value` constructor to create values is undesired.
+값을 생성하기 위해 `.value` 생성자를 사용하는 것이 왜 바람직하지 않은지 확인하려면 [StackOverflow 답변](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)을 확인하세요.
 
-- **DO** create a new object inside `create`.
+- **DO** : `create` 안에서 신규 오브젝트를 생성하세요.
 
 ```dart
 Provider(
@@ -102,7 +98,7 @@ Provider(
 )
 ```
 
-- **DON'T** use `Provider.value` to create your object.
+- **DON'T** : 객체를 생성하기 위해 `Provider.value`를 사용하지 마세요.
 
 ```dart
 ChangeNotifierProvider.value(
@@ -111,10 +107,9 @@ ChangeNotifierProvider.value(
 )
 ```
 
-- **DON'T** create your object from variables that can change over time.
+- **DON'T** : 시간에 따라 변경될 수 있는 변수로 객체를 만들지 마세요.
 
-  In such a situation, your object would never update when the
-  value changes.
+  만약 그렇게 생성하였다면, 생성된 객체는 값이 변화해도 업데이트되지 않습니다.
 
 ```dart
 int count;
@@ -125,8 +120,8 @@ Provider(
 )
 ```
 
-If you want to pass variables that can change over time to your object,
-consider using `ProxyProvider`:
+망갸 시간에 따라 변경될 수 있는 변수를 객체에 전달하려면
+`ProxyProvider` 사용을 고려하세요.
 
 ```dart
 int count;
@@ -139,12 +134,10 @@ ProxyProvider0(
 
 **NOTE**:
 
-When using the `create`/`update` callback of a provider, it is worth noting that this callback
-is called lazily by default.
+provider의 `create`/`update` 콜백을 사용할 때, 이 콜백이 기본적으로 Lazy하게 호출된다는 점에 유의해야합니다. 
 
-This means that until the value is requested at least once, the `create`/`update` callbacks won't be called.
-
-This behavior can be disabled if you want to pre-compute some logic, using the `lazy` parameter:
+즉, 해당 값을 한 번 이상 호출하기 전에는 `create`/`update` 콜백이 호출되지 않습니다.
+이 동작은 `lazy` 파라미터를 사용해 일부 로직을 사전 연산(pre-compute)하고자 하는 경우 비활성화 될 수 있습니다.
 
 ```dart
 MyProvider(
@@ -153,14 +146,13 @@ MyProvider(
 )
 ```
 
-#### Reusing an existing object instance:
+#### 기존 객체 인스턴스를 재사용하기 
 
-If you already have an object instance and want to expose it, it would be best to use the `.value` constructor of a provider.
+객체 인스턴스가 이미 생성되었고, 해당 객체를 노출시키길 원하는 경우 provider의 `.value` 생성자를 사용하는 것이 가장 좋습니다.
 
-Failing to do so may call your object `dispose` method when it is still in use.
+그렇지 않으면 객체가 아직 사용되고 있는 도중에 `dispose` 메소드가 호출될 수 도 있습니다.
 
-- **DO** use `ChangeNotifierProvider.value` to provide an existing
-  [ChangeNotifier].
+- **DO** : 이미 존재하는 [ChangeNotifier]를 공급(provide)하기 위해서 `ChangeNotifierProvider.value`를 사용하세요.
 
 ```dart
 MyChangeNotifier variable;
@@ -171,7 +163,7 @@ ChangeNotifierProvider.value(
 )
 ```
 
-- **DON'T** reuse an existing [ChangeNotifier] using the default constructor
+- **DON'T** : 이미 존재하는 [ChangeNotifier]를 기본 생성자를 사용해서 재사용하지 마세요.
 
 ```dart
 MyChangeNotifier variable;
@@ -182,30 +174,26 @@ ChangeNotifierProvider(
 )
 ```
 
-### Reading a value
+### 값 읽기
 
-The easiest way to read a value is by using the extension methods on [BuildContext]:
+값을 읽는 가장 쉬운 방법은 [BuildContext]의 확장 메소드를 활용하는 것입니다.
 
-- `context.watch<T>()`, which makes the widget listen to changes on `T`
-- `context.read<T>()`, which returns `T` without listening to it
-- `context.select<T, R>(R cb(T value))`, which allows a widget to listen to only a small part of `T`.
+- `context.watch<T>()` : 위젯이 `T`의 변화를 감지할 수 있도록 합니다.
+- `context.read<T>()` : `T`를 변화 감지 없이 return 합니다.
+- `context.select<T, R>(R cb(T value))` : `T`의 일부 작은 영역에 대해서만 위젯이 변화를 감지할 수 있도록 합니다.
 
-One can also use the static method `Provider.of<T>(context)`, which will behave similarly
-to `watch` and when the `listen` parameter is set to `false` like `Provider.of<T>(context, listen: false)`, then 
-it will behave similarly to `read`.
+또한 `watch`와 유사하게 동작하는 정적 메소드(static method)인 `Provider.of<T>(context)`를 사용할 수도 있습니다.
+ `Provider.of<T>(context, listen: false)`처럼 `listen` 파라미터를 `false`로 하면 `read`와 유사하게 동작합니다.
 
-It's worth noting that `context.read<T>()` won't make a widget rebuild when the value
-changes and it cannot be called inside `StatelessWidget.build`/`State.build`.
-On the other hand, it can be freely called outside of these methods.
+`context.read<T>()`는 값이 변경되었을 때 위젯을 재빌드하지 않음으로 `StatelessWidget.build`/`State.build` 안에서 호출될 수 없음을 유의하세요.
+반면, 이러한 메소드들 밖에서는 자유롭게 호출될 수 있습니다.
 
-These methods will look up in the widget tree starting from the widget associated
-with the `BuildContext` passed and will return the nearest variable of type `T`
-found (or throw if nothing is found).
+이러한 메소드들은 전달된 `BuildContext`와 관련된 위젯에서 시작해 위젯 트리에서 발견되며, 
+발견된 가장 가까운 `T` 타입 변수를 반환합니다. (아무것도 찾을 수 없는 경우 예외가 발생 합니다.)
 
-This operation is O(1). It doesn't involve walking in the widget tree.
+이 작업은 O(1)입니다. 작업에 위젯 트리를 순차적으로 탐색하는 일이 포함 되어있지 않습니다.
 
-Combined with the first example of [exposing a value](#exposing-a-value), this
-the widget will read the exposed `String` and render "Hello World."
+이 위젯은 첫 번째 예시인 [값 노출하기](#값-노출하기)에서 노출된 `String`을 읽고 "Hello World."를 렌더합니다.
 
 ```dart
 class Home extends StatelessWidget {
@@ -219,43 +207,38 @@ class Home extends StatelessWidget {
 }
 ```
 
-Alternatively, instead of using these methods, we can use [Consumer] and [Selector].
+이러한 메소드들을 사용하는 대신에, 우리는 [Consumer]와 [Selector]를 사용할 수 있습니다.
 
-These can be useful for performance optimizations or when it is difficult to
-obtain a `BuildContext` descendant of the provider.
+이 기능은 성능을 최적화하거나, provider의 `BuildContext` 하위 항목에 접근하기 어려울 때 유용하게 활용할 수 있습니다.
 
-See the [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do)
-or the documentation of [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
-and [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html)
-for more information.
+더 많은 정보가 필요하다면 아래와 같은 문서를 참고하세요.
+- [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do)
+- [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html) 문서
+- [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html) 문서 
 
-### Optionally depending on a provider
+### provider의 선택적 의존
 
-Sometimes, we may want to support cases where a provider does not exist. An
-example would be for reusable widgets that could be used in various locations,
-including outside of a provider.
+때때로 우리는 provider가 존재하지 않는 경우를 지원하고 싶을 수도 있습니다. 
+예를 들어 provider 외부 등 다양한 위치에서 사용될 수 있는 위젯의 경우가 있습니다.
 
-To do so, when calling `context.watch`/`context.read`, make the generic type
-nullable. Such that instead of:
+그렇게 하기 위해서, `context.watch`/`context.read`을 호출할 때 generic 타입 대신 nullable 타입을 사용합니다.
+예를 들어 아래와 같이 사용하는 경우,
 
 ```dart
 context.watch<Model>()
 ```
 
-which will throw a `ProviderNotFoundException` if no matching providers
-are found, do:
+매칭되는 provider를 찾지 못한 경우 `ProviderNotFoundException` 예외가 발생합니다.
+대신 아래와 같이 사용하면,
 
 ```dart
 context.watch<Model?>()
 ```
 
-which will try to obtain a matching provider. But if none are found,
-`null` will be returned instead of throwing.
-
+매칭되는 provider를 찾지 못하더라도 예외를 발생시키는 대신, `null`을 반환합니다.
 ### MultiProvider
 
-When injecting many values in big applications, `Provider` can rapidly become
-pretty nested:
+규모가 큰 어플리케이션에서 많은 값을 주입하면 `Provider`가 급격하게 중첩될 수 있습니다.
 
 ```dart
 Provider<Something>(
@@ -270,7 +253,7 @@ Provider<Something>(
 ),
 ```
 
-To:
+이를 아래와 같이 작성할 수 있습니다.
 
 ```dart
 MultiProvider(
@@ -283,18 +266,18 @@ MultiProvider(
 )
 ```
 
-The behavior of both examples is strictly the same. `MultiProvider` only changes
-the appearance of the code.
+두 코드는 완전히 동일하게 동작합니다. 
+`MultiProvider`는 오직 코드의 외관을 바꿔줄 뿐입니다.
 
 ### ProxyProvider
 
-Since the 3.0.0, there is a new kind of provider: `ProxyProvider`.
+3.0.0 버젼부터 새로운 provider인 `ProxyProvider`가 추가되었습니다.
 
-`ProxyProvider` is a provider that combines multiple values from other providers into a new object and sends the result to `Provider`.
+`ProxyProvider`는 다른 provider들의 여러 값을 하나의 객체로 묶어 `Provider`로 전달하는 provider입니다.
 
-That new object will then be updated whenever one of the provider we depend on gets updated.
+그러면 해당 신규 객체는 우리가 의존하는 provider 중 하나가 업데이트될 때마다 업데이트됩니다.
 
-The following example uses `ProxyProvider` to build translations based on a counter coming from another provider.
+아래 예제에서는 다른 provider에서 온 `counter`를 기반으로 `translations`를 빌드하기 위해  `ProxyProvider` 를 사용하고 있습니다.
 
 ```dart
 Widget build(BuildContext context) {
@@ -318,44 +301,42 @@ class Translations {
 }
 ```
 
-It comes under multiple variations, such as:
+이것은 아래와 같은 다양한 변형이 가능합니다.
 
 - `ProxyProvider` vs `ProxyProvider2` vs `ProxyProvider3`, ...
 
-  That digit after the class name is the number of other providers that
-  `ProxyProvider` depends on.
+  클래스 이름 뒤의 숫자는 `ProxyProvider`가 의존하는 다른 공급자의 수입니다.
 
 - `ProxyProvider` vs `ChangeNotifierProxyProvider` vs `ListenableProxyProvider`, ...
 
-  They all work similarly, but instead of sending the result into a `Provider`,
-  a `ChangeNotifierProxyProvider` will send its value to a `ChangeNotifierProvider`.
+  모두 비슷하게 동작하지만, 
+`ChangeNotifierProxyProvider`는 값을 그 결과를 `Provider`를 보내는 대신,  `ChangeNotifierProvider`로 보냅니다.
 
 ### FAQ
 
-#### Can I inspect the content of my objects?
+#### 내 객체들을 인스펙터에서 확인할 수 있나요?
 
-Flutter comes with a [devtool](https://github.com/flutter/devtools) that shows
-what the widget tree is at a given moment.
+Flutter는 지정된 시점에 위젯 트리가 어떤 것인지 보여주는 [devtool](https://github.com/flutter/devtools)이 함께 제공됩니다.
 
-Since providers are widgets, they are also visible in that devtool:
+provider는 위젯이기 때문에 마찬가지로 devtool에서 볼 수 있습니다.
 
 <img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/devtools_providers.jpg" width="200" />
 
-From there, if you click on one provider, you will be able to see the value it exposes:
+여기에서 한 provider를 클릭하면 해당 provider가 노출하고 있는 값을 볼 수 있습니다.
 
 <img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/expanded_devtools.jpg" width="200" />
 
-(screenshot of the devtools using the `example` folder)
+(`example` 폴더를 사용하는 devtool 스크린샷)
 
-#### The devtool only shows "Instance of MyClass". What can I do?
+#### devtool에 "Instance of MyClass" 밖에 안보여요. 어떻게 해야하나요?
 
-By default, the devtool relies on `toString`, which defaults to "Instance of MyClass".
+기본적으로 devTool은 `toString`에 의존하기 때문에 기본 설정인 "Instance of MyClass"로 보여집니다.
 
-To have something more useful, you have two solutions:
+보다 유용하게 사용하기 위해서, 다음과 같은 두 가지 솔루션이 있습니다.
 
-- use the [Diagnosticable](https://api.flutter.dev/flutter/foundation/Diagnosticable-class.html) API from Flutter.
+- Flutter의 [Diagnosticable](https://api.flutter.dev/flutter/foundation/Diagnosticable-class.html) API를 사용하세요.
 
-  For most cases, I will use [DiagnosticableTreeMixin] on your objects, followed by a custom implementation of [debugFillProperties](https://api.flutter.dev/flutter/foundation/DiagnosticableTreeMixin/debugFillProperties.html).
+  대부분의 경우 객체에 [debugFillProperties](https://api.flutter.dev/flutter/foundation/DiagnosticableTreeMixin/debugFillProperties.html)로 커스텀한 [DiagnosticableTreeMixin]를 사용
 
   ```dart
   class MyClass with DiagnosticableTreeMixin {
@@ -375,13 +356,12 @@ To have something more useful, you have two solutions:
   }
   ```
 
-- Override `toString`.
+- `toString`을 재정의(override) 하세요.
 
-  If you cannot use [DiagnosticableTreeMixin] (like if your class is in a package
-  that does not depend on Flutter), then you can override `toString`.
+   만약 [DiagnosticableTreeMixin]를 사용할 수 없다면 (Flutter를 사용하지 않는 패키지 등),
+`toString`를 재정의해서 사용할 수 있습니다.
 
-  This is easier than using [DiagnosticableTreeMixin] but is less powerful:
-  You will not be able to expand/collapse the details of your object.
+  이것은 [DiagnosticableTreeMixin]를 사용하는 것 보다 쉽지만, 객체의 세부정보를 확장하거나 축소할 수 없는 만큼 보다 덜 강력합니다.
 
   ```dart
   class MyClass with DiagnosticableTreeMixin {
@@ -397,15 +377,13 @@ To have something more useful, you have two solutions:
   }
   ```
 
-#### I have an exception when obtaining Providers inside `initState`. What can I do?
+#### Provider를 `initState`안에 넣었을 때 예외가 발생합니다. 어떻게 해야하나요?
 
-This exception happens because you're trying to listen to a provider from a
-life-cycle that will never ever be called again.
+이 예외는 다시 호출되지 않는 생명 주기(life-cycle)에서 provider를 감지하려고 하기 때문에 발생합니다.
 
-It means that you either should use another life-cycle (`build`), or explicitly
-specify that you do not care about updates.
+때문에 `build`와 같은 다른 생명 주기에서 사용하거나, 업데이트에 관련 없음을 명시해주어야합니다.
 
-As such, instead of:
+때문에 아래와 같이 작성하는 대신,
 
 ```dart
 initState() {
@@ -414,7 +392,7 @@ initState() {
 }
 ```
 
-you can do:
+이렇게 작성할 수 있습니다.
 
 ```dart
 Value value;
@@ -428,9 +406,9 @@ Widget build(BuildContext context) {
 }
 ```
 
-which will print `value` whenever it changes (and only when it changes).
+이는 값이 변경될 때마다(그리고 변경될 때만) '`value`가 출력됩니다.
 
-Alternatively, you can do:
+또는 다음과 같이 작성할 수 있습니다.
 
 ```dart
 initState() {
@@ -439,11 +417,11 @@ initState() {
 }
 ```
 
-Which will print `value` once _and ignore updates._
+이는 `value`를 한번 출력하고 _업데이트를 무시합니다._
 
-#### How to handle hot-reload on my objects?
+#### 객체들의 hot-reload를 어떻게 다룰 수 있나요?
 
-You can make your provided object implement `ReassembleHandler`:
+제공된 객체에 `ReassembleHandler`를 구현할 수 있습니다.
 
 ```dart
 class Example extends ChangeNotifier implements ReassembleHandler {
@@ -454,17 +432,17 @@ class Example extends ChangeNotifier implements ReassembleHandler {
 }
 ```
 
-Then used typically with `provider`:
+그 후 일반적으로 `provider`와 함께 사용합니다.
 
 ```dart
 ChangeNotifierProvider(create: (_) => Example()),
 ```
 
-#### I use [ChangeNotifier], and I have an exception when I update it. What happens?
+#### [ChangeNotifier]를 사용하며 업데이트할 때 예외가 발생합니다. 무슨 일이 일어나고 있는 거죠?
 
-This likely happens because you are modifying the [ChangeNotifier] from one of its descendants _while the widget tree is building_.
+_위젯 트리가 빌드되는 동안_ 하위 항목 중 하나에서 [ChangeNotifier]를 수정하고 있기 때문에 문제가 발생할 수 있습니다.
 
-A typical situation where this happens is when starting an http request, where the future is stored inside the notifier:
+일반적으로 이러한 상황은 notifier 안에 future가 저장된 상태에서 http 요청을 시작할 때 발생합니다.
 
 ```dart
 initState() {
@@ -473,14 +451,14 @@ initState() {
 }
 ```
 
-This is not allowed because the state update is synchronous.
+상태 업데이트가 동기화되어있으므로 이 작업은 허용되지 않습니다.
 
-This means that some widgets may build _before_ the mutation happens (getting an old value), while other widgets will build _after_ the mutation is complete (getting a new value). This could cause inconsistencies in your UI and is therefore not allowed.
+이는 즉, 어떤 위젯은 변경이 일어나기 전에 빌드될 수 있으며(오래된 값을 받음), 또 어떤 위젯은 변경이 완료된 후에 빌드될 수 있습니다(새로운 값을 받음).
+이로인해 UI에 불일치가 발생할 수 있으므로, 이는 허용되지 않습니다.
 
-Instead, you should perform that mutation in a place that would affect the
-entire tree equally:
+대신 전체 트리에 동일하게 영향을 미치는 위치에서 변경을 수행해야합니다.
 
-- directly inside the `create` of your provider/constructor of your model:
+- 모델의 provider 생성자 `create`인자 안에서 직접 수행하기 :
 
   ```dart
   class MyNotifier with ChangeNotifier {
@@ -492,9 +470,9 @@ entire tree equally:
   }
   ```
 
-  This is useful when there's no "external parameter".
+  외부 변수가 없는 경우 유용합니다.
 
-- asynchronously at the end of the frame:
+- 프레임 끝에 비동기식으로 수행하기 :
   ```dart
   initState() {
     super.initState();
@@ -503,16 +481,15 @@ entire tree equally:
     );
   }
   ```
-  It is slightly less ideal, but allows passing parameters to the mutation.
+  약간 덜 이상적이지만, 변경 사항에 매개변수를 전달할 수 있습니다.
 
-#### Do I have to use [ChangeNotifier] for complex states?
+#### 복잡한 상태의 경우 [ChangeNotifier]를 써야하나요?
 
-No.
+아닙니다.
 
-You can use any object to represent your state. For example, an alternate
-architecture is to use `Provider.value()` combined with a `StatefulWidget`.
+모든 객체를 사용하여 상태를 나타낼 수 있습니다. 예를 들어 대체 구조로 `Provider.value()`와 `StatefulWidget`를 결합하여 사용할 수 있습니다.
 
-Here's a counter example using such architecture:
+아래 예시는 이러한 구조를 사용한 반증 사례입니다.
 
 ```dart
 class Example extends StatefulWidget {
@@ -546,13 +523,13 @@ class ExampleState extends State<Example> {
 }
 ```
 
-where we can read the state by doing:
+다음 작업을 통해 상태를 읽을 수 있습니다.
 
 ```dart
 return Text(context.watch<int>().toString());
 ```
 
-and modify the state with:
+또한 다음과 같이 상태를 수정할 수 있습니다.
 
 ```dart
 return FloatingActionButton(
@@ -561,27 +538,27 @@ return FloatingActionButton(
 );
 ```
 
-Alternatively, you can create your own provider.
+또는 직접 provider를 만들 수도 있습니다.
 
-#### Can I make my Provider?
+#### 나만의 provider를 만들 수 있나요?
 
-Yes. `provider` exposes all the small components that make a fully-fledged provider.
+네. `provider`는 provider를 완전하게 구성하는 작은 컴포넌트들을 모두 공개하고 있습니다.
 
-This includes:
+이는 아래와 같은 것들을 포함합니다.
 
-- `SingleChildStatelessWidget`, to make any widget works with `MultiProvider`.  
-  This interface is exposed as part of `package:provider/single_child_widget`
+- 어떤 위젯이던지 `MultiProvider`와 함께 동작하도록 만들어주는 `SingleChildStatelessWidget`.
+  이 인터페이스는 `package:provider/single_child_widget`의 일부로 노출됩니다.
 
-- [InheritedProvider], the generic `InheritedWidget` obtained when doing `context.watch`.
+- `context.watch`를 할 때 얻을 수 있는 일반적인 `InheritedWidget`인 [InheritedProvider].
 
-Here's an example of a custom provider to use `ValueNotifier` as the state:
+다음은 `ValueNotifier`를 상태로 사용하는 사용자 지정 provider의 예입니다.
 https://gist.github.com/rrousselGit/4910f3125e41600df3c2577e26967c91
 
-#### My widget rebuilds too often. What can I do?
+#### 위젯이 너무 자주 재빌드됩니다. 어떻게 하나요?
 
-Instead of `context.watch`, you can use `context.select` to listen only to the specific set of properties on the obtained object.
+`context.watch`를 사용하는 대신, 객체의 특정한 부분 만을 추적하는 `context.select`를 사용할 수 있습니다.
 
-For example, while you can write:
+예를 들어 다음과 같이 작성한다면,
 
 ```dart
 Widget build(BuildContext context) {
@@ -590,9 +567,9 @@ Widget build(BuildContext context) {
 }
 ```
 
-It may cause the widget to rebuild if something other than `name` changes.
+`name`이 아닌 다른 프로퍼티가 변경되어도 위젯이 재빌드될 것입니다.
 
-Instead, you can use `context.select` to listen only to the `name` property:
+대신에 `context.select`를 사용해 `name` 프로퍼티만 추적하게하면,
 
 ```dart
 Widget build(BuildContext context) {
@@ -601,9 +578,9 @@ Widget build(BuildContext context) {
 }
 ```
 
-This way, the widget won't unnecessarily rebuild if something other than `name` changes.
+이렇게 하면 `name` 프로퍼티가 아닌 변화가 발생하더라도 불필요하게 위젯을 재빌드하지 않습니다.
 
-Similarly, you can use [Consumer]/[Selector]. Their optional `child` argument allows rebuilding only a particular part of the widget tree:
+유사하게 [Consumer]/[Selector]를 사용할 수도 있습니다. 이들이 가지고 있는 `child` 매개변수는 위젯 트리의 특정 부분만 재빌드할 수 있도록 해줍니다.
 
 ```dart
 Foo(
@@ -616,16 +593,16 @@ Foo(
 )
 ```
 
-In this example, only `Bar` will rebuild when `A` updates. `Foo` and `Baz` won't
-unnecessarily rebuild.
+위 예시에서 `A`가 업데이트 되었을 때 오직 `Bar`만 재빌드됩니다. `Foo`는 불필요하게 재빌드되지 않습니다.
 
-#### Can I obtain two different providers using the same type?
 
-No. While you can have multiple providers sharing the same type, a widget will be able to obtain only one of them: the closest ancestor.
+#### 동일한 타입을 사용하는 다른 provider들을 함께 사용할 수 있나요?
 
-Instead, it would help if you explicitly gave both providers a different type.
+없습니다. 여러 provider가 동일한 타입을 공유할 수 있지만, 위젯은 가장 가까운 상위 provider 하나 만을 가져올 수 있습니다.
 
-Instead of:
+대신 두 provider에게 명시적으로 다른 타입을 제공하면 좋습니다.
+
+아래와 같이 작성하는 대신,
 
 ```dart
 Provider<String>(
@@ -637,7 +614,7 @@ Provider<String>(
 ),
 ```
 
-Prefer:
+이렇게 작성하는 것이 좋습니다.
 
 ```dart
 Provider<Country>(
@@ -649,9 +626,9 @@ Provider<Country>(
 ),
 ```
 
-#### Can I consume an interface and provide an implementation?
+#### 인터페이스를 사용하거나 구현을 제공할 수 있나요?
 
-Yes, a type hint must be given to the compiler to indicate the interface will be consumed, with the implementation provided in create.
+네, 생성 시 제공된 구현과 함께 인터페이스가 사용될 것임을 나타내는 형식 힌트를 컴파일러에 제공해야 합니다.
 
 ```dart
 abstract class ProviderInterface with ChangeNotifier {
@@ -676,20 +653,20 @@ ChangeNotifierProvider<ProviderInterface>(
 ),
 ```
 
-### Existing providers
+### 현재 제공되는 provider
 
-`provider` exposes a few different kinds of "provider" for different types of objects.
+`provider` 는 다른 객체 타입에 대해 몇 가지 다른 "provider"를 제공합니다.
 
-The complete list of all the objects available is [here](https://pub.dev/documentation/provider/latest/provider/provider-library.html)
+모든 객체의 리스트는 [여기](https://pub.dev/documentation/provider/latest/provider/provider-library.html)에서 확인할 수 있습니다.
 
-| name                                                                                                                          | description                                                                                                                                                            |
+| 이름                                                                                                                          | 설명                                                                                                                                                            |
 | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Provider](https://pub.dartlang.org/documentation/provider/latest/provider/Provider-class.html)                               | The most basic form of provider. It takes a value and exposes it, whatever the value is.                                                                               |
-| [ListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ListenableProvider-class.html)           | A specific provider for Listenable object. ListenableProvider will listen to the object and ask widgets which depend on it to rebuild whenever the listener is called. |
-| [ChangeNotifierProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ChangeNotifierProvider-class.html)   | A specification of ListenableProvider for ChangeNotifier. It will automatically call `ChangeNotifier.dispose` when needed.                                             |
-| [ValueListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ValueListenableProvider-class.html) | Listen to a ValueListenable and only expose `ValueListenable.value`.                                                                                                   |
-| [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | Listen to a Stream and expose the latest value emitted.                                                                                                                |
-| [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | Takes a `Future` and updates dependents when the future completes.                                                                                                     |
+| [Provider](https://pub.dartlang.org/documentation/provider/latest/provider/Provider-class.html)                               | The most 기본적인 provider 형태. 어떤 값이던 간에 값을 노출시킵니다.                                                                               |
+| [ListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ListenableProvider-class.html)           | Listenable 객체를 위한 특수한 provider. ListenableProvider는 listener가 호출될 때마다 오브젝트를 수신하고 오브젝트에 종속된 위젯을 재구성하도록 요청합니다. |
+| [ChangeNotifierProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ChangeNotifierProvider-class.html)   | ChangeNotifier용 ListenableProvider 사양. 필요할 때 자동으로 `ChangeNotifier.dispose`를 호출합니다.                                             |
+| [ValueListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ValueListenableProvider-class.html) | ValueListenable을 수신하고, `ValueListenable.value`만을 노출합니다..                                                                                                   |
+| [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | 스트림을 수신하고 최신 값을 표시합니다.                                                                                                               |
+| [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | `Future`를 받고, 완성되었을 때 의존된 객체를 업데이트합니다.                                                                                                  |
 
 [provider.of]: https://pub.dev/documentation/provider/latest/provider/Provider/of.html
 [selector]: https://pub.dev/documentation/provider/latest/provider/Selector-class.html
@@ -698,3 +675,4 @@ The complete list of all the objects available is [here](https://pub.dev/documen
 [inheritedwidget]: https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html
 [inheritedprovider]: https://pub.dev/documentation/provider/latest/provider/InheritedProvider-class.html
 [diagnosticabletreemixin]: https://api.flutter.dev/flutter/foundation/DiagnosticableTreeMixin-mixin.html
+[BuildContext]: https://api.flutter.dev/flutter/widgets/BuildContext-class.html
