@@ -18,11 +18,11 @@ Usando o `provider` ao invés de usar InheritedWidget, você ganha:
 
 Para ler mais sobre o `provider`, veja a [documentação](https://pub.dev/documentation/provider/latest/provider/provider-library.html).
 
-## Migration from 4.x.x to 5.0.0-nullsafety
+## Migrando de 4.x.x para 5.0.0-nullsafety
 
 - `initialData` para `FutureProvider` e `StreamProvider` é mandatório.
 
-  Para migrar, o que antes era...:
+  Para migrar, o que antes era:
 
   ```dart
   FutureProvider<int>(
@@ -36,7 +36,7 @@ Para ler mais sobre o `provider`, veja a [documentação](https://pub.dev/docume
   }
   ```
 
-  é agora...:
+  E agora:
 
   ```dart
   FutureProvider<int?>(
