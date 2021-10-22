@@ -13,7 +13,7 @@ Usando o `provider` ao invés de usar [InheritedWidget], você ganha:
 - lazy-loading
 - redução considerável de código desnecessário toda vez que se cria uma class
 - compatível com devtools
-- uma maneira comum de consumir [InheritedWidgets] (consulte [Provider.of]/[Consumer]/[Selector])
+- uma maneira comum de consumir [InheritedWidget]s (consulte [Provider.of]/[Consumer]/[Selector])
 - maior escalabilidade para classes com um mecanismo de escuta que cresce exponencialmente em complexidade (como [ChangeNotifier], que é O(N) para notificações de despacho).
 
 Para ler mais sobre o `provider`, veja a [documentação](https://pub.dev/documentation/provider/latest/provider/provider-library.html).
