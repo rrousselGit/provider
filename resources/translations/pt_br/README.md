@@ -5,15 +5,15 @@
 
 [<img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
 
-Um wrapper para o InheritedWidget tornando-os mais fáceis de usar e reutilizáveis.
+Um wrapper para o [InheritedWidget] tornando-os mais fáceis de usar e reutilizáveis.
 
-Usando o `provider` ao invés de usar InheritedWidget, você ganha:
+Usando o `provider` ao invés de usar [InheritedWidget], você ganha:
 
 - alocação/disposição simplificada de recursos
 - lazy-loading
 - redução considerável de código desnecessário toda vez que se cria uma class
 - compatível com devtools
-- uma maneira comum de consumir InheritedWidgets (consulte [Provider.of]/[Consumer]/[Selector])
+- uma maneira comum de consumir [InheritedWidget]s (consulte [Provider.of]/[Consumer]/[Selector])
 - maior escalabilidade para classes com um mecanismo de escuta que cresce exponencialmente em complexidade (como [ChangeNotifier], que é O(N) para notificações de despacho).
 
 Para ler mais sobre o `provider`, veja a [documentação](https://pub.dev/documentation/provider/latest/provider/provider-library.html).
