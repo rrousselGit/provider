@@ -187,6 +187,7 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>?, T> {
     required T initialData,
     ErrorBuilder<T>? catchError,
     UpdateShouldNotify<T>? updateShouldNotify,
+    Dispose<Future<T>?>? dispose,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
@@ -195,6 +196,7 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>?, T> {
           lazy: lazy,
           builder: builder,
           create: create,
+          dispose: dispose,
           updateShouldNotify: updateShouldNotify,
           startListening: _futureStartListening(
             catchError: catchError,
