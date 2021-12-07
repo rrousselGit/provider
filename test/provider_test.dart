@@ -194,6 +194,20 @@ void main() {
       expect(tester.takeException(), isFlutterError);
     });
 
+    testWidgets('includes constructor error in stack trace', (tester) async {
+      try {
+        await tester.pumpWidget(
+          Provider(
+            lazy: false,
+            create: (_) => ModelWithBrokenConstructor(),
+            child: Container(),
+          ),
+        );  
+      } catch (e) {
+        expect(e, contains('Catch me, if you can!'));
+      }
+    });
+
     testWidgets('debugCheckInvalidValueType can be disabled', (tester) async {
       final previous = Provider.debugCheckInvalidValueType;
       Provider.debugCheckInvalidValueType = null;
@@ -517,4 +531,11 @@ void main() {
     // Provider<double> not found, uses Provider<double?> instead.
     expect(value, equals(null));
   });
+}
+
+class ModelWithBrokenConstructor {
+  ModelWithBrokenConstructor() {
+    // ignore: only_throw_errors
+    throw 'Catch me, if you can!';
+  }
 }

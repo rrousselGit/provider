@@ -13,3 +13,7 @@ coverage/
 
 # Directory created by dartdoc
 doc/api/
+
+# IntelliJ
+.idea/
+
