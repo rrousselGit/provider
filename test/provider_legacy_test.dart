@@ -153,6 +153,7 @@ void main() {
     await tester.pumpWidget(
       // Install a Provider<double*>.
       Provider<double>.value(
+        // ignore: avoid_redundant_argument_values
         value: null,
         child: Provider<int>.value(
           value: 42,
