@@ -2422,20 +2422,18 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    try {
-      expect(
-        flutterErrors,
-        contains(
-          isA<FlutterErrorDetails>().having(
-                (e) => e.exception,
-            'exception',
-            isA<StateError>().having((s) => s.message, 'message', expected),
-          ),
+    FlutterError.onError = onError;
+
+    expect(
+      flutterErrors,
+      contains(
+        isA<FlutterErrorDetails>().having(
+              (e) => e.exception,
+          'exception',
+          isA<StateError>().having((s) => s.message, 'message', expected),
         ),
-      );
-    } finally {
-      FlutterError.onError = onError;
-    }
+      ),
+    );
   });
 
   testWidgets('StateError is thrown when exception occurs in create',
@@ -2455,20 +2453,18 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    try {
-      expect(
-        flutterErrors,
-        contains(
-          isA<FlutterErrorDetails>().having(
-                (e) => e.exception,
-            'exception',
-            isA<StateError>().having((s) => s.message, 'message', expected),
-          ),
+    FlutterError.onError = onError;
+
+    expect(
+      flutterErrors,
+      contains(
+        isA<FlutterErrorDetails>().having(
+              (e) => e.exception,
+          'exception',
+          isA<StateError>().having((s) => s.message, 'message', expected),
         ),
-      );
-    } finally {
-      FlutterError.onError = onError;
-    }
+      ),
+    );
   });
 
   testWidgets(
@@ -2490,20 +2486,18 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    try {
-      expect(
-        flutterErrors,
-        contains(
-          isA<FlutterErrorDetails>().having(
-                (e) => e.exception,
-            'exception',
-            exception,
-          ),
+    FlutterError.onError = onError;
+
+    expect(
+      flutterErrors,
+      contains(
+        isA<FlutterErrorDetails>().having(
+              (e) => e.exception,
+          'exception',
+          exception,
         ),
-      );
-    } finally {
-      FlutterError.onError = onError;
-    }
+      ),
+    );
   });
 }
 
