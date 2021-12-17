@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
@@ -2428,7 +2429,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       flutterErrors,
       contains(
         isA<FlutterErrorDetails>().having(
-              (e) => e.exception,
+          (e) => e.exception,
           'exception',
           isA<StateError>().having((s) => s.message, 'message', expected),
         ),
@@ -2459,7 +2460,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       flutterErrors,
       contains(
         isA<FlutterErrorDetails>().having(
-              (e) => e.exception,
+          (e) => e.exception,
           'exception',
           isA<StateError>().having((s) => s.message, 'message', expected),
         ),
@@ -2492,7 +2493,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       flutterErrors,
       contains(
         isA<FlutterErrorDetails>().having(
-              (e) => e.exception,
+          (e) => e.exception,
           'exception',
           exception,
         ),
