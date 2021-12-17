@@ -2422,18 +2422,20 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    expect(
-      flutterErrors,
-      contains(
-        isA<FlutterErrorDetails>().having(
-          (e) => e.exception,
-          'exception',
-          isA<StateError>().having((s) => s.message, 'message', expected),
+    try {
+      expect(
+        flutterErrors,
+        contains(
+          isA<FlutterErrorDetails>().having(
+                (e) => e.exception,
+            'exception',
+            isA<StateError>().having((s) => s.message, 'message', expected),
+          ),
         ),
-      ),
-    );
-
-    FlutterError.onError = onError;
+      );
+    } finally {
+      FlutterError.onError = onError;
+    }
   });
 
   testWidgets('StateError is thrown when exception occurs in create',
@@ -2453,18 +2455,20 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    expect(
-      flutterErrors,
-      contains(
-        isA<FlutterErrorDetails>().having(
-          (e) => e.exception,
-          'exception',
-          isA<StateError>().having((s) => s.message, 'message', expected),
+    try {
+      expect(
+        flutterErrors,
+        contains(
+          isA<FlutterErrorDetails>().having(
+                (e) => e.exception,
+            'exception',
+            isA<StateError>().having((s) => s.message, 'message', expected),
+          ),
         ),
-      ),
-    );
-
-    FlutterError.onError = onError;
+      );
+    } finally {
+      FlutterError.onError = onError;
+    }
   });
 
   testWidgets(
@@ -2486,18 +2490,20 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
-    expect(
-      flutterErrors,
-      contains(
-        isA<FlutterErrorDetails>().having(
-          (e) => e.exception,
-          'exception',
-          exception,
+    try {
+      expect(
+        flutterErrors,
+        contains(
+          isA<FlutterErrorDetails>().having(
+                (e) => e.exception,
+            'exception',
+            exception,
+          ),
         ),
-      ),
-    );
-
-    FlutterError.onError = onError;
+      );
+    } finally {
+      FlutterError.onError = onError;
+    }
   });
 }
 
