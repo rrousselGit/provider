@@ -691,18 +691,18 @@ class _CreateInheritedProviderState<T>
     extends _DelegateState<T, _CreateInheritedProvider<T>> {
   VoidCallback? _removeListener;
   bool _didInitValue = false;
-  bool _didSucceedInit = false;
   T? _value;
   _CreateInheritedProvider<T>? _previousWidget;
   FlutterErrorDetails? _initError;
 
   @override
   T get value {
-    if (_didInitValue && !_didSucceedInit) {
+    if (_didInitValue && _initError != null) {
       throw StateError(
-          'Tried to read a provider that threw during the creation of its value.\n'
-          'The exception occurred during the creation of type $T.\n\n'
-          '${_initError?.toString()}');
+        'Tried to read a provider that threw during the creation of its value.\n'
+        'The exception occurred during the creation of type $T.\n\n'
+        '${_initError?.toString()}',
+      );
     }
     bool? _debugPreviousIsInInheritedProviderCreate;
     bool? _debugPreviousIsInInheritedProviderUpdate;
@@ -726,7 +726,6 @@ class _CreateInheritedProviderState<T>
             return true;
           }());
           _value = delegate.create!(element!);
-          _didSucceedInit = true;
         } catch (e, stackTrace) {
           _initError = FlutterErrorDetails(
             library: 'provider',
@@ -758,7 +757,13 @@ class _CreateInheritedProviderState<T>
             return true;
           }());
           _value = delegate.update!(element!, _value);
-          _didSucceedInit = true;
+        } catch (e, stackTrace) {
+          _initError = FlutterErrorDetails(
+            library: 'provider',
+            exception: e,
+            stack: stackTrace,
+          );
+          rethrow;
         } finally {
           assert(() {
             debugIsInInheritedProviderCreate =
@@ -774,7 +779,6 @@ class _CreateInheritedProviderState<T>
           return true;
         }());
       }
-      _didSucceedInit = true;
     }
 
     element!._isNotifyDependentsEnabled = false;
