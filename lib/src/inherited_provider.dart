@@ -757,13 +757,6 @@ class _CreateInheritedProviderState<T>
             return true;
           }());
           _value = delegate.update!(element!, _value);
-        } catch (e, stackTrace) {
-          _initError = FlutterErrorDetails(
-            library: 'provider',
-            exception: e,
-            stack: stackTrace,
-          );
-          rethrow;
         } finally {
           assert(() {
             debugIsInInheritedProviderCreate =

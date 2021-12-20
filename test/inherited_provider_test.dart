@@ -2482,6 +2482,40 @@ When the exception was thrown, this was the stack:
     );
   });
 
+  testWidgets('Exception is thrown when exception occurs in rebuild',
+      (tester) async {
+    const errorMessage = 'oops';
+    final onError = FlutterError.onError;
+    final flutterErrors = <FlutterErrorDetails>[];
+    FlutterError.onError = flutterErrors.add;
+
+    final provider = InheritedProvider<String>(
+      create: (_) => '',
+      update: (c, p) {
+        throw Exception(errorMessage);
+      },
+      child: TextOf<String>(),
+    );
+    await tester.pumpWidget(Provider.value(value: 0, child: provider));
+
+    FlutterError.onError = onError;
+
+    expect(
+      flutterErrors,
+      contains(
+        isA<FlutterErrorDetails>().having(
+          (e) => e.exception,
+          'exception',
+          isA<Exception>().having(
+            (s) => s.toString(),
+            'toString',
+            contains(errorMessage),
+          ),
+        ),
+      ),
+    );
+  });
+
   testWidgets(
       'Exception is propagated when context.watch is called after a provider threw',
       (tester) async {
