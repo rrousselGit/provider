@@ -694,14 +694,15 @@ class _CreateInheritedProviderState<T>
   bool _didSucceedInit = false;
   T? _value;
   _CreateInheritedProvider<T>? _previousWidget;
+  FlutterErrorDetails? _initError;
 
   @override
   T get value {
     if (_didInitValue && !_didSucceedInit) {
       throw StateError(
-        'Tried to read a provider that threw during the creation of its value.\n'
-        'The exception occurred during the creation of type $T.',
-      );
+          'Tried to read a provider that threw during the creation of its value.\n'
+          'The exception occurred during the creation of type $T.\n\n'
+          '${_initError?.toString()}');
     }
     bool? _debugPreviousIsInInheritedProviderCreate;
     bool? _debugPreviousIsInInheritedProviderUpdate;
@@ -726,6 +727,13 @@ class _CreateInheritedProviderState<T>
           }());
           _value = delegate.create!(element!);
           _didSucceedInit = true;
+        } catch (e, stackTrace) {
+          _initError = FlutterErrorDetails(
+            library: 'provider',
+            exception: e,
+            stack: stackTrace,
+          );
+          rethrow;
         } finally {
           assert(() {
             debugIsInInheritedProviderCreate =
