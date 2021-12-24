@@ -691,6 +691,52 @@ The complete list of all the objects available is [here](https://pub.dev/documen
 | [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | Listen to a Stream and expose the latest value emitted.                                                                                                                |
 | [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | Takes a `Future` and updates dependents when the future completes.                                                                                                     |
 
+
+### My application throws a StackOverflowError because I have too many providers, what can I do?
+
+If you have a very large number of providers (150+), it is possible that some devices will throw a `StackOverflowError` because you end-up building too many widgets at once.
+
+In this situation, you have a few solutions:
+
+- If your application has a splash-screen, try mounting your providers over time instead of all at once.
+
+  You could do:
+  
+  ```dart
+  MultiProvider(
+    providers: [
+      if (step1) ...[
+        <lots of providers>,
+      ],
+      if (step2) ...[
+        <some more providers>
+      ]
+    ],
+  )
+  ```
+  
+  where during your splash screen animation, you would do:
+  
+  ```dart
+  bool step1 = false;
+  bool step2 = false;
+  @override
+  initState() {
+    super.initState();
+    Future(() {
+      setState(() => step1 = true);
+      Future(() {
+        setState(() => step2 = true);
+      });  
+    });
+  }
+  ```
+
+- Consider opting out of using `MultiProvider`.
+  `MultiProvider` works by adding a widget between every providers. Not using `MultiProvider` can
+  increase the limit before a `StackOverflowError` is reached.
+
+
 [provider.of]: https://pub.dev/documentation/provider/latest/provider/Provider/of.html
 [selector]: https://pub.dev/documentation/provider/latest/provider/Selector-class.html
 [consumer]: https://pub.dev/documentation/provider/latest/provider/Consumer-class.html
