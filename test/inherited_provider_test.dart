@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
@@ -2422,6 +2423,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
+    FlutterError.onError = onError;
+
     expect(
       flutterErrors,
       contains(
@@ -2432,8 +2435,6 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         ),
       ),
     );
-
-    FlutterError.onError = onError;
   });
 
   testWidgets('StateError is thrown when exception occurs in create',
@@ -2453,6 +2454,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
+    FlutterError.onError = onError;
+
     expect(
       flutterErrors,
       contains(
@@ -2463,8 +2466,6 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         ),
       ),
     );
-
-    FlutterError.onError = onError;
   });
 
   testWidgets(
@@ -2486,6 +2487,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       ),
     );
 
+    FlutterError.onError = onError;
+
     expect(
       flutterErrors,
       contains(
@@ -2496,8 +2499,6 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         ),
       ),
     );
-
-    FlutterError.onError = onError;
   });
 }
 
