@@ -84,7 +84,7 @@
 
 Providers는 단순히 값은 노출 시켜줄 뿐만 아니라, 값의 생성(create), 수신(listen) 그리고 해제(dispose)를 할 수 있도록 합니다. 
 
-신규 생성한 객체를 노출하기 위해 provider의 기본 생성자를 사용하세요. 
+신규 생성한 객체를 노출하기 위해 provider의 기본 생성자를 사용하세요. 
 만약 객체를 **생성**하고 싶다면 `.value` 생성자를 _사용하지마세요._ 그렇지 않으면 의도치 않은 부작용이 나타날 수 있습니다.
 
 값을 생성하기 위해 `.value` 생성자를 사용하는 것이 왜 바람직하지 않은지 확인하려면 [StackOverflow 답변](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)을 확인하세요.
@@ -120,7 +120,7 @@ Provider(
 )
 ```
 
-망갸 시간에 따라 변경될 수 있는 변수를 객체에 전달하려면
+만약 시간에 따라 변경될 수 있는 변수를 객체에 전달하려면
 `ProxyProvider` 사용을 고려하세요.
 
 ```dart
@@ -664,7 +664,7 @@ ChangeNotifierProvider<ProviderInterface>(
 | [Provider](https://pub.dartlang.org/documentation/provider/latest/provider/Provider-class.html)                               | The most 기본적인 provider 형태. 어떤 값이던 간에 값을 노출시킵니다.                                                                               |
 | [ListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ListenableProvider-class.html)           | Listenable 객체를 위한 특수한 provider. ListenableProvider는 listener가 호출될 때마다 오브젝트를 수신하고 오브젝트에 종속된 위젯을 재구성하도록 요청합니다. |
 | [ChangeNotifierProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ChangeNotifierProvider-class.html)   | ChangeNotifier용 ListenableProvider 사양. 필요할 때 자동으로 `ChangeNotifier.dispose`를 호출합니다.                                             |
-| [ValueListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ValueListenableProvider-class.html) | ValueListenable을 수신하고, `ValueListenable.value`만을 노출합니다..                                                                                                   |
+| [ValueListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ValueListenableProvider-class.html) | ValueListenable을 수신하고, `ValueListenable.value`만을 노출합니다.                                                                                                   |
 | [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | 스트림을 수신하고 최신 값을 표시합니다.                                                                                                               |
 | [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | `Future`를 받고, 완성되었을 때 의존된 객체를 업데이트합니다.                                                                                                  |
 
