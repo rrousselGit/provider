@@ -185,8 +185,8 @@ bool _debugIsSelecting = false;
 
 /// Adds a `select` method on [BuildContext].
 extension SelectContext on BuildContext {
-  /// Watch a value of type [T] exposed from a provider, and listen only partially
-  /// to changes.
+  /// Watch a value of type [T] exposed from a provider, and mark this widget for rebuild
+  /// on changes of that value.
   ///
   /// If [T] is nullable and no matching providers are found, [watch] will
   /// return `null`. Otherwise if [T] is non-nullable, will throw [ProviderNotFoundException].
