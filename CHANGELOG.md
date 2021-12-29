@@ -1,3 +1,7 @@
+# 6.0.2
+
+Added error details for provider that threw during the creation (thanks to @jmewes)
+
 # 6.0.1
 
 Removed the assert that prevented from using `ChangeNotifierProvider`
