@@ -698,6 +698,7 @@ class _CreateInheritedProviderState<T>
   @override
   T get value {
     if (_didInitValue && _initError != null) {
+      // TODO(rrousselGit) update to use Error.throwWithStacktTrace when it reaches stable
       throw StateError(
         'Tried to read a provider that threw during the creation of its value.\n'
         'The exception occurred during the creation of type $T.\n\n'
