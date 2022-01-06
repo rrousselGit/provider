@@ -9,7 +9,7 @@ class ValueListenableProvider<T> extends SingleChildStatelessWidget {
   /// {@template provider.valuelistenableprovider}
   /// Listens to a [ValueListenable] and exposes its current value.
   ///
-  /// This is useful for testing purpose, to easily simular a provider update:
+  /// This is useful for testing purposes, to easily simular a provider update:
   ///
   /// ```dart
   /// testWidgets('example', (tester) async {

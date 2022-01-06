@@ -316,7 +316,8 @@ abstract class InheritedContext<T> extends BuildContext {
   /// The current value exposed by [InheritedProvider].
   ///
   /// This property is lazy loaded, and reading it the first time may trigger
-  /// some side-effects such as creating a [T] instance or start a subscription.
+  /// some side-effects such as creating a [T] instance or starting
+  /// a subscription.
   T get value;
 
   /// Marks the [InheritedProvider] as needing to update dependents.
