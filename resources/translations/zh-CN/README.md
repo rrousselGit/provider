@@ -639,7 +639,7 @@ Provider<Country>(
 #### 我可以消费一个接口并且提供一个实现吗？
 
 可以，编译器需要你提供类型提示 (`type hint`)，来指定将要被消费的接口，
-同时你需要在 `craete` 中提供具体实现:
+同时你需要在 `create` 中提供具体实现:
 
 ```dart
 abstract class ProviderInterface with ChangeNotifier {
