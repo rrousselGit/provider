@@ -108,7 +108,7 @@ abstract class _DeferredDelegateState<T, R, W extends _DeferredDelegate<T, R>>
     element!._isNotifyDependentsEnabled = true;
     assert(element!.hasValue, '''
 The callback "startListening" was called, but it left DeferredInhertitedProviderElement<$T, $R>
-in an unitialized state.
+in an uninitialized state.
 
 It is necessary for "startListening" to call "setState" at least once the very
 first time "value" is requested.

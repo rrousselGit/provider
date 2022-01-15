@@ -56,7 +56,7 @@ import 'selector.dart' show Selector;
 /// [Text]. It will also update the [Text] whenever the value `foo` changes.
 ///
 ///
-/// * It helps with performance optimisation by providing more granular rebuilds.
+/// * It helps with performance optimization by providing more granular rebuilds.
 ///
 /// Unless `listen: false` is passed to [Provider.of], the widget
 /// associated with the [BuildContext] passed to [Provider.of] will rebuild
