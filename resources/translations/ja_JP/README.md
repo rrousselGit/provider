@@ -21,7 +21,6 @@
 以下も必要に応じて参照してください:
 
 - `provider` と [ChangeNotifier] の使用に関して例を公開している [Flutter 公式の状態管理ドキュメント](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple)。
-- [flutter architecture sample](https://github.com/brianegan/flutter_architecture_samples/tree/master/change_notifier_provider), which contains an implementation of that app using `provider` + [ChangeNotifier]
 - `provider` と [ChangeNotifier] を使用したアプリの実装に関する例を公開している [Flutter アーキテクチャサンプル]。
 - それらのアーキテクチャ上で `provider` を使用している [flutter_bloc](https://github.com/felangel/bloc) と [Mobx](https://github.com/mobxjs/mobx.dart)。
 
