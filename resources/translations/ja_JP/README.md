@@ -20,9 +20,10 @@
 
 以下も必要に応じて参照してください:
 
-- [The official Flutter state management documentation](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple), which showcases how to use `provider` + [ChangeNotifier]
+- `provider` と [ChangeNotifier] の使用に関して例を公開している [Flutter 公式の状態管理ドキュメント](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple)。
 - [flutter architecture sample](https://github.com/brianegan/flutter_architecture_samples/tree/master/change_notifier_provider), which contains an implementation of that app using `provider` + [ChangeNotifier]
-- [flutter_bloc](https://github.com/felangel/bloc) and [Mobx](https://github.com/mobxjs/mobx.dart), which uses a `provider` in their architecture
+- `provider` と [ChangeNotifier] を使用したアプリの実装に関する例を公開している [Flutter アーキテクチャサンプル]。
+- それらのアーキテクチャ上で `provider` を使用している [flutter_bloc](https://github.com/felangel/bloc) と [Mobx](https://github.com/mobxjs/mobx.dart)。
 
 ## 4.x.x から 5.0.0-nullsafety への移行について
 
@@ -153,7 +154,7 @@ MyProvider(
 
 既に存在するオブジェクトのインスタンスを再利用する際に `.value` コンストラクタを使用しなかった場合は、オブジェクトがまだ使用されているにもかかわらず `dispose` メソッドが呼び出される可能性があります。
 
-- 既に存在する[ChangeNotifier]を再利用するためには `ChangeNotifierProvider.value` を使用 **_してください_**。
+- 既に存在する [ChangeNotifier] を再利用するためには `ChangeNotifierProvider.value` を使用 **_してください_**。
 
 ```dart
 MyChangeNotifier variable;
@@ -164,7 +165,7 @@ ChangeNotifierProvider.value(
 )
 ```
 
-- 既に存在する[ChangeNotifier]をデフォルトコンストラクタを使用して再利用 **_しないでください_**。
+- 既に存在する [ChangeNotifier] をデフォルトコンストラクタを使用して再利用 **_しないでください_**。
 
 ```dart
 MyChangeNotifier variable;
@@ -177,7 +178,7 @@ ChangeNotifierProvider(
 
 ### 値の読み込み
 
-値を読み取る最も簡単な方法は、[BuildContext]の拡張メソッドを使用することです。
+値を読み取る最も簡単な方法は [BuildContext] の拡張メソッドを使用することです。
 
 - `context.watch<T>()`: ウィジェットが `T` 上の変更をリッスンできるようにします。
 - `context.read<T>()`: リッスンせずに `T` を返却します。
@@ -191,7 +192,7 @@ ChangeNotifierProvider(
 
 この検索操作の計算量は O(1)であり、ウィジェットツリーを探索することを意味しません。
 
-これらのメソッドと最初に[値の公開](#値の公開)で挙げた例を組み合わせると、以下のようにウィジェットは公開された `String` を読み込み "Hello World." をレンダリングすることできます。
+これらのメソッドと最初に [値の公開](#値の公開) で挙げた例を組み合わせると、以下のようにウィジェットは公開された `String` を読み込み "Hello World." をレンダリングすることできます。
 
 ```dart
 class Home extends StatelessWidget {
@@ -205,7 +206,7 @@ class Home extends StatelessWidget {
 }
 ```
 
-また、これらの方法の代わりに、[Consumer]と[Selector]を使用することも可能です。
+また、これらの方法の代わりに [Consumer] と [Selector] を使用することも可能です。
 
 これらは、パフォーマンスの最適化や、プロバイダの `BuildContext` の子孫を取得するのが困難な場合に便利です。
 
