@@ -1,10 +1,9 @@
-[English](https://github.com/rrousselGit/provider/blob/master/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md) | [简体中文](https://github.com/rrousselGit/provider/blob/master/resources/translations/zh-CN/README.md) | [Español](./resources/translations/es_MX/README.md) | [한국어](https://github.com/rrousselGit/provider/blob/master/resources/translations/ko-KR/README.md)
+[English](https://github.com/rrousselGit/provider/blob/master/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md) | [简体中文](https://github.com/rrousselGit/provider/blob/master/resources/translations/zh-CN/README.md) | [Español](./resources/translations/es_MX/README.md) | [한국어](https://github.com/rrousselGit/provider/blob/master/resources/translations/ko-KR/README.md) | [日本語](https://github.com/rrousselGit/provider/blob/master/resources/translations/ja-JP/README.md)
 
 <a href="https://github.com/rrousselGit/provider/actions"><img src="https://github.com/rrousselGit/provider/workflows/Build/badge.svg" alt="Build Status"></a>
 [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider) [![Gitter](https://badges.gitter.im/flutter_provider/community.svg)](https://gitter.im/flutter_provider/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 [<img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
-
 
 Un wrapper alrededor de [InheritedWidget]
 para hacerlo más fácil de usar y más utilizable.
@@ -15,8 +14,8 @@ Al utilizar `provider` en lugar de escribir manualmente los [InheritedWidget], o
 - lazy-loading
 - un boilerplate muy reducido en lugar de hacer una nueva clase cada vez.
 - compatibilidad con devtools
-- una manera común de consumir esto [InheritedWidget]s (ver  [Provider.of]/[Consumer]/[Selector])
-- incrementa la escalabilidad de tus clases con un mecanismo de escucha (listener) que crece exponencialmente 
+- una manera común de consumir esto [InheritedWidget]s (ver [Provider.of]/[Consumer]/[Selector])
+- incrementa la escalabilidad de tus clases con un mecanismo de escucha (listener) que crece exponencialmente
   en complejidad (tales como [ChangeNotifier], el cual es O(N²) al enviar notificaciones)
 
 Para leer más acerca de `provider`, leé su [documentación](https://pub.dev/documentation/provider/latest/provider/provider-library.html).
@@ -25,11 +24,12 @@ Ver también:
 
 - [La documentación oficial de Flutter en gestión de estado](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple), la cual muestra como usar `provider` + [ChangeNotifier]
 - [Ejemplos de arquitectura en Flutter](https://github.com/brianegan/flutter_architecture_samples/tree/master/change_notifier_provider), la cual contiene una implementación de una app usando `provider` + [ChangeNotifier]
-- [flutter_bloc](https://github.com/felangel/bloc) y [Mobx](https://github.com/mobxjs/mobx.dart), los cuales usan `provider`  en su arquitectura.
+- [flutter_bloc](https://github.com/felangel/bloc) y [Mobx](https://github.com/mobxjs/mobx.dart), los cuales usan `provider` en su arquitectura.
 
 ## Migrar de v3.x.0 a v4.0.0
 
 - Los parámetros `builder` e `initialBuilder` de providers son eliminados.
+
   - `initialBuilder` deberá ser reemplazado por `create`.
   - `builder` de "proxy" providers deberá ser reemplazado por `update`
   - `builder` de providers clásicos deberá ser reemplazado por `create`.
@@ -215,7 +215,7 @@ class Home extends StatelessWidget {
 
 Otra opción, en lugar de utilizar estos métodos, podemos usar [Consumer] y [Selector].
 
-Estos pueden ayudar a optimizar el desempeño o cuando es difícil de obtener 
+Estos pueden ayudar a optimizar el desempeño o cuando es difícil de obtener
 el `BuildContext` descendiente del provider
 
 Ve las [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do) o la documentación de [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html)
@@ -441,7 +441,6 @@ sus descendientes, _mientras que el árbol de los widgets se está construyendo_
 Una situación típica en la que esto ocurre es cuando se inicia una petición http, donde
 el futuro está almacenado dentro del notifier:
 
-
 ```dart
 initState() {
   super.initState();
@@ -665,13 +664,13 @@ ChangeNotifierProvider<ProviderInterface>(
 La lista completa de todos los objetos disponibles esta [aquí](https://pub.dev/documentation/provider/latest/provider/provider-library.html)
 
 | Nombre                                                                                                                        | Descripción                                                                                                                                                                               |
-| ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | 
+| ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [Provider](https://pub.dartlang.org/documentation/provider/latest/provider/Provider-class.html)                               | La forma más básica de provider. Toma un valor y lo expone, sea cual sea el valor.                                                                                                        |
 | [ListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ListenableProvider-class.html)           | Un proveedor específico para el objeto Listenable. ListenableProvider escuchará el objeto y pedirá a los widgets que dependen de él que lo reconstruyan siempre que se llame al listener. |
 | [ChangeNotifierProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ChangeNotifierProvider-class.html)   | Se especifica el tipo de ListenableProvider para ChangeNotifier. Este llamará automáticamente `ChangeNotifier.dispose` cuando lo necesite.                                                |
 | [ValueListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ValueListenableProvider-class.html) | Escucha al ValueListenable y solo muestra `ValueListenable.value`.                                                                                                                        |
 | [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | Escucha a un Stream y muestra el último valor emitido.                                                                                                                                    |
-| [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | Toma un `Future` y actualiza a sus dependientes cuando el futuro es completado.                                                                                                          |
+| [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | Toma un `Future` y actualiza a sus dependientes cuando el futuro es completado.                                                                                                           |
 
 [provider.of]: https://pub.dev/documentation/provider/latest/provider/Provider/of.html
 [selector]: https://pub.dev/documentation/provider/latest/provider/Selector-class.html

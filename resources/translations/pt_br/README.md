@@ -1,4 +1,4 @@
-[English](https://github.com/rrousselGit/provider/blob/master/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md) | [简体中文](https://github.com/rrousselGit/provider/blob/master/resources/translations/zh-CN/README.md) | [Español](https://github.com/rrousselGit/provider/blob/master/resources/translations/es_MX/README.md) | [한국어](https://github.com/rrousselGit/provider/blob/master/resources/translations/ko-KR/README.md)
+[English](https://github.com/rrousselGit/provider/blob/master/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md) | [简体中文](https://github.com/rrousselGit/provider/blob/master/resources/translations/zh-CN/README.md) | [Español](https://github.com/rrousselGit/provider/blob/master/resources/translations/es_MX/README.md) | [한국어](https://github.com/rrousselGit/provider/blob/master/resources/translations/ko-KR/README.md) | [日本語](https://github.com/rrousselGit/provider/blob/master/resources/translations/ja-JP/README.md)
 
 [![Build Status](https://travis-ci.org/rrousselGit/provider.svg?branch=master)](https://travis-ci.org/rrousselGit/provider)
 [![pub package](https://img.shields.io/pub/v/provider.svg)](https://pub.dev/packages/provider) [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider) [![Gitter](https://badges.gitter.im/flutter_provider/community.svg)](https://gitter.im/flutter_provider/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
@@ -175,8 +175,7 @@ A forma mais fácil de ler um valor é usando os métodos extensões do [BuildCo
 - `context.read<T>()`, retorna `T` sem escutar
 - `context.select<T, R>(R cb(T value))`, permite o widget escutar apenas uma pequena parte de `T`
 
-
-Ou use o método estático `Provider.of<T>(context)`, que é semelhante ao `watch` e qunado passado `false` para o parâmetro `listen` como  `Provider.of<T>(context,listen: false)` se comporta de maneira similar ao `read`.
+Ou use o método estático `Provider.of<T>(context)`, que é semelhante ao `watch` e qunado passado `false` para o parâmetro `listen` como `Provider.of<T>(context,listen: false)` se comporta de maneira similar ao `read`.
 
 É importante notar que `context.read<T>()` não fará o widget reconstruir quando o valor for alterado e não podee estar dentro de `StatelessWidget.build`/`State.build`. Porém pode ser chamado fora destes métodos.
 
@@ -277,7 +276,7 @@ Vem com outras opções tais como:
 
 - `ProxyProvider` vs `ProxyProvider2` vs `ProxyProvider3`, ...
 
-  O digito depois da classe é o número de outros providers que no qual o 
+  O digito depois da classe é o número de outros providers que no qual o
   `ProxyProvider` depende.
 
 - `ProxyProvider` vs `ChangeNotifierProxyProvider` vs `ListenableProxyProvider`, ...
@@ -288,7 +287,6 @@ Vem com outras opções tais como:
 ### FAQ
 
 #### Posso inspecionar o conteúdo dos meus objetos?
-
 
 Flutter vem com [devtool](https://github.com/flutter/devtools) que mostra
 a árvore de widgets do momento.
@@ -333,7 +331,6 @@ Para algo mais útil, existem duas soluções:
 
 - sobrescreva `toString`.
 
-
   Se não for possbile usar [DiagnosticableTreeMixin] (como se sua classe estiver em um pacote que não depende do Flutter), você pode simplesmente sobrescrever `toString`.
   Isto é mais fácil que usar [DiagnosticableTreeMixin] mas menos poderoso:
   Não será possível expandir/colapsar os detalhes de seus objetos.
@@ -352,7 +349,7 @@ Para algo mais útil, existem duas soluções:
   }
   ```
 
-#### Recebo uma exceção quando obtenho Providers dentro de um  `initState`. O que fazer?
+#### Recebo uma exceção quando obtenho Providers dentro de um `initState`. O que fazer?
 
 Esta exceção acontece pois você está tentando escutar um provider de um ciclo-de-vida que nunca será chamado de novo.
 
@@ -391,9 +388,10 @@ initState() {
   print(context.read<Foo>().value);
 }
 ```
+
 Que vai mostrar `value` uma vez _e ignorar atualizações._
 
-#### Como lidar com hot-reload nos meus objetos? 
+#### Como lidar com hot-reload nos meus objetos?
 
 Você pode fazer seu objeto provider implementar `ReassembleHandler`:
 
@@ -412,8 +410,8 @@ E usar normalmente com `provider`:
 ChangeNotifierProvider(create: (_) => Example()),
 ```
 
-
 #### Eu uso [ChangeNotifier] e recebo uma exceção quando o atualizo, o que está acontecendo?
+
 Possivelmente você esta tentando modificar o [ChangeNotifier] de um de seus descendentes _enquanto a árvore de widgets está sendo construída_.
 
 Uma situação comum é quando se inicia uma solicitação http, onde o futuro é armazenado em um notifier:
@@ -448,6 +446,7 @@ Ao invés disso, você pode fazer a mutação em algum lugar que afeta toda a á
   Isto pode ser útil quando nao há 'parametro externo'.
 
 - de forma assíncrona no final de um frame:
+
   ```dart
   initState() {
     super.initState();
@@ -456,7 +455,7 @@ Ao invés disso, você pode fazer a mutação em algum lugar que afeta toda a á
     );
   }
   ```
-  
+
   É menos ideal, mas permite passar parâmetros para a mutação.
 
 #### Preciso usar [ChangeNotifier] for complex states?
@@ -524,10 +523,9 @@ Sim. O `provider` expõe todos os pequenos componentes que tornam um provider co
 Isso inclui:
 
 - `SingleChildCloneableWidget`, para fazer com que qualquer widget funcione com o `MultiProvider`.
-  Esta interface é exposta como porte do  `package:provider/single_child_widget`
+  Esta interface é exposta como porte do `package:provider/single_child_widget`
 
 - [InheritedProvider], o `InheritedWidget` generico é obtido usando o `Provider.of`.
-
 
 Aqui está um exempo de um provider cutomizado que usa o `ValueNotifier` como estado:
 https://gist.github.com/rrousselGit/4910f3125e41600df3c2577e26967c91
@@ -555,7 +553,6 @@ Widget build(BuildContext context) {
   return Text(name);
 }
 ```
-
 
 Desta forma, o widget não ira necessariamente reconstruir se algo que não seja `name` mudar.
 
@@ -609,6 +606,7 @@ Provider<Country>(
 ```
 
 #### Posso consumir uma interface e fazer a implementação?
+
 Sim, uma dica de tipo tem que ser especificada para o compilador para indicar que a interface será consumida, com a implmentação do create.
 
 ```dart

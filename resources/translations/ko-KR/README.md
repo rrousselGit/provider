@@ -1,9 +1,7 @@
-[English](https://github.com/rrousselGit/provider/blob/master/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md) | [简体中文](https://github.com/rrousselGit/provider/blob/master/resources/translations/zh-CN/README.md) | [Español](https://github.com/rrousselGit/provider/blob/master/resources/translations/es_MX/README.md) | [한국어](https://github.com/rrousselGit/provider/blob/master/resources/translations/ko-KR/README.md)
-
+[English](https://github.com/rrousselGit/provider/blob/master/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md) | [简体中文](https://github.com/rrousselGit/provider/blob/master/resources/translations/zh-CN/README.md) | [Español](https://github.com/rrousselGit/provider/blob/master/resources/translations/es_MX/README.md) | [한국어](https://github.com/rrousselGit/provider/blob/master/resources/translations/ko-KR/README.md) | [日本語](https://github.com/rrousselGit/provider/blob/master/resources/translations/ja-JP/README.md)
 
 <a href="https://github.com/rrousselGit/provider/actions"><img src="https://github.com/rrousselGit/provider/workflows/Build/badge.svg" alt="Build Status"></a>
 [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider) <a href="https://discord.gg/Bbumvej"><img src="https://img.shields.io/discord/765557403865186374.svg?logo=discord&color=blue" alt="Discord"></a>
-
 
 [<img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
 
@@ -11,7 +9,7 @@
 
 [InheritedWidget]을 직접 작성하는 것 대신 `provider`를 사용함으로써, 아래와 같은 이점을 가질 수 있습니다.
 
-- 리소스의 단순화된 할당/해제 
+- 리소스의 단순화된 할당/해제
 - 지연 로딩(lazy-loading)
 - 클래스를 새로 만들 때 마다 매번 작성해야했던 부분을 크게 줄임
 - devtool 친화적 : Provider를 사용하면 Application State가 Flutter devtool에 표시됨
@@ -24,13 +22,13 @@
 
 - [The official Flutter state management documentation](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple) : `provider` + [ChangeNotifier] 사용법에 대한 쇼케이스
 - [flutter architecture sample](https://github.com/brianegan/flutter_architecture_samples/tree/master/change_notifier_provider) : `provider` + [ChangeNotifier]를 사용한 앱 구현
-- `provider`를 아키텍처에 활용한 [flutter_bloc](https://github.com/felangel/bloc)와 [Mobx](https://github.com/mobxjs/mobx.dart) 
+- `provider`를 아키텍처에 활용한 [flutter_bloc](https://github.com/felangel/bloc)와 [Mobx](https://github.com/mobxjs/mobx.dart)
 
 ## 4.x.x에서 5.0.0-nullsafety로의 마이그레이션
 
 - 이제 `FutureProvider`와 `StreamProvider`를 위한 `initialData`가 필요합니다.
 
-  마이그레이션을 위해 아래와 같은 내용은 
+  마이그레이션을 위해 아래와 같은 내용은
 
   ```dart
   FutureProvider<int>(
@@ -44,7 +42,7 @@
   }
   ```
 
-  이제 이렇게 작성합니다. 
+  이제 이렇게 작성합니다.
 
   ```dart
   FutureProvider<int?>(
@@ -62,7 +60,7 @@
 
 - `ValueListenableProvider`가 삭제되었습니다.
 
-  마이그레이션 시, 대신 `Provider`를 `ValueListenableBuilder`와 결합하여 사용할 수 있습니다. 
+  마이그레이션 시, 대신 `Provider`를 `ValueListenableBuilder`와 결합하여 사용할 수 있습니다.
 
   ```dart
   ValueListenableBuilder<int>(
@@ -84,7 +82,7 @@
 
 Providers는 단순히 값을 노출 시켜줄 뿐만 아니라, 값의 생성(create), 수신(listen) 그리고 해제(dispose)를 할 수 있도록 합니다.
 
-신규 생성한 객체를 노출하기 위해 provider의 기본 생성자를 사용하세요. 
+신규 생성한 객체를 노출하기 위해 provider의 기본 생성자를 사용하세요.
 만약 객체를 **생성**하고 싶다면 `.value` 생성자를 _사용하지마세요._ 그렇지 않으면 의도치 않은 부작용이 나타날 수 있습니다.
 
 값을 생성하기 위해 `.value` 생성자를 사용하는 것이 왜 바람직하지 않은지 확인하려면 [StackOverflow 답변](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)을 확인하세요.
@@ -134,7 +132,7 @@ ProxyProvider0(
 
 **NOTE**:
 
-provider의 `create`/`update` 콜백을 사용할 때, 이 콜백이 기본적으로 Lazy하게 호출된다는 점에 유의해야합니다. 
+provider의 `create`/`update` 콜백을 사용할 때, 이 콜백이 기본적으로 Lazy하게 호출된다는 점에 유의해야합니다.
 
 즉, 해당 값을 한 번 이상 호출하기 전에는 `create`/`update` 콜백이 호출되지 않습니다.
 이 동작은 `lazy` 파라미터를 사용해 일부 로직을 사전 연산(pre-compute)하고자 하는 경우 비활성화 될 수 있습니다.
@@ -146,7 +144,7 @@ MyProvider(
 )
 ```
 
-#### 기존 객체 인스턴스를 재사용하기 
+#### 기존 객체 인스턴스를 재사용하기
 
 객체 인스턴스가 이미 생성되었고, 해당 객체를 노출시키길 원하는 경우 provider의 `.value` 생성자를 사용하는 것이 가장 좋습니다.
 
@@ -183,12 +181,12 @@ ChangeNotifierProvider(
 - `context.select<T, R>(R cb(T value))` : `T`의 일부 작은 영역에 대해서만 위젯이 변화를 감지할 수 있도록 합니다.
 
 또한 `watch`와 유사하게 동작하는 정적 메소드(static method)인 `Provider.of<T>(context)`를 사용할 수도 있습니다.
- `Provider.of<T>(context, listen: false)`처럼 `listen` 파라미터를 `false`로 하면 `read`와 유사하게 동작합니다.
+`Provider.of<T>(context, listen: false)`처럼 `listen` 파라미터를 `false`로 하면 `read`와 유사하게 동작합니다.
 
 `context.read<T>()`는 값이 변경되었을 때 위젯을 재빌드하지 않음으로 `StatelessWidget.build`/`State.build` 안에서 호출될 수 없음을 유의하세요.
 반면, 이러한 메소드들 밖에서는 자유롭게 호출될 수 있습니다.
 
-이러한 메소드들은 전달된 `BuildContext`와 관련된 위젯에서 시작해 위젯 트리에서 발견되며, 
+이러한 메소드들은 전달된 `BuildContext`와 관련된 위젯에서 시작해 위젯 트리에서 발견되며,
 발견된 가장 가까운 `T` 타입 변수를 반환합니다. (아무것도 찾을 수 없는 경우 예외가 발생 합니다.)
 
 이 작업은 O(1)입니다. 작업에 위젯 트리를 순차적으로 탐색하는 일이 포함 되어있지 않습니다.
@@ -212,13 +210,14 @@ class Home extends StatelessWidget {
 이 기능은 성능을 최적화하거나, provider의 `BuildContext` 하위 항목에 접근하기 어려울 때 유용하게 활용할 수 있습니다.
 
 더 많은 정보가 필요하다면 아래와 같은 문서를 참고하세요.
+
 - [FAQ](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do)
 - [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html) 문서
-- [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html) 문서 
+- [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html) 문서
 
 ### provider의 선택적 의존
 
-때때로 우리는 provider가 존재하지 않는 경우를 지원하고 싶을 수도 있습니다. 
+때때로 우리는 provider가 존재하지 않는 경우를 지원하고 싶을 수도 있습니다.
 예를 들어 provider 외부 등 다양한 위치에서 사용될 수 있는 위젯의 경우가 있습니다.
 
 그렇게 하기 위해서, `context.watch`/`context.read`을 호출할 때 generic 타입 대신 nullable 타입을 사용합니다.
@@ -236,6 +235,7 @@ context.watch<Model?>()
 ```
 
 매칭되는 provider를 찾지 못하더라도 예외를 발생시키는 대신, `null`을 반환합니다.
+
 ### MultiProvider
 
 규모가 큰 어플리케이션에서 많은 값을 주입하면 `Provider`가 급격하게 중첩될 수 있습니다.
@@ -266,7 +266,7 @@ MultiProvider(
 )
 ```
 
-두 코드는 완전히 동일하게 동작합니다. 
+두 코드는 완전히 동일하게 동작합니다.
 `MultiProvider`는 오직 코드의 외관을 바꿔줄 뿐입니다.
 
 ### ProxyProvider
@@ -277,7 +277,7 @@ MultiProvider(
 
 그러면 해당 신규 객체는 우리가 의존하는 provider 중 하나가 업데이트될 때마다 업데이트됩니다.
 
-아래 예제에서는 다른 provider에서 온 `counter`를 기반으로 `translations`를 빌드하기 위해  `ProxyProvider` 를 사용하고 있습니다.
+아래 예제에서는 다른 provider에서 온 `counter`를 기반으로 `translations`를 빌드하기 위해 `ProxyProvider` 를 사용하고 있습니다.
 
 ```dart
 Widget build(BuildContext context) {
@@ -309,8 +309,8 @@ class Translations {
 
 - `ProxyProvider` vs `ChangeNotifierProxyProvider` vs `ListenableProxyProvider`, ...
 
-  모두 비슷하게 동작하지만, 
-`ChangeNotifierProxyProvider`는 값을 그 결과를 `Provider`를 보내는 대신,  `ChangeNotifierProvider`로 보냅니다.
+  모두 비슷하게 동작하지만,
+  `ChangeNotifierProxyProvider`는 값을 그 결과를 `Provider`를 보내는 대신, `ChangeNotifierProvider`로 보냅니다.
 
 ### FAQ
 
@@ -358,8 +358,8 @@ provider는 위젯이기 때문에 마찬가지로 devtool에서 볼 수 있습�
 
 - `toString`을 재정의(override) 하세요.
 
-   만약 [DiagnosticableTreeMixin]를 사용할 수 없다면 (Flutter를 사용하지 않는 패키지 등),
-`toString`를 재정의해서 사용할 수 있습니다.
+  만약 [DiagnosticableTreeMixin]를 사용할 수 없다면 (Flutter를 사용하지 않는 패키지 등),
+  `toString`를 재정의해서 사용할 수 있습니다.
 
   이것은 [DiagnosticableTreeMixin]를 사용하는 것 보다 쉽지만, 객체의 세부정보를 확장하거나 축소할 수 없는 만큼 보다 덜 강력합니다.
 
@@ -595,7 +595,6 @@ Foo(
 
 위 예시에서 `A`가 업데이트 되었을 때 오직 `Bar`만 재빌드됩니다. `Foo`는 불필요하게 재빌드되지 않습니다.
 
-
 #### 동일한 타입을 사용하는 다른 provider들을 함께 사용할 수 있나요?
 
 없습니다. 여러 provider가 동일한 타입을 공유할 수 있지만, 위젯은 가장 가까운 상위 provider 하나 만을 가져올 수 있습니다.
@@ -659,14 +658,14 @@ ChangeNotifierProvider<ProviderInterface>(
 
 모든 객체의 리스트는 [여기](https://pub.dev/documentation/provider/latest/provider/provider-library.html)에서 확인할 수 있습니다.
 
-| 이름                                                                                                                          | 설명                                                                                                                                                            |
-| ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Provider](https://pub.dartlang.org/documentation/provider/latest/provider/Provider-class.html)                               | The most 기본적인 provider 형태. 어떤 값이던 간에 값을 노출시킵니다.                                                                               |
+| 이름                                                                                                                          | 설명                                                                                                                                                        |
+| ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Provider](https://pub.dartlang.org/documentation/provider/latest/provider/Provider-class.html)                               | The most 기본적인 provider 형태. 어떤 값이던 간에 값을 노출시킵니다.                                                                                        |
 | [ListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ListenableProvider-class.html)           | Listenable 객체를 위한 특수한 provider. ListenableProvider는 listener가 호출될 때마다 오브젝트를 수신하고 오브젝트에 종속된 위젯을 재구성하도록 요청합니다. |
-| [ChangeNotifierProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ChangeNotifierProvider-class.html)   | ChangeNotifier용 ListenableProvider 사양. 필요할 때 자동으로 `ChangeNotifier.dispose`를 호출합니다.                                             |
-| [ValueListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ValueListenableProvider-class.html) | ValueListenable을 수신하고, `ValueListenable.value`만을 노출합니다.                                                                                                   |
-| [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | 스트림을 수신하고 최신 값을 표시합니다.                                                                                                               |
-| [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | `Future`를 받고, 완성되었을 때 의존된 객체를 업데이트합니다.                                                                                                  |
+| [ChangeNotifierProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ChangeNotifierProvider-class.html)   | ChangeNotifier용 ListenableProvider 사양. 필요할 때 자동으로 `ChangeNotifier.dispose`를 호출합니다.                                                         |
+| [ValueListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ValueListenableProvider-class.html) | ValueListenable을 수신하고, `ValueListenable.value`만을 노출합니다.                                                                                         |
+| [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | 스트림을 수신하고 최신 값을 표시합니다.                                                                                                                     |
+| [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | `Future`를 받고, 완성되었을 때 의존된 객체를 업데이트합니다.                                                                                                |
 
 [provider.of]: https://pub.dev/documentation/provider/latest/provider/Provider/of.html
 [selector]: https://pub.dev/documentation/provider/latest/provider/Selector-class.html
@@ -675,4 +674,4 @@ ChangeNotifierProvider<ProviderInterface>(
 [inheritedwidget]: https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html
 [inheritedprovider]: https://pub.dev/documentation/provider/latest/provider/InheritedProvider-class.html
 [diagnosticabletreemixin]: https://api.flutter.dev/flutter/foundation/DiagnosticableTreeMixin-mixin.html
-[BuildContext]: https://api.flutter.dev/flutter/widgets/BuildContext-class.html
+[buildcontext]: https://api.flutter.dev/flutter/widgets/BuildContext-class.html

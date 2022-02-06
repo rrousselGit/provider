@@ -1,9 +1,7 @@
-[English](https://github.com/rrousselGit/provider/blob/master/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md) | [简体中文](https://github.com/rrousselGit/provider/blob/master/resources/translations/zh-CN/README.md) | [Español](https://github.com/rrousselGit/provider/blob/master/resources/translations/es_MX/README.md) | [한국어](https://github.com/rrousselGit/provider/blob/master/resources/translations/ko-KR/README.md) | [বাংলা](/resources/translations/bn_BD/README.md)
-
+[English](https://github.com/rrousselGit/provider/blob/master/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md) | [简体中文](https://github.com/rrousselGit/provider/blob/master/resources/translations/zh-CN/README.md) | [Español](https://github.com/rrousselGit/provider/blob/master/resources/translations/es_MX/README.md) | [한국어](https://github.com/rrousselGit/provider/blob/master/resources/translations/ko-KR/README.md) | [বাংলা](/resources/translations/bn_BD/README.md) | [日本語](https://github.com/rrousselGit/provider/blob/master/resources/translations/ja-JP/README.md)
 
 <a href="https://github.com/rrousselGit/provider/actions"><img src="https://github.com/rrousselGit/provider/workflows/Build/badge.svg" alt="Build Status"></a>
 [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider) <a href="https://discord.gg/Bbumvej"><img src="https://img.shields.io/discord/765557403865186374.svg?logo=discord&color=blue" alt="Discord"></a>
-
 
 [<img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
 
@@ -191,7 +189,7 @@ The easiest way to read a value is by using the extension methods on [BuildConte
 - `context.select<T, R>(R cb(T value))`, which allows a widget to listen to only a small part of `T`.
 
 One can also use the static method `Provider.of<T>(context)`, which will behave similarly
-to `watch`. When the `listen` parameter is set to `false` (as in `Provider.of<T>(context, listen: false)`), then 
+to `watch`. When the `listen` parameter is set to `false` (as in `Provider.of<T>(context, listen: false)`), then
 it will behave similarly to `read`.
 
 It's worth noting that `context.read<T>()` won't make a widget rebuild when the value
@@ -691,7 +689,6 @@ The complete list of all the objects available is [here](https://pub.dev/documen
 | [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | Listen to a Stream and expose the latest value emitted.                                                                                                                |
 | [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | Takes a `Future` and updates dependents when the future completes.                                                                                                     |
 
-
 ### My application throws a StackOverflowError because I have too many providers, what can I do?
 
 If you have a very large number of providers (150+), it is possible that some devices will throw a `StackOverflowError` because you end-up building too many widgets at once.
@@ -701,7 +698,7 @@ In this situation, you have a few solutions:
 - If your application has a splash-screen, try mounting your providers over time instead of all at once.
 
   You could do:
-  
+
   ```dart
   MultiProvider(
     providers: [
@@ -714,9 +711,9 @@ In this situation, you have a few solutions:
     ],
   )
   ```
-  
+
   where during your splash screen animation, you would do:
-  
+
   ```dart
   bool step1 = false;
   bool step2 = false;
@@ -727,7 +724,7 @@ In this situation, you have a few solutions:
       setState(() => step1 = true);
       Future(() {
         setState(() => step2 = true);
-      });  
+      });
     });
   }
   ```
@@ -735,7 +732,6 @@ In this situation, you have a few solutions:
 - Consider opting out of using `MultiProvider`.
   `MultiProvider` works by adding a widget between every providers. Not using `MultiProvider` can
   increase the limit before a `StackOverflowError` is reached.
-
 
 [provider.of]: https://pub.dev/documentation/provider/latest/provider/Provider/of.html
 [selector]: https://pub.dev/documentation/provider/latest/provider/Selector-class.html
