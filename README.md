@@ -567,7 +567,7 @@ Yes. `provider` exposes all the small components that make a fully-fledged provi
 
 This includes:
 
-- `SingleChildStatelessWidget`, to make any widget works with `MultiProvider`.
+- `SingleChildStatelessWidget`, to make any widget works with `MultiProvider`.  
   This interface is exposed as part of `package:provider/single_child_widget`
 
 - [InheritedProvider], the generic `InheritedWidget` obtained when doing `context.watch`.
