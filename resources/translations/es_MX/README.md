@@ -546,7 +546,7 @@ Si. `provider` muestra todos los pequeños componentes para hacer el tuyo.
 
 Esto incluye:
 
-- `SingleChildStatelessWidget`, para hacer que el widget funcione con `MultiProvider`.
+- `SingleChildStatelessWidget`, para hacer que el widget funcione con `MultiProvider`.  
   Esta interfaz es expuesta como parte de `package:provider/single_child_widget`
 
 - [InheritedProvider], el `InheritedWidget` genérico obtenido cuando hacemos `context.watch`.
