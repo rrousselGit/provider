@@ -310,9 +310,6 @@ class Translations {
 
 #### オブジェクトの中身を検査することはできますか？
 
-Flutter comes with a [devtool](https://github.com/flutter/devtools) that shows
-what the widget tree is at a given moment.
-
 Flutter にはある瞬間のウィジェットツリーの状態を表示する [devtool](https://github.com/flutter/devtools) が付属されています。
 
 プロバイダはウィジェットなので、その devtool にも表示されます。
