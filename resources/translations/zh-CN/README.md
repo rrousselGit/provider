@@ -88,12 +88,12 @@ Provider 不仅可以暴露出一个值，同时也可以创建、监听和销�
 
 要暴露一个新创建的对象，你可以使用这个 provider 的默认构造。
 而如果你想在开始监听时再 **创建** 一个对象，
-**不要**使用 `.value` 构造函数，否则可能会有你预期外的副作用。
+**不推荐**使用 `.value` 构造函数，否则可能会有你预期外的副作用。
 
 你可以阅读在 [StackOverflow 上的回答](https://stackoverflow.com/questions/52249578/how-to-deal-with-unwanted-widget-build)
 以了解为什么不推荐使用 `.value` 构造函数创建值。
 
-- **要** 在 `create` 内创建新对象\*\*。
+- **推荐** 在 `create` 内创建新对象\*\*。
 
   ```dart
   Provider(
@@ -102,7 +102,7 @@ Provider 不仅可以暴露出一个值，同时也可以创建、监听和销�
   )
   ```
 
-- **不要** 使用 `Provider.value` 创建新对象\*\*。
+- **不推荐** 使用 `Provider.value` 创建新对象\*\*。
 
   ```dart
   ChangeNotifierProvider.value(
@@ -111,7 +111,7 @@ Provider 不仅可以暴露出一个值，同时也可以创建、监听和销�
   )
   ```
 
-- **不要** 以可能随时间改变的变量创建对象。
+- **不推荐** 以可能随时间改变的变量创建对象。
 
   在以下变量发生变化的场景里，你的对象将不会跟随值的变化而更新。
 
@@ -158,7 +158,7 @@ MyProvider(
 如果你没有这么做，那么在你调用对象的 `dispose` 方法时，
 这个对象可能仍然在被使用，导致无法释放。
 
-- **要** 使用 `ChangeNotifierProvider.value` 来提供一个当前已存在的 [ChangeNotifier][]
+- **推荐** 使用 `ChangeNotifierProvider.value` 来提供一个当前已存在的 [ChangeNotifier][]
 
   ```dart
   MyChangeNotifier variable;
@@ -169,7 +169,7 @@ MyProvider(
   )
   ```
 
-- **不要** 使用默认的构造函数来尝试复用一个已存在的 [ChangeNotifier][]
+- **不推荐** 使用默认的构造函数来尝试复用一个已存在的 [ChangeNotifier][]
 
   ```dart
   MyChangeNotifier variable;
