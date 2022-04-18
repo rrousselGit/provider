@@ -733,6 +733,14 @@ In this situation, you have a few solutions:
   `MultiProvider` works by adding a widget between every providers. Not using `MultiProvider` can
   increase the limit before a `StackOverflowError` is reached.
 
+## Sponsors
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/rrousselGit/freezed/master/sponsorkit/sponsors.svg">
+    <img src='https://raw.githubusercontent.com/rrousselGit/freezed/master/sponsorkit/sponsors.svg'/>
+  </a>
+</p>
+
 [provider.of]: https://pub.dev/documentation/provider/latest/provider/Provider/of.html
 [selector]: https://pub.dev/documentation/provider/latest/provider/Selector-class.html
 [consumer]: https://pub.dev/documentation/provider/latest/provider/Consumer-class.html
