@@ -378,6 +378,18 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
   late String _debugId;
 
   @override
+  InheritedElement?
+      getElementForInheritedWidgetOfExactType<T extends InheritedWidget>() {
+    InheritedElement? inheritedElement;
+
+    visitAncestorElements((parent) {
+      inheritedElement = parent.getElementForInheritedWidgetOfExactType<T>();
+      return false;
+    });
+    return inheritedElement;
+  }
+
+  @override
   void mount(Element? parent, dynamic newSlot) {
     if (kDebugMode) {
       _debugId = '${_nextProviderId++}';
