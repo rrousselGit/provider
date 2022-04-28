@@ -382,6 +382,8 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
       getElementForInheritedWidgetOfExactType<T extends InheritedWidget>() {
     InheritedElement? inheritedElement;
 
+    // An InheritedProvider<T>'s update tries to obtain a parent provider of
+    // the same type.
     visitAncestorElements((parent) {
       inheritedElement = parent.getElementForInheritedWidgetOfExactType<T>();
       return false;
