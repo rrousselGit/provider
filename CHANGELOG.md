@@ -3,6 +3,7 @@
 - fix late initialization error when using `debugPrintRebuildDirtyWidgets`
 - slightly reduced the binary size of release mode applications using provider
 - Fix typos in the error message of ProviderNotFoundException
+- improve performances for reading providers (thanks to @jiahaog)
 
 # 6.0.2
 
