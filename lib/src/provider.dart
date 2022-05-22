@@ -336,21 +336,8 @@ If you want to expose a variable that can be anything, consider changing
 `dynamic` to `Object` instead.
 ''',
     );
-    _InheritedProviderScopeElement<T?>? inheritedElement;
-
-    if (context.widget is _InheritedProviderScope<T?>) {
-      // An InheritedProvider<T>'s update tries to obtain a parent provider of
-      // the same type.
-      context.visitAncestorElements((parent) {
-        inheritedElement = parent.getElementForInheritedWidgetOfExactType<
-                _InheritedProviderScope<T?>>()
-            as _InheritedProviderScopeElement<T?>?;
-        return false;
-      });
-    } else {
-      inheritedElement = context.getElementForInheritedWidgetOfExactType<
-          _InheritedProviderScope<T?>>() as _InheritedProviderScopeElement<T?>?;
-    }
+    final inheritedElement = context.getElementForInheritedWidgetOfExactType<
+        _InheritedProviderScope<T?>>() as _InheritedProviderScopeElement<T?>?;
 
     if (inheritedElement == null && null is! T) {
       throw ProviderNotFoundException(T, context.widget.runtimeType);
