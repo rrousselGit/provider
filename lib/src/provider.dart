@@ -428,6 +428,9 @@ class ProviderNullException implements Exception {
   final Type widgetType;
   @override
   String toString() {
+    if (kReleaseMode) {
+      return 'A provider for $valueType unexpectedly returned null.';
+    }
     return '''
 Error: The widget $widgetType tried to read Provider<$valueType> but the matching
 provider returned null.
@@ -454,6 +457,9 @@ class ProviderNotFoundException implements Exception {
 
   @override
   String toString() {
+    if (kReleaseMode) {
+      return 'Provider<$valueType> not found for $widgetType';
+    }
     return '''
 Error: Could not find the correct Provider<$valueType> above this $widgetType Widget
 
