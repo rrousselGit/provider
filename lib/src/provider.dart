@@ -500,8 +500,8 @@ of your choice. There are a few common scenarios:
       create: (_) => Example(),
       // Will throw a ProviderNotFoundError, because `context` is associated
       // to the widget that is the parent of `Provider<Example>`
-      child: Text(context.watch<Example>()),
-    ),
+      child: Text(context.watch<Example>().toString()),
+    );
   }
   ```
 
@@ -512,11 +512,11 @@ of your choice. There are a few common scenarios:
     return Provider<Example>(
       create: (_) => Example(),
       // we use `builder` to obtain a new `BuildContext` that has access to the provider
-      builder: (context) {
+      builder: (context, child) {
         // No longer throws
-        return Text(context.watch<Example>()),
+        return Text(context.watch<Example>().toString());
       }
-    ),
+    );
   }
   ```
 

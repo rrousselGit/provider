@@ -1,3 +1,8 @@
+# 6.0.3
+
+- slightly reduced the binary size of release mode applications using provider
+- Fix typos in the error message of ProviderNotFoundException
+
 # 6.0.2
 
 Added error details for provider that threw during the creation (thanks to @jmewes)
