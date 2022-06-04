@@ -11,7 +11,7 @@ dependencies:
   collection: ^1.15.0
   flutter:
     sdk: flutter
-  nested: ^1.0.0
+  nested: ^1.0.0 
 
 dev_dependencies:
   flutter_test:
