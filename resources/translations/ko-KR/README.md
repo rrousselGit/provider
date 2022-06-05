@@ -667,6 +667,60 @@ ChangeNotifierProvider<ProviderInterface>(
 | [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | 스트림을 수신하고 최신 값을 표시합니다.                                                                                                                     |
 | [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | `Future`를 받고, 완성되었을 때 의존된 객체를 업데이트합니다.                                                                                                |
 
+### 내 애플리케이션에서 너무 많은 프로바이더를 가지고 있어 StackOverflowError 예외가 발생합니다. 어떻게 해결하면 좋을까요?
+
+
+만약 매우 많은 프로바이더(150 이상)가 있는 경우, 한 번에 많은 위젯을 빌드되기 때문에 디바이스에 따라서는 `StackOverflowError` 예외가 발생될 가능성이 있습니다.
+
+이 경우 몇 가지 해결책이 있습니다.
+
+- 만약 애플리케이션에 스플래시 화면이 있는 경우, provider를 한번에 마운트하는 대신 시간이 지남에 따라 마운트해 보세요.
+
+  아래의 예제코드와 같을 경우:
+
+  ```dart
+  MultiProvider(
+    providers: [
+      if (step1) ...[
+        <lots of providers>,
+      ],
+      if (step2) ...[
+        <some more providers>
+      ]
+    ],
+  )
+  ```
+
+  스플래시 스크린 애니메이션에서 아래와 같이 처리해보세요.
+
+  ```dart
+  bool step1 = false;
+  bool step2 = false;
+  @override
+  initState() {
+    super.initState();
+    Future(() {
+      setState(() => step1 = true);
+      Future(() {
+        setState(() => step2 = true);
+      });
+    });
+  }
+  ```
+
+- `MultiProvider`를 사용하지 않는 것을 고려해보세요.
+  - `MultiProvider` 는 `각 프로바이더의 사이에 위젯을 추가하는 것`으로 동작합니다.
+  - `MultiProvider` 를 사용하지 않는 경우는 `StackOverflowError` 에 이를 때까지의 제한을 늘릴 수가 있습니다.
+
+
+## Sponsors
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/rrousselGit/freezed/master/sponsorkit/sponsors.svg">
+    <img src='https://raw.githubusercontent.com/rrousselGit/freezed/master/sponsorkit/sponsors.svg'/>
+  </a>
+</p>
+
 [provider.of]: https://pub.dev/documentation/provider/latest/provider/Provider/of.html
 [selector]: https://pub.dev/documentation/provider/latest/provider/Selector-class.html
 [consumer]: https://pub.dev/documentation/provider/latest/provider/Consumer-class.html
