@@ -1,20 +1,16 @@
-name: provider
+name: jaspr_provider
 description: A wrapper around InheritedWidget to make them easier to use and more reusable.
-version: 6.0.3
+version: 0.0.1
 repository: https://github.com/rrousselGit/provider
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=1.16.0"
+  sdk: ">=2.16.0 <3.0.0"
 
 dependencies:
   collection: ^1.15.0
-  flutter:
-    sdk: flutter
+  jaspr: ^0.1.2
   nested: ^1.0.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   mockito: ^5.0.0
   test: ^1.15.5

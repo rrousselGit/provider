@@ -1,4 +1,5 @@
-import 'package:flutter/widgets.dart';
+
+import 'package:jaspr/jaspr.dart';
 
 import 'change_notifier_provider.dart'
     show ChangeNotifierProvider, ChangeNotifierProxyProvider;
@@ -13,7 +14,7 @@ import 'proxy_provider.dart';
 ///
 /// You will generally want to use [ChangeNotifierProvider] instead.
 /// But [ListenableProvider] is available in case you want to implement
-/// [Listenable] yourself, or use [Animation].
+/// [Listenable] yourself.
 class ListenableProvider<T extends Listenable?> extends InheritedProvider<T> {
   /// Creates a [Listenable] using [create] and subscribes to it.
   ///
@@ -26,8 +27,8 @@ class ListenableProvider<T extends Listenable?> extends InheritedProvider<T> {
     required Create<T> create,
     Dispose<T>? dispose,
     bool? lazy,
-    TransitionBuilder? builder,
-    Widget? child,
+    ComponentBuilder? builder,
+    Component? child,
   }) : super(
           key: key,
           startListening: _startListening,
@@ -43,8 +44,8 @@ class ListenableProvider<T extends Listenable?> extends InheritedProvider<T> {
     Key? key,
     required T value,
     UpdateShouldNotify<T>? updateShouldNotify,
-    TransitionBuilder? builder,
-    Widget? child,
+    ComponentBuilder? builder,
+    Component? child,
   }) : super.value(
           key: key,
           builder: builder,
@@ -74,8 +75,8 @@ class ListenableProxyProvider0<R extends Listenable?>
     Dispose<R>? dispose,
     UpdateShouldNotify<R>? updateShouldNotify,
     bool? lazy,
-    TransitionBuilder? builder,
-    Widget? child,
+    ComponentBuilder? builder,
+    Component? child,
   }) : super(
           key: key,
           create: create,
@@ -100,8 +101,7 @@ class ListenableProxyProvider0<R extends Listenable?>
 /// work with [ChangeNotifier], but the behavior stays the same.
 /// Most of the time you'll want to use [ChangeNotifierProxyProvider] instead.
 /// But [ListenableProxyProvider] is exposed in case someone wants to use a
-/// [Listenable] implementation other than [ChangeNotifier], such as
-/// [Animation].
+/// [Listenable] implementation other than [ChangeNotifier].
 /// {@endtemplate}
 class ListenableProxyProvider<T, R extends Listenable?>
     extends ListenableProxyProvider0<R> {
@@ -112,8 +112,8 @@ class ListenableProxyProvider<T, R extends Listenable?>
     required ProxyProviderBuilder<T, R> update,
     Dispose<R>? dispose,
     bool? lazy,
-    TransitionBuilder? builder,
-    Widget? child,
+    ComponentBuilder? builder,
+    Component? child,
   }) : super(
           key: key,
           create: create,
@@ -139,8 +139,8 @@ class ListenableProxyProvider2<T, T2, R extends Listenable?>
     required ProxyProviderBuilder2<T, T2, R> update,
     Dispose<R>? dispose,
     bool? lazy,
-    TransitionBuilder? builder,
-    Widget? child,
+    ComponentBuilder? builder,
+    Component? child,
   }) : super(
           key: key,
           create: create,
@@ -167,8 +167,8 @@ class ListenableProxyProvider3<T, T2, T3, R extends Listenable?>
     required ProxyProviderBuilder3<T, T2, T3, R> update,
     Dispose<R>? dispose,
     bool? lazy,
-    TransitionBuilder? builder,
-    Widget? child,
+    ComponentBuilder? builder,
+    Component? child,
   }) : super(
           key: key,
           create: create,
@@ -196,8 +196,8 @@ class ListenableProxyProvider4<T, T2, T3, T4, R extends Listenable?>
     required ProxyProviderBuilder4<T, T2, T3, T4, R> update,
     Dispose<R>? dispose,
     bool? lazy,
-    TransitionBuilder? builder,
-    Widget? child,
+    ComponentBuilder? builder,
+    Component? child,
   }) : super(
           key: key,
           create: create,
@@ -226,8 +226,8 @@ class ListenableProxyProvider5<T, T2, T3, T4, T5, R extends Listenable?>
     required ProxyProviderBuilder5<T, T2, T3, T4, T5, R> update,
     Dispose<R>? dispose,
     bool? lazy,
-    TransitionBuilder? builder,
-    Widget? child,
+    ComponentBuilder? builder,
+    Component? child,
   }) : super(
           key: key,
           create: create,
@@ -257,8 +257,8 @@ class ListenableProxyProvider6<T, T2, T3, T4, T5, T6, R extends Listenable?>
     required ProxyProviderBuilder6<T, T2, T3, T4, T5, T6, R> update,
     Dispose<R>? dispose,
     bool? lazy,
-    TransitionBuilder? builder,
-    Widget? child,
+    ComponentBuilder? builder,
+    Component? child,
   }) : super(
           key: key,
           create: create,

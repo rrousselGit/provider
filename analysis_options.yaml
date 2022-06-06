@@ -2,6 +2,8 @@ include: all_lint_rules.yaml
 analyzer:
   exclude:
     - "**/*.g.dart"
+    # - "**/**_test.dart"
+    - "test/**"
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false
@@ -12,6 +14,8 @@ analyzer:
     included_file_warning: ignore
 linter:
   rules:
+    one_member_abstracts: false
+
     # Personal preference. I don't find it more readable
     cascade_invocations: false
 

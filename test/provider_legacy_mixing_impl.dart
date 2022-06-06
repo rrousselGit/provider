@@ -1,7 +1,7 @@
 /////// Mixed mode: test is legacy, runtime is legacy, package:provider is null safe.
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/jaspr_provider.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'common_legacy.dart';

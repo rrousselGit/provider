@@ -1,7 +1,6 @@
-library provider;
+library jaspr_provider;
 
-export 'src/async_provider.dart'
-    show FutureProvider, StreamProvider, ErrorBuilder;
+export 'src/async_provider.dart' show FutureProvider, StreamProvider, ErrorBuilder;
 export 'src/change_notifier_provider.dart'
     show
         ChangeNotifierProvider,
@@ -12,8 +11,7 @@ export 'src/change_notifier_provider.dart'
         ChangeNotifierProxyProvider4,
         ChangeNotifierProxyProvider5,
         ChangeNotifierProxyProvider6;
-export 'src/consumer.dart'
-    show Consumer, Consumer2, Consumer3, Consumer4, Consumer5, Consumer6;
+export 'src/consumer.dart' show Consumer, Consumer2, Consumer3, Consumer4, Consumer5, Consumer6;
 export 'src/listenable_provider.dart'
     show
         ListenableProvider,
@@ -29,7 +27,6 @@ export 'src/provider.dart'
         DeferredInheritedProvider,
         InheritedContext,
         InheritedProvider,
-        MultiProvider,
         Provider,
         ProviderBinding,
         ProviderNotFoundException,
@@ -59,15 +56,4 @@ export 'src/proxy_provider.dart'
         ProxyProviderBuilder4,
         ProxyProviderBuilder5,
         ProxyProviderBuilder6;
-export 'src/reassemble_handler.dart' show ReassembleHandler;
-export 'src/selector.dart'
-    show
-        Selector,
-        Selector0,
-        Selector2,
-        Selector3,
-        Selector4,
-        Selector5,
-        Selector6,
-        ShouldRebuild;
 export 'src/value_listenable_provider.dart' show ValueListenableProvider;

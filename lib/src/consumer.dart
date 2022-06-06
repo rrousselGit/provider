@@ -1,8 +1,7 @@
-import 'package:flutter/widgets.dart';
-import 'package:nested/nested.dart';
+import 'package:jaspr/jaspr.dart';
 
 import 'provider.dart';
-import 'selector.dart' show Selector;
+import 'selector.dart';
 
 /// {@template provider.consumer}
 /// Obtains [Provider<T>] from its ancestors and passes its value to [builder].
@@ -133,50 +132,38 @@ import 'selector.dart' show Selector;
 /// Therefore in such a configuration, only `FooWidget` will rebuild
 /// if `Foo` changes.
 ///
-/// ## Note:
-///
-/// The [Consumer] widget can also be used inside [MultiProvider]. To do so, it
-/// must return the `child` passed to [builder] in the widget tree it creates.
-///
-/// ```dart
-/// MultiProvider(
-///   providers: [
-///     Provider(create: (_) => Foo()),
-///     Consumer<Foo>(
-///       builder: (context, foo, child) =>
-///         Provider.value(value: foo.bar, child: child),
-///     )
-///   ],
-/// );
-/// ```
-///
 /// See also:
 ///   * [Selector], a [Consumer] that can filter updates.
 /// {@endtemplate}
-class Consumer<T> extends SingleChildStatelessWidget {
+class Consumer<T> extends StatelessComponent {
   /// {@template provider.consumer.constructor}
   /// Consumes a [Provider<T>]
   /// {@endtemplate}
   Consumer({
     Key? key,
     required this.builder,
-    Widget? child,
-  }) : super(key: key, child: child);
+    this.child,
+  }) : super(key: key);
+
+  /// {@template provider.consumer.child}
+  /// Component which will be passed to the [builder].
+  /// {@endtemplate}
+  final Component? child;
 
   /// {@template provider.consumer.builder}
   /// Build a widget tree based on the value from a [Provider<T>].
   ///
   /// Must not be `null`.
   /// {@endtemplate}
-  final Widget Function(
+  final Component Function(
     BuildContext context,
     T value,
-    Widget? child,
+    Component? child,
   ) builder;
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    return builder(
+  Iterable<Component> build(BuildContext context) sync* {
+    yield builder(
       context,
       Provider.of<T>(context),
       child,
@@ -185,25 +172,28 @@ class Consumer<T> extends SingleChildStatelessWidget {
 }
 
 /// {@macro provider.consumer}
-class Consumer2<A, B> extends SingleChildStatelessWidget {
+class Consumer2<A, B> extends StatelessComponent {
   /// {@macro provider.consumer.constructor}
   Consumer2({
     Key? key,
     required this.builder,
-    Widget? child,
-  }) : super(key: key, child: child);
+    this.child,
+  }) : super(key: key);
+
+  /// {@macro provider.consumer.child}
+  final Component? child;
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(
+  final Component Function(
     BuildContext context,
     A value,
     B value2,
-    Widget? child,
+    Component? child,
   ) builder;
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    return builder(
+  Iterable<Component> build(BuildContext context) sync* {
+    yield builder(
       context,
       Provider.of<A>(context),
       Provider.of<B>(context),
@@ -213,26 +203,29 @@ class Consumer2<A, B> extends SingleChildStatelessWidget {
 }
 
 /// {@macro provider.consumer}
-class Consumer3<A, B, C> extends SingleChildStatelessWidget {
+class Consumer3<A, B, C> extends StatelessComponent {
   /// {@macro provider.consumer.constructor}
   Consumer3({
     Key? key,
     required this.builder,
-    Widget? child,
-  }) : super(key: key, child: child);
+    this.child,
+  }) : super(key: key);
+
+  /// {@macro provider.consumer.child}
+  final Component? child;
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(
+  final Component Function(
     BuildContext context,
     A value,
     B value2,
     C value3,
-    Widget? child,
+    Component? child,
   ) builder;
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    return builder(
+  Iterable<Component> build(BuildContext context) sync* {
+    yield builder(
       context,
       Provider.of<A>(context),
       Provider.of<B>(context),
@@ -243,27 +236,30 @@ class Consumer3<A, B, C> extends SingleChildStatelessWidget {
 }
 
 /// {@macro provider.consumer}
-class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
+class Consumer4<A, B, C, D> extends StatelessComponent {
   /// {@macro provider.consumer.constructor}
   Consumer4({
     Key? key,
     required this.builder,
-    Widget? child,
-  }) : super(key: key, child: child);
+    this.child,
+  }) : super(key: key);
+
+  /// {@macro provider.consumer.child}
+  final Component? child;
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(
+  final Component Function(
     BuildContext context,
     A value,
     B value2,
     C value3,
     D value4,
-    Widget? child,
+    Component? child,
   ) builder;
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    return builder(
+  Iterable<Component> build(BuildContext context) sync* {
+    yield builder(
       context,
       Provider.of<A>(context),
       Provider.of<B>(context),
@@ -275,28 +271,31 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
 }
 
 /// {@macro provider.consumer}
-class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
+class Consumer5<A, B, C, D, E> extends StatelessComponent {
   /// {@macro provider.consumer.constructor}
   Consumer5({
     Key? key,
     required this.builder,
-    Widget? child,
-  }) : super(key: key, child: child);
+    this.child,
+  }) : super(key: key);
+
+  /// {@macro provider.consumer.child}
+  final Component? child;
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(
+  final Component Function(
     BuildContext context,
     A value,
     B value2,
     C value3,
     D value4,
     E value5,
-    Widget? child,
+    Component? child,
   ) builder;
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    return builder(
+  Iterable<Component> build(BuildContext context) sync* {
+    yield builder(
       context,
       Provider.of<A>(context),
       Provider.of<B>(context),
@@ -309,16 +308,19 @@ class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
 }
 
 /// {@macro provider.consumer}
-class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
+class Consumer6<A, B, C, D, E, F> extends StatelessComponent {
   /// {@macro provider.consumer.constructor}
   Consumer6({
     Key? key,
     required this.builder,
-    Widget? child,
-  }) : super(key: key, child: child);
+    this.child,
+  }) : super(key: key);
+
+  /// {@macro provider.consumer.child}
+  final Component? child;
 
   /// {@macro provider.consumer.builder}
-  final Widget Function(
+  final Component Function(
     BuildContext context,
     A value,
     B value2,
@@ -326,12 +328,12 @@ class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
     D value4,
     E value5,
     F value6,
-    Widget? child,
+    Component? child,
   ) builder;
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    return builder(
+  Iterable<Component> build(BuildContext context) sync* {
+    yield builder(
       context,
       Provider.of<A>(context),
       Provider.of<B>(context),

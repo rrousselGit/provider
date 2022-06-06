@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart' as mockito show when;
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/jaspr_provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 void mockImplementation<T extends Function>(dynamic Function() when, T mock) {
