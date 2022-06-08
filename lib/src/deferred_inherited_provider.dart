@@ -11,7 +11,7 @@ part of 'provider.dart';
 /// - [StartListening], a simpler version of this typedef.
 typedef DeferredStartListening<T, R> = VoidCallback Function(
   InheritedContext<R?> context,
-  void Function(R value) setState,
+  void Function(R? value) setState,
   T controller,
   R? value,
 );
@@ -37,7 +37,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     required Create<T> create,
     Dispose<T>? dispose,
     required DeferredStartListening<T, R> startListening,
-    UpdateShouldNotify<R>? updateShouldNotify,
+    UpdateShouldNotify<R?>? updateShouldNotify,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
@@ -59,7 +59,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
     Key? key,
     required T value,
     required DeferredStartListening<T, R> startListening,
-    UpdateShouldNotify<R>? updateShouldNotify,
+    UpdateShouldNotify<R?>? updateShouldNotify,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
@@ -79,7 +79,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
 abstract class _DeferredDelegate<T, R> extends _Delegate<R> {
   _DeferredDelegate(this.updateShouldNotify, this.startListening);
 
-  final UpdateShouldNotify<R>? updateShouldNotify;
+  final UpdateShouldNotify<R?>? updateShouldNotify;
   final DeferredStartListening<T, R> startListening;
 
   @override
@@ -142,7 +142,7 @@ DeferredInheritedProvider(
   @override
   bool get hasValue => _hasValue;
 
-  void setState(R value) {
+  void setState(R? value) {
     if (_hasValue) {
       final shouldNotify = delegate.updateShouldNotify != null
           ? delegate.updateShouldNotify!(_value as R, value)
@@ -160,7 +160,7 @@ class _CreateDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
   _CreateDeferredInheritedProvider({
     required this.create,
     this.dispose,
-    UpdateShouldNotify<R>? updateShouldNotify,
+    UpdateShouldNotify<R?>? updateShouldNotify,
     required DeferredStartListening<T, R> startListening,
   }) : super(updateShouldNotify, startListening);
 
@@ -256,7 +256,7 @@ class _CreateDeferredInheritedProviderElement<T, R>
 class _ValueDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
   _ValueDeferredInheritedProvider(
     this.value,
-    UpdateShouldNotify<R>? updateShouldNotify,
+    UpdateShouldNotify<R?>? updateShouldNotify,
     DeferredStartListening<T, R> startListening,
   ) : super(updateShouldNotify, startListening);
 

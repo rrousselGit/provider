@@ -13,7 +13,7 @@ import 'provider.dart';
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object? error);
 
 DeferredStartListening<Stream<T>?, T> _streamStartListening<T>({
-  required T initialData,
+  T? initialData,
   ErrorBuilder<T>? catchError,
 }) {
   return (e, setState, controller, __) {
@@ -79,9 +79,9 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>?, T> {
   StreamProvider({
     Key? key,
     required Create<Stream<T>?> create,
-    required T initialData,
+    T? initialData,
     ErrorBuilder<T>? catchError,
-    UpdateShouldNotify<T>? updateShouldNotify,
+    UpdateShouldNotify<T?>? updateShouldNotify,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
@@ -102,9 +102,9 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>?, T> {
   StreamProvider.value({
     Key? key,
     required Stream<T>? value,
-    required T initialData,
+    T? initialData,
     ErrorBuilder<T>? catchError,
-    UpdateShouldNotify<T>? updateShouldNotify,
+    UpdateShouldNotify<T?>? updateShouldNotify,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
@@ -123,7 +123,7 @@ class StreamProvider<T> extends DeferredInheritedProvider<Stream<T>?, T> {
 }
 
 DeferredStartListening<Future<T>?, T> _futureStartListening<T>({
-  required T initialData,
+  T? initialData,
   ErrorBuilder<T>? catchError,
 }) {
   // ignore: void_checks, false positive
@@ -184,9 +184,9 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>?, T> {
   FutureProvider({
     Key? key,
     required Create<Future<T>?> create,
-    required T initialData,
+    T? initialData,
     ErrorBuilder<T>? catchError,
-    UpdateShouldNotify<T>? updateShouldNotify,
+    UpdateShouldNotify<T?>? updateShouldNotify,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
@@ -207,9 +207,9 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>?, T> {
   FutureProvider.value({
     Key? key,
     required Future<T>? value,
-    required T initialData,
+    T? initialData,
     ErrorBuilder<T>? catchError,
-    UpdateShouldNotify<T>? updateShouldNotify,
+    UpdateShouldNotify<T?>? updateShouldNotify,
     TransitionBuilder? builder,
     Widget? child,
   }) : super.value(
