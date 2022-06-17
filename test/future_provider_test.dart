@@ -242,4 +242,40 @@ Exception:
 
     expect(find.text('24'), findsOneWidget);
   });
+
+  group('No initial data test group', () {
+    testWidgets('Future provider works', (tester) async {
+      await tester.pumpWidget(
+        FutureProvider<int?>(
+          create: (_) => Future.value(42),
+          child: TextOf<int?>(),
+        ),
+      );
+
+      expect(find.text('null'), findsOneWidget);
+
+      await Future.microtask(tester.pump);
+
+      expect(find.text('42'), findsOneWidget);
+    });
+
+    testWidgets('Future provider value works', (tester) async {
+      await tester.pumpWidget(
+        FutureProvider<int?>.value(
+          value: Future.value(42),
+          child: TextOf<int?>(),
+        ),
+      );
+
+      expect(find.text('null'), findsOneWidget);
+
+      await Future.microtask(tester.pump);
+
+      expect(find.text('42'), findsOneWidget);
+    });
+
+    // We can't have a confirmed int if we don't specify its value at start
+    //  The thing is, we basically never have an "initial value",
+    //  providers are basically always nullable
+  });
 }

@@ -193,4 +193,96 @@ Exception:
       verifyNoMoreInteractions(stream);
     });
   });
+
+  group('No initial data test group', () {
+    testWidgets('Stream provider works', (tester) async {
+      await tester.pumpWidget(
+        StreamProvider<int?>(
+          create: (_) => Stream.value(42),
+          child: TextOf<int?>(),
+        ),
+      );
+
+      expect(find.text('null'), findsOneWidget);
+
+      await Future.microtask(tester.pump);
+
+      expect(find.text('42'), findsOneWidget);
+    });
+
+    testWidgets('Stream provider value works', (tester) async {
+      await tester.pumpWidget(
+        StreamProvider<int?>.value(
+          value: Stream.value(42),
+          child: TextOf<int?>(),
+        ),
+      );
+
+      expect(find.text('null'), findsOneWidget);
+
+      await Future.microtask(tester.pump);
+
+      expect(find.text('42'), findsOneWidget);
+    });
+
+    testWidgets('calls catchError if present and stream has error create',
+        (tester) async {
+      final controller = StreamController<int>(sync: true);
+      final catchError = ErrorBuilderMock<int>(0);
+      when(catchError(any, 42)).thenReturn(42);
+
+      await tester.pumpWidget(
+        StreamProvider<int?>(
+          create: (_) => controller.stream,
+          catchError: catchError,
+          child: TextOf<int?>(),
+        ),
+      );
+
+      expect(find.text('null'), findsOneWidget);
+
+      controller.addError(42);
+
+      await Future.microtask(tester.pump);
+
+      expect(find.text('42'), findsOneWidget);
+      verify(catchError(argThat(isNotNull), 42)).called(1);
+      verifyNoMoreInteractions(catchError);
+
+      // ignore: unawaited_futures
+      controller.close();
+    });
+
+    testWidgets('calls catchError if present and stream has error value',
+        (tester) async {
+      final controller = StreamController<int>(sync: true);
+      final catchError = ErrorBuilderMock<int>(0);
+      when(catchError(any, 42)).thenReturn(42);
+
+      await tester.pumpWidget(
+        StreamProvider<int?>.value(
+          value: controller.stream,
+          catchError: catchError,
+          child: TextOf<int?>(),
+        ),
+      );
+
+      expect(find.text('null'), findsOneWidget);
+
+      controller.addError(42);
+
+      await Future.microtask(tester.pump);
+
+      expect(find.text('42'), findsOneWidget);
+      verify(catchError(argThat(isNotNull), 42)).called(1);
+      verifyNoMoreInteractions(catchError);
+
+      // ignore: unawaited_futures
+      controller.close();
+    });
+    
+    // We can't have a confirmed int if we don't specify its value at start
+    //  The thing is, we basically never have an "initial value",
+    //  providers are basically always nullable
+  });
 }
