@@ -39,6 +39,7 @@ export 'src/provider.dart'
         Dispose,
         Locator,
         ReadContext,
+        SearchContext,
         SelectContext,
         StartListening,
         UpdateShouldNotify,

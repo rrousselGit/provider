@@ -12,7 +12,9 @@ import 'package:nested/nested.dart';
 import 'reassemble_handler.dart';
 
 part 'deferred_inherited_provider.dart';
+
 part 'devtool.dart';
+
 part 'inherited_provider.dart';
 
 /// Whether the runtime has null safe sound mode enabled.
@@ -269,7 +271,14 @@ class Provider<T> extends InheritedProvider<T> {
   ///   },
   /// )
   /// ```
-  static T of<T>(BuildContext context, {bool listen = true}) {
+  ///
+  /// If [searchCallback] is not `null`, the value will be checked using searchCallback
+  /// until got the specific value.
+  static T of<T>(
+    BuildContext context, {
+    bool listen = true,
+    bool Function(T)? searchCallback,
+  }) {
     assert(
       context.owner!.debugBuilding ||
           listen == false ||
@@ -290,26 +299,52 @@ The context used was: $context
 ''',
     );
 
-    final inheritedElement = _inheritedElementOf<T>(context);
+    var inheritedElement = _inheritedElementOf<T>(context);
 
-    if (listen) {
-      // bind context with the element
-      // We have to use this method instead of dependOnInheritedElement, because
-      // dependOnInheritedElement does not support relocating using GlobalKey
-      // if no provider were found previously.
-      context.dependOnInheritedWidgetOfExactType<_InheritedProviderScope<T?>>();
+    var value = inheritedElement?.value;
+    _checkType(context, value);
+
+    if (searchCallback != null) {
+      while (true) {
+        if (inheritedElement == null) {
+          throw ProviderNotFoundException(T, context.widget.runtimeType);
+        }
+
+        if (searchCallback(value as T)) {
+          // Got a value
+          if (listen) {
+            // bind context with the element
+            context.dependOnInheritedElement(inheritedElement);
+          }
+          break;
+        }
+
+        // Looking for another value
+        inheritedElement = _inheritedElement2Of<T>(inheritedElement);
+        value = inheritedElement?.value;
+        _checkType(context, value);
+      };
+    } else {
+      if (listen) {
+        // bind context with the element
+        // We have to use this method instead of dependOnInheritedElement, because
+        // dependOnInheritedElement does not support relocating using GlobalKey
+        // if no provider were found previously.
+        context.dependOnInheritedWidgetOfExactType<_InheritedProviderScope<T?>>();
+      }
     }
 
-    final value = inheritedElement?.value;
+    return value as T;
+  }
 
+  /// Check wither [value] applies [T] type
+  /// this check required only in SoundMode
+  static void _checkType<T>(BuildContext context, T? value) {
     if (_isSoundMode) {
       if (value is! T) {
         throw ProviderNullException(T, context.widget.runtimeType);
       }
-      return value;
     }
-
-    return value as T;
   }
 
   static _InheritedProviderScopeElement<T?>? _inheritedElementOf<T>(
@@ -341,6 +376,18 @@ If you want to expose a variable that can be anything, consider changing
 
     if (inheritedElement == null && null is! T) {
       throw ProviderNotFoundException(T, context.widget.runtimeType);
+    }
+
+    return inheritedElement;
+  }
+
+  static _InheritedProviderScopeElement<T?>? _inheritedElement2Of<T>(
+      _InheritedProviderScopeElement<T?> element,) {
+    final inheritedElement = element.getElementForInheritedWidgetOfExactType<
+        _InheritedProviderScope<T?>>() as _InheritedProviderScopeElement<T?>?;
+
+    if (inheritedElement == null && null is! T) {
+      throw ProviderNotFoundException(T, element.widget.runtimeType);
     }
 
     return inheritedElement;
@@ -426,6 +473,7 @@ class ProviderNullException implements Exception {
 
   /// The type of the Widget requesting the value
   final Type widgetType;
+
   @override
   String toString() {
     if (kReleaseMode) {
@@ -645,8 +693,31 @@ extension ReadContext on BuildContext {
   /// - [WatchContext] and its `watch` method, similar to [read], but
   ///   will make the widget tree rebuild when the obtained value changes.
   /// - [Locator], a typedef to make it easier to pass [read] to objects.
-  T read<T>() {
-    return Provider.of<T>(this, listen: false);
+  ///
+  /// if [searchCallback] is not `null`,
+  /// the value will be checked using [searchCallback] until got the specific value.
+  ///
+  /// If no values applies the [searchCallback],
+  /// [ProviderNotFoundException] will be thrown.
+  ///
+  T read<T>({bool Function(T)? searchCallback}) {
+    return Provider.of<T>(this, listen: false, searchCallback: searchCallback);
+  }
+}
+
+/// Exposes the [search] method.
+extension SearchContext on BuildContext {
+  /// Obtain a value from the nearest ancestor provider of type [T]
+  /// where value applies [searchCallback].
+  ///
+  /// This method works like [read] if [listen] is `false`.
+  /// Otherwise it works like [watch].
+  ///
+  /// If no values applies the [searchCallback],
+  /// [ProviderNotFoundException] will be thrown.
+  ///
+  T search<T>(bool Function(T) searchCallback, { bool listen = false }) {
+    return Provider.of<T>(this, listen: listen, searchCallback: searchCallback);
   }
 }
 
@@ -689,8 +760,15 @@ extension WatchContext on BuildContext {
   ///
   /// - [ReadContext] and its `read` method, similar to [watch], but doesn't make
   ///   widgets rebuild if the value obtained changes.
-  T watch<T>() {
-    return Provider.of<T>(this);
+  ///
+  /// if [searchCallback] is not `null`,
+  /// the value will be checked using [searchCallback] until got the specific value.
+  ///
+  /// If no values applies the [searchCallback],
+  /// [ProviderNotFoundException] will be thrown.
+  ///
+  T watch<T>({bool Function(T)? searchCallback}) {
+    return Provider.of<T>(this, searchCallback: searchCallback);
   }
 }
 
