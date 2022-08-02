@@ -161,6 +161,7 @@ class Consumer<T> extends SingleChildStatelessWidget {
     Key? key,
     required this.builder,
     Widget? child,
+    this.searchCallback,
   }) : super(key: key, child: child);
 
   /// {@template provider.consumer.builder}
@@ -174,11 +175,20 @@ class Consumer<T> extends SingleChildStatelessWidget {
     Widget? child,
   ) builder;
 
+  /// {@template provider.consumer.searchCallback}
+  /// A callback function used to search for a specific value
+  /// instead of getting the first one in the tree.
+  ///
+  /// It passed to Provider.of<T>() as it.
+  /// If [searchCallback] is `null`, the value will be the first value gotten in the tree
+  /// {@endtemplate}
+  final bool Function(T value)? searchCallback;
+
   @override
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<T>(context),
+      Provider.of<T>(context, searchCallback: searchCallback),
       child,
     );
   }
@@ -191,6 +201,8 @@ class Consumer2<A, B> extends SingleChildStatelessWidget {
     Key? key,
     required this.builder,
     Widget? child,
+    this.searchCallback1,
+    this.searchCallback2,
   }) : super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
@@ -201,12 +213,18 @@ class Consumer2<A, B> extends SingleChildStatelessWidget {
     Widget? child,
   ) builder;
 
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(A value)? searchCallback1;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(B value)? searchCallback2;
+
   @override
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<A>(context),
-      Provider.of<B>(context),
+      Provider.of<A>(context, searchCallback: searchCallback1),
+      Provider.of<B>(context, searchCallback: searchCallback2),
       child,
     );
   }
@@ -219,6 +237,9 @@ class Consumer3<A, B, C> extends SingleChildStatelessWidget {
     Key? key,
     required this.builder,
     Widget? child,
+    this.searchCallback1,
+    this.searchCallback2,
+    this.searchCallback3,
   }) : super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
@@ -230,13 +251,22 @@ class Consumer3<A, B, C> extends SingleChildStatelessWidget {
     Widget? child,
   ) builder;
 
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(A value)? searchCallback1;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(B value)? searchCallback2;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(C value)? searchCallback3;
+
   @override
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<A>(context),
-      Provider.of<B>(context),
-      Provider.of<C>(context),
+      Provider.of<A>(context, searchCallback: searchCallback1),
+      Provider.of<B>(context, searchCallback: searchCallback2),
+      Provider.of<C>(context, searchCallback: searchCallback3),
       child,
     );
   }
@@ -249,6 +279,10 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
     Key? key,
     required this.builder,
     Widget? child,
+    this.searchCallback1,
+    this.searchCallback2,
+    this.searchCallback3,
+    this.searchCallback4,
   }) : super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
@@ -261,14 +295,26 @@ class Consumer4<A, B, C, D> extends SingleChildStatelessWidget {
     Widget? child,
   ) builder;
 
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(A value)? searchCallback1;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(B value)? searchCallback2;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(C value)? searchCallback3;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(D value)? searchCallback4;
+
   @override
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<A>(context),
-      Provider.of<B>(context),
-      Provider.of<C>(context),
-      Provider.of<D>(context),
+      Provider.of<A>(context, searchCallback: searchCallback1),
+      Provider.of<B>(context, searchCallback: searchCallback2),
+      Provider.of<C>(context, searchCallback: searchCallback3),
+      Provider.of<D>(context, searchCallback: searchCallback4),
       child,
     );
   }
@@ -281,6 +327,11 @@ class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
     Key? key,
     required this.builder,
     Widget? child,
+    this.searchCallback1,
+    this.searchCallback2,
+    this.searchCallback3,
+    this.searchCallback4,
+    this.searchCallback5,
   }) : super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
@@ -294,15 +345,31 @@ class Consumer5<A, B, C, D, E> extends SingleChildStatelessWidget {
     Widget? child,
   ) builder;
 
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(A value)? searchCallback1;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(B value)? searchCallback2;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(C value)? searchCallback3;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(D value)? searchCallback4;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(E value)? searchCallback5;
+
   @override
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<A>(context),
-      Provider.of<B>(context),
-      Provider.of<C>(context),
-      Provider.of<D>(context),
-      Provider.of<E>(context),
+      Provider.of<A>(context, searchCallback: searchCallback1),
+      Provider.of<B>(context, searchCallback: searchCallback2),
+      Provider.of<C>(context, searchCallback: searchCallback3),
+      Provider.of<D>(context, searchCallback: searchCallback4),
+      Provider.of<E>(context, searchCallback: searchCallback5),
       child,
     );
   }
@@ -315,6 +382,12 @@ class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
     Key? key,
     required this.builder,
     Widget? child,
+    this.searchCallback1,
+    this.searchCallback2,
+    this.searchCallback3,
+    this.searchCallback4,
+    this.searchCallback5,
+    this.searchCallback6,
   }) : super(key: key, child: child);
 
   /// {@macro provider.consumer.builder}
@@ -329,16 +402,34 @@ class Consumer6<A, B, C, D, E, F> extends SingleChildStatelessWidget {
     Widget? child,
   ) builder;
 
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(A value)? searchCallback1;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(B value)? searchCallback2;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(C value)? searchCallback3;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(D value)? searchCallback4;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(E value)? searchCallback5;
+
+  /// {@macro provider.consumer.searchCallback}
+  final bool Function(F value)? searchCallback6;
+
   @override
   Widget buildWithChild(BuildContext context, Widget? child) {
     return builder(
       context,
-      Provider.of<A>(context),
-      Provider.of<B>(context),
-      Provider.of<C>(context),
-      Provider.of<D>(context),
-      Provider.of<E>(context),
-      Provider.of<F>(context),
+      Provider.of<A>(context, searchCallback: searchCallback1),
+      Provider.of<B>(context, searchCallback: searchCallback2),
+      Provider.of<C>(context, searchCallback: searchCallback3),
+      Provider.of<D>(context, searchCallback: searchCallback4),
+      Provider.of<E>(context, searchCallback: searchCallback5),
+      Provider.of<F>(context, searchCallback: searchCallback6),
       child,
     );
   }
