@@ -143,12 +143,16 @@ class Selector<A, S> extends Selector0<S> {
     required ValueWidgetBuilder<S> builder,
     required S Function(BuildContext, A) selector,
     ShouldRebuild<S>? shouldRebuild,
+    bool Function(A value)? searchCallback,
     Widget? child,
   }) : super(
           key: key,
           shouldRebuild: shouldRebuild,
           builder: builder,
-          selector: (context) => selector(context, Provider.of(context)),
+          selector: (context) => selector(
+            context,
+            Provider.of(context, searchCallback: searchCallback),
+          ),
           child: child,
         );
 }
@@ -161,6 +165,8 @@ class Selector2<A, B, S> extends Selector0<S> {
     required ValueWidgetBuilder<S> builder,
     required S Function(BuildContext, A, B) selector,
     ShouldRebuild<S>? shouldRebuild,
+    bool Function(A value)? searchCallback1,
+    bool Function(B value)? searchCallback2,
     Widget? child,
   }) : super(
           key: key,
@@ -168,8 +174,8 @@ class Selector2<A, B, S> extends Selector0<S> {
           builder: builder,
           selector: (context) => selector(
             context,
-            Provider.of(context),
-            Provider.of(context),
+            Provider.of(context, searchCallback: searchCallback1),
+            Provider.of(context, searchCallback: searchCallback2),
           ),
           child: child,
         );
@@ -183,6 +189,9 @@ class Selector3<A, B, C, S> extends Selector0<S> {
     required ValueWidgetBuilder<S> builder,
     required S Function(BuildContext, A, B, C) selector,
     ShouldRebuild<S>? shouldRebuild,
+    bool Function(A value)? searchCallback1,
+    bool Function(B value)? searchCallback2,
+    bool Function(C value)? searchCallback3,
     Widget? child,
   }) : super(
           key: key,
@@ -190,9 +199,9 @@ class Selector3<A, B, C, S> extends Selector0<S> {
           builder: builder,
           selector: (context) => selector(
             context,
-            Provider.of(context),
-            Provider.of(context),
-            Provider.of(context),
+            Provider.of(context, searchCallback: searchCallback1),
+            Provider.of(context, searchCallback: searchCallback2),
+            Provider.of(context, searchCallback: searchCallback3),
           ),
           child: child,
         );
@@ -206,6 +215,10 @@ class Selector4<A, B, C, D, S> extends Selector0<S> {
     required ValueWidgetBuilder<S> builder,
     required S Function(BuildContext, A, B, C, D) selector,
     ShouldRebuild<S>? shouldRebuild,
+    bool Function(A value)? searchCallback1,
+    bool Function(B value)? searchCallback2,
+    bool Function(C value)? searchCallback3,
+    bool Function(D value)? searchCallback4,
     Widget? child,
   }) : super(
           key: key,
@@ -213,10 +226,10 @@ class Selector4<A, B, C, D, S> extends Selector0<S> {
           builder: builder,
           selector: (context) => selector(
             context,
-            Provider.of(context),
-            Provider.of(context),
-            Provider.of(context),
-            Provider.of(context),
+            Provider.of(context, searchCallback: searchCallback1),
+            Provider.of(context, searchCallback: searchCallback2),
+            Provider.of(context, searchCallback: searchCallback3),
+            Provider.of(context, searchCallback: searchCallback4),
           ),
           child: child,
         );
@@ -230,6 +243,11 @@ class Selector5<A, B, C, D, E, S> extends Selector0<S> {
     required ValueWidgetBuilder<S> builder,
     required S Function(BuildContext, A, B, C, D, E) selector,
     ShouldRebuild<S>? shouldRebuild,
+    bool Function(A value)? searchCallback1,
+    bool Function(B value)? searchCallback2,
+    bool Function(C value)? searchCallback3,
+    bool Function(D value)? searchCallback4,
+    bool Function(E value)? searchCallback5,
     Widget? child,
   }) : super(
           key: key,
@@ -237,11 +255,11 @@ class Selector5<A, B, C, D, E, S> extends Selector0<S> {
           builder: builder,
           selector: (context) => selector(
             context,
-            Provider.of(context),
-            Provider.of(context),
-            Provider.of(context),
-            Provider.of(context),
-            Provider.of(context),
+            Provider.of(context, searchCallback: searchCallback1),
+            Provider.of(context, searchCallback: searchCallback2),
+            Provider.of(context, searchCallback: searchCallback3),
+            Provider.of(context, searchCallback: searchCallback4),
+            Provider.of(context, searchCallback: searchCallback5),
           ),
           child: child,
         );
@@ -255,6 +273,12 @@ class Selector6<A, B, C, D, E, F, S> extends Selector0<S> {
     required ValueWidgetBuilder<S> builder,
     required S Function(BuildContext, A, B, C, D, E, F) selector,
     ShouldRebuild<S>? shouldRebuild,
+    bool Function(A value)? searchCallback1,
+    bool Function(B value)? searchCallback2,
+    bool Function(C value)? searchCallback3,
+    bool Function(D value)? searchCallback4,
+    bool Function(E value)? searchCallback5,
+    bool Function(F value)? searchCallback6,
     Widget? child,
   }) : super(
           key: key,
@@ -262,12 +286,12 @@ class Selector6<A, B, C, D, E, F, S> extends Selector0<S> {
           builder: builder,
           selector: (context) => selector(
             context,
-            Provider.of(context),
-            Provider.of(context),
-            Provider.of(context),
-            Provider.of(context),
-            Provider.of(context),
-            Provider.of(context),
+            Provider.of(context, searchCallback: searchCallback1),
+            Provider.of(context, searchCallback: searchCallback2),
+            Provider.of(context, searchCallback: searchCallback3),
+            Provider.of(context, searchCallback: searchCallback4),
+            Provider.of(context, searchCallback: searchCallback5),
+            Provider.of(context, searchCallback: searchCallback6),
           ),
           child: child,
         );
