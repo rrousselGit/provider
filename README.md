@@ -202,8 +202,7 @@ found (or throw if nothing is found).
 
 This operation is O(1). It doesn't involve walking in the widget tree.
 
-Combined with the first example of [exposing a value](#exposing-a-value), this
-the widget will read the exposed `String` and render "Hello World."
+Combined with the first example of [exposing a value](#exposing-a-value), this widget will read the exposed `String` and render "Hello World."
 
 ```dart
 class Home extends StatelessWidget {
