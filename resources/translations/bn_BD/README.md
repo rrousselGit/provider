@@ -1,9 +1,7 @@
-[English](https://github.com/rrousselGit/provider/blob/master/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md) | [简体中文](https://github.com/rrousselGit/provider/blob/master/resources/translations/zh-CN/README.md) | [Español](https://github.com/rrousselGit/provider/blob/master/resources/translations/es_MX/README.md) | [한국어](https://github.com/rrousselGit/provider/blob/master/resources/translations/ko-KR/README.md) | [বাংলা](/resources/translations/bn_BD/README.md) | [日本語](https://github.com/rrousselGit/provider/blob/master/resources/translations/ja_JP/README.md)
-
+[English](https://github.com/rrousselGit/provider/blob/master/README.md)| [French](https://github.com/rrousselGit/provider/blob/master/resources/translations/fr_FR/README.md) | [Português](https://github.com/rrousselGit/provider/blob/master/resources/translations/pt_br/README.md) | [简体中文](https://github.com/rrousselGit/provider/blob/master/resources/translations/zh-CN/README.md) | [Español](https://github.com/rrousselGit/provider/blob/master/resources/translations/es_MX/README.md) | [한국어](https://github.com/rrousselGit/provider/blob/master/resources/translations/ko-KR/README.md) | [বাংলা](/resources/translations/bn_BD/README.md) | [日本語](https://github.com/rrousselGit/provider/blob/master/resources/translations/ja_JP/README.md)
 
 <a href="https://github.com/rrousselGit/provider/actions"><img src="https://github.com/rrousselGit/provider/workflows/Build/badge.svg" alt="Build Status"></a>
 [![codecov](https://codecov.io/gh/rrousselGit/provider/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/provider) <a href="https://discord.gg/Bbumvej"><img src="https://img.shields.io/discord/765557403865186374.svg?logo=discord&color=blue" alt="Discord"></a>
-
 
 [<img src="https://raw.githubusercontent.com/rrousselGit/provider/master/resources/flutter_favorite.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
 
@@ -33,32 +31,32 @@
 
 মাইগ্রেট করতে, আগে যা হতোঃ
 
-  ```dart
-  FutureProvider<int>(
-    create: (context) => Future.value(42),
-    child: MyApp(),
-  )
+```dart
+FutureProvider<int>(
+  create: (context) => Future.value(42),
+  child: MyApp(),
+)
 
-  Widget build(BuildContext context) {
-    final value = context.watch<int>();
-    return Text('$value');
-  }
-  ```
+Widget build(BuildContext context) {
+  final value = context.watch<int>();
+  return Text('$value');
+}
+```
 
-  আর এখনঃ
+আর এখনঃ
 
-  ```dart
-  FutureProvider<int?>(
-    initialValue: null,
-    create: (context) => Future.value(42),
-    child: MyApp(),
-  )
+```dart
+FutureProvider<int?>(
+  initialValue: null,
+  create: (context) => Future.value(42),
+  child: MyApp(),
+)
 
-  Widget build(BuildContext context) {
-    // খেয়াল রাখবেন যেন "?" দেওয়া হয়, যেমনঃ context.watch<int?>();
-    return Text('$value');
-  }
-  ```
+Widget build(BuildContext context) {
+  // খেয়াল রাখবেন যেন "?" দেওয়া হয়, যেমনঃ context.watch<int?>();
+  return Text('$value');
+}
+```
 
 - `ValueListenableProvider` রিমোভ করে দেওয়া হয়েছে
 
@@ -178,7 +176,6 @@ ChangeNotifierProvider(
 
 ### একটি ভ্যালু রিড করা
 
-
 একটি ভ্যালু রিড করার সবচেয়ে সহজ উপায় হল [BuildContext] এ এক্সটেনশন পদ্ধতি ব্যবহার করেঃ
 
 - `context.watch<T>()`,যা উইজেট পরিবর্তনগুলি রিড করতে সাহায্য করে `T` এর মধ্যে
@@ -187,11 +184,9 @@ ChangeNotifierProvider(
 
 অনেকে স্ট্যাটিক পদ্ধতি ব্যবহার করতে পারে `Provider.of<T>(context)`, যা `watch` এর মতোই আচরণ করবে। যখন `listen` প্যারামিটার `false` তে সেট করা হয় (যেমন `Provider.of<T>(context, listen: false)`), তখন এটি `read` এর মতোই আচরণ করবে।
 
-
 এটা লক্ষণীয় যে `context.read<T>()` কোনো উইজেট পুনর্নির্মাণ করবে না যখন ভ্যালু পরিবর্তন হবে এবং এটিকে `StatelessWidget.build`/`State.build`-এর মধ্যে কল করা যাবে না। অন্যদিকে, এটিকে এই মেথডগুলির বাইরে অবাধে কল করা যেতে পারে।
 
 এই মেথডগুলি `BuildContext` পাস করা উইজেট থেকে শুরু করে উইজেট ট্রিতে দেখাবে এবং পাওয়া `T` প্রকারের নিকটতম ভেরিয়েবল রিটার্ন দেবে (অথবা কিছু না পাওয়া গেলে throw দেওয়া হবে)।
-
 
 এই অপারেশন হল O(1)। এটি উইজেট ট্রিতে নড়াচড়ার সাথে জড়িত নয়।
 
@@ -202,7 +197,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      // আপনি `watch` প্রাপ্ত করতে চান অবজেক্ট টাইপ 
+      // আপনি `watch` প্রাপ্ত করতে চান অবজেক্ট টাইপ
       // পাস করতে ভুলবেন না!
       context.watch<String>(),
     );
@@ -213,7 +208,6 @@ class Home extends StatelessWidget {
 বিকল্পভাবে, এই পদ্ধতিগুলি ব্যবহার করার পরিবর্তে, আমরা [Consumer] এবং [Selector] ব্যবহার করতে পারি।
 
 এগুলি পারফরমেন্স অপ্টিমাইজেশানের জন্য বা যখন প্রভাইডারের একটি `BuildContext` উত্তরসূরি পাওয়া কঠিন হয় তার জন্য উপযোগী হতে পারে।
-
 
 [সচারাচর জিজ্ঞাসা](https://github.com/rrousselGit/provider#my-widget-rebuilds-too-often-what-can-i-do) দেখুন
 অথবা [Consumer](https://pub.dev/documentation/provider/latest/provider/Consumer-class.html) এর ডকুমেন্টেশন
@@ -316,7 +310,6 @@ class Translations {
 
 #### আমি কি আমার অবজেক্টের বিষয়বস্তু ইন্সপেক্ট করতে পারি?
 
-
 ফ্লটার একটি [ডেভটুল](https://github.com/flutter/devtools) এর সাথে আসে যা দেখায় যে একটি নির্দিষ্ট মুহূর্তে উইজেট ট্রি কিরকম আছে।
 
 যেহেতু প্রভাইডাররা উইজেট, তাই তারা সেই devtool-এও দৃশ্যমানঃ
@@ -349,7 +342,7 @@ class Translations {
     @override
     void debugFillProperties(DiagnosticPropertiesBuilder properties) {
       super.debugFillProperties(properties);
-      // এখানে আপনার ক্লাসের সমস্ত প্রপার্টিগুলো তালিকাভুক্ত করুন। 
+      // এখানে আপনার ক্লাসের সমস্ত প্রপার্টিগুলো তালিকাভুক্ত করুন।
       // আরো তথ্যের জন্য debugFillProperties এর ডকুমেন্টেশন দেখুন।
       properties.add(IntProperty('a', a));
       properties.add(StringProperty('b', b));
@@ -457,7 +450,6 @@ initState() {
 
 এর মানে হল মিউটেশন হওয়ার _আগে_ কিছু উইজেট তৈরি হতে পারে (পুরোনো ভ্যালু পাওয়া), অন্য উইজেটগুলি মিউটেশন সম্পূর্ণ হওয়ার _পরে_ তৈরি হবে (একটি নতুন মান পাওয়া)। এটি আপনার UI তে অসঙ্গতি সৃষ্টি করতে পারে এবং তাই এটি অনুমোদিত নয়৷
 
-
 পরিবর্তে, আপনার সেই মিউটেশনটি এমন জায়গায় করা উচিত যা পুরো ট্রিকে সমানভাবে প্রভাবিত করবেঃ
 
 - সরাসরি আপনার মডেলের আপনার প্রদানকারী/নির্মাতার `create`-এর ভিতরেঃ
@@ -475,6 +467,7 @@ initState() {
   যখন কোন "বাহ্যিক প্যারামিটার" নেই তখন এটি কার্যকর।
 
 - ফ্রেমের শেষে অ্যাসিঙ্ক্রোনাসঃ
+
   ```dart
   initState() {
     super.initState();
@@ -548,7 +541,7 @@ return FloatingActionButton(
 হ্যাঁ. `provider` সমস্ত ছোট উপাদানগুলিকে উন্মোচিত করে যা একটি সম্পূর্ণরূপে প্রভাইডারকে তৈরি করে৷
 
 এটা অন্তর্ভুক্তঃ
-  
+
 - `SingleChildStateless Widget`, যেকোনো উইজেটকে `MultiProvider`-এর সাথে কাজ করতে
   এই ইন্টারফেসটি এক্সপোস হয় একটি `package:provider/single_child_widget` এর অংশ হিসেবে।
 
@@ -596,10 +589,9 @@ Foo(
 )
 ```
 
-এই উদাহরণে, `A` আপডেট হলে শুধুমাত্র `Bar` পুনরায় তৈরি হবে। `Foo` এবং `Baz`  অপ্রয়োজনীয়ভাবে পুনর্নির্মাণ হবে না।
+এই উদাহরণে, `A` আপডেট হলে শুধুমাত্র `Bar` পুনরায় তৈরি হবে। `Foo` এবং `Baz` অপ্রয়োজনীয়ভাবে পুনর্নির্মাণ হবে না।
 
 #### আমি কি একই ধরনের টাইপ ব্যবহার করে দুটি ভিন্ন প্রভাইডার পেতে পারি?
-
 
 না। আপনার কাছে একই ধরনের একাধিক প্রভাইডার শেয়ার করার সময়, একটি উইজেট তাদের মধ্যে শুধুমাত্র একটি পেতে সক্ষম হবে: যে নিকটতম।
 
@@ -633,7 +625,6 @@ Provider<Country>(
 
 হ্যাঁ, কম্পাইলারকে একটি টাইপ ইঙ্গিত দিতে হবে যাতে বোঝা যায় যে ইন্টারফেসটি ব্যবহার করা হবে, তৈরিতে দেওয়া ইমপ্লিমেন্টশনের সাথে।
 
-
 ```dart
 abstract class ProviderInterface with ChangeNotifier {
   ...
@@ -663,15 +654,14 @@ ChangeNotifierProvider<ProviderInterface>(
 
 উপলব্ধ সমস্ত অবজেক্টের সম্পূর্ণ তালিকা [এখানে](https://pub.dev/documentation/provider/latest/provider/provider-library.html)
 
-| নাম                                                                                                                            | ব্যাখ্যা                                                                                                                                  |
-| ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| [Provider](https://pub.dartlang.org/documentation/provider/latest/provider/Provider-class.html)                               | প্রভাইডারের সবচেয়ে মৌলিক ফর্ম. এটি একটি ভ্যালু/মান নেয় এবং এটি প্রকাশ করে, তা যাই হোক না কেন।                                                                   |
-| [ListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ListenableProvider-class.html)           | লিসেনেবল অবজেক্টের জন্য একটি নির্দিষ্ট প্রভাইডার।  ListenableProvider অবেজক্টটি লিসেন করবে এবং যখনই শ্রোতাকে ডাকা হবে তখনই এটির উপর নির্ভরশীল উইজেটগুলিকে পুনর্নির্মাণ করতে বলবে। |
-| [ChangeNotifierProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ChangeNotifierProvider-class.html)   | ChangeNotifier-এর জন্য ListenableProvider-এর একটি স্পেসিফিকেশন। প্রয়োজনে এটি স্বয়ংক্রিয়ভাবে `ChangeNotifier.dispose` কল করবে।                           |
-| [ValueListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ValueListenableProvider-class.html) | একটি ValueListenable লিসেন করুন এবং শুধুমাত্র `ValueListenable.value` প্রকাশ করুন।                                                                |
-| [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | একটি স্ট্রিম লিসেন করুন এবং নির্গত সর্বশেষ মান/ভ্যালু প্রকাশ করুন।                                                                                       |
-| [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | একটি `Future` নেয় এবং `Future` সম্পূর্ণ হলে নির্ভরশীলদের আপডেট করে।                                                                                |
-
+| নাম                                                                                                                           | ব্যাখ্যা                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Provider](https://pub.dartlang.org/documentation/provider/latest/provider/Provider-class.html)                               | প্রভাইডারের সবচেয়ে মৌলিক ফর্ম. এটি একটি ভ্যালু/মান নেয় এবং এটি প্রকাশ করে, তা যাই হোক না কেন।                                                                                  |
+| [ListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ListenableProvider-class.html)           | লিসেনেবল অবজেক্টের জন্য একটি নির্দিষ্ট প্রভাইডার। ListenableProvider অবেজক্টটি লিসেন করবে এবং যখনই শ্রোতাকে ডাকা হবে তখনই এটির উপর নির্ভরশীল উইজেটগুলিকে পুনর্নির্মাণ করতে বলবে। |
+| [ChangeNotifierProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ChangeNotifierProvider-class.html)   | ChangeNotifier-এর জন্য ListenableProvider-এর একটি স্পেসিফিকেশন। প্রয়োজনে এটি স্বয়ংক্রিয়ভাবে `ChangeNotifier.dispose` কল করবে।                                                 |
+| [ValueListenableProvider](https://pub.dartlang.org/documentation/provider/latest/provider/ValueListenableProvider-class.html) | একটি ValueListenable লিসেন করুন এবং শুধুমাত্র `ValueListenable.value` প্রকাশ করুন।                                                                                               |
+| [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | একটি স্ট্রিম লিসেন করুন এবং নির্গত সর্বশেষ মান/ভ্যালু প্রকাশ করুন।                                                                                                               |
+| [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | একটি `Future` নেয় এবং `Future` সম্পূর্ণ হলে নির্ভরশীলদের আপডেট করে।                                                                                                             |
 
 ### আমার অ্যাপ্লিকেশন একটি StackOverflowError নিক্ষেপ করে কারণ আমার অনেক প্রভাইডার আছে, আমি কি করতে পারি?
 
@@ -682,7 +672,7 @@ ChangeNotifierProvider<ProviderInterface>(
 - আপনার অ্যাপ্লিকেশানে যদি স্প্ল্যাশ-স্ক্রিন থাকে, তবে একবারে সব না করে সময়ের সাথে সাথে আপনার প্রভাইডারদের মাউন্ট করার চেষ্টা করুন।
 
   আপনি করতে পারেনঃ
-  
+
   ```dart
   MultiProvider(
     providers: [
@@ -695,9 +685,9 @@ ChangeNotifierProvider<ProviderInterface>(
     ],
   )
   ```
-  
+
   যেখানে আপনার স্প্ল্যাশ স্ক্রিন অ্যানিমেশনের সময়, আপনি করবেনঃ
-  
+
   ```dart
   bool step1 = false;
   bool step2 = false;
@@ -708,13 +698,12 @@ ChangeNotifierProvider<ProviderInterface>(
       setState(() => step1 = true);
       Future(() {
         setState(() => step2 = true);
-      });  
+      });
     });
   }
   ```
 
-- `MultiProvider` ব্যবহার করা থেকে অপ্ট আউট করার কথা বিবেচনা করুন।  `MultiProvider` প্রতিটি প্রভাইডারের মধ্যে একটি উইজেট যোগ করে কাজ করে।  `MultiProvider` ব্যবহার না করলে `StackOverflowError` এর লিমিট বাড়তে পারে।
-
+- `MultiProvider` ব্যবহার করা থেকে অপ্ট আউট করার কথা বিবেচনা করুন। `MultiProvider` প্রতিটি প্রভাইডারের মধ্যে একটি উইজেট যোগ করে কাজ করে। `MultiProvider` ব্যবহার না করলে `StackOverflowError` এর লিমিট বাড়তে পারে।
 
 [provider.of]: https://pub.dev/documentation/provider/latest/provider/Provider/of.html
 [selector]: https://pub.dev/documentation/provider/latest/provider/Selector-class.html
