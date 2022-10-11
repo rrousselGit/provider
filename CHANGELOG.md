@@ -1,3 +1,7 @@
+# 6.0.4
+
+Fix typos and broken links in the documentation
+
 # 6.0.3
 
 - fix late initialization error when using `debugPrintRebuildDirtyWidgets`
