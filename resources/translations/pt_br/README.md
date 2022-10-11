@@ -370,7 +370,7 @@ você pode:
 Value value;
 
 Widget build(BuildContext context) {
-  final value = context.watch<Foo>.value;
+  final value = context.watch<Foo>().value;
   if (value != this.value) {
     this.value = value;
     print(value);

@@ -417,7 +417,7 @@ you can do:
 Value value;
 
 Widget build(BuildContext context) {
-  final value = context.watch<Foo>.value;
+  final value = context.watch<Foo>().value;
   if (value != this.value) {
     this.value = value;
     print(value);
