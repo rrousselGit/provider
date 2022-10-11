@@ -325,7 +325,7 @@ Por defecto, devtool necesita `toString`, el cual por defecto es "Instance of My
 
 Para algo más útil, tienes dos opciones:
 
-- Usa el API [Diagnosticable](https://api.flutter.dev/flutter/foundation/Diagnosticable-class.html) de Flutter.
+- Usa el API [Diagnosticable](https://api.flutter.dev/flutter/foundation/Diagnosticable-mixin.html) de Flutter.
 
   Para la mayoría de los casos, esto se logrará utilizando [DiagnosticableTreeMixin]
   en tus objetos, siguiendo la implementación personalizada de [debugFillProperties](https://api.flutter.dev/flutter/foundation/DiagnosticableTreeMixin/debugFillProperties.html).

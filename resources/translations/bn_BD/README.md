@@ -328,7 +328,7 @@ class Translations {
 
 আরো দরকারী কিছু পেতে, আপনার দুটি সমাধান আছেঃ
 
-- Flutter থেকে [Diagnosticable](https://api.flutter.dev/flutter/foundation/Diagnosticable-class.html) API ব্যবহার করুন।
+- Flutter থেকে [Diagnosticable](https://api.flutter.dev/flutter/foundation/Diagnosticable-mixin.html) API ব্যবহার করুন।
 
   বেশিরভাগ ক্ষেত্রে, আমি আপনার অবজেক্টে [DiagnosticableTreeMixin] ব্যবহার করব, তারপরে [debugFillProperties](https://api.flutter.dev/flutter/foundation/DiagnosticableTreeMixin/debugFillProperties.html) এর একটি কাস্টম ইমপ্লিমেন্টশন হবে।
 
