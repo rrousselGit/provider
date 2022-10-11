@@ -334,7 +334,7 @@ provider는 위젯이기 때문에 마찬가지로 devtool에서 볼 수 있습�
 
 보다 유용하게 사용하기 위해서, 다음과 같은 두 가지 솔루션이 있습니다.
 
-- Flutter의 [Diagnosticable](https://api.flutter.dev/flutter/foundation/Diagnosticable-class.html) API를 사용하세요.
+- Flutter의 [Diagnosticable](https://api.flutter.dev/flutter/foundation/Diagnosticable-mixin.html) API를 사용하세요.
 
   대부분의 경우 객체에 [debugFillProperties](https://api.flutter.dev/flutter/foundation/DiagnosticableTreeMixin/debugFillProperties.html)로 커스텀한 [DiagnosticableTreeMixin]를 사용
 

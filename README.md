@@ -350,7 +350,7 @@ By default, the devtool relies on `toString`, which defaults to "Instance of MyC
 
 To have something more useful, you have two solutions:
 
-- use the [Diagnosticable](https://api.flutter.dev/flutter/foundation/Diagnosticable-class.html) API from Flutter.
+- use the [Diagnosticable](https://api.flutter.dev/flutter/foundation/Diagnosticable-mixin.html) API from Flutter.
 
   For most cases, I will use [DiagnosticableTreeMixin] on your objects, followed by a custom implementation of [debugFillProperties](https://api.flutter.dev/flutter/foundation/DiagnosticableTreeMixin/debugFillProperties.html).
 

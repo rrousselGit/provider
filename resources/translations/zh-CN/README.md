@@ -342,7 +342,7 @@ Flutter 提供的 [DevTools](https://github.com/flutter/devtools) 能够展示�
 
 如果要得到更多信息，你有两种方式:
 
-- 使用 Flutter 提供的 [Diagnosticable](https://api.flutter-io.cn/flutter/foundation/Diagnosticable-class.html) API
+- 使用 Flutter 提供的 [Diagnosticable](https://api.flutter-io.cn/flutter/foundation/Diagnosticable-mixin.html) API
 
   在大多数情况下，你只需要在对象上使用 [DiagnosticableTreeMixin][diagnosticabletreemixin] 即可，
   以下是一个自定义 [debugFillProperties](https://api.flutter-io.cn/flutter/foundation/DiagnosticableTreeMixin/debugFillProperties.html)
