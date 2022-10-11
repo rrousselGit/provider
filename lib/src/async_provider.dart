@@ -9,7 +9,7 @@ import 'provider.dart';
 /// See also:
 ///
 ///   * [StreamProvider] and [FutureProvider], which both uses [ErrorBuilder] to
-///     handle respectively [Stream.catchError] and [Future.catch].
+///     handle respectively `Stream.catchError` and [Future.catch].
 typedef ErrorBuilder<T> = T Function(BuildContext context, Object? error);
 
 DeferredStartListening<Stream<T>?, T> _streamStartListening<T>({

@@ -148,6 +148,7 @@ void main() {
         final context = tester.element(find.byWidget(child));
 
         expect(
+          // ignore: avoid_redundant_argument_values
           () => Provider.of<int>(context, listen: true),
           throwsAssertionError,
         );
