@@ -554,7 +554,7 @@ The context used was: Context
         ),
       );
 
-      final rootElement = tester.allElements.first;
+      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
 
       expect(
         rootElement.toString(),
@@ -583,7 +583,7 @@ The context used was: Context
         ),
       );
 
-      final rootElement = tester.allElements.first;
+      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
 
       expect(
         rootElement.toString(),
@@ -607,7 +607,7 @@ The context used was: Context
         ),
       );
 
-      final rootElement = tester.allElements.first;
+      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
 
       expect(
         rootElement.toString(),
@@ -634,7 +634,7 @@ The context used was: Context
         ),
       );
 
-      final rootElement = tester.allElements.first;
+      final rootElement = tester.element(find.bySubtype<DeferredInheritedProvider>());
 
       expect(
         rootElement.toString(),
@@ -665,7 +665,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         ),
       );
 
-      final rootElement = tester.allElements.first;
+      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
 
       expect(
         rootElement.toString(),
