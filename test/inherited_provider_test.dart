@@ -634,7 +634,8 @@ The context used was: Context
         ),
       );
 
-      final rootElement = tester.element(find.bySubtype<DeferredInheritedProvider>());
+      final rootElement =
+          tester.element(find.bySubtype<DeferredInheritedProvider>());
 
       expect(
         rootElement.toString(),
