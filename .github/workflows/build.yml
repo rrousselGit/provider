@@ -32,9 +32,10 @@ jobs:
       - run: set -e
       - run: cd $1
       - run: flutter packages get
-      - run: flutter format --set-exit-if-changed lib test
-      - run: flutter analyze --no-current-package lib test/
+      - run: flutter format --set-exit-if-changed
+      - run: flutter analyze --no-current-package
       - run: flutter test --no-pub --coverage test/null_safe
       - run: flutter test --no-pub --coverage --no-sound-null-safety test/mixed_mode
+        if: matrix.package_path != 'master'
       # resets to the original state
       - run: cd -
