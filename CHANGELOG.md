@@ -1,7 +1,6 @@
 # 6.0.5
 
 - Fix broken links on pub.dev
-- Update upper Dart constraint to `<4.0.0`
 
 # 6.0.4
 
