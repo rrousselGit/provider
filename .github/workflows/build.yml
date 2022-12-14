@@ -21,5 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Execute test script
-        run: curl -s https://raw.githubusercontent.com/rrousselGit/ci/master/scripts/ci.sh | bash -s nnbd
+      # abort CI if an error happens
+      - run: set -e
+      - run: cd $1
+      - run: flutter packages get
+      - run: flutter format --set-exit-if-changed lib test
+      - run: flutter analyze --no-current-package lib test/
+      - run: flutter test --no-pub --coverage test/null_safe
+      - run: flutter test --no-pub --coverage --no-sound-null-safety test/mixed_mode
+      # resets to the original state
+      - run: cd -
