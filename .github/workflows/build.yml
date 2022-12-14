@@ -22,7 +22,6 @@ jobs:
       matrix:
         channel:
           - master
-          - dev
           - beta
 
     steps:
