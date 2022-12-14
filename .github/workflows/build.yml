@@ -15,6 +15,7 @@ jobs:
     strategy:
       matrix:
         channel:
+          - master
           - dev
           - beta
 

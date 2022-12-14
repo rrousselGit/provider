@@ -553,7 +553,8 @@ The context used was: Context
         ),
       );
 
-      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
+      final rootElement =
+          tester.element(find.byWidgetPredicate((w) => w is InheritedProvider));
 
       expect(
         rootElement.toString(),
@@ -582,7 +583,8 @@ The context used was: Context
         ),
       );
 
-      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
+      final rootElement =
+          tester.element(find.byWidgetPredicate((w) => w is InheritedProvider));
 
       expect(
         rootElement.toString(),
@@ -606,7 +608,8 @@ The context used was: Context
         ),
       );
 
-      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
+      final rootElement =
+          tester.element(find.byWidgetPredicate((w) => w is InheritedProvider));
 
       expect(
         rootElement.toString(),
@@ -633,8 +636,8 @@ The context used was: Context
         ),
       );
 
-      final rootElement =
-          tester.element(find.bySubtype<DeferredInheritedProvider>());
+      final rootElement = tester.element(
+          find.byWidgetPredicate((w) => w is DeferredInheritedProvider));
 
       expect(
         rootElement.toString(),
@@ -665,7 +668,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         ),
       );
 
-      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
+      final rootElement =
+          tester.element(find.byWidgetPredicate((w) => w is InheritedProvider));
 
       expect(
         rootElement.toString(),
