@@ -16,7 +16,6 @@ on:
 jobs:
   flutter:
     runs-on: ubuntu-latest
-    container: cirrusci/flutter:${{matrix.channel}}
 
     strategy:
       matrix:
@@ -27,15 +26,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 2
 
-      # abort CI if an error happens
-      - run: set -e
-      - run: cd $1
-      - run: flutter packages get
+      - uses: subosito/flutter-action@v2.7.1
+        with:
+          channel: ${{ matrix.channel }}
+
+      - name: Add pub cache bin to PATH
+        run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+      - name: Add pub cache to PATH
+        run: echo "PUB_CACHE="$HOME/.pub-cache"" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: flutter pub get
+
       - run: flutter format --set-exit-if-changed
       - run: flutter analyze --no-current-package
+
       - run: flutter test --no-pub --coverage test/null_safe
       - run: flutter test --no-pub --coverage --no-sound-null-safety test/mixed_mode
         if: matrix.package_path != 'master'
-      # resets to the original state
-      - run: cd -
