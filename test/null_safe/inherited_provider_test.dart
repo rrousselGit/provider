@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -554,7 +553,8 @@ The context used was: Context
         ),
       );
 
-      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
+      final rootElement =
+          tester.element(find.byWidgetPredicate((w) => w is InheritedProvider));
 
       expect(
         rootElement.toString(),
@@ -583,7 +583,8 @@ The context used was: Context
         ),
       );
 
-      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
+      final rootElement =
+          tester.element(find.byWidgetPredicate((w) => w is InheritedProvider));
 
       expect(
         rootElement.toString(),
@@ -607,7 +608,8 @@ The context used was: Context
         ),
       );
 
-      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
+      final rootElement =
+          tester.element(find.byWidgetPredicate((w) => w is InheritedProvider));
 
       expect(
         rootElement.toString(),
@@ -634,8 +636,8 @@ The context used was: Context
         ),
       );
 
-      final rootElement =
-          tester.element(find.bySubtype<DeferredInheritedProvider>());
+      final rootElement = tester.element(
+          find.byWidgetPredicate((w) => w is DeferredInheritedProvider));
 
       expect(
         rootElement.toString(),
@@ -666,7 +668,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         ),
       );
 
-      final rootElement = tester.element(find.bySubtype<InheritedProvider>());
+      final rootElement =
+          tester.element(find.byWidgetPredicate((w) => w is InheritedProvider));
 
       expect(
         rootElement.toString(),
