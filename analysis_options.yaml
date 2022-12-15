@@ -4,6 +4,7 @@ analyzer:
     - "**/*.g.dart"
   language:
     strict-casts: true
+    strict-inference: true
     strict-raw-types: true
   errors:
     # Otherwise cause the import of all_lint_rules to warn because of some rules conflicts.
