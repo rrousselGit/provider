@@ -43,6 +43,7 @@ export 'src/provider.dart'
         StartListening,
         UpdateShouldNotify,
         WatchContext;
+export 'src/provider_lifecycle.dart' show LifeCycle;
 export 'src/proxy_provider.dart'
     show
         ProxyProvider,

@@ -20,14 +20,28 @@ void main() {
 
 /// Mix-in [DiagnosticableTreeMixin] to have access to [debugFillProperties] for the devtool
 // ignore: prefer_mixin
-class Counter with ChangeNotifier, DiagnosticableTreeMixin {
-  int _count = 0;
+class Counter extends LifeCycle with ChangeNotifier, DiagnosticableTreeMixin {
+  late int _count;
 
   int get count => _count;
 
   void increment() {
     _count++;
     notifyListeners();
+  }
+
+  /// this callback could be used to initialize your late initializers like
+  /// [TabController] or [TextEditingController] etc
+  @override
+  void onInit() {
+    _count = 0;
+    super.onInit();
+  }
+
+  /// use this callback to execute things after UI ready
+  @override
+  void onReady() {
+    super.onReady();
   }
 
   /// Makes `Counter` readable inside the devtools by listing all of its properties
