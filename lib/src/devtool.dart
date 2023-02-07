@@ -38,6 +38,8 @@ class PostEventSpy {
   PostEventSpy._();
   final logs = <PostEventCall>[];
 
+  /// Disposes the spy. All implementations must end with the call `super.dispose()`.
+  @mustCallSuper
   void dispose() {
     assert(
       _debugPostEventOverride == _postEvent,

@@ -656,6 +656,8 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
 
   bool willUpdateDelegate(D newDelegate) => false;
 
+  /// Disposes the delegate. All implementations must end with the call `super.dispose()`.
+  @mustCallSuper
   void dispose() {}
 
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {}
@@ -791,11 +793,11 @@ class _CreateInheritedProviderState<T>
 
   @override
   void dispose() {
-    super.dispose();
     _removeListener?.call();
     if (_didInitValue) {
       delegate.dispose?.call(element!, _value as T);
     }
+    super.dispose();
   }
 
   @override
@@ -950,8 +952,8 @@ class _ValueInheritedProviderState<T>
 
   @override
   void dispose() {
-    super.dispose();
     _removeListener?.call();
+    super.dispose();
   }
 
   @override

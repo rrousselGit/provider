@@ -1,3 +1,7 @@
+# x.x.x
+
+- Fix dispose order wrong (#802)
+
 # 6.0.5
 
 - Fix broken links on pub.dev

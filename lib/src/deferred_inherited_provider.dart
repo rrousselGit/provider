@@ -131,8 +131,8 @@ DeferredInheritedProvider(
 
   @override
   void dispose() {
-    super.dispose();
     _removeListener?.call();
+    super.dispose();
   }
 
   bool get isLoaded => _removeListener != null;
@@ -218,10 +218,10 @@ class _CreateDeferredInheritedProviderElement<T, R>
 
   @override
   void dispose() {
-    super.dispose();
     if (_didBuild) {
       delegate.dispose?.call(element!, _controller as T);
     }
+    super.dispose();
   }
 
   @override
