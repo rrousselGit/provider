@@ -55,7 +55,7 @@ class ListenableProvider<T extends Listenable?> extends InheritedProvider<T> {
         );
 
   static VoidCallback _startListening(
-    InheritedContext e,
+    InheritedContext<Listenable?> e,
     Listenable? value,
   ) {
     value?.addListener(e.markNeedsNotifyDependents);
