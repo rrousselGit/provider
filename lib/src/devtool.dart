@@ -60,13 +60,13 @@ class ProviderNode {
     required this.id,
     required this.childrenNodeIds,
     required this.type,
-    required _InheritedProviderScopeElement element,
+    required _InheritedProviderScopeElement<Object?> element,
   }) : _element = element;
 
   final String id;
   final String type;
   final List<String> childrenNodeIds;
-  final _InheritedProviderScopeElement _element;
+  final _InheritedProviderScopeElement<Object?> _element;
 
   Object? get value => _element._delegateState.value;
 }
