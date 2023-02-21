@@ -356,4 +356,61 @@ void main() {
 
     expect(myNotifier.notifyListeners, throwsAssertionError);
   });
+
+  testWidgets('call dispose after removing listeners', (tester) async {
+    final notifier = _ChangeNotifierDisposeTest();
+    final widget = ChangeNotifierProvider(
+      create: (_) => notifier,
+      builder: (context, __) => Text(
+        Provider.of<_ChangeNotifierDisposeTest>(context).text,
+        textDirection: TextDirection.ltr,
+      ),
+    );
+
+    await tester.pumpWidget(widget);
+    await tester.pumpAndSettle();
+
+    // If the listener is removed after the super.dispose, this will throw
+    await tester.pumpWidget(Container());
+    await tester.pumpAndSettle();
+  });
+}
+
+class _ChangeNotifierDisposeTest with _ChangeNotifierDispose {
+  final String text = 'test';
+}
+
+mixin _ChangeNotifierDispose implements ChangeNotifier {
+  var _disposed = false;
+  var _listeners = 0;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    if (_listeners != 0) {
+      throw Exception('listeners not removed before dispose');
+    }
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    _listeners--;
+    if (_disposed) {
+      throw Exception('disposed when removing listener');
+    }
+  }
+
+  @override
+  void addListener(VoidCallback listener) {
+    _listeners++;
+    if (_disposed) {
+      throw Exception('disposed when adding listener');
+    }
+  }
+
+  @override
+  bool get hasListeners => _listeners > 0;
+
+  @override
+  void notifyListeners() {}
 }
