@@ -43,10 +43,10 @@ jobs:
         run: flutter pub get
 
       - run: dart format lib test --set-exit-if-changed
-        if: matrix.package_path != 'master'
+        if: matrix.channel != 'master'
 
       - run: flutter analyze --no-current-package
 
       - run: flutter test --no-pub --coverage test/null_safe
       - run: flutter test --no-pub --coverage --no-sound-null-safety test/mixed_mode
-        if: matrix.package_path != 'master'
+        if: matrix.channel != 'master'
