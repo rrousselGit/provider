@@ -226,11 +226,27 @@ or the documentation of [Consumer](https://pub.dev/documentation/provider/latest
 and [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html)
 for more information.
 
-**NOTE**:
+**NOTES**:
 
-When using ***Navigator.push*** methods, a new branch of the widget tree is created for the new screen under the MaterialApp. So, you won't be able to access the Provider in the first screen.
+When using ***Navigator.push*** methods, a new branch of the widget tree is created for the new screen under the MaterialApp. So, you won't be able to access the Provider that is in the first screen from the second screen.
 
-It is recommended to keep the data scoped as possible, so you can send the instance to the new screen using `Provider.value`. It is recommended that if the second screen needs the provider to save data in it then you can await for ***Navigator.push*** and return this data through Navigator arguments.
+It is recommended to keep the data scoped as possible, so you can send the instance to the new screen using `Provider.value`.
+
+```dart
+return MaterialPageRoute(
+  builder: (BuildContext _) => ChangeNotifierProvider.value(
+    value: context.read<MyProvider>(),
+    child: const SecondScreen(),
+  ),
+);
+```
+
+It is recommended that if the second screen needs the provider to save data in it then you can await for ***Navigator.push*** and return this data through Navigator arguments.
+
+```dart
+final data = await Navigator.of(context).pushNamed(SecondScreen.routeName);
+context.read<MyProvider>().setData(data);
+```
 
 ### Optionally depending on a provider
 
