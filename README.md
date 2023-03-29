@@ -234,7 +234,7 @@ It is recommended to keep the data scoped as possible, so you can send the insta
 
 ```dart
 return MaterialPageRoute(
-  builder: (BuildContext _) => ChangeNotifierProvider.value(
+  builder: (_) => ChangeNotifierProvider.value(
     value: context.read<MyProvider>(),
     child: const SecondScreen(),
   ),
@@ -244,7 +244,7 @@ return MaterialPageRoute(
 It is recommended that if the second screen needs the provider to save data in it then you can await for ***Navigator.push*** and return this data through Navigator arguments.
 
 ```dart
-final data = await Navigator.of(context).pushNamed(SecondScreen.routeName);
+final data = await Navigator.of(context).pushNamed<MyDataClass>(SecondScreen.routeName);
 context.read<MyProvider>().setData(data);
 ```
 
