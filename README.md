@@ -226,6 +226,12 @@ or the documentation of [Consumer](https://pub.dev/documentation/provider/latest
 and [Selector](https://pub.dev/documentation/provider/latest/provider/Selector-class.html)
 for more information.
 
+**NOTE**:
+
+When using ***Navigator.push*** methods, a new branch of the widget tree is created for the new screen under the MaterialApp. So, you won't be able to access the Provider in the first screen.
+
+It is recommended to keep the data scoped as possible, so you can send the instance to the new screen using `Provider.value`. It is recommended that if the second screen needs the provider to save data in it then you can await for ***Navigator.push*** and return this data through Navigator arguments.
+
 ### Optionally depending on a provider
 
 Sometimes, we may want to support cases where a provider does not exist. An
