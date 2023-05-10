@@ -248,8 +248,7 @@ class DeferredStartListeningMock<T, R> extends Mock {
       void Function(R value) setState,
       T controller,
       R? value,
-    )?
-        call,
+    )? call,
   ]) {
     if (call != null) {
       when(this(any, any, any, any)).thenAnswer((invoc) {
