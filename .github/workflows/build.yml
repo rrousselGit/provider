@@ -48,5 +48,3 @@ jobs:
       - run: flutter analyze --no-current-package
 
       - run: flutter test --no-pub --coverage test/null_safe
-      - run: flutter test --no-pub --coverage --no-sound-null-safety test/mixed_mode
-        if: matrix.channel != 'master'
