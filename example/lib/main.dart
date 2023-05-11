@@ -58,11 +58,11 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Example'),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
+          children: <Widget>[
             Text('You have pushed the button this many times:'),
 
             /// Extracted as a separate widget for performance optimization.
