@@ -44,7 +44,7 @@ Ayrıca:
   }
   ```
 
-  is now:
+  yenilenmiş hali:
 
   ```dart
   FutureProvider<int?>(
