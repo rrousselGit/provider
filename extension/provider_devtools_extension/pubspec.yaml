@@ -1,0 +1,41 @@
+name: provider_devtools_extension
+description: "The Flutter web app for the package:provider DevTools extension."
+publish_to: 'none'
+
+version: 0.0.1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  collection: ^1.15.0
+  devtools_extensions:
+    path: ../../../devtools/packages/devtools_extensions
+  devtools_app_shared:
+    path: ../../../devtools/packages/devtools_app_shared
+  # TODO: https://github.com/flutter/devtools/issues/4569 - unpin this version
+  flutter_riverpod: 2.0.0-dev.9
+  vm_service: ^11.3.0
+
+dev_dependencies:
+  flutter_driver:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+dependency_overrides:
+  devtools_extensions:
+    path: ../../../devtools/packages/devtools_extensions
+  devtools_app_shared:
+    path: ../../../devtools/packages/devtools_app_shared
+  devtools_shared:
+    path: ../../../devtools/packages/devtools_shared
