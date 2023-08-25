@@ -13,8 +13,8 @@ class FooPackageDevToolsExtension extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ProviderScope(
-      child: DevToolsExtension(
+    return const DevToolsExtension(
+      child: ProviderScope(
         child: ProviderScreenBody(),
       ),
     );
