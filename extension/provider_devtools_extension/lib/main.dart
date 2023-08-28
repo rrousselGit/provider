@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'src/provider_screen.dart';
 
 void main() {
-  runApp(const FooPackageDevToolsExtension());
+  runApp(const ProviderDevToolsExtension());
 }
 
-class FooPackageDevToolsExtension extends StatelessWidget {
-  const FooPackageDevToolsExtension({super.key});
+class ProviderDevToolsExtension extends StatelessWidget {
+  const ProviderDevToolsExtension({super.key});
 
   @override
   Widget build(BuildContext context) {
