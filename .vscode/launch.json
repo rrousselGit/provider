@@ -43,20 +43,29 @@
         },
         {
             "name": "provider_devtools_extension",
-            "cwd": "extension/devtools/provider_devtools_extension",
+            "cwd": "extension/provider_devtools_extension",
             "request": "launch",
             "type": "dart"
         },
         {
+            "name": "provider_devtools_extension + simulated environment",
+            "program": "extension/provider_devtools_extension/lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define=use_simulated_environment=true"
+            ],
+        },
+        {
             "name": "provider_devtools_extension (profile mode)",
-            "cwd": "extension/devtools/provider_devtools_extension",
+            "cwd": "extension/provider_devtools_extension",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
             "name": "provider_devtools_extension (release mode)",
-            "cwd": "extension/devtools/provider_devtools_extension",
+            "cwd": "extension/provider_devtools_extension",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
