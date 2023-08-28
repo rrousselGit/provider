@@ -30,10 +30,10 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-# dependency_overrides:
-#   devtools_extensions:
-#     path: ../../../devtools/packages/devtools_extensions
-#   devtools_app_shared:
-#     path: ../../../devtools/packages/devtools_app_shared
-#   devtools_shared:
-#     path: ../../../devtools/packages/devtools_shared
+dependency_overrides:
+  devtools_extensions:
+    path: ../../../devtools/packages/devtools_extensions
+  devtools_app_shared:
+    path: ../../../devtools/packages/devtools_app_shared
+  devtools_shared:
+    path: ../../../devtools/packages/devtools_shared
