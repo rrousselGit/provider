@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:devtools_app_shared/ui.dart';
+import 'package:devtools_extensions/devtools_extensions.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -110,10 +111,15 @@ class ProviderScreenBody extends ConsumerWidget {
 }
 
 void showProviderErrorBanner() {
-  // TODO(kenz) post message here
-  // bannerMessages.addMessage(
-  //   ProviderUnknownErrorBanner(screenId: ProviderScreen.id).build(),
-  // );
+  extensionManager.showBannerMessage(
+    key: 'provider_unknown_error',
+    type: 'error',
+    message: '''
+DevTools failed to connect with package:provider.
+
+This could be caused by an older version of package:provider; please make sure that you are using version >=5.0.0.''',
+    extensionName: 'provider',
+  );
 }
 
 class _StateInspectorSettingsDialog extends ConsumerWidget {

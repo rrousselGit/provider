@@ -1,16 +1,15 @@
 # provider_devtools_extension
 
-"A new Flutter project."
+This is the Provider DevTools extension. The extension is implemented
+as a Flutter web app and is included in `package:provider` under the
+`extension/devtools` directory.
 
-## Getting Started
+To build this extension and update the built assets in `package:provider`,
+run the following command:
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```sh
+cd packages/provider_devtools_extension
+flutter pub get &&
+dart run devtools_extensions build_and_copy \
+  --source=. --dest=../provider/extension/devtools
+```

@@ -12,8 +12,8 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   collection: ^1.15.0
-  devtools_extensions: ^0.0.2
-  devtools_app_shared: ^0.0.1
+  devtools_extensions: ^0.0.3
+  devtools_app_shared: ^0.0.2
   # TODO: https://github.com/flutter/devtools/issues/4569 - unpin this version
   flutter_riverpod: 2.0.0-dev.9
   vm_service: ^11.9.0
@@ -29,11 +29,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-dependency_overrides:
-  devtools_extensions:
-    path: ../../../devtools/packages/devtools_extensions
-  devtools_app_shared:
-    path: ../../../devtools/packages/devtools_app_shared
-  devtools_shared:
-    path: ../../../devtools/packages/devtools_shared
