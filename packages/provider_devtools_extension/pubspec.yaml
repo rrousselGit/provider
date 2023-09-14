@@ -12,8 +12,8 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   collection: ^1.15.0
-  devtools_extensions: ^0.0.3
-  devtools_app_shared: ^0.0.2
+  devtools_extensions: ^0.0.4
+  devtools_app_shared: ^0.0.3
   # TODO: https://github.com/flutter/devtools/issues/4569 - unpin this version
   flutter_riverpod: 2.0.0-dev.9
   logging: ^1.1.1
