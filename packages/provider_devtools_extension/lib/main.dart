@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'src/provider_screen.dart';
+import 'src/utils/riverpod_error_logger_observer.dart';
 
 void main() {
-  runApp(const ProviderDevToolsExtension());
+  runApp(const ProviderScope(
+    observers: [ErrorLoggerObserver()],
+    child: ProviderDevToolsExtension(),
+  ));
 }
 
 class ProviderDevToolsExtension extends StatelessWidget {
@@ -14,9 +18,7 @@ class ProviderDevToolsExtension extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const DevToolsExtension(
-      child: ProviderScope(
-        child: ProviderScreenBody(),
-      ),
+      child: ProviderScreenBody(),
     );
   }
 }
