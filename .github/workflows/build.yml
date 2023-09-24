@@ -41,6 +41,7 @@ jobs:
 
       - run: ls
       - run: cd packages/provider
+      - run: ls
 
       - name: Install dependencies
         run: flutter pub get
