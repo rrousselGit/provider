@@ -39,6 +39,7 @@ jobs:
       - name: Add pub cache to PATH
         run: echo "PUB_CACHE="$HOME/.pub-cache"" >> $GITHUB_ENV
 
+      - run: ls
       - run: cd packages/provider
 
       - name: Install dependencies
