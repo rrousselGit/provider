@@ -1,4 +1,4 @@
-## Unreleased minor -dev
+## 6.1.0-dev.0
 
 - Moved the implementation of the devtool extension
   in the source of Provider (thanks to @kenzieschmoll)

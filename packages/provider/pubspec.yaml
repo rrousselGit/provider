@@ -1,11 +1,11 @@
 name: provider
 description: A wrapper around InheritedWidget to make them easier to use and more reusable.
-version: 6.0.5
+version: 6.1.0-dev.0
 repository: https://github.com/rrousselGit/provider
 issue_tracker: https://github.com/rrousselGit/provider/issues
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.12.0 <4.0.0"
   flutter: ">=1.16.0"
 
 dependencies:
