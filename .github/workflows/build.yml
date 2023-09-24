@@ -17,6 +17,10 @@ jobs:
   flutter:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: packages/provider
+
     strategy:
       matrix:
         channel:
@@ -38,10 +42,6 @@ jobs:
         run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
       - name: Add pub cache to PATH
         run: echo "PUB_CACHE="$HOME/.pub-cache"" >> $GITHUB_ENV
-
-      - run: ls
-      - run: cd packages/provider
-      - run: ls
 
       - name: Install dependencies
         run: flutter pub get
