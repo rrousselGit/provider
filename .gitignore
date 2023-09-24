@@ -9,7 +9,7 @@ macos/
 pubspec.lock
 
 # Conventional directory for build outputs
-build/
+/build/
 coverage/
 
 # Directory created by dartdoc

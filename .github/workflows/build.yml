@@ -17,6 +17,10 @@ jobs:
   flutter:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: packages/provider
+
     strategy:
       matrix:
         channel:
