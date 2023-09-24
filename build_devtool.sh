@@ -1,5 +1,6 @@
 pushd packages/provider
 
+rm -rf extension/devtools/build
 mkdir extension/devtools/build
 
 popd
