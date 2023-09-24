@@ -1,3 +1,7 @@
+## 6.1.0-dev.1
+
+- Fix missing folder in devtool extension
+
 ## 6.1.0-dev.0
 
 - Moved the implementation of the devtool extension
