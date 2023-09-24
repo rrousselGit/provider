@@ -1,3 +1,8 @@
+## Unreleased minor -dev
+
+- Moved the implementation of the devtool extension
+  in the source of Provider (thanks to @kenzieschmoll)
+
 ## 6.0.5
 
 - Fix broken links on pub.dev
