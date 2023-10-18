@@ -688,6 +688,83 @@ The complete list of all the objects available is [here](https://pub.dev/documen
 | [StreamProvider](https://pub.dartlang.org/documentation/provider/latest/provider/StreamProvider-class.html)                   | Listen to a Stream and expose the latest value emitted.                                                                                                                |
 | [FutureProvider](https://pub.dartlang.org/documentation/provider/latest/provider/FutureProvider-class.html)                   | Takes a `Future` and updates dependents when the future completes.                                                                                                     |
 
+### Provider Extensions
+
+Provider Extensions are a set of extension methods on the Widget class that allow any widget to be easily wrapped with various types of providers, such as Provider, MultiProvider, and ChangeNotifierProvider. These extensions help to reduce boilerplate code and make the code more readable.
+
+1. ProviderExtension:
+   - provideProvider
+   - provideProviderValue
+2. MultiProviderExtension:
+   - provideMultiProvider
+3. ChangeNotifierProviderExtension:
+   - provideChangeNotifierProvider
+   - provideChangeNotifierProviderValue
+
+#### Provider without extension
+
+```dart
+Provider<MyObject>(
+  create: (_) => MyObject(),
+  child: MyWidget(),
+);
+```
+
+#### Provider with extension
+
+
+```dart
+MyWidget().provideProvider(
+  create: (_) => MyObject(),
+);
+```
+
+#### ChangeNotifierProvider.value without extension
+
+```dart
+MyChangeNotifier myChangeNotifier = MyChangeNotifier();
+
+ChangeNotifierProvider<MyChangeNotifier>.value(
+  value: myChangeNotifier,
+  child: MyWidget(),
+);
+```
+
+#### ChangeNotifierProvider.value with extension
+
+```dart
+MyChangeNotifier myChangeNotifier = MyChangeNotifier();
+
+MyWidget().provideChangeNotifierProviderValue(
+  value: myChangeNotifier,
+);
+```
+
+#### MultiProvider without extension
+
+```dart
+MultiProvider(
+  providers: [
+    Provider<MyObject>(create: (_) => MyObject()),
+    Provider<MyOtherObject>(create: (_) => MyOtherObject()),
+  ],
+  child: MyWidget(),
+);
+```
+
+#### MultiProvider with extension
+
+```dart
+MyWidget().provideMultiProvider(
+  providers: [
+    Provider<MyObject>(create: (_) => MyObject()),
+    Provider<MyOtherObject>(create: (_) => MyOtherObject()),
+  ],
+);
+```
+
+
+
 ### My application throws a StackOverflowError because I have too many providers, what can I do?
 
 If you have a very large number of providers (150+), it is possible that some devices will throw a `StackOverflowError` because you end-up building too many widgets at once.

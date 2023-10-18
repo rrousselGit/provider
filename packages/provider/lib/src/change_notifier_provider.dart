@@ -361,3 +361,82 @@ class ChangeNotifierProxyProvider6<T, T2, T3, T4, T5, T6,
           child: child,
         );
 }
+
+/// Extension on [Widget] to provide a [ChangeNotifierProvider].
+///
+/// This extension methods allows any [Widget] to be wrapped with a [ChangeNotifierProvider]
+/// or a [ChangeNotifierProvider.value].
+///
+/// Example usage:
+/// ```dart
+/// MyWidget().provideChangeNotifierProvider(
+///   create: (_) => MyChangeNotifier(),
+///   lazy: false,
+///   key: Key('MyChangeNotifierProvider'),
+/// );
+/// ```
+extension ChangeNotifierProviderExtension on Widget {
+  /// Wraps the widget with a [ChangeNotifierProvider].
+  ///
+  /// Parameters:
+  /// * [create]: A function that creates the [ChangeNotifier].
+  /// * [lazy]: An optional parameter to control the laziness of the provider. Defaults to true.
+  /// * [builder]: An optional parameter for custom transitions.
+  /// * [key]: An optional parameter for identifying the provider.
+  ///
+  /// Returns: The widget wrapped with a [ChangeNotifierProvider].
+  ///
+  /// Example usage:
+  /// ```dart
+  /// MyWidget().provideChangeNotifierProvider(
+  ///   create: (_) => MyChangeNotifier(),
+  ///   lazy: false,
+  ///   key: Key('MyChangeNotifierProvider'),
+  /// );
+  /// ```
+  Widget provideChangeNotifierProvider<T extends ChangeNotifier>({
+    required Create<T> create,
+    Key? key,
+    bool? lazy,
+    TransitionBuilder? builder,
+  }) {
+    return ChangeNotifierProvider<T>(
+      key: key,
+      create: create,
+      lazy: lazy,
+      builder: builder,
+      child: this,
+    );
+  }
+
+  /// Wraps the widget with a [ChangeNotifierProvider.value].
+  ///
+  /// Parameters:
+  /// * [value]: The [ChangeNotifier] to provide.
+  /// * [builder]: An optional parameter for custom transitions.
+  /// * [key]: An optional parameter for identifying the provider.
+  ///
+  /// Returns: The widget wrapped with a [ChangeNotifierProvider.value].
+  ///
+  /// Example usage:
+  /// ```dart
+  /// MyChangeNotifier myChangeNotifier = MyChangeNotifier();
+  ///
+  /// MyWidget().provideChangeNotifierProviderValue(
+  ///   value: MyChangeNotifier,
+  ///   key: Key('MyChangeNotifierProvider'),
+  /// );
+  /// ```
+  Widget provideChangeNotifierProviderValue<T extends ChangeNotifier>({
+    required T value,
+    Key? key,
+    TransitionBuilder? builder,
+  }) {
+    return ChangeNotifierProvider<T>.value(
+      key: key,
+      value: value,
+      builder: builder,
+      child: this,
+    );
+  }
+}

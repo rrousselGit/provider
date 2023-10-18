@@ -5,6 +5,7 @@ export 'src/async_provider.dart'
 export 'src/change_notifier_provider.dart'
     show
         ChangeNotifierProvider,
+        ChangeNotifierProviderExtension,
         ChangeNotifierProxyProvider,
         ChangeNotifierProxyProvider0,
         ChangeNotifierProxyProvider2,
@@ -39,6 +40,8 @@ export 'src/provider.dart'
         Dispose,
         Locator,
         ReadContext,
+        ProviderExtension,
+        MultiProviderExtension,
         SelectContext,
         StartListening,
         UpdateShouldNotify,

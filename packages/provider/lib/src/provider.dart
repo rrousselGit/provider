@@ -694,6 +694,137 @@ extension WatchContext on BuildContext {
   }
 }
 
+/// Extension on [Widget] to provide a [Provider].
+///
+/// This extension methods allows any [Widget] to be wrapped with a [Provider].
+///
+/// Example usage:
+/// ```dart
+/// MyWidget().provideProvider(
+///   create: (_) => MyObject(),
+/// );
+/// ```
+extension ProviderExtension on Widget {
+  /// Wraps the widget with a [Provider].
+  ///
+  /// Parameters:
+  /// * [create]: A function that creates the object.
+  /// * [dispose]: A function that disposes the object.
+  /// * [key]: An optional parameter for identifying the provider.
+  /// * [lazy]: An optional parameter to control the laziness of the provider. Defaults to true.
+  /// * [builder]: An optional parameter for custom transitions.
+  ///
+  /// Returns: The widget wrapped with a [Provider].
+  ///
+  /// Example usage:
+  /// ```dart
+  /// MyWidget().provideProvider(
+  ///   create: (_) => MyObject(),
+  ///   lazy: false,
+  ///   key: Key('MyProvider'),
+  /// );
+  /// ```
+  Widget provideProvider<T>({
+    Key? key,
+    required Create<T> create,
+    Dispose<T>? dispose,
+    bool? lazy,
+    TransitionBuilder? builder,
+  }) {
+    return Provider<T>(
+      key: key,
+      create: create,
+      dispose: dispose,
+      lazy: lazy,
+      builder: builder,
+      child: this,
+    );
+  }
+
+  /// Wraps the widget with a [Provider.value].
+  ///
+  /// Parameters:
+  /// * [value]: The value to provide.
+  /// * [updateShouldNotify]: An optional parameter to avoid unnecessarily
+  /// rebuilding dependents when [Provider] is rebuilt but `value` did not change.
+  /// * [builder]: An optional parameter for custom transitions.
+  /// * [key]: An optional parameter for identifying the provider.
+  ///
+  /// Returns: The widget wrapped with a [Provider.value].
+  ///
+  /// Example usage:
+  /// ```dart
+  /// MyObject myObject = MyObject();
+  ///
+  /// MyWidget().provideProviderValue(
+  ///   value: myObject,
+  ///   key: Key('MyProvider'),
+  /// );
+  /// ```
+  Widget provideProviderValue<T>({
+    required T value,
+    Key? key,
+    UpdateShouldNotify<T>? updateShouldNotify,
+    TransitionBuilder? builder,
+  }) {
+    return Provider<T>.value(
+      key: key,
+      value: value,
+      updateShouldNotify: updateShouldNotify,
+      builder: builder,
+      child: this,
+    );
+  }
+}
+
+/// Extension on [Widget] to provide a [MultiProvider].
+///
+/// This extension methods allows any [Widget] to be wrapped with a [MultiProvider].
+///
+/// Example usage:
+/// ```dart
+/// MyWidget().provideMultiProvider(
+///   providers: [
+///     Provider<MyObject>(create: (_) => MyObject()),
+///     Provider<MyOtherObject>(create: (_) => MyOtherObject()),
+///   ],
+/// );
+/// ```
+extension MultiProviderExtension on Widget {
+  /// Wraps the widget with a [MultiProvider].
+  ///
+  /// Parameters:
+  /// * [providers]: A list of providers to be provided to the widget tree.
+  /// * [key]: An optional parameter for identifying the provider.
+  /// * [builder]: An optional parameter for custom transitions.
+  ///
+  /// Returns: The widget wrapped with a [MultiProvider].
+  ///
+  /// Example usage:
+  /// ```dart
+  /// MyWidget().provideMultiProvider(
+  ///   providers: [
+  ///     Provider<MyObject>(create: (_) => MyObject()),
+  ///     Provider<MyOtherObject>(create: (_) => MyOtherObject()),
+  ///   ],
+  ///   key: Key('MyMultiProvider'),
+  /// );
+  /// ```
+  Widget provideMultiProvider({
+    required List<SingleChildWidget> providers,
+    Key? key,
+    TransitionBuilder? builder,
+  }) {
+    return MultiProvider(
+      key: key,
+      providers: providers,
+      builder: builder,
+      child: this,
+    );
+  }
+}
+
+
 /// A generic function that can be called to read providers, without having a
 /// reference on [BuildContext].
 ///
