@@ -1,3 +1,15 @@
+## 6.1.0-dev.2
+
+- Provider Extensions added: 
+  1. ProviderExtension:
+     - provideProvider
+     - provideProviderValue
+  2. MultiProviderExtension:
+     - provideMultiProvider
+  3. ChangeNotifierProviderExtension:
+     - provideChangeNotifierProvider
+     - provideChangeNotifierProviderValue
+
 ## 6.1.0-dev.1
 
 - Fix missing folder in devtool extension
