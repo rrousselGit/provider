@@ -1,3 +1,7 @@
+## 6.1.0
+
+- The package now comes with a devtool extension enabled.
+
 ## 6.1.0-dev.1
 
 - Fix missing folder in devtool extension
