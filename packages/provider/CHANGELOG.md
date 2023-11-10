@@ -1,3 +1,7 @@
+## 6.1.1
+
+- Fix missing devtool assets
+
 ## 6.1.0
 
 - The package now comes with a devtool extension enabled.
