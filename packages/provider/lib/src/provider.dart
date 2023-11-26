@@ -518,7 +518,7 @@ extension ReadContext on BuildContext {
   /// Obtain a value from the nearest ancestor provider of type [T].
   ///
   /// This method is the opposite of [watch].\
-  /// It will _not_ make widget rebuild when the value changes and cannot be
+  /// It will _not_ make widget rebuild when the value changes and should not be
   /// called inside [StatelessWidget.build]/[State.build].\
   /// On the other hand, it can be freely called _outside_ of these methods.
   ///
