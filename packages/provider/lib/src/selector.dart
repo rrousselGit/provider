@@ -119,20 +119,21 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
 /// As such, it `selector` should return either a collection ([List]/[Map]/[Set]/[Iterable])
 /// or a class that override `==`.
 ///
-/// To select multiple values without having to write a class that implements `==`,
-/// the easiest solution is to use a "Tuple" from [tuple](https://pub.dev/packages/tuple):
+///To select multiple values without having to write a class that implements `==`,
+///the easiest solution is to use "Records," available from Dart version 3.0.
+///For more information on Records, refer to the [records](https://dart.dev/language/records).
 ///
 /// ```dart
-/// Selector<Foo, Tuple2<Bar, Baz>>(
-///   selector: (_, foo) => Tuple2(foo.bar, foo.baz),
+/// Selector<Foo, ({String item1, String item2})>(
+///   selector: (_, foo) => (item1: foo.item1, item2: foo.item2),
 ///   builder: (_, data, __) {
 ///     return Text('${data.item1}  ${data.item2}');
-///   }
-/// )
+///   },
+/// );
 /// ```
 ///
-/// In that example, `builder` will be called again only if `foo.bar` or
-/// `foo.baz` changes.
+/// In that example, `builder` will be called again only if `foo.item1` or
+/// `foo.item2` changes.
 ///
 /// For generic usage information, see [Consumer].
 /// {@endtemplate}
