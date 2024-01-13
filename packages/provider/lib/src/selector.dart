@@ -135,9 +135,9 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
 ///
 /// Example 2:
 ///
-///To select multiple values without having to write a class that implements `==`,
-///the easiest solution is to use "Records," available from Dart version 3.0.
-///For more information on Records, refer to the [records](https://dart.dev/language/records).
+/// To select multiple values without having to write a class that implements `==`,
+/// the easiest solution is to use "Records," available from Dart version 3.0.
+/// For more information on Records, refer to the [records](https://dart.dev/language/records).
 ///
 /// ```dart
 /// Selector<Foo, ({String item1, String item2})>(
