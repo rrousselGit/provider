@@ -25,14 +25,10 @@ jobs:
       matrix:
         channel:
           - master
-          - dev
           - beta
 
     steps:
-      - uses: actions/checkout@v2
       - uses: actions/checkout@v3.1.0
-        with:
-          fetch-depth: 2
 
       - uses: subosito/flutter-action@v2.7.1
         with:
