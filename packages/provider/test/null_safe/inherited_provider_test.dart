@@ -271,6 +271,8 @@ void main() {
       'Provider.of(listen: false) outside of build works when it loads a provider',
       (tester) async {
     final notifier = ValueNotifier(42);
+    addTearDown(notifier.dispose);
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -329,9 +331,10 @@ void main() {
   testWidgets(
       'builder receives the current value and updates independently from `update`',
       (tester) async {
-    final child = Container();
-
     final notifier = ValueNotifier(0);
+    addTearDown(notifier.dispose);
+
+    final child = Container();
     final builder = TransitionBuilderMock((c, child) {
       final notifier = Provider.of<ValueNotifier<int>>(c);
       return Text(
@@ -365,6 +368,8 @@ void main() {
     final child = Container();
 
     final notifier = ValueNotifier(0);
+    addTearDown(notifier.dispose);
+
     final builder = TransitionBuilderMock((c, child) {
       return const Text('foo', textDirection: TextDirection.ltr);
     });
@@ -392,6 +397,8 @@ void main() {
     final child = Container();
 
     final notifier = ValueNotifier(0);
+    addTearDown(notifier.dispose);
+
     final builder = TransitionBuilderMock((c, child) {
       return const Text('foo', textDirection: TextDirection.ltr);
     });
@@ -1663,6 +1670,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         },
       );
       final controller = ValueNotifier<int>(0);
+      addTearDown(controller.dispose);
 
       await tester.pumpWidget(
         DeferredInheritedProvider<ValueNotifier<int>, int>.value(
@@ -1714,6 +1722,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         },
       );
       final controller = ValueNotifier<int>(0);
+      addTearDown(controller.dispose);
 
       await tester.pumpWidget(
         DeferredInheritedProvider<ValueNotifier<int>, int>.value(
@@ -1729,6 +1738,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           DeferredStartListeningMock<ValueNotifier<int>, int>();
       when(startListening2(any, any, any, any)).thenReturn(() {});
       final controller2 = ValueNotifier<int>(0);
+      addTearDown(controller2.dispose);
 
       await tester.pumpWidget(
         DeferredInheritedProvider<ValueNotifier<int>, int>.value(
@@ -1849,6 +1859,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
           DeferredStartListeningMock<ValueNotifier<int>, int>();
       when(startListening(any, any, any, any)).thenReturn(() {});
       final controller = ValueNotifier<int>(0);
+      addTearDown(controller.dispose);
 
       await tester.pumpWidget(
         DeferredInheritedProvider<ValueNotifier<int>, int>.value(
@@ -1882,6 +1893,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         },
       );
       final controller = ValueNotifier<int>(0);
+      addTearDown(controller.dispose);
 
       await tester.pumpWidget(
         DeferredInheritedProvider<ValueNotifier<int>, int>.value(
@@ -1905,6 +1917,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
         },
       );
       final controller2 = ValueNotifier<int>(1);
+      addTearDown(controller2.dispose);
 
       await tester.pumpWidget(
         DeferredInheritedProvider<ValueNotifier<int>, int>.value(

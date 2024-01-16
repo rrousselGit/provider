@@ -8,6 +8,7 @@ void main() {
   group('ChangeNotifierProvider', () {
     testWidgets('value', (tester) async {
       final myNotifier = ValueNotifier<int>(0);
+      addTearDown(myNotifier.dispose);
 
       await tester.pumpWidget(
         MultiProvider(

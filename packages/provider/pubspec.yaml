@@ -17,5 +17,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  # The version is `any` because it is defined by Flutter SDK.
+  leak_tracker: any
   mockito: ^5.0.0
   test: ^1.15.5

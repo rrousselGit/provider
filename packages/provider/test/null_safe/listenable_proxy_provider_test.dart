@@ -31,6 +31,8 @@ void main() {
     testWidgets('rebuilds dependendents when listeners are called',
         (tester) async {
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
+
       await tester.pumpWidget(
         MultiProvider(
           providers: [
@@ -117,6 +119,7 @@ void main() {
     testWidgets('disposes of created value', (tester) async {
       final dispose = DisposeMock<ValueNotifier<int>>();
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
       final key = GlobalKey();
 
       await tester.pumpWidget(

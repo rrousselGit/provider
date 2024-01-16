@@ -22,9 +22,12 @@ void main() {
     });
 
     testWidgets('.value', (tester) async {
+      final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
+
       await tester.pumpWidget(
         ChangeNotifierProvider.value(
-          value: ValueNotifier(0),
+          value: notifier,
           builder: (context, child) {
             context.watch<ValueNotifier<int>>();
             return child!;
@@ -41,7 +44,12 @@ void main() {
     testWidgets('default', (tester) async {
       await tester.pumpWidget(
         ListenableProvider(
-          create: (_) => ValueNotifier(0),
+          create: (_) {
+            final valueNotifier = ValueNotifier(0);
+            addTearDown(valueNotifier.dispose);
+
+            return valueNotifier;
+          },
           builder: (context, child) {
             context.watch<ValueNotifier<int>>();
             return child!;
@@ -54,9 +62,12 @@ void main() {
     });
 
     testWidgets('.value', (tester) async {
+      final valueNotifier = ValueNotifier(0);
+      addTearDown(valueNotifier.dispose);
+
       await tester.pumpWidget(
         ListenableProvider.value(
-          value: ValueNotifier(0),
+          value: valueNotifier,
           builder: (context, child) {
             context.watch<ValueNotifier<int>>();
             return child!;
@@ -326,7 +337,11 @@ void main() {
         MultiProvider(
           providers: [
             ListenableProvider(
-              create: (_) => ValueNotifier(0),
+              create: (_) {
+                final notifier = ValueNotifier(0);
+                addTearDown(notifier.dispose);
+                return notifier;
+              },
             ),
           ],
           builder: (context, child) {
