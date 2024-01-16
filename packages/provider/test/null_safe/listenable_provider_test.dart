@@ -11,6 +11,7 @@ void main() {
     testWidgets('works with MultiProvider', (tester) async {
       final key = GlobalKey();
       final listenable = ChangeNotifier();
+      addTearDown(listenable.dispose);
 
       await tester.pumpWidget(
         MultiProvider(
@@ -30,6 +31,7 @@ void main() {
       (tester) async {
         final key = GlobalKey();
         final notifier = ValueNotifier(0)..addListener(() {});
+        addTearDown(notifier.dispose);
 
         await tester.pumpWidget(
           ListenableProvider(
@@ -258,6 +260,8 @@ void main() {
       when(builder(any)).thenReturn(Container());
 
       var listenable = ChangeNotifier();
+      addTearDown(listenable.dispose);
+
       Widget build() {
         return ListenableProvider.value(
           value: listenable,
@@ -276,6 +280,7 @@ void main() {
 
       final previousNotifier = listenable;
       listenable = ChangeNotifier();
+      addTearDown(listenable.dispose);
 
       await tester.pumpWidget(build());
 
@@ -349,6 +354,8 @@ void main() {
 
     testWidgets('notifylistener rebuilds descendants', (tester) async {
       final listenable = ChangeNotifier();
+      addTearDown(listenable.dispose);
+
       final keyChild = GlobalKey();
       final builder = BuilderMock();
       when(builder(any)).thenReturn(Container());

@@ -16,6 +16,7 @@ void main() {
 
   testWidgets('calls postEvent whenever a provider is updated', (tester) async {
     final notifier = ValueNotifier(42);
+    addTearDown(notifier.dispose);
 
     await tester.pumpWidget(
       MultiProvider(

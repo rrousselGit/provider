@@ -37,10 +37,16 @@ void main() {
   group('valueListenableProvider', () {
     testWidgets('rebuilds when value change', (tester) async {
       final listenable = ValueNotifier(0);
+      addTearDown(listenable.dispose);
 
       final child = Builder(
-          builder: (context) => Text(Provider.of<int>(context).toString(),
-              textDirection: TextDirection.ltr));
+        builder: (context) {
+          return Text(
+            Provider.of<int>(context).toString(),
+            textDirection: TextDirection.ltr,
+          );
+        },
+      );
 
       await tester.pumpWidget(
         ValueListenableProvider.value(
@@ -58,6 +64,8 @@ void main() {
     testWidgets("don't rebuild dependents by default", (tester) async {
       var buildCount = 0;
       final listenable = ValueNotifier(0);
+      addTearDown(listenable.dispose);
+
       final child = Builder(builder: (context) {
         buildCount++;
         return Container();
@@ -84,10 +92,13 @@ void main() {
 
     testWidgets('pass keys', (tester) async {
       final key = GlobalKey();
+      final valueNotifier = ValueNotifier(42);
+      addTearDown(valueNotifier.dispose);
+
       await tester.pumpWidget(
         ValueListenableProvider.value(
           key: key,
-          value: ValueNotifier(42),
+          value: valueNotifier,
           child: Container(),
         ),
       );
@@ -117,10 +128,12 @@ void main() {
     });
 
     testWidgets('pass updateShouldNotify', (tester) async {
+      final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
+
       final shouldNotify = UpdateShouldNotifyMock<int>();
       when(shouldNotify(0, 1)).thenReturn(true);
 
-      final notifier = ValueNotifier(0);
       await tester.pumpWidget(
         ValueListenableProvider.value(
           value: notifier,

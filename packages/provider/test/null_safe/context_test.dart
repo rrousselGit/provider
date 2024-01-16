@@ -9,6 +9,7 @@ void main() {
   group('context.watch<T?>', () {
     testWidgets('can watch T', (tester) async {
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
 
       await tester.pumpWidget(
         ChangeNotifierProvider<ValueNotifier<int>>.value(
@@ -36,6 +37,7 @@ void main() {
 
     testWidgets('can watch T?', (tester) async {
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
 
       await tester.pumpWidget(
         ChangeNotifierProvider<ValueNotifier<int>?>.value(
@@ -98,6 +100,8 @@ void main() {
       expect(find.text(''), findsOneWidget);
 
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
+
       await tester.pumpWidget(
         ChangeNotifierProvider<ValueNotifier<int>?>.value(
           value: notifier,
@@ -117,6 +121,7 @@ void main() {
   group('context.watch<T>', () {
     testWidgets('can watch T?', (tester) async {
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
 
       await tester.pumpWidget(
         ChangeNotifierProvider<ValueNotifier<int>?>.value(
@@ -175,6 +180,7 @@ void main() {
   group('context.select<T?>', () {
     testWidgets('can watch T', (tester) async {
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
 
       await tester.pumpWidget(
         ChangeNotifierProvider<ValueNotifier<int>>.value(
@@ -203,6 +209,7 @@ void main() {
 
     testWidgets('can watch T?', (tester) async {
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
 
       await tester.pumpWidget(
         ChangeNotifierProvider<ValueNotifier<int>?>.value(
@@ -268,6 +275,8 @@ void main() {
       expect(find.text(''), findsOneWidget);
 
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
+
       await tester.pumpWidget(
         ChangeNotifierProvider<ValueNotifier<int>?>.value(
           value: notifier,
@@ -287,6 +296,7 @@ void main() {
   group('context.select<T>', () {
     testWidgets('can watch T?', (tester) async {
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
 
       await tester.pumpWidget(
         ChangeNotifierProvider<ValueNotifier<int>?>.value(
@@ -315,6 +325,7 @@ void main() {
 
     testWidgets('can watch T', (tester) async {
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
 
       await tester.pumpWidget(
         ChangeNotifierProvider<ValueNotifier<int>>.value(
@@ -386,9 +397,12 @@ void main() {
         },
       );
 
+      final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
+
       await tester.pumpWidget(
         ChangeNotifierProvider<ValueNotifier<int>?>.value(
-          value: ValueNotifier(0),
+          value: notifier,
           child: child,
         ),
       );
@@ -691,10 +705,13 @@ void main() {
     testWidgets("don't call old selectors if the child rebuilds individually",
         (tester) async {
       final notifier = ValueNotifier(0);
+      addTearDown(notifier.dispose);
 
       var buildCount = 0;
+      final selectedNotifier = ValueNotifier(0);
+      addTearDown(selectedNotifier.dispose);
       final selector =
-          MockSelector.identity<ValueNotifier<int>>(ValueNotifier(0));
+          MockSelector.identity<ValueNotifier<int>>(selectedNotifier);
       final child = Builder(builder: (c) {
         buildCount++;
         c.select<ValueNotifier<int>, ValueNotifier<int>>(selector);
@@ -1057,6 +1074,7 @@ void main() {
 
     testWidgets('context.select deeply compares maps', (tester) async {
       final notifier = ValueNotifier(<int, int>{});
+      addTearDown(notifier.dispose);
 
       var buildCount = 0;
       final selector = MockSelector.identity<Map<int, int>>({});
@@ -1100,6 +1118,7 @@ void main() {
 
     testWidgets('context.select deeply compares lists', (tester) async {
       final notifier = ValueNotifier(<int>[]);
+      addTearDown(notifier.dispose);
 
       var buildCount = 0;
       final selector = MockSelector.identity<List<int>>([]);
@@ -1142,6 +1161,7 @@ void main() {
 
     testWidgets('context.select deeply compares iterables', (tester) async {
       final notifier = ValueNotifier<Iterable<int>>(<int>[]);
+      addTearDown(notifier.dispose);
 
       var buildCount = 0;
       final selector = MockSelector.identity<Iterable<int>>({});
@@ -1184,6 +1204,7 @@ void main() {
 
     testWidgets('context.select deeply compares sets', (tester) async {
       final notifier = ValueNotifier<Set<int>>(<int>{});
+      addTearDown(notifier.dispose);
 
       var buildCount = 0;
       final selector = MockSelector.identity<Set<int>>({});
