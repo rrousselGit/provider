@@ -25,7 +25,6 @@ jobs:
       matrix:
         channel:
           - master
-          - beta
 
     steps:
       - uses: actions/checkout@v3.1.0
