@@ -177,7 +177,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ListenableProxyProvider0<_ListenableCombined>(
-              create: (_) => _ListenableCombined(),
+              create: (_) => const _ListenableCombined(),
               update: (context, previous) => _ListenableCombined(
                 context,
                 previous,
@@ -200,7 +200,7 @@ void main() {
         combinedConsumerMock(
           _ListenableCombined(
             context,
-            _ListenableCombined(),
+            const _ListenableCombined(),
             a,
             b,
             c,
@@ -223,7 +223,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ListenableProxyProvider2<A, B, _ListenableCombined>(
-              create: (_) => _ListenableCombined(),
+              create: (_) => const _ListenableCombined(),
               update: (context, a, b, previous) =>
                   _ListenableCombined(context, previous, a, b),
             )
@@ -236,7 +236,7 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          _ListenableCombined(context, _ListenableCombined(), a, b),
+          _ListenableCombined(context, const _ListenableCombined(), a, b),
         ),
       ).called(1);
     });
@@ -252,7 +252,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ListenableProxyProvider3<A, B, C, _ListenableCombined>(
-              create: (_) => _ListenableCombined(),
+              create: (_) => const _ListenableCombined(),
               update: (context, a, b, c, previous) =>
                   _ListenableCombined(context, previous, a, b, c),
             )
@@ -265,7 +265,7 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          _ListenableCombined(context, _ListenableCombined(), a, b, c),
+          _ListenableCombined(context, const _ListenableCombined(), a, b, c),
         ),
       ).called(1);
     });
@@ -281,7 +281,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ListenableProxyProvider4<A, B, C, D, _ListenableCombined>(
-              create: (_) => _ListenableCombined(),
+              create: (_) => const _ListenableCombined(),
               update: (context, a, b, c, d, previous) =>
                   _ListenableCombined(context, previous, a, b, c, d),
             )
@@ -294,7 +294,7 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          _ListenableCombined(context, _ListenableCombined(), a, b, c, d),
+          _ListenableCombined(context, const _ListenableCombined(), a, b, c, d),
         ),
       ).called(1);
     });
@@ -310,7 +310,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ListenableProxyProvider5<A, B, C, D, E, _ListenableCombined>(
-              create: (_) => _ListenableCombined(),
+              create: (_) => const _ListenableCombined(),
               update: (context, a, b, c, d, e, previous) =>
                   _ListenableCombined(context, previous, a, b, c, d, e),
             )
@@ -323,7 +323,8 @@ void main() {
 
       verify(
         combinedConsumerMock(
-          _ListenableCombined(context, _ListenableCombined(), a, b, c, d, e),
+          _ListenableCombined(
+              context, const _ListenableCombined(), a, b, c, d, e),
         ),
       ).called(1);
     });
@@ -339,7 +340,7 @@ void main() {
             Provider.value(value: e),
             Provider.value(value: f),
             ListenableProxyProvider6<A, B, C, D, E, F, _ListenableCombined>(
-              create: (_) => _ListenableCombined(),
+              create: (_) => const _ListenableCombined(),
               update: (context, a, b, c, d, e, f, previous) =>
                   _ListenableCombined(context, previous, a, b, c, d, e, f),
             )
@@ -351,7 +352,8 @@ void main() {
       final context = findInheritedProvider();
       verify(
         combinedConsumerMock(
-          _ListenableCombined(context, _ListenableCombined(), a, b, c, d, e, f),
+          _ListenableCombined(
+              context, const _ListenableCombined(), a, b, c, d, e, f),
         ),
       ).called(1);
     });
