@@ -570,8 +570,8 @@ class _EditableFieldState extends State<_EditableField> {
 
         return Focus(
           focusNode: focusNode,
-          onKey: (node, key) {
-            if (key.data.physicalKey == PhysicalKeyboardKey.escape) {
+          onKeyEvent: (node, key) {
+            if (key.physicalKey == PhysicalKeyboardKey.escape) {
               focusNode.unfocus();
               return KeyEventResult.handled;
             }
