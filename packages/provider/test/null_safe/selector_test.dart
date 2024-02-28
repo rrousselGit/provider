@@ -335,12 +335,10 @@ void main() {
   });
 
   testWidgets('rebuild when inherited widget changes', (tester) async {
-    when(selector(any)).thenReturn(42);
-
     final selectorWidget = Directionality(
       textDirection: TextDirection.ltr,
       child: Selector0<int>(
-        selector: selector,
+        selector: (_) => 0,
         builder: (context, _, __) =>
             Text('${DummyInheritedWidget.of(context).data}'),
       ),
