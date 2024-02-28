@@ -565,7 +565,8 @@ class DummyInheritedWidget extends InheritedWidget {
   final int data;
 
   static DummyInheritedWidget of(BuildContext context) {
-    final result = context.dependOnInheritedWidgetOfExactType<DummyInheritedWidget>();
+    final result =
+        context.dependOnInheritedWidgetOfExactType<DummyInheritedWidget>();
     assert(result != null, 'No DummyInheritedWidget found in context');
     return result!;
   }
