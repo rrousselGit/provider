@@ -82,10 +82,12 @@ class _Selector0State<T> extends SingleChildState<Selector0<T>> {
     if (shouldInvalidateCache) {
       value = selected;
       oldWidget = widget;
-      cache = widget.builder(
-        context,
-        selected,
-        child,
+      cache = Builder(
+        builder: (context) => widget.builder(
+          context,
+          selected,
+          child,
+        ),
       );
     }
     return cache!;

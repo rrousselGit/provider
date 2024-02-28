@@ -334,6 +334,38 @@ void main() {
     expect(find.text('24'), findsOneWidget);
   });
 
+  testWidgets('rebuild when inherited widget changes', (tester) async {
+    when(selector(any)).thenReturn(42);
+
+    final selectorWidget = Directionality(
+      textDirection: TextDirection.ltr,
+      child: Selector0<int>(
+        selector: selector,
+        builder: (context, _, __) =>
+            Text('${DummyInheritedWidget.of(context).data}'),
+      ),
+    );
+
+    await tester.pumpWidget(
+      DummyInheritedWidget(
+        data: 1,
+        child: selectorWidget,
+      ),
+    );
+
+    expect(find.text('1'), findsOneWidget);
+
+    await tester.pumpWidget(
+      DummyInheritedWidget(
+        data: 2,
+        child: selectorWidget,
+      ),
+    );
+
+    expect(find.text('1'), findsNothing);
+    expect(find.text('2'), findsOneWidget);
+  });
+
   testWidgets('debugFillProperties', (tester) async {
     final builder = DiagnosticPropertiesBuilder();
     final key = UniqueKey();
@@ -523,4 +555,23 @@ class MockBuilder<T> extends Mock {
       returnValue: Container(),
     ) as Widget;
   }
+}
+
+class DummyInheritedWidget extends InheritedWidget {
+  const DummyInheritedWidget({
+    required this.data,
+    required Widget child,
+    Key? key,
+  }) : super(child: child, key: key);
+
+  final int data;
+
+  static DummyInheritedWidget of(BuildContext context) {
+    final result = context.dependOnInheritedWidgetOfExactType<DummyInheritedWidget>();
+    assert(result != null, 'No DummyInheritedWidget found in context');
+    return result!;
+  }
+
+  @override
+  bool updateShouldNotify(DummyInheritedWidget old) => old.data != data;
 }
