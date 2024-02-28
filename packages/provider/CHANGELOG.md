@@ -1,3 +1,8 @@
+## 6.1.2 - 2024-02-28
+
+- Fixed an issue with `Selector` not rebuilding when the `builder` listens
+  to InheritedWidgets (thanks to @spkersten)
+
 ## 6.1.1
 
 - Fix missing devtool assets
