@@ -7,7 +7,24 @@ import 'package:provider/provider.dart';
 import 'common.dart';
 
 // ignore: prefer_mixin, must_be_immutable
-class _ListenableCombined = Combined with ChangeNotifier;
+class _ListenableCombined extends Combined implements Listenable {
+  const _ListenableCombined([
+    BuildContext? context,
+    Combined? previous,
+    A? a,
+    B? b,
+    C? c,
+    D? d,
+    E? e,
+    F? f,
+  ]) : super(context, previous, a, b, c, d, e, f);
+
+  @override
+  void addListener(VoidCallback listener) {}
+
+  @override
+  void removeListener(VoidCallback listener) {}
+}
 
 void main() {
   final a = A();

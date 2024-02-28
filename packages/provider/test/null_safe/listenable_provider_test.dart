@@ -297,6 +297,7 @@ void main() {
     testWidgets("rebuilding with the same provider don't rebuilds descendants",
         (tester) async {
       final listenable = ChangeNotifier();
+      addTearDown(listenable.dispose);
 
       var buildCount = 0;
       final child = Consumer<ChangeNotifier>(
