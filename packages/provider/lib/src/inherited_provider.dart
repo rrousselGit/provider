@@ -95,6 +95,22 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
         ),
         super(key: key, child: child);
 
+  InheritedProvider.sharedInstance({
+    Key? key,
+    required Create<T> createInstance,
+    Dispose<T>? dispose,
+    String? instanceKey,
+    bool? lazy,
+    this.builder,
+    Widget? child,
+  })  : _lazy = lazy,
+        _delegate = _SharedInstanceInheritedProvider(
+          create: createInstance,
+          dispose: dispose,
+          instanceKey: instanceKey,
+        ),
+        super(key: key, child: child);
+
   InheritedProvider._constructor({
     Key? key,
     required _Delegate<T> delegate,
@@ -682,7 +698,7 @@ class _CreateInheritedProvider<T> extends _Delegate<T> {
   final Dispose<T>? dispose;
 
   @override
-  _CreateInheritedProviderState<T> createState() =>
+  _CreateInheritedProviderState<T, _CreateInheritedProvider<T>> createState() =>
       _CreateInheritedProviderState();
 }
 
@@ -694,13 +710,18 @@ bool debugIsInInheritedProviderUpdate = false;
 // ignore: public_member_api_docs
 bool debugIsInInheritedProviderCreate = false;
 
-class _CreateInheritedProviderState<T>
-    extends _DelegateState<T, _CreateInheritedProvider<T>> {
+class _CreateInheritedProviderState<T, D extends _CreateInheritedProvider<T>>
+    extends _DelegateState<T, D> {
   VoidCallback? _removeListener;
   bool _didInitValue = false;
   T? _value;
   _CreateInheritedProvider<T>? _previousWidget;
   FlutterErrorDetails? _initError;
+
+  @protected
+  T _createValue() {
+    return delegate.create!(element!);
+  }
 
   @override
   T get value {
@@ -733,7 +754,7 @@ class _CreateInheritedProviderState<T>
             debugIsInInheritedProviderUpdate = false;
             return true;
           }());
-          _value = delegate.create!(element!);
+          _value = _createValue();
         } catch (e, stackTrace) {
           _initError = FlutterErrorDetails(
             library: 'provider',
@@ -790,10 +811,10 @@ class _CreateInheritedProviderState<T>
   }
 
   @override
-  void dispose() {
+  void dispose([bool shouldDelegateDispose = true]) {
     super.dispose();
     _removeListener?.call();
-    if (_didInitValue) {
+    if (_didInitValue && shouldDelegateDispose) {
       delegate.dispose?.call(element!, _value as T);
     }
   }
@@ -969,4 +990,43 @@ class _ValueInheritedProviderState<T>
 
   @override
   bool get hasValue => true;
+}
+
+class _SharedInstanceInheritedProvider<T> extends _CreateInheritedProvider<T> {
+  _SharedInstanceInheritedProvider({
+    required Create<T> create,
+    Dispose<T>? dispose,
+    this.instanceKey,
+  }) : super(
+          create: create,
+          dispose: dispose,
+        );
+
+  final String? instanceKey;
+
+  @override
+  _SharedInstanceInheritedProviderState<T> createState() =>
+      _SharedInstanceInheritedProviderState<T>();
+}
+
+class _SharedInstanceInheritedProviderState<T>
+    extends _CreateInheritedProviderState<T,
+        _SharedInstanceInheritedProvider<T>> {
+  late SharedInstance<T> _sharedInstance;
+
+  @override
+  T _createValue() {
+    _sharedInstance = SharedInstance.acquire<T>(
+      createValue: super._createValue,
+      acquirer: this,
+      instanceKey: delegate.instanceKey,
+    );
+    _value = _sharedInstance.value;
+    return _value!;
+  }
+
+  @override
+  void dispose([bool doCallDelegateDispose = true]) {
+    super.dispose(_sharedInstance.release(this));
+  }
 }
