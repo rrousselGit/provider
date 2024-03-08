@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
 
 import 'reassemble_handler.dart';
+import 'shared_instance.dart';
 
 part 'deferred_inherited_provider.dart';
 part 'devtool.dart';
@@ -249,6 +250,24 @@ class Provider<T> extends InheritedProvider<T> {
           builder: builder,
           value: value,
           updateShouldNotify: updateShouldNotify,
+          child: child,
+        );
+
+  Provider.sharedInstance({
+    Key? key,
+    required Create<T> createInstance,
+    String? instanceKey,
+    Dispose<T>? dispose,
+    bool? lazy,
+    TransitionBuilder? builder,
+    Widget? child,
+  }) : super.sharedInstance(
+          key: key,
+          lazy: lazy,
+          builder: builder,
+          createInstance: createInstance,
+          instanceKey: instanceKey,
+          dispose: dispose,
           child: child,
         );
 
