@@ -1,19 +1,12 @@
+import 'package:flutter/foundation.dart';
+
 typedef CreateValue<T> = T Function();
 
 class SharedInstance<T> {
   SharedInstance._({
     required this.value,
-    required Object acquirer,
     required String instanceKey,
-  }) : _instanceKey = instanceKey {
-    _acquirers.add(acquirer);
-  }
-
-  final String _instanceKey;
-
-  final T value;
-
-  final Set<Object> _acquirers = {};
+  }) : _instanceKey = instanceKey;
 
   static final _container = <String, SharedInstance<dynamic>>{};
 
@@ -23,6 +16,32 @@ class SharedInstance<T> {
 
   static bool hasAcquirer(String instanceKey) {
     return _getAcquirerCount(instanceKey) > 0;
+  }
+
+  @visibleForTesting
+  static void disposeAll() {
+    _container.forEach((key, value) {
+      value._acquirers.clear();
+    });
+    _container.clear();
+  }
+
+  final String _instanceKey;
+
+  final T value;
+
+  final Set<Object> _acquirers = {};
+
+  bool get _hasAcquirer {
+    return _acquirers.isNotEmpty;
+  }
+
+  void _addAcquirer(Object acquirer) {
+    _acquirers.add(acquirer);
+  }
+
+  void _removeAcquirer(Object acquirer) {
+    _acquirers.remove(acquirer);
   }
 
   ///
@@ -38,11 +57,12 @@ class SharedInstance<T> {
     if (!_container.containsKey(instanceKey)) {
       _container[instanceKey] = SharedInstance<T>._(
         value: createValue(),
-        acquirer: acquirer,
         instanceKey: instanceKey,
       );
     }
-    return _container[instanceKey]! as SharedInstance<T>;
+    final sharedInstance = _container[instanceKey]! as SharedInstance<T>;
+    sharedInstance._addAcquirer(acquirer);
+    return sharedInstance;
   }
 
   ///
@@ -52,8 +72,8 @@ class SharedInstance<T> {
   /// Returns false if the instance remains in the container.
   ///
   bool release(Object acquirer) {
-    _acquirers.remove(acquirer);
-    if (_acquirers.isEmpty) {
+    _removeAcquirer(acquirer);
+    if (!_hasAcquirer) {
       _container.remove(_instanceKey);
     }
     return !hasAcquirer(_instanceKey);
