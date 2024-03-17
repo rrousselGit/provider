@@ -931,7 +931,7 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     });
   });
 
-  group('InheritedProvider.sharedInstance()', () {
+  group('InheritedProvider.shared()', () {
     testWidgets('One instance for [type] shared between InheritedProvider',
         (tester) async {
       const firstInstance = 1;
@@ -946,8 +946,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       );
 
       final children = <Widget>[
-        InheritedProvider<int>.sharedInstance(
-          createInstance: (BuildContext context) {
+        InheritedProvider<int>.shared(
+          create: (BuildContext context) {
             return firstInstance;
           },
           child: consumer,
@@ -960,8 +960,8 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(value, equals(firstInstance));
 
-      children.add(InheritedProvider<int>.sharedInstance(
-        createInstance: (BuildContext context) {
+      children.add(InheritedProvider<int>.shared(
+        create: (BuildContext context) {
           return secondInstance;
         },
         child: consumer,
@@ -988,9 +988,9 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       );
 
       final children = <Widget>[
-        InheritedProvider<int>.sharedInstance(
+        InheritedProvider<int>.shared(
           instanceKey: 'firstInstanceKey',
-          createInstance: (BuildContext context) {
+          create: (BuildContext context) {
             return firstInstance;
           },
           child: consumer,
@@ -1003,9 +1003,9 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(value, equals(firstInstance));
 
-      children.add(InheritedProvider<int>.sharedInstance(
+      children.add(InheritedProvider<int>.shared(
         instanceKey: 'firstInstanceKey',
-        createInstance: (BuildContext context) {
+        create: (BuildContext context) {
           return secondInstance;
         },
         child: consumer,
@@ -1032,9 +1032,9 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       );
 
       final children = <Widget>[
-        InheritedProvider<int>.sharedInstance(
+        InheritedProvider<int>.shared(
           instanceKey: 'firstInstanceKey',
-          createInstance: (BuildContext context) {
+          create: (BuildContext context) {
             return firstInstance;
           },
           child: consumer,
@@ -1047,9 +1047,9 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
 
       expect(value, equals(firstInstance));
 
-      children.add(InheritedProvider<int>.sharedInstance(
+      children.add(InheritedProvider<int>.shared(
         instanceKey: 'secondInstanceKey',
-        createInstance: (BuildContext context) {
+        create: (BuildContext context) {
           return secondInstance;
         },
         child: consumer,
@@ -1072,15 +1072,15 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       int createInstance(_) => 1;
 
       final children = <Widget>[
-        InheritedProvider<int>.sharedInstance(
+        InheritedProvider<int>.shared(
           instanceKey: 'instanceKey',
-          createInstance: createInstance,
+          create: createInstance,
           dispose: firstDispose,
           child: consumer,
         ),
-        InheritedProvider<int>.sharedInstance(
+        InheritedProvider<int>.shared(
           instanceKey: 'instanceKey',
-          createInstance: createInstance,
+          create: createInstance,
           dispose: secondDispose,
           child: consumer,
         ),
@@ -1109,15 +1109,15 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
       int createInstance(_) => 1;
 
       final children = <Widget>[
-        InheritedProvider<int>.sharedInstance(
+        InheritedProvider<int>.shared(
           instanceKey: 'instanceKey',
-          createInstance: createInstance,
+          create: createInstance,
           dispose: firstDispose,
           child: consumer,
         ),
-        InheritedProvider<int>.sharedInstance(
+        InheritedProvider<int>.shared(
           instanceKey: 'instanceKey',
-          createInstance: createInstance,
+          create: createInstance,
           dispose: secondDispose,
           child: consumer,
         ),

@@ -95,9 +95,9 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
         ),
         super(key: key, child: child);
 
-  InheritedProvider.sharedInstance({
+  InheritedProvider.shared({
     Key? key,
-    required Create<T> createInstance,
+    required Create<T> create,
     StartListening<T>? startListening,
     Dispose<T>? dispose,
     String? instanceKey,
@@ -105,8 +105,8 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     this.builder,
     Widget? child,
   })  : _lazy = lazy,
-        _delegate = _SharedInstanceInheritedProvider(
-          create: createInstance,
+        _delegate = _SharedInheritedProvider(
+          create: create,
           startListening: startListening,
           dispose: dispose,
           instanceKey: instanceKey,
@@ -994,8 +994,8 @@ class _ValueInheritedProviderState<T>
   bool get hasValue => true;
 }
 
-class _SharedInstanceInheritedProvider<T> extends _CreateInheritedProvider<T> {
-  _SharedInstanceInheritedProvider({
+class _SharedInheritedProvider<T> extends _CreateInheritedProvider<T> {
+  _SharedInheritedProvider({
     required Create<T> create,
     this.instanceKey,
     StartListening<T>? startListening,
@@ -1009,13 +1009,13 @@ class _SharedInstanceInheritedProvider<T> extends _CreateInheritedProvider<T> {
   final String? instanceKey;
 
   @override
-  _SharedInstanceInheritedProviderState<T> createState() =>
-      _SharedInstanceInheritedProviderState<T>();
+  _SharedInheritedProviderState<T> createState() =>
+      _SharedInheritedProviderState<T>();
 }
 
-class _SharedInstanceInheritedProviderState<T>
+class _SharedInheritedProviderState<T>
     extends _CreateInheritedProviderState<T,
-        _SharedInstanceInheritedProvider<T>> {
+        _SharedInheritedProvider<T>> {
   SharedInstance<T>? _sharedInstance;
 
   String get _instanceKey => delegate.instanceKey ?? T.toString();

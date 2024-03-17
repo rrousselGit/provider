@@ -253,19 +253,25 @@ class Provider<T> extends InheritedProvider<T> {
           child: child,
         );
 
-  Provider.sharedInstance({
+  /// Creates a value, store it, and expose it to its descendants.
+  /// Will also share it with other providers by value type or instanceKey.
+  ///
+  /// The value can be optionally disposed using [dispose] callback.
+  /// This callback that will be called when the last [Provider]
+  /// using the shared instance is unmounted from the widget tree.
+  Provider.shared({
     Key? key,
-    required Create<T> createInstance,
+    required Create<T> create,
     String? instanceKey,
     Dispose<T>? dispose,
     bool? lazy,
     TransitionBuilder? builder,
     Widget? child,
-  }) : super.sharedInstance(
+  }) : super.shared(
           key: key,
           lazy: lazy,
           builder: builder,
-          createInstance: createInstance,
+          create: create,
           instanceKey: instanceKey,
           dispose: dispose,
           child: child,
