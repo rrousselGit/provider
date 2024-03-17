@@ -931,6 +931,221 @@ DeferredInheritedProvider<int, int>(controller: 42, value: 24)'''),
     });
   });
 
+  group('InheritedProvider.sharedInstance()', () {
+    testWidgets('One instance for [type] shared between InheritedProvider',
+        (tester) async {
+      const firstInstance = 1;
+      const secondInstance = 2;
+
+      int? value;
+      final consumer = Consumer<int>(
+        builder: (_, v, __) {
+          value = v;
+          return Container();
+        },
+      );
+
+      final children = <Widget>[
+        InheritedProvider<int>.sharedInstance(
+          createInstance: (BuildContext context) {
+            return firstInstance;
+          },
+          child: consumer,
+        )
+      ];
+
+      await tester.pumpWidget(Column(
+        children: children,
+      ));
+
+      expect(value, equals(firstInstance));
+
+      children.add(InheritedProvider<int>.sharedInstance(
+        createInstance: (BuildContext context) {
+          return secondInstance;
+        },
+        child: consumer,
+      ));
+
+      await tester.pumpWidget(Column(
+        children: children,
+      ));
+      expect(value, equals(firstInstance));
+    });
+
+    testWidgets(
+        'One instance for [instanceKey] shared between InheritedProvider',
+        (tester) async {
+      const firstInstance = 1;
+      const secondInstance = 2;
+
+      int? value;
+      final consumer = Consumer<int>(
+        builder: (_, v, __) {
+          value = v;
+          return Container();
+        },
+      );
+
+      final children = <Widget>[
+        InheritedProvider<int>.sharedInstance(
+          instanceKey: 'firstInstanceKey',
+          createInstance: (BuildContext context) {
+            return firstInstance;
+          },
+          child: consumer,
+        )
+      ];
+
+      await tester.pumpWidget(Column(
+        children: children,
+      ));
+
+      expect(value, equals(firstInstance));
+
+      children.add(InheritedProvider<int>.sharedInstance(
+        instanceKey: 'firstInstanceKey',
+        createInstance: (BuildContext context) {
+          return secondInstance;
+        },
+        child: consumer,
+      ));
+
+      await tester.pumpWidget(Column(
+        children: children,
+      ));
+      expect(value, equals(firstInstance));
+    });
+
+    testWidgets(
+        'Different instance for different [instanceKey] between InheritedProvider',
+        (tester) async {
+      const firstInstance = 1;
+      const secondInstance = 2;
+
+      int? value;
+      final consumer = Consumer<int>(
+        builder: (_, v, __) {
+          value = v;
+          return Container();
+        },
+      );
+
+      final children = <Widget>[
+        InheritedProvider<int>.sharedInstance(
+          instanceKey: 'firstInstanceKey',
+          createInstance: (BuildContext context) {
+            return firstInstance;
+          },
+          child: consumer,
+        )
+      ];
+
+      await tester.pumpWidget(Column(
+        children: children,
+      ));
+
+      expect(value, equals(firstInstance));
+
+      children.add(InheritedProvider<int>.sharedInstance(
+        instanceKey: 'secondInstanceKey',
+        createInstance: (BuildContext context) {
+          return secondInstance;
+        },
+        child: consumer,
+      ));
+
+      await tester.pumpWidget(Column(
+        children: children,
+      ));
+      expect(value, equals(secondInstance));
+    });
+
+    testWidgets(
+        'Dispose is not called when one of the InheritedProvider with identical instanceKey is removed',
+        (tester) async {
+      final firstDispose = DisposeMock<int>();
+      final secondDispose = DisposeMock<int>();
+      final consumer = Consumer<int>(builder: (_, v, __) {
+        return Container();
+      });
+      int createInstance(_) => 1;
+
+      final children = <Widget>[
+        InheritedProvider<int>.sharedInstance(
+          instanceKey: 'instanceKey',
+          createInstance: createInstance,
+          dispose: firstDispose,
+          child: consumer,
+        ),
+        InheritedProvider<int>.sharedInstance(
+          instanceKey: 'instanceKey',
+          createInstance: createInstance,
+          dispose: secondDispose,
+          child: consumer,
+        ),
+      ];
+
+      await tester.pumpWidget(Column(
+        children: children,
+      ));
+      children.removeLast();
+      await tester.pumpWidget(Column(
+        children: children,
+      ));
+
+      verifyZeroInteractions(firstDispose);
+      verifyZeroInteractions(secondDispose);
+    });
+
+    testWidgets(
+        'Dispose is called when all InheritedProvider with identical instanceKey is removed',
+        (tester) async {
+      final firstDispose = DisposeMock<int>();
+      final secondDispose = DisposeMock<int>();
+      final consumer = Consumer<int>(builder: (_, v, __) {
+        return Container();
+      });
+      int createInstance(_) => 1;
+
+      final children = <Widget>[
+        InheritedProvider<int>.sharedInstance(
+          instanceKey: 'instanceKey',
+          createInstance: createInstance,
+          dispose: firstDispose,
+          child: consumer,
+        ),
+        InheritedProvider<int>.sharedInstance(
+          instanceKey: 'instanceKey',
+          createInstance: createInstance,
+          dispose: secondDispose,
+          child: consumer,
+        ),
+      ];
+
+      await tester.pumpWidget(Column(
+        children: children,
+      ));
+      children.removeLast();
+      await tester.pumpWidget(Column(
+        children: children,
+      ));
+      verifyZeroInteractions(firstDispose);
+      verifyZeroInteractions(secondDispose);
+
+      children.removeLast();
+
+      await tester.pumpWidget(Column(
+        children: children,
+      ));
+
+      verifyZeroInteractions(secondDispose);
+      verify(firstDispose(any, 1)).called(1);
+      verifyNoMoreInteractions(firstDispose);
+      verifyNoMoreInteractions(secondDispose);
+    });
+  });
+
   group('InheritedProvider()', () {
     testWidgets('hasValue', (tester) async {
       await tester.pumpWidget(InheritedProvider(
