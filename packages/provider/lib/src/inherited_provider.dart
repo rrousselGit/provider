@@ -98,6 +98,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   InheritedProvider.sharedInstance({
     Key? key,
     required Create<T> createInstance,
+    StartListening<T>? startListening,
     Dispose<T>? dispose,
     String? instanceKey,
     bool? lazy,
@@ -106,6 +107,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   })  : _lazy = lazy,
         _delegate = _SharedInstanceInheritedProvider(
           create: createInstance,
+          startListening: startListening,
           dispose: dispose,
           instanceKey: instanceKey,
         ),
@@ -995,10 +997,12 @@ class _ValueInheritedProviderState<T>
 class _SharedInstanceInheritedProvider<T> extends _CreateInheritedProvider<T> {
   _SharedInstanceInheritedProvider({
     required Create<T> create,
-    Dispose<T>? dispose,
     this.instanceKey,
+    StartListening<T>? startListening,
+    Dispose<T>? dispose,
   }) : super(
           create: create,
+          startListening: startListening,
           dispose: dispose,
         );
 
@@ -1012,21 +1016,28 @@ class _SharedInstanceInheritedProvider<T> extends _CreateInheritedProvider<T> {
 class _SharedInstanceInheritedProviderState<T>
     extends _CreateInheritedProviderState<T,
         _SharedInstanceInheritedProvider<T>> {
-  late SharedInstance<T> _sharedInstance;
+  SharedInstance<T>? _sharedInstance;
+
+  String get _instanceKey => delegate.instanceKey ?? T.toString();
 
   @override
   T _createValue() {
-    _sharedInstance = SharedInstance.acquire<T>(
+    _sharedInstance = SharedInstance.acquire(
       createValue: super._createValue,
       acquirer: this,
-      instanceKey: delegate.instanceKey,
+      instanceKey: _instanceKey,
     );
-    _value = _sharedInstance.value;
+    _value = _sharedInstance!.value;
     return _value!;
   }
 
   @override
   void dispose([bool doCallDelegateDispose = true]) {
-    super.dispose(_sharedInstance.release(this));
+    final sharedInstance = _sharedInstance;
+    if (sharedInstance == null) {
+      super.dispose(!SharedInstance.hasAcquirer(_instanceKey));
+    } else {
+      super.dispose(sharedInstance.release(this));
+    }
   }
 }

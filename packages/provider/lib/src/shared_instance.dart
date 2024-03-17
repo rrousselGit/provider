@@ -17,26 +17,32 @@ class SharedInstance<T> {
 
   static final _container = <String, SharedInstance<dynamic>>{};
 
+  static int _getAcquirerCount(String instanceKey) {
+    return _container[instanceKey]?._acquirers.length ?? 0;
+  }
+
+  static bool hasAcquirer(String instanceKey) {
+    return _getAcquirerCount(instanceKey) > 0;
+  }
+
   ///
   /// Creates and returns an instance if it does not exist in the container.
   /// Otherwise, returns an existing instance.
   /// The acquirer is added to the list of acquirers.
   ///
-  static SharedInstance<T> acquire<T>({
+  factory SharedInstance.acquire({
     required CreateValue<T> createValue,
     required Object acquirer,
-    String? instanceKey,
+    required String instanceKey,
   }) {
-    final key = instanceKey ?? T.toString();
-
-    if (!_container.containsKey(key)) {
-      _container[key] = SharedInstance<T>._(
+    if (!_container.containsKey(instanceKey)) {
+      _container[instanceKey] = SharedInstance<T>._(
         value: createValue(),
         acquirer: acquirer,
-        instanceKey: key,
+        instanceKey: instanceKey,
       );
     }
-    return _container[key]! as SharedInstance<T>;
+    return _container[instanceKey]! as SharedInstance<T>;
   }
 
   ///
@@ -47,11 +53,9 @@ class SharedInstance<T> {
   ///
   bool release(Object acquirer) {
     _acquirers.remove(acquirer);
-    var disposed = false;
     if (_acquirers.isEmpty) {
       _container.remove(_instanceKey);
-      disposed = true;
     }
-    return disposed;
+    return !hasAcquirer(_instanceKey);
   }
 }
