@@ -665,9 +665,9 @@ extension WatchContext on BuildContext {
   /// ```dart
   /// runApp(
   ///   Builder(builder: (context) {
-  ///     final value = context.watch<Movie?>();
+  ///     final movie = context.watch<Movie?>();
   ///
-  ///     if (value == null) Text('no Movie found');
+  ///     if (movie == null) Text('no Movie found');
   ///     return Text(movie.title);
   ///   }),
   /// );
