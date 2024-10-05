@@ -13,6 +13,22 @@ import 'instance_viewer/instance_viewer.dart';
 import 'provider_list.dart';
 import 'provider_nodes.dart';
 
+final hasConnectionProvider = Provider.autoDispose<bool>((ref) {
+  final currentValue = serviceManager.connectedState.value.connected;
+
+  listener() {
+    ref.state = serviceManager.connectedState.value.connected;
+  }
+
+  serviceManager.connectedState.addListener(listener);
+
+  ref.onDispose(() {
+    serviceManager.connectedState.removeListener(listener);
+  });
+
+  return currentValue;
+});
+
 final _hasErrorProvider = Provider.autoDispose<bool>((ref) {
   if (ref.watch(sortedProviderNodesProvider) is AsyncError) return true;
 
@@ -42,7 +58,9 @@ class ProviderScreenBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final splitAxis = Split.axisFor(context, 0.85);
+    final splitAxis = SplitPane.axisFor(context, 0.85);
+
+    final hasConnection = ref.watch(hasConnectionProvider);
 
     // A provider will automatically be selected as soon as one is detected
     final selectedProviderId = ref.watch(selectedProviderIdProvider);
@@ -54,59 +72,69 @@ class ProviderScreenBody extends ConsumerWidget {
       if (hasError) showProviderErrorBanner();
     });
 
-    return Split(
-      axis: splitAxis,
-      initialFractions: const [0.33, 0.67],
-      children: [
-        const RoundedOutlinedBorder(
-          clip: true,
-          child: Column(
-            children: [
-              AreaPaneHeader(
-                roundedTopBorder: false,
-                includeTopBorder: false,
-                title: Text('Providers'),
-              ),
-              Expanded(
-                child: ProviderList(),
-              ),
-            ],
-          ),
-        ),
-        RoundedOutlinedBorder(
-          clip: true,
-          child: Column(
-            children: [
-              AreaPaneHeader(
-                roundedTopBorder: false,
-                includeTopBorder: false,
-                title: Text(detailsTitleText),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.settings),
-                    onPressed: () {
-                      unawaited(
-                        showDialog(
-                          context: context,
-                          builder: (_) => _StateInspectorSettingsDialog(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              if (selectedProviderId != null)
-                Expanded(
-                  child: InstanceViewer(
-                    rootPath: InstancePath.fromProviderId(selectedProviderId),
-                    showInternalProperties: ref.watch(_showInternals),
-                  ),
+    // This change needed for extension to work in simulated environment
+    // since new option `requiresConnection` to config.yml
+    // not works in this config and it is needed to check connection
+    // inside plugin itself.
+    if (hasConnection) {
+      return SplitPane(
+        axis: splitAxis,
+        initialFractions: const [0.33, 0.67],
+        children: [
+          const RoundedOutlinedBorder(
+            clip: true,
+            child: Column(
+              children: [
+                AreaPaneHeader(
+                  roundedTopBorder: false,
+                  includeTopBorder: false,
+                  title: Text('Providers'),
                 ),
-            ],
+                Expanded(
+                  child: ProviderList(),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+          RoundedOutlinedBorder(
+            clip: true,
+            child: Column(
+              children: [
+                AreaPaneHeader(
+                  roundedTopBorder: false,
+                  includeTopBorder: false,
+                  title: Text(detailsTitleText),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () {
+                        unawaited(
+                          showDialog(
+                            context: context,
+                            builder: (_) => _StateInspectorSettingsDialog(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                if (selectedProviderId != null)
+                  Expanded(
+                    child: InstanceViewer(
+                      rootPath: InstancePath.fromProviderId(selectedProviderId),
+                      showInternalProperties: ref.watch(_showInternals),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      );
+    } else {
+      return const Center(
+        child: Text('Devtools are not connected to VmService'),
+      );
+    }
   }
 }
 

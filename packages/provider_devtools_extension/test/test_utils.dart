@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:devtools_app_shared/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,11 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 Future<void> loadFonts() async {
   // source: https://medium.com/swlh/test-your-flutter-widgets-using-golden-files-b533ac0de469
-
-  //https://github.com/flutter/flutter/issues/20907
-  if (Directory.current.path.endsWith('/test')) {
-    Directory.current = Directory.current.parent;
-  }
 
   const fonts = {
     'Roboto': [
@@ -37,11 +30,7 @@ Future<void> loadFonts() async {
     final loader = FontLoader(entry.key);
 
     for (final path in entry.value) {
-      final fontData = File(path).readAsBytes().then((bytes) {
-        return ByteData.view(Uint8List.fromList(bytes).buffer);
-      });
-
-      loader.addFont(fontData);
+      loader.addFont(rootBundle.load(path));
     }
 
     await loader.load();
