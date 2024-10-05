@@ -10,10 +10,12 @@ import 'dart:math' as math;
 import 'package:devtools_app_shared/service.dart';
 import 'package:devtools_app_shared/ui.dart';
 import 'package:devtools_app_shared/utils.dart';
+import 'package:devtools_extensions/api.dart';
+import 'package:devtools_extensions/devtools_extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' hide shortHash;
 
 import 'instance_details.dart';
 import 'instance_providers.dart';
@@ -69,7 +71,7 @@ final estimatedChildCountProvider =
               },
               list: (instance) {
                 return expandableEstimatedChildCount(
-                  List.generate(instance.length, $PathToProperty.listIndex),
+                  List.generate(instance.length, PathToProperty.listIndex),
                 );
               },
               object: (instance) {
@@ -118,15 +120,14 @@ class _InstanceViewerState extends ConsumerState<InstanceViewer> {
 
   Iterable<Widget> _buildError(
     Object error,
-    StackTrace? _,
+    StackTrace? stack,
     InstancePath __,
   ) {
     if (error is SentinelException) {
       final valueAsString = error.sentinel.valueAsString;
       if (valueAsString != null) return [Text(valueAsString)];
     }
-
-    return const [Text('<unknown error>')];
+    return [Text('<unknown error>\n$stack')];
   }
 
   Iterable<Widget?> _buildListViewItems(

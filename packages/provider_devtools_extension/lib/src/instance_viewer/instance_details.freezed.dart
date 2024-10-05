@@ -1,6 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'instance_details.dart';
 
@@ -11,38 +12,7 @@ part of 'instance_details.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$PathToPropertyTearOff {
-  const _$PathToPropertyTearOff();
-
-  ListIndexPath listIndex(int index) {
-    return ListIndexPath(
-      index,
-    );
-  }
-
-  MapKeyPath mapKey({required String? ref}) {
-    return MapKeyPath(
-      ref: ref,
-    );
-  }
-
-  PropertyPath objectProperty(
-      {required String name,
-      required String ownerUri,
-      required String ownerName}) {
-    return PropertyPath(
-      name: name,
-      ownerUri: ownerUri,
-      ownerName: ownerName,
-    );
-  }
-}
-
-/// @nodoc
-const $PathToProperty = _$PathToPropertyTearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$PathToProperty {
@@ -56,9 +26,9 @@ mixin _$PathToProperty {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(int index)? listIndex,
-    TResult Function(String? ref)? mapKey,
-    TResult Function(String name, String ownerUri, String ownerName)?
+    TResult? Function(int index)? listIndex,
+    TResult? Function(String? ref)? mapKey,
+    TResult? Function(String name, String ownerUri, String ownerName)?
         objectProperty,
   }) =>
       throw _privateConstructorUsedError;
@@ -80,9 +50,9 @@ mixin _$PathToProperty {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(ListIndexPath value)? listIndex,
-    TResult Function(MapKeyPath value)? mapKey,
-    TResult Function(PropertyPath value)? objectProperty,
+    TResult? Function(ListIndexPath value)? listIndex,
+    TResult? Function(MapKeyPath value)? mapKey,
+    TResult? Function(PropertyPath value)? objectProperty,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -99,44 +69,49 @@ mixin _$PathToProperty {
 abstract class $PathToPropertyCopyWith<$Res> {
   factory $PathToPropertyCopyWith(
           PathToProperty value, $Res Function(PathToProperty) then) =
-      _$PathToPropertyCopyWithImpl<$Res>;
+      _$PathToPropertyCopyWithImpl<$Res, PathToProperty>;
 }
 
 /// @nodoc
-class _$PathToPropertyCopyWithImpl<$Res>
+class _$PathToPropertyCopyWithImpl<$Res, $Val extends PathToProperty>
     implements $PathToPropertyCopyWith<$Res> {
   _$PathToPropertyCopyWithImpl(this._value, this._then);
 
-  final PathToProperty _value;
   // ignore: unused_field
-  final $Res Function(PathToProperty) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of PathToProperty
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
-abstract class $ListIndexPathCopyWith<$Res> {
-  factory $ListIndexPathCopyWith(
-          ListIndexPath value, $Res Function(ListIndexPath) then) =
-      _$ListIndexPathCopyWithImpl<$Res>;
+abstract class _$$ListIndexPathImplCopyWith<$Res> {
+  factory _$$ListIndexPathImplCopyWith(
+          _$ListIndexPathImpl value, $Res Function(_$ListIndexPathImpl) then) =
+      __$$ListIndexPathImplCopyWithImpl<$Res>;
+  @useResult
   $Res call({int index});
 }
 
 /// @nodoc
-class _$ListIndexPathCopyWithImpl<$Res>
-    extends _$PathToPropertyCopyWithImpl<$Res>
-    implements $ListIndexPathCopyWith<$Res> {
-  _$ListIndexPathCopyWithImpl(
-      ListIndexPath _value, $Res Function(ListIndexPath) _then)
-      : super(_value, (v) => _then(v as ListIndexPath));
+class __$$ListIndexPathImplCopyWithImpl<$Res>
+    extends _$PathToPropertyCopyWithImpl<$Res, _$ListIndexPathImpl>
+    implements _$$ListIndexPathImplCopyWith<$Res> {
+  __$$ListIndexPathImplCopyWithImpl(
+      _$ListIndexPathImpl _value, $Res Function(_$ListIndexPathImpl) _then)
+      : super(_value, _then);
 
-  @override
-  ListIndexPath get _value => super._value as ListIndexPath;
-
+  /// Create a copy of PathToProperty
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? index = freezed,
+    Object? index = null,
   }) {
-    return _then(ListIndexPath(
-      index == freezed
+    return _then(_$ListIndexPathImpl(
+      null == index
           ? _value.index
           : index // ignore: cast_nullable_to_non_nullable
               as int,
@@ -146,8 +121,10 @@ class _$ListIndexPathCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ListIndexPath with DiagnosticableTreeMixin implements ListIndexPath {
-  const _$ListIndexPath(this.index);
+class _$ListIndexPathImpl
+    with DiagnosticableTreeMixin
+    implements ListIndexPath {
+  const _$ListIndexPathImpl(this.index);
 
   @override
   final int index;
@@ -166,21 +143,23 @@ class _$ListIndexPath with DiagnosticableTreeMixin implements ListIndexPath {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is ListIndexPath &&
-            const DeepCollectionEquality().equals(other.index, index));
+            other is _$ListIndexPathImpl &&
+            (identical(other.index, index) || other.index == index));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(index));
+  int get hashCode => Object.hash(runtimeType, index);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PathToProperty
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  $ListIndexPathCopyWith<ListIndexPath> get copyWith =>
-      _$ListIndexPathCopyWithImpl<ListIndexPath>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$ListIndexPathImplCopyWith<_$ListIndexPathImpl> get copyWith =>
+      __$$ListIndexPathImplCopyWithImpl<_$ListIndexPathImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -196,9 +175,9 @@ class _$ListIndexPath with DiagnosticableTreeMixin implements ListIndexPath {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(int index)? listIndex,
-    TResult Function(String? ref)? mapKey,
-    TResult Function(String name, String ownerUri, String ownerName)?
+    TResult? Function(int index)? listIndex,
+    TResult? Function(String? ref)? mapKey,
+    TResult? Function(String name, String ownerUri, String ownerName)?
         objectProperty,
   }) {
     return listIndex?.call(index);
@@ -232,9 +211,9 @@ class _$ListIndexPath with DiagnosticableTreeMixin implements ListIndexPath {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(ListIndexPath value)? listIndex,
-    TResult Function(MapKeyPath value)? mapKey,
-    TResult Function(PropertyPath value)? objectProperty,
+    TResult? Function(ListIndexPath value)? listIndex,
+    TResult? Function(MapKeyPath value)? mapKey,
+    TResult? Function(PropertyPath value)? objectProperty,
   }) {
     return listIndex?.call(this);
   }
@@ -255,37 +234,43 @@ class _$ListIndexPath with DiagnosticableTreeMixin implements ListIndexPath {
 }
 
 abstract class ListIndexPath implements PathToProperty {
-  const factory ListIndexPath(int index) = _$ListIndexPath;
+  const factory ListIndexPath(final int index) = _$ListIndexPathImpl;
 
   int get index;
-  @JsonKey(ignore: true)
-  $ListIndexPathCopyWith<ListIndexPath> get copyWith =>
+
+  /// Create a copy of PathToProperty
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ListIndexPathImplCopyWith<_$ListIndexPathImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $MapKeyPathCopyWith<$Res> {
-  factory $MapKeyPathCopyWith(
-          MapKeyPath value, $Res Function(MapKeyPath) then) =
-      _$MapKeyPathCopyWithImpl<$Res>;
+abstract class _$$MapKeyPathImplCopyWith<$Res> {
+  factory _$$MapKeyPathImplCopyWith(
+          _$MapKeyPathImpl value, $Res Function(_$MapKeyPathImpl) then) =
+      __$$MapKeyPathImplCopyWithImpl<$Res>;
+  @useResult
   $Res call({String? ref});
 }
 
 /// @nodoc
-class _$MapKeyPathCopyWithImpl<$Res> extends _$PathToPropertyCopyWithImpl<$Res>
-    implements $MapKeyPathCopyWith<$Res> {
-  _$MapKeyPathCopyWithImpl(MapKeyPath _value, $Res Function(MapKeyPath) _then)
-      : super(_value, (v) => _then(v as MapKeyPath));
+class __$$MapKeyPathImplCopyWithImpl<$Res>
+    extends _$PathToPropertyCopyWithImpl<$Res, _$MapKeyPathImpl>
+    implements _$$MapKeyPathImplCopyWith<$Res> {
+  __$$MapKeyPathImplCopyWithImpl(
+      _$MapKeyPathImpl _value, $Res Function(_$MapKeyPathImpl) _then)
+      : super(_value, _then);
 
-  @override
-  MapKeyPath get _value => super._value as MapKeyPath;
-
+  /// Create a copy of PathToProperty
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? ref = freezed,
   }) {
-    return _then(MapKeyPath(
-      ref: ref == freezed
+    return _then(_$MapKeyPathImpl(
+      ref: freezed == ref
           ? _value.ref
           : ref // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -295,8 +280,8 @@ class _$MapKeyPathCopyWithImpl<$Res> extends _$PathToPropertyCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$MapKeyPath with DiagnosticableTreeMixin implements MapKeyPath {
-  const _$MapKeyPath({required this.ref});
+class _$MapKeyPathImpl with DiagnosticableTreeMixin implements MapKeyPath {
+  const _$MapKeyPathImpl({required this.ref});
 
   @override
   final String? ref;
@@ -315,21 +300,23 @@ class _$MapKeyPath with DiagnosticableTreeMixin implements MapKeyPath {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is MapKeyPath &&
-            const DeepCollectionEquality().equals(other.ref, ref));
+            other is _$MapKeyPathImpl &&
+            (identical(other.ref, ref) || other.ref == ref));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(ref));
+  int get hashCode => Object.hash(runtimeType, ref);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PathToProperty
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  $MapKeyPathCopyWith<MapKeyPath> get copyWith =>
-      _$MapKeyPathCopyWithImpl<MapKeyPath>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$MapKeyPathImplCopyWith<_$MapKeyPathImpl> get copyWith =>
+      __$$MapKeyPathImplCopyWithImpl<_$MapKeyPathImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -345,9 +332,9 @@ class _$MapKeyPath with DiagnosticableTreeMixin implements MapKeyPath {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(int index)? listIndex,
-    TResult Function(String? ref)? mapKey,
-    TResult Function(String name, String ownerUri, String ownerName)?
+    TResult? Function(int index)? listIndex,
+    TResult? Function(String? ref)? mapKey,
+    TResult? Function(String name, String ownerUri, String ownerName)?
         objectProperty,
   }) {
     return mapKey?.call(ref);
@@ -381,9 +368,9 @@ class _$MapKeyPath with DiagnosticableTreeMixin implements MapKeyPath {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(ListIndexPath value)? listIndex,
-    TResult Function(MapKeyPath value)? mapKey,
-    TResult Function(PropertyPath value)? objectProperty,
+    TResult? Function(ListIndexPath value)? listIndex,
+    TResult? Function(MapKeyPath value)? mapKey,
+    TResult? Function(PropertyPath value)? objectProperty,
   }) {
     return mapKey?.call(this);
   }
@@ -404,49 +391,53 @@ class _$MapKeyPath with DiagnosticableTreeMixin implements MapKeyPath {
 }
 
 abstract class MapKeyPath implements PathToProperty {
-  const factory MapKeyPath({required String? ref}) = _$MapKeyPath;
+  const factory MapKeyPath({required final String? ref}) = _$MapKeyPathImpl;
 
   String? get ref;
-  @JsonKey(ignore: true)
-  $MapKeyPathCopyWith<MapKeyPath> get copyWith =>
+
+  /// Create a copy of PathToProperty
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$MapKeyPathImplCopyWith<_$MapKeyPathImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $PropertyPathCopyWith<$Res> {
-  factory $PropertyPathCopyWith(
-          PropertyPath value, $Res Function(PropertyPath) then) =
-      _$PropertyPathCopyWithImpl<$Res>;
+abstract class _$$PropertyPathImplCopyWith<$Res> {
+  factory _$$PropertyPathImplCopyWith(
+          _$PropertyPathImpl value, $Res Function(_$PropertyPathImpl) then) =
+      __$$PropertyPathImplCopyWithImpl<$Res>;
+  @useResult
   $Res call({String name, String ownerUri, String ownerName});
 }
 
 /// @nodoc
-class _$PropertyPathCopyWithImpl<$Res>
-    extends _$PathToPropertyCopyWithImpl<$Res>
-    implements $PropertyPathCopyWith<$Res> {
-  _$PropertyPathCopyWithImpl(
-      PropertyPath _value, $Res Function(PropertyPath) _then)
-      : super(_value, (v) => _then(v as PropertyPath));
+class __$$PropertyPathImplCopyWithImpl<$Res>
+    extends _$PathToPropertyCopyWithImpl<$Res, _$PropertyPathImpl>
+    implements _$$PropertyPathImplCopyWith<$Res> {
+  __$$PropertyPathImplCopyWithImpl(
+      _$PropertyPathImpl _value, $Res Function(_$PropertyPathImpl) _then)
+      : super(_value, _then);
 
-  @override
-  PropertyPath get _value => super._value as PropertyPath;
-
+  /// Create a copy of PathToProperty
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = freezed,
-    Object? ownerUri = freezed,
-    Object? ownerName = freezed,
+    Object? name = null,
+    Object? ownerUri = null,
+    Object? ownerName = null,
   }) {
-    return _then(PropertyPath(
-      name: name == freezed
+    return _then(_$PropertyPathImpl(
+      name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      ownerUri: ownerUri == freezed
+      ownerUri: null == ownerUri
           ? _value.ownerUri
           : ownerUri // ignore: cast_nullable_to_non_nullable
               as String,
-      ownerName: ownerName == freezed
+      ownerName: null == ownerName
           ? _value.ownerName
           : ownerName // ignore: cast_nullable_to_non_nullable
               as String,
@@ -456,19 +447,19 @@ class _$PropertyPathCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$PropertyPath with DiagnosticableTreeMixin implements PropertyPath {
-  const _$PropertyPath(
+class _$PropertyPathImpl with DiagnosticableTreeMixin implements PropertyPath {
+  const _$PropertyPathImpl(
       {required this.name, required this.ownerUri, required this.ownerName});
 
   @override
   final String name;
-  @override
 
   /// Path to the class/mixin that defined this property
-  final String ownerUri;
   @override
+  final String ownerUri;
 
   /// Name of the class/mixin that defined this property
+  @override
   final String ownerName;
 
   @override
@@ -487,26 +478,27 @@ class _$PropertyPath with DiagnosticableTreeMixin implements PropertyPath {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is PropertyPath &&
-            const DeepCollectionEquality().equals(other.name, name) &&
-            const DeepCollectionEquality().equals(other.ownerUri, ownerUri) &&
-            const DeepCollectionEquality().equals(other.ownerName, ownerName));
+            other is _$PropertyPathImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.ownerUri, ownerUri) ||
+                other.ownerUri == ownerUri) &&
+            (identical(other.ownerName, ownerName) ||
+                other.ownerName == ownerName));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(name),
-      const DeepCollectionEquality().hash(ownerUri),
-      const DeepCollectionEquality().hash(ownerName));
+  int get hashCode => Object.hash(runtimeType, name, ownerUri, ownerName);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PathToProperty
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  $PropertyPathCopyWith<PropertyPath> get copyWith =>
-      _$PropertyPathCopyWithImpl<PropertyPath>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$PropertyPathImplCopyWith<_$PropertyPathImpl> get copyWith =>
+      __$$PropertyPathImplCopyWithImpl<_$PropertyPathImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -522,9 +514,9 @@ class _$PropertyPath with DiagnosticableTreeMixin implements PropertyPath {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(int index)? listIndex,
-    TResult Function(String? ref)? mapKey,
-    TResult Function(String name, String ownerUri, String ownerName)?
+    TResult? Function(int index)? listIndex,
+    TResult? Function(String? ref)? mapKey,
+    TResult? Function(String name, String ownerUri, String ownerName)?
         objectProperty,
   }) {
     return objectProperty?.call(name, ownerUri, ownerName);
@@ -558,9 +550,9 @@ class _$PropertyPath with DiagnosticableTreeMixin implements PropertyPath {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(ListIndexPath value)? listIndex,
-    TResult Function(MapKeyPath value)? mapKey,
-    TResult Function(PropertyPath value)? objectProperty,
+    TResult? Function(ListIndexPath value)? listIndex,
+    TResult? Function(MapKeyPath value)? mapKey,
+    TResult? Function(PropertyPath value)? objectProperty,
   }) {
     return objectProperty?.call(this);
   }
@@ -582,9 +574,9 @@ class _$PropertyPath with DiagnosticableTreeMixin implements PropertyPath {
 
 abstract class PropertyPath implements PathToProperty {
   const factory PropertyPath(
-      {required String name,
-      required String ownerUri,
-      required String ownerName}) = _$PropertyPath;
+      {required final String name,
+      required final String ownerUri,
+      required final String ownerName}) = _$PropertyPathImpl;
 
   String get name;
 
@@ -593,37 +585,13 @@ abstract class PropertyPath implements PathToProperty {
 
   /// Name of the class/mixin that defined this property
   String get ownerName;
-  @JsonKey(ignore: true)
-  $PropertyPathCopyWith<PropertyPath> get copyWith =>
+
+  /// Create a copy of PathToProperty
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PropertyPathImplCopyWith<_$PropertyPathImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
-
-/// @nodoc
-class _$ObjectFieldTearOff {
-  const _$ObjectFieldTearOff();
-
-  _ObjectField call(
-      {required String name,
-      required bool isFinal,
-      required String ownerName,
-      required String ownerUri,
-      required Result<InstanceRef> ref,
-      required EvalOnDartLibrary eval,
-      required bool isDefinedByDependency}) {
-    return _ObjectField(
-      name: name,
-      isFinal: isFinal,
-      ownerName: ownerName,
-      ownerUri: ownerUri,
-      ref: ref,
-      eval: eval,
-      isDefinedByDependency: isDefinedByDependency,
-    );
-  }
-}
-
-/// @nodoc
-const $ObjectField = _$ObjectFieldTearOff();
 
 /// @nodoc
 mixin _$ObjectField {
@@ -641,7 +609,9 @@ mixin _$ObjectField {
   /// This is used by the UI to hide variables that are not useful for the user.
   bool get isDefinedByDependency => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ObjectField
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ObjectFieldCopyWith<ObjectField> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -650,7 +620,8 @@ mixin _$ObjectField {
 abstract class $ObjectFieldCopyWith<$Res> {
   factory $ObjectFieldCopyWith(
           ObjectField value, $Res Function(ObjectField) then) =
-      _$ObjectFieldCopyWithImpl<$Res>;
+      _$ObjectFieldCopyWithImpl<$Res, ObjectField>;
+  @useResult
   $Res call(
       {String name,
       bool isFinal,
@@ -664,70 +635,79 @@ abstract class $ObjectFieldCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ObjectFieldCopyWithImpl<$Res> implements $ObjectFieldCopyWith<$Res> {
+class _$ObjectFieldCopyWithImpl<$Res, $Val extends ObjectField>
+    implements $ObjectFieldCopyWith<$Res> {
   _$ObjectFieldCopyWithImpl(this._value, this._then);
 
-  final ObjectField _value;
   // ignore: unused_field
-  final $Res Function(ObjectField) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  /// Create a copy of ObjectField
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = freezed,
-    Object? isFinal = freezed,
-    Object? ownerName = freezed,
-    Object? ownerUri = freezed,
-    Object? ref = freezed,
-    Object? eval = freezed,
-    Object? isDefinedByDependency = freezed,
+    Object? name = null,
+    Object? isFinal = null,
+    Object? ownerName = null,
+    Object? ownerUri = null,
+    Object? ref = null,
+    Object? eval = null,
+    Object? isDefinedByDependency = null,
   }) {
     return _then(_value.copyWith(
-      name: name == freezed
+      name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      isFinal: isFinal == freezed
+      isFinal: null == isFinal
           ? _value.isFinal
           : isFinal // ignore: cast_nullable_to_non_nullable
               as bool,
-      ownerName: ownerName == freezed
+      ownerName: null == ownerName
           ? _value.ownerName
           : ownerName // ignore: cast_nullable_to_non_nullable
               as String,
-      ownerUri: ownerUri == freezed
+      ownerUri: null == ownerUri
           ? _value.ownerUri
           : ownerUri // ignore: cast_nullable_to_non_nullable
               as String,
-      ref: ref == freezed
+      ref: null == ref
           ? _value.ref
           : ref // ignore: cast_nullable_to_non_nullable
               as Result<InstanceRef>,
-      eval: eval == freezed
+      eval: null == eval
           ? _value.eval
           : eval // ignore: cast_nullable_to_non_nullable
               as EvalOnDartLibrary,
-      isDefinedByDependency: isDefinedByDependency == freezed
+      isDefinedByDependency: null == isDefinedByDependency
           ? _value.isDefinedByDependency
           : isDefinedByDependency // ignore: cast_nullable_to_non_nullable
               as bool,
-    ));
+    ) as $Val);
   }
 
+  /// Create a copy of ObjectField
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $ResultCopyWith<InstanceRef, $Res> get ref {
     return $ResultCopyWith<InstanceRef, $Res>(_value.ref, (value) {
-      return _then(_value.copyWith(ref: value));
+      return _then(_value.copyWith(ref: value) as $Val);
     });
   }
 }
 
 /// @nodoc
-abstract class _$ObjectFieldCopyWith<$Res>
+abstract class _$$ObjectFieldImplCopyWith<$Res>
     implements $ObjectFieldCopyWith<$Res> {
-  factory _$ObjectFieldCopyWith(
-          _ObjectField value, $Res Function(_ObjectField) then) =
-      __$ObjectFieldCopyWithImpl<$Res>;
+  factory _$$ObjectFieldImplCopyWith(
+          _$ObjectFieldImpl value, $Res Function(_$ObjectFieldImpl) then) =
+      __$$ObjectFieldImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call(
       {String name,
       bool isFinal,
@@ -742,51 +722,52 @@ abstract class _$ObjectFieldCopyWith<$Res>
 }
 
 /// @nodoc
-class __$ObjectFieldCopyWithImpl<$Res> extends _$ObjectFieldCopyWithImpl<$Res>
-    implements _$ObjectFieldCopyWith<$Res> {
-  __$ObjectFieldCopyWithImpl(
-      _ObjectField _value, $Res Function(_ObjectField) _then)
-      : super(_value, (v) => _then(v as _ObjectField));
+class __$$ObjectFieldImplCopyWithImpl<$Res>
+    extends _$ObjectFieldCopyWithImpl<$Res, _$ObjectFieldImpl>
+    implements _$$ObjectFieldImplCopyWith<$Res> {
+  __$$ObjectFieldImplCopyWithImpl(
+      _$ObjectFieldImpl _value, $Res Function(_$ObjectFieldImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _ObjectField get _value => super._value as _ObjectField;
-
+  /// Create a copy of ObjectField
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = freezed,
-    Object? isFinal = freezed,
-    Object? ownerName = freezed,
-    Object? ownerUri = freezed,
-    Object? ref = freezed,
-    Object? eval = freezed,
-    Object? isDefinedByDependency = freezed,
+    Object? name = null,
+    Object? isFinal = null,
+    Object? ownerName = null,
+    Object? ownerUri = null,
+    Object? ref = null,
+    Object? eval = null,
+    Object? isDefinedByDependency = null,
   }) {
-    return _then(_ObjectField(
-      name: name == freezed
+    return _then(_$ObjectFieldImpl(
+      name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      isFinal: isFinal == freezed
+      isFinal: null == isFinal
           ? _value.isFinal
           : isFinal // ignore: cast_nullable_to_non_nullable
               as bool,
-      ownerName: ownerName == freezed
+      ownerName: null == ownerName
           ? _value.ownerName
           : ownerName // ignore: cast_nullable_to_non_nullable
               as String,
-      ownerUri: ownerUri == freezed
+      ownerUri: null == ownerUri
           ? _value.ownerUri
           : ownerUri // ignore: cast_nullable_to_non_nullable
               as String,
-      ref: ref == freezed
+      ref: null == ref
           ? _value.ref
           : ref // ignore: cast_nullable_to_non_nullable
               as Result<InstanceRef>,
-      eval: eval == freezed
+      eval: null == eval
           ? _value.eval
           : eval // ignore: cast_nullable_to_non_nullable
               as EvalOnDartLibrary,
-      isDefinedByDependency: isDefinedByDependency == freezed
+      isDefinedByDependency: null == isDefinedByDependency
           ? _value.isDefinedByDependency
           : isDefinedByDependency // ignore: cast_nullable_to_non_nullable
               as bool,
@@ -796,8 +777,8 @@ class __$ObjectFieldCopyWithImpl<$Res> extends _$ObjectFieldCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_ObjectField extends _ObjectField with DiagnosticableTreeMixin {
-  _$_ObjectField(
+class _$ObjectFieldImpl extends _ObjectField with DiagnosticableTreeMixin {
+  _$ObjectFieldImpl(
       {required this.name,
       required this.isFinal,
       required this.ownerName,
@@ -817,15 +798,15 @@ class _$_ObjectField extends _ObjectField with DiagnosticableTreeMixin {
   final String ownerUri;
   @override
   final Result<InstanceRef> ref;
-  @override
 
   /// An [EvalOnDartLibrary] that can access this field from the owner object
-  final EvalOnDartLibrary eval;
   @override
+  final EvalOnDartLibrary eval;
 
   /// Whether this field was defined by the inspected app or by one of its dependencies
   ///
   /// This is used by the UI to hide variables that are not useful for the user.
+  @override
   final bool isDefinedByDependency;
 
   @override
@@ -849,46 +830,44 @@ class _$_ObjectField extends _ObjectField with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _ObjectField &&
-            const DeepCollectionEquality().equals(other.name, name) &&
-            const DeepCollectionEquality().equals(other.isFinal, isFinal) &&
-            const DeepCollectionEquality().equals(other.ownerName, ownerName) &&
-            const DeepCollectionEquality().equals(other.ownerUri, ownerUri) &&
-            const DeepCollectionEquality().equals(other.ref, ref) &&
-            const DeepCollectionEquality().equals(other.eval, eval) &&
-            const DeepCollectionEquality()
-                .equals(other.isDefinedByDependency, isDefinedByDependency));
+            other is _$ObjectFieldImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.isFinal, isFinal) || other.isFinal == isFinal) &&
+            (identical(other.ownerName, ownerName) ||
+                other.ownerName == ownerName) &&
+            (identical(other.ownerUri, ownerUri) ||
+                other.ownerUri == ownerUri) &&
+            (identical(other.ref, ref) || other.ref == ref) &&
+            (identical(other.eval, eval) || other.eval == eval) &&
+            (identical(other.isDefinedByDependency, isDefinedByDependency) ||
+                other.isDefinedByDependency == isDefinedByDependency));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(name),
-      const DeepCollectionEquality().hash(isFinal),
-      const DeepCollectionEquality().hash(ownerName),
-      const DeepCollectionEquality().hash(ownerUri),
-      const DeepCollectionEquality().hash(ref),
-      const DeepCollectionEquality().hash(eval),
-      const DeepCollectionEquality().hash(isDefinedByDependency));
+  int get hashCode => Object.hash(runtimeType, name, isFinal, ownerName,
+      ownerUri, ref, eval, isDefinedByDependency);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ObjectField
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  _$ObjectFieldCopyWith<_ObjectField> get copyWith =>
-      __$ObjectFieldCopyWithImpl<_ObjectField>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$ObjectFieldImplCopyWith<_$ObjectFieldImpl> get copyWith =>
+      __$$ObjectFieldImplCopyWithImpl<_$ObjectFieldImpl>(this, _$identity);
 }
 
 abstract class _ObjectField extends ObjectField {
   factory _ObjectField(
-      {required String name,
-      required bool isFinal,
-      required String ownerName,
-      required String ownerUri,
-      required Result<InstanceRef> ref,
-      required EvalOnDartLibrary eval,
-      required bool isDefinedByDependency}) = _$_ObjectField;
+      {required final String name,
+      required final bool isFinal,
+      required final String ownerName,
+      required final String ownerUri,
+      required final Result<InstanceRef> ref,
+      required final EvalOnDartLibrary eval,
+      required final bool isDefinedByDependency}) = _$ObjectFieldImpl;
   _ObjectField._() : super._();
 
   @override
@@ -901,121 +880,29 @@ abstract class _ObjectField extends ObjectField {
   String get ownerUri;
   @override
   Result<InstanceRef> get ref;
-  @override
 
   /// An [EvalOnDartLibrary] that can access this field from the owner object
-  EvalOnDartLibrary get eval;
   @override
+  EvalOnDartLibrary get eval;
 
   /// Whether this field was defined by the inspected app or by one of its dependencies
   ///
   /// This is used by the UI to hide variables that are not useful for the user.
-  bool get isDefinedByDependency;
   @override
-  @JsonKey(ignore: true)
-  _$ObjectFieldCopyWith<_ObjectField> get copyWith =>
+  bool get isDefinedByDependency;
+
+  /// Create a copy of ObjectField
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ObjectFieldImplCopyWith<_$ObjectFieldImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-class _$InstanceDetailsTearOff {
-  const _$InstanceDetailsTearOff();
-
-  NullInstance nill({required Setter? setter}) {
-    return NullInstance(
-      setter: setter,
-    );
-  }
-
-  BoolInstance boolean(String displayString,
-      {required String instanceRefId, required Setter? setter}) {
-    return BoolInstance(
-      displayString,
-      instanceRefId: instanceRefId,
-      setter: setter,
-    );
-  }
-
-  NumInstance number(String displayString,
-      {required String instanceRefId, required Setter? setter}) {
-    return NumInstance(
-      displayString,
-      instanceRefId: instanceRefId,
-      setter: setter,
-    );
-  }
-
-  StringInstance string(String displayString,
-      {required String instanceRefId, required Setter? setter}) {
-    return StringInstance(
-      displayString,
-      instanceRefId: instanceRefId,
-      setter: setter,
-    );
-  }
-
-  MapInstance map(List<InstanceDetails> keys,
-      {required int hash,
-      required String instanceRefId,
-      required Setter? setter}) {
-    return MapInstance(
-      keys,
-      hash: hash,
-      instanceRefId: instanceRefId,
-      setter: setter,
-    );
-  }
-
-  ListInstance list(
-      {required int length,
-      required int hash,
-      required String instanceRefId,
-      required Setter? setter}) {
-    return ListInstance(
-      length: length,
-      hash: hash,
-      instanceRefId: instanceRefId,
-      setter: setter,
-    );
-  }
-
-  ObjectInstance object(List<ObjectField> fields,
-      {required String type,
-      required int hash,
-      required String instanceRefId,
-      required Setter? setter,
-      required EvalOnDartLibrary evalForInstance}) {
-    return ObjectInstance(
-      fields,
-      type: type,
-      hash: hash,
-      instanceRefId: instanceRefId,
-      setter: setter,
-      evalForInstance: evalForInstance,
-    );
-  }
-
-  EnumInstance enumeration(
-      {required String type,
-      required String value,
-      required Setter? setter,
-      required String instanceRefId}) {
-    return EnumInstance(
-      type: type,
-      value: value,
-      setter: setter,
-      instanceRefId: instanceRefId,
-    );
-  }
-}
-
-/// @nodoc
-const $InstanceDetails = _$InstanceDetailsTearOff();
-
-/// @nodoc
 mixin _$InstanceDetails {
-  Setter? get setter => throw _privateConstructorUsedError;
-
+  Future<void> Function(String)? get setter =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(Setter? setter) nill,
@@ -1049,23 +936,23 @@ mixin _$InstanceDetails {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Setter? setter)? nill,
-    TResult Function(
+    TResult? Function(Setter? setter)? nill,
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         boolean,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         number,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         string,
-    TResult Function(List<InstanceDetails> keys, int hash, String instanceRefId,
-            Setter? setter)?
+    TResult? Function(List<InstanceDetails> keys, int hash,
+            String instanceRefId, Setter? setter)?
         map,
-    TResult Function(
+    TResult? Function(
             int length, int hash, String instanceRefId, Setter? setter)?
         list,
-    TResult Function(
+    TResult? Function(
             List<ObjectField> fields,
             String type,
             int hash,
@@ -1073,7 +960,7 @@ mixin _$InstanceDetails {
             Setter? setter,
             EvalOnDartLibrary evalForInstance)?
         object,
-    TResult Function(
+    TResult? Function(
             String type, String value, Setter? setter, String instanceRefId)?
         enumeration,
   }) =>
@@ -1124,14 +1011,14 @@ mixin _$InstanceDetails {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(NullInstance value)? nill,
-    TResult Function(BoolInstance value)? boolean,
-    TResult Function(NumInstance value)? number,
-    TResult Function(StringInstance value)? string,
-    TResult Function(MapInstance value)? map,
-    TResult Function(ListInstance value)? list,
-    TResult Function(ObjectInstance value)? object,
-    TResult Function(EnumInstance value)? enumeration,
+    TResult? Function(NullInstance value)? nill,
+    TResult? Function(BoolInstance value)? boolean,
+    TResult? Function(NumInstance value)? number,
+    TResult? Function(StringInstance value)? string,
+    TResult? Function(MapInstance value)? map,
+    TResult? Function(ListInstance value)? list,
+    TResult? Function(ObjectInstance value)? object,
+    TResult? Function(EnumInstance value)? enumeration,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1148,7 +1035,9 @@ mixin _$InstanceDetails {
   }) =>
       throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $InstanceDetailsCopyWith<InstanceDetails> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1157,59 +1046,65 @@ mixin _$InstanceDetails {
 abstract class $InstanceDetailsCopyWith<$Res> {
   factory $InstanceDetailsCopyWith(
           InstanceDetails value, $Res Function(InstanceDetails) then) =
-      _$InstanceDetailsCopyWithImpl<$Res>;
-  $Res call({Setter? setter});
+      _$InstanceDetailsCopyWithImpl<$Res, InstanceDetails>;
+  @useResult
+  $Res call({Future<void> Function(String)? setter});
 }
 
 /// @nodoc
-class _$InstanceDetailsCopyWithImpl<$Res>
+class _$InstanceDetailsCopyWithImpl<$Res, $Val extends InstanceDetails>
     implements $InstanceDetailsCopyWith<$Res> {
   _$InstanceDetailsCopyWithImpl(this._value, this._then);
 
-  final InstanceDetails _value;
   // ignore: unused_field
-  final $Res Function(InstanceDetails) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? setter = freezed,
   }) {
     return _then(_value.copyWith(
-      setter: setter == freezed
+      setter: freezed == setter
           ? _value.setter
           : setter // ignore: cast_nullable_to_non_nullable
-              as Setter?,
-    ));
+              as Future<void> Function(String)?,
+    ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class $NullInstanceCopyWith<$Res>
+abstract class _$$NullInstanceImplCopyWith<$Res>
     implements $InstanceDetailsCopyWith<$Res> {
-  factory $NullInstanceCopyWith(
-          NullInstance value, $Res Function(NullInstance) then) =
-      _$NullInstanceCopyWithImpl<$Res>;
+  factory _$$NullInstanceImplCopyWith(
+          _$NullInstanceImpl value, $Res Function(_$NullInstanceImpl) then) =
+      __$$NullInstanceImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({Setter? setter});
 }
 
 /// @nodoc
-class _$NullInstanceCopyWithImpl<$Res>
-    extends _$InstanceDetailsCopyWithImpl<$Res>
-    implements $NullInstanceCopyWith<$Res> {
-  _$NullInstanceCopyWithImpl(
-      NullInstance _value, $Res Function(NullInstance) _then)
-      : super(_value, (v) => _then(v as NullInstance));
+class __$$NullInstanceImplCopyWithImpl<$Res>
+    extends _$InstanceDetailsCopyWithImpl<$Res, _$NullInstanceImpl>
+    implements _$$NullInstanceImplCopyWith<$Res> {
+  __$$NullInstanceImplCopyWithImpl(
+      _$NullInstanceImpl _value, $Res Function(_$NullInstanceImpl) _then)
+      : super(_value, _then);
 
-  @override
-  NullInstance get _value => super._value as NullInstance;
-
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? setter = freezed,
   }) {
-    return _then(NullInstance(
-      setter: setter == freezed
+    return _then(_$NullInstanceImpl(
+      setter: freezed == setter
           ? _value.setter
           : setter // ignore: cast_nullable_to_non_nullable
               as Setter?,
@@ -1219,8 +1114,8 @@ class _$NullInstanceCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$NullInstance extends NullInstance with DiagnosticableTreeMixin {
-  _$NullInstance({required this.setter}) : super._();
+class _$NullInstanceImpl extends NullInstance with DiagnosticableTreeMixin {
+  _$NullInstanceImpl({required this.setter}) : super._();
 
   @override
   final Setter? setter;
@@ -1239,20 +1134,23 @@ class _$NullInstance extends NullInstance with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is NullInstance &&
+            other is _$NullInstanceImpl &&
             (identical(other.setter, setter) || other.setter == setter));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, setter);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  $NullInstanceCopyWith<NullInstance> get copyWith =>
-      _$NullInstanceCopyWithImpl<NullInstance>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$NullInstanceImplCopyWith<_$NullInstanceImpl> get copyWith =>
+      __$$NullInstanceImplCopyWithImpl<_$NullInstanceImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1291,23 +1189,23 @@ class _$NullInstance extends NullInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Setter? setter)? nill,
-    TResult Function(
+    TResult? Function(Setter? setter)? nill,
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         boolean,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         number,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         string,
-    TResult Function(List<InstanceDetails> keys, int hash, String instanceRefId,
-            Setter? setter)?
+    TResult? Function(List<InstanceDetails> keys, int hash,
+            String instanceRefId, Setter? setter)?
         map,
-    TResult Function(
+    TResult? Function(
             int length, int hash, String instanceRefId, Setter? setter)?
         list,
-    TResult Function(
+    TResult? Function(
             List<ObjectField> fields,
             String type,
             int hash,
@@ -1315,7 +1213,7 @@ class _$NullInstance extends NullInstance with DiagnosticableTreeMixin {
             Setter? setter,
             EvalOnDartLibrary evalForInstance)?
         object,
-    TResult Function(
+    TResult? Function(
             String type, String value, Setter? setter, String instanceRefId)?
         enumeration,
   }) {
@@ -1378,14 +1276,14 @@ class _$NullInstance extends NullInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(NullInstance value)? nill,
-    TResult Function(BoolInstance value)? boolean,
-    TResult Function(NumInstance value)? number,
-    TResult Function(StringInstance value)? string,
-    TResult Function(MapInstance value)? map,
-    TResult Function(ListInstance value)? list,
-    TResult Function(ObjectInstance value)? object,
-    TResult Function(EnumInstance value)? enumeration,
+    TResult? Function(NullInstance value)? nill,
+    TResult? Function(BoolInstance value)? boolean,
+    TResult? Function(NumInstance value)? number,
+    TResult? Function(StringInstance value)? string,
+    TResult? Function(MapInstance value)? map,
+    TResult? Function(ListInstance value)? list,
+    TResult? Function(ObjectInstance value)? object,
+    TResult? Function(EnumInstance value)? enumeration,
   }) {
     return nill?.call(this);
   }
@@ -1411,54 +1309,58 @@ class _$NullInstance extends NullInstance with DiagnosticableTreeMixin {
 }
 
 abstract class NullInstance extends InstanceDetails {
-  factory NullInstance({required Setter? setter}) = _$NullInstance;
+  factory NullInstance({required final Setter? setter}) = _$NullInstanceImpl;
   NullInstance._() : super._();
 
   @override
   Setter? get setter;
+
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
-  $NullInstanceCopyWith<NullInstance> get copyWith =>
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$NullInstanceImplCopyWith<_$NullInstanceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $BoolInstanceCopyWith<$Res>
+abstract class _$$BoolInstanceImplCopyWith<$Res>
     implements $InstanceDetailsCopyWith<$Res> {
-  factory $BoolInstanceCopyWith(
-          BoolInstance value, $Res Function(BoolInstance) then) =
-      _$BoolInstanceCopyWithImpl<$Res>;
+  factory _$$BoolInstanceImplCopyWith(
+          _$BoolInstanceImpl value, $Res Function(_$BoolInstanceImpl) then) =
+      __$$BoolInstanceImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({String displayString, String instanceRefId, Setter? setter});
 }
 
 /// @nodoc
-class _$BoolInstanceCopyWithImpl<$Res>
-    extends _$InstanceDetailsCopyWithImpl<$Res>
-    implements $BoolInstanceCopyWith<$Res> {
-  _$BoolInstanceCopyWithImpl(
-      BoolInstance _value, $Res Function(BoolInstance) _then)
-      : super(_value, (v) => _then(v as BoolInstance));
+class __$$BoolInstanceImplCopyWithImpl<$Res>
+    extends _$InstanceDetailsCopyWithImpl<$Res, _$BoolInstanceImpl>
+    implements _$$BoolInstanceImplCopyWith<$Res> {
+  __$$BoolInstanceImplCopyWithImpl(
+      _$BoolInstanceImpl _value, $Res Function(_$BoolInstanceImpl) _then)
+      : super(_value, _then);
 
-  @override
-  BoolInstance get _value => super._value as BoolInstance;
-
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? displayString = freezed,
-    Object? instanceRefId = freezed,
+    Object? displayString = null,
+    Object? instanceRefId = null,
     Object? setter = freezed,
   }) {
-    return _then(BoolInstance(
-      displayString == freezed
+    return _then(_$BoolInstanceImpl(
+      null == displayString
           ? _value.displayString
           : displayString // ignore: cast_nullable_to_non_nullable
               as String,
-      instanceRefId: instanceRefId == freezed
+      instanceRefId: null == instanceRefId
           ? _value.instanceRefId
           : instanceRefId // ignore: cast_nullable_to_non_nullable
               as String,
-      setter: setter == freezed
+      setter: freezed == setter
           ? _value.setter
           : setter // ignore: cast_nullable_to_non_nullable
               as Setter?,
@@ -1468,8 +1370,8 @@ class _$BoolInstanceCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BoolInstance extends BoolInstance with DiagnosticableTreeMixin {
-  _$BoolInstance(this.displayString,
+class _$BoolInstanceImpl extends BoolInstance with DiagnosticableTreeMixin {
+  _$BoolInstanceImpl(this.displayString,
       {required this.instanceRefId, required this.setter})
       : super._();
 
@@ -1496,28 +1398,28 @@ class _$BoolInstance extends BoolInstance with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is BoolInstance &&
-            const DeepCollectionEquality()
-                .equals(other.displayString, displayString) &&
-            const DeepCollectionEquality()
-                .equals(other.instanceRefId, instanceRefId) &&
+            other is _$BoolInstanceImpl &&
+            (identical(other.displayString, displayString) ||
+                other.displayString == displayString) &&
+            (identical(other.instanceRefId, instanceRefId) ||
+                other.instanceRefId == instanceRefId) &&
             (identical(other.setter, setter) || other.setter == setter));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(displayString),
-      const DeepCollectionEquality().hash(instanceRefId),
-      setter);
+  int get hashCode =>
+      Object.hash(runtimeType, displayString, instanceRefId, setter);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  $BoolInstanceCopyWith<BoolInstance> get copyWith =>
-      _$BoolInstanceCopyWithImpl<BoolInstance>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$BoolInstanceImplCopyWith<_$BoolInstanceImpl> get copyWith =>
+      __$$BoolInstanceImplCopyWithImpl<_$BoolInstanceImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1556,23 +1458,23 @@ class _$BoolInstance extends BoolInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Setter? setter)? nill,
-    TResult Function(
+    TResult? Function(Setter? setter)? nill,
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         boolean,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         number,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         string,
-    TResult Function(List<InstanceDetails> keys, int hash, String instanceRefId,
-            Setter? setter)?
+    TResult? Function(List<InstanceDetails> keys, int hash,
+            String instanceRefId, Setter? setter)?
         map,
-    TResult Function(
+    TResult? Function(
             int length, int hash, String instanceRefId, Setter? setter)?
         list,
-    TResult Function(
+    TResult? Function(
             List<ObjectField> fields,
             String type,
             int hash,
@@ -1580,7 +1482,7 @@ class _$BoolInstance extends BoolInstance with DiagnosticableTreeMixin {
             Setter? setter,
             EvalOnDartLibrary evalForInstance)?
         object,
-    TResult Function(
+    TResult? Function(
             String type, String value, Setter? setter, String instanceRefId)?
         enumeration,
   }) {
@@ -1643,14 +1545,14 @@ class _$BoolInstance extends BoolInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(NullInstance value)? nill,
-    TResult Function(BoolInstance value)? boolean,
-    TResult Function(NumInstance value)? number,
-    TResult Function(StringInstance value)? string,
-    TResult Function(MapInstance value)? map,
-    TResult Function(ListInstance value)? list,
-    TResult Function(ObjectInstance value)? object,
-    TResult Function(EnumInstance value)? enumeration,
+    TResult? Function(NullInstance value)? nill,
+    TResult? Function(BoolInstance value)? boolean,
+    TResult? Function(NumInstance value)? number,
+    TResult? Function(StringInstance value)? string,
+    TResult? Function(MapInstance value)? map,
+    TResult? Function(ListInstance value)? list,
+    TResult? Function(ObjectInstance value)? object,
+    TResult? Function(EnumInstance value)? enumeration,
   }) {
     return boolean?.call(this);
   }
@@ -1676,58 +1578,62 @@ class _$BoolInstance extends BoolInstance with DiagnosticableTreeMixin {
 }
 
 abstract class BoolInstance extends InstanceDetails {
-  factory BoolInstance(String displayString,
-      {required String instanceRefId,
-      required Setter? setter}) = _$BoolInstance;
+  factory BoolInstance(final String displayString,
+      {required final String instanceRefId,
+      required final Setter? setter}) = _$BoolInstanceImpl;
   BoolInstance._() : super._();
 
   String get displayString;
   String get instanceRefId;
   @override
   Setter? get setter;
+
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
-  $BoolInstanceCopyWith<BoolInstance> get copyWith =>
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$BoolInstanceImplCopyWith<_$BoolInstanceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $NumInstanceCopyWith<$Res>
+abstract class _$$NumInstanceImplCopyWith<$Res>
     implements $InstanceDetailsCopyWith<$Res> {
-  factory $NumInstanceCopyWith(
-          NumInstance value, $Res Function(NumInstance) then) =
-      _$NumInstanceCopyWithImpl<$Res>;
+  factory _$$NumInstanceImplCopyWith(
+          _$NumInstanceImpl value, $Res Function(_$NumInstanceImpl) then) =
+      __$$NumInstanceImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({String displayString, String instanceRefId, Setter? setter});
 }
 
 /// @nodoc
-class _$NumInstanceCopyWithImpl<$Res>
-    extends _$InstanceDetailsCopyWithImpl<$Res>
-    implements $NumInstanceCopyWith<$Res> {
-  _$NumInstanceCopyWithImpl(
-      NumInstance _value, $Res Function(NumInstance) _then)
-      : super(_value, (v) => _then(v as NumInstance));
+class __$$NumInstanceImplCopyWithImpl<$Res>
+    extends _$InstanceDetailsCopyWithImpl<$Res, _$NumInstanceImpl>
+    implements _$$NumInstanceImplCopyWith<$Res> {
+  __$$NumInstanceImplCopyWithImpl(
+      _$NumInstanceImpl _value, $Res Function(_$NumInstanceImpl) _then)
+      : super(_value, _then);
 
-  @override
-  NumInstance get _value => super._value as NumInstance;
-
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? displayString = freezed,
-    Object? instanceRefId = freezed,
+    Object? displayString = null,
+    Object? instanceRefId = null,
     Object? setter = freezed,
   }) {
-    return _then(NumInstance(
-      displayString == freezed
+    return _then(_$NumInstanceImpl(
+      null == displayString
           ? _value.displayString
           : displayString // ignore: cast_nullable_to_non_nullable
               as String,
-      instanceRefId: instanceRefId == freezed
+      instanceRefId: null == instanceRefId
           ? _value.instanceRefId
           : instanceRefId // ignore: cast_nullable_to_non_nullable
               as String,
-      setter: setter == freezed
+      setter: freezed == setter
           ? _value.setter
           : setter // ignore: cast_nullable_to_non_nullable
               as Setter?,
@@ -1737,8 +1643,8 @@ class _$NumInstanceCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$NumInstance extends NumInstance with DiagnosticableTreeMixin {
-  _$NumInstance(this.displayString,
+class _$NumInstanceImpl extends NumInstance with DiagnosticableTreeMixin {
+  _$NumInstanceImpl(this.displayString,
       {required this.instanceRefId, required this.setter})
       : super._();
 
@@ -1765,28 +1671,28 @@ class _$NumInstance extends NumInstance with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is NumInstance &&
-            const DeepCollectionEquality()
-                .equals(other.displayString, displayString) &&
-            const DeepCollectionEquality()
-                .equals(other.instanceRefId, instanceRefId) &&
+            other is _$NumInstanceImpl &&
+            (identical(other.displayString, displayString) ||
+                other.displayString == displayString) &&
+            (identical(other.instanceRefId, instanceRefId) ||
+                other.instanceRefId == instanceRefId) &&
             (identical(other.setter, setter) || other.setter == setter));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(displayString),
-      const DeepCollectionEquality().hash(instanceRefId),
-      setter);
+  int get hashCode =>
+      Object.hash(runtimeType, displayString, instanceRefId, setter);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  $NumInstanceCopyWith<NumInstance> get copyWith =>
-      _$NumInstanceCopyWithImpl<NumInstance>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$NumInstanceImplCopyWith<_$NumInstanceImpl> get copyWith =>
+      __$$NumInstanceImplCopyWithImpl<_$NumInstanceImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1825,23 +1731,23 @@ class _$NumInstance extends NumInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Setter? setter)? nill,
-    TResult Function(
+    TResult? Function(Setter? setter)? nill,
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         boolean,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         number,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         string,
-    TResult Function(List<InstanceDetails> keys, int hash, String instanceRefId,
-            Setter? setter)?
+    TResult? Function(List<InstanceDetails> keys, int hash,
+            String instanceRefId, Setter? setter)?
         map,
-    TResult Function(
+    TResult? Function(
             int length, int hash, String instanceRefId, Setter? setter)?
         list,
-    TResult Function(
+    TResult? Function(
             List<ObjectField> fields,
             String type,
             int hash,
@@ -1849,7 +1755,7 @@ class _$NumInstance extends NumInstance with DiagnosticableTreeMixin {
             Setter? setter,
             EvalOnDartLibrary evalForInstance)?
         object,
-    TResult Function(
+    TResult? Function(
             String type, String value, Setter? setter, String instanceRefId)?
         enumeration,
   }) {
@@ -1912,14 +1818,14 @@ class _$NumInstance extends NumInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(NullInstance value)? nill,
-    TResult Function(BoolInstance value)? boolean,
-    TResult Function(NumInstance value)? number,
-    TResult Function(StringInstance value)? string,
-    TResult Function(MapInstance value)? map,
-    TResult Function(ListInstance value)? list,
-    TResult Function(ObjectInstance value)? object,
-    TResult Function(EnumInstance value)? enumeration,
+    TResult? Function(NullInstance value)? nill,
+    TResult? Function(BoolInstance value)? boolean,
+    TResult? Function(NumInstance value)? number,
+    TResult? Function(StringInstance value)? string,
+    TResult? Function(MapInstance value)? map,
+    TResult? Function(ListInstance value)? list,
+    TResult? Function(ObjectInstance value)? object,
+    TResult? Function(EnumInstance value)? enumeration,
   }) {
     return number?.call(this);
   }
@@ -1945,57 +1851,62 @@ class _$NumInstance extends NumInstance with DiagnosticableTreeMixin {
 }
 
 abstract class NumInstance extends InstanceDetails {
-  factory NumInstance(String displayString,
-      {required String instanceRefId, required Setter? setter}) = _$NumInstance;
+  factory NumInstance(final String displayString,
+      {required final String instanceRefId,
+      required final Setter? setter}) = _$NumInstanceImpl;
   NumInstance._() : super._();
 
   String get displayString;
   String get instanceRefId;
   @override
   Setter? get setter;
+
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
-  $NumInstanceCopyWith<NumInstance> get copyWith =>
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$NumInstanceImplCopyWith<_$NumInstanceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $StringInstanceCopyWith<$Res>
+abstract class _$$StringInstanceImplCopyWith<$Res>
     implements $InstanceDetailsCopyWith<$Res> {
-  factory $StringInstanceCopyWith(
-          StringInstance value, $Res Function(StringInstance) then) =
-      _$StringInstanceCopyWithImpl<$Res>;
+  factory _$$StringInstanceImplCopyWith(_$StringInstanceImpl value,
+          $Res Function(_$StringInstanceImpl) then) =
+      __$$StringInstanceImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({String displayString, String instanceRefId, Setter? setter});
 }
 
 /// @nodoc
-class _$StringInstanceCopyWithImpl<$Res>
-    extends _$InstanceDetailsCopyWithImpl<$Res>
-    implements $StringInstanceCopyWith<$Res> {
-  _$StringInstanceCopyWithImpl(
-      StringInstance _value, $Res Function(StringInstance) _then)
-      : super(_value, (v) => _then(v as StringInstance));
+class __$$StringInstanceImplCopyWithImpl<$Res>
+    extends _$InstanceDetailsCopyWithImpl<$Res, _$StringInstanceImpl>
+    implements _$$StringInstanceImplCopyWith<$Res> {
+  __$$StringInstanceImplCopyWithImpl(
+      _$StringInstanceImpl _value, $Res Function(_$StringInstanceImpl) _then)
+      : super(_value, _then);
 
-  @override
-  StringInstance get _value => super._value as StringInstance;
-
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? displayString = freezed,
-    Object? instanceRefId = freezed,
+    Object? displayString = null,
+    Object? instanceRefId = null,
     Object? setter = freezed,
   }) {
-    return _then(StringInstance(
-      displayString == freezed
+    return _then(_$StringInstanceImpl(
+      null == displayString
           ? _value.displayString
           : displayString // ignore: cast_nullable_to_non_nullable
               as String,
-      instanceRefId: instanceRefId == freezed
+      instanceRefId: null == instanceRefId
           ? _value.instanceRefId
           : instanceRefId // ignore: cast_nullable_to_non_nullable
               as String,
-      setter: setter == freezed
+      setter: freezed == setter
           ? _value.setter
           : setter // ignore: cast_nullable_to_non_nullable
               as Setter?,
@@ -2005,8 +1916,8 @@ class _$StringInstanceCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$StringInstance extends StringInstance with DiagnosticableTreeMixin {
-  _$StringInstance(this.displayString,
+class _$StringInstanceImpl extends StringInstance with DiagnosticableTreeMixin {
+  _$StringInstanceImpl(this.displayString,
       {required this.instanceRefId, required this.setter})
       : super._();
 
@@ -2033,28 +1944,29 @@ class _$StringInstance extends StringInstance with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is StringInstance &&
-            const DeepCollectionEquality()
-                .equals(other.displayString, displayString) &&
-            const DeepCollectionEquality()
-                .equals(other.instanceRefId, instanceRefId) &&
+            other is _$StringInstanceImpl &&
+            (identical(other.displayString, displayString) ||
+                other.displayString == displayString) &&
+            (identical(other.instanceRefId, instanceRefId) ||
+                other.instanceRefId == instanceRefId) &&
             (identical(other.setter, setter) || other.setter == setter));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(displayString),
-      const DeepCollectionEquality().hash(instanceRefId),
-      setter);
+  int get hashCode =>
+      Object.hash(runtimeType, displayString, instanceRefId, setter);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  $StringInstanceCopyWith<StringInstance> get copyWith =>
-      _$StringInstanceCopyWithImpl<StringInstance>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$StringInstanceImplCopyWith<_$StringInstanceImpl> get copyWith =>
+      __$$StringInstanceImplCopyWithImpl<_$StringInstanceImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -2093,23 +2005,23 @@ class _$StringInstance extends StringInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Setter? setter)? nill,
-    TResult Function(
+    TResult? Function(Setter? setter)? nill,
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         boolean,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         number,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         string,
-    TResult Function(List<InstanceDetails> keys, int hash, String instanceRefId,
-            Setter? setter)?
+    TResult? Function(List<InstanceDetails> keys, int hash,
+            String instanceRefId, Setter? setter)?
         map,
-    TResult Function(
+    TResult? Function(
             int length, int hash, String instanceRefId, Setter? setter)?
         list,
-    TResult Function(
+    TResult? Function(
             List<ObjectField> fields,
             String type,
             int hash,
@@ -2117,7 +2029,7 @@ class _$StringInstance extends StringInstance with DiagnosticableTreeMixin {
             Setter? setter,
             EvalOnDartLibrary evalForInstance)?
         object,
-    TResult Function(
+    TResult? Function(
             String type, String value, Setter? setter, String instanceRefId)?
         enumeration,
   }) {
@@ -2180,14 +2092,14 @@ class _$StringInstance extends StringInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(NullInstance value)? nill,
-    TResult Function(BoolInstance value)? boolean,
-    TResult Function(NumInstance value)? number,
-    TResult Function(StringInstance value)? string,
-    TResult Function(MapInstance value)? map,
-    TResult Function(ListInstance value)? list,
-    TResult Function(ObjectInstance value)? object,
-    TResult Function(EnumInstance value)? enumeration,
+    TResult? Function(NullInstance value)? nill,
+    TResult? Function(BoolInstance value)? boolean,
+    TResult? Function(NumInstance value)? number,
+    TResult? Function(StringInstance value)? string,
+    TResult? Function(MapInstance value)? map,
+    TResult? Function(ListInstance value)? list,
+    TResult? Function(ObjectInstance value)? object,
+    TResult? Function(EnumInstance value)? enumeration,
   }) {
     return string?.call(this);
   }
@@ -2213,28 +2125,32 @@ class _$StringInstance extends StringInstance with DiagnosticableTreeMixin {
 }
 
 abstract class StringInstance extends InstanceDetails {
-  factory StringInstance(String displayString,
-      {required String instanceRefId,
-      required Setter? setter}) = _$StringInstance;
+  factory StringInstance(final String displayString,
+      {required final String instanceRefId,
+      required final Setter? setter}) = _$StringInstanceImpl;
   StringInstance._() : super._();
 
   String get displayString;
   String get instanceRefId;
   @override
   Setter? get setter;
+
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
-  $StringInstanceCopyWith<StringInstance> get copyWith =>
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$StringInstanceImplCopyWith<_$StringInstanceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $MapInstanceCopyWith<$Res>
+abstract class _$$MapInstanceImplCopyWith<$Res>
     implements $InstanceDetailsCopyWith<$Res> {
-  factory $MapInstanceCopyWith(
-          MapInstance value, $Res Function(MapInstance) then) =
-      _$MapInstanceCopyWithImpl<$Res>;
+  factory _$$MapInstanceImplCopyWith(
+          _$MapInstanceImpl value, $Res Function(_$MapInstanceImpl) then) =
+      __$$MapInstanceImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call(
       {List<InstanceDetails> keys,
       int hash,
@@ -2243,37 +2159,37 @@ abstract class $MapInstanceCopyWith<$Res>
 }
 
 /// @nodoc
-class _$MapInstanceCopyWithImpl<$Res>
-    extends _$InstanceDetailsCopyWithImpl<$Res>
-    implements $MapInstanceCopyWith<$Res> {
-  _$MapInstanceCopyWithImpl(
-      MapInstance _value, $Res Function(MapInstance) _then)
-      : super(_value, (v) => _then(v as MapInstance));
+class __$$MapInstanceImplCopyWithImpl<$Res>
+    extends _$InstanceDetailsCopyWithImpl<$Res, _$MapInstanceImpl>
+    implements _$$MapInstanceImplCopyWith<$Res> {
+  __$$MapInstanceImplCopyWithImpl(
+      _$MapInstanceImpl _value, $Res Function(_$MapInstanceImpl) _then)
+      : super(_value, _then);
 
-  @override
-  MapInstance get _value => super._value as MapInstance;
-
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? keys = freezed,
-    Object? hash = freezed,
-    Object? instanceRefId = freezed,
+    Object? keys = null,
+    Object? hash = null,
+    Object? instanceRefId = null,
     Object? setter = freezed,
   }) {
-    return _then(MapInstance(
-      keys == freezed
-          ? _value.keys
+    return _then(_$MapInstanceImpl(
+      null == keys
+          ? _value._keys
           : keys // ignore: cast_nullable_to_non_nullable
               as List<InstanceDetails>,
-      hash: hash == freezed
+      hash: null == hash
           ? _value.hash
           : hash // ignore: cast_nullable_to_non_nullable
               as int,
-      instanceRefId: instanceRefId == freezed
+      instanceRefId: null == instanceRefId
           ? _value.instanceRefId
           : instanceRefId // ignore: cast_nullable_to_non_nullable
               as String,
-      setter: setter == freezed
+      setter: freezed == setter
           ? _value.setter
           : setter // ignore: cast_nullable_to_non_nullable
               as Setter?,
@@ -2283,13 +2199,20 @@ class _$MapInstanceCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$MapInstance extends MapInstance with DiagnosticableTreeMixin {
-  _$MapInstance(this.keys,
+class _$MapInstanceImpl extends MapInstance with DiagnosticableTreeMixin {
+  _$MapInstanceImpl(final List<InstanceDetails> keys,
       {required this.hash, required this.instanceRefId, required this.setter})
-      : super._();
+      : _keys = keys,
+        super._();
 
+  final List<InstanceDetails> _keys;
   @override
-  final List<InstanceDetails> keys;
+  List<InstanceDetails> get keys {
+    if (_keys is EqualUnmodifiableListView) return _keys;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_keys);
+  }
+
   @override
   final int hash;
   @override
@@ -2314,29 +2237,28 @@ class _$MapInstance extends MapInstance with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is MapInstance &&
-            const DeepCollectionEquality().equals(other.keys, keys) &&
-            const DeepCollectionEquality().equals(other.hash, hash) &&
-            const DeepCollectionEquality()
-                .equals(other.instanceRefId, instanceRefId) &&
+            other is _$MapInstanceImpl &&
+            const DeepCollectionEquality().equals(other._keys, _keys) &&
+            (identical(other.hash, hash) || other.hash == hash) &&
+            (identical(other.instanceRefId, instanceRefId) ||
+                other.instanceRefId == instanceRefId) &&
             (identical(other.setter, setter) || other.setter == setter));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(keys),
-      const DeepCollectionEquality().hash(hash),
-      const DeepCollectionEquality().hash(instanceRefId),
-      setter);
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_keys), hash, instanceRefId, setter);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  $MapInstanceCopyWith<MapInstance> get copyWith =>
-      _$MapInstanceCopyWithImpl<MapInstance>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$MapInstanceImplCopyWith<_$MapInstanceImpl> get copyWith =>
+      __$$MapInstanceImplCopyWithImpl<_$MapInstanceImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -2375,23 +2297,23 @@ class _$MapInstance extends MapInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Setter? setter)? nill,
-    TResult Function(
+    TResult? Function(Setter? setter)? nill,
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         boolean,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         number,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         string,
-    TResult Function(List<InstanceDetails> keys, int hash, String instanceRefId,
-            Setter? setter)?
+    TResult? Function(List<InstanceDetails> keys, int hash,
+            String instanceRefId, Setter? setter)?
         map,
-    TResult Function(
+    TResult? Function(
             int length, int hash, String instanceRefId, Setter? setter)?
         list,
-    TResult Function(
+    TResult? Function(
             List<ObjectField> fields,
             String type,
             int hash,
@@ -2399,7 +2321,7 @@ class _$MapInstance extends MapInstance with DiagnosticableTreeMixin {
             Setter? setter,
             EvalOnDartLibrary evalForInstance)?
         object,
-    TResult Function(
+    TResult? Function(
             String type, String value, Setter? setter, String instanceRefId)?
         enumeration,
   }) {
@@ -2462,14 +2384,14 @@ class _$MapInstance extends MapInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(NullInstance value)? nill,
-    TResult Function(BoolInstance value)? boolean,
-    TResult Function(NumInstance value)? number,
-    TResult Function(StringInstance value)? string,
-    TResult Function(MapInstance value)? map,
-    TResult Function(ListInstance value)? list,
-    TResult Function(ObjectInstance value)? object,
-    TResult Function(EnumInstance value)? enumeration,
+    TResult? Function(NullInstance value)? nill,
+    TResult? Function(BoolInstance value)? boolean,
+    TResult? Function(NumInstance value)? number,
+    TResult? Function(StringInstance value)? string,
+    TResult? Function(MapInstance value)? map,
+    TResult? Function(ListInstance value)? list,
+    TResult? Function(ObjectInstance value)? object,
+    TResult? Function(EnumInstance value)? enumeration,
   }) {
     return map?.call(this);
   }
@@ -2495,10 +2417,10 @@ class _$MapInstance extends MapInstance with DiagnosticableTreeMixin {
 }
 
 abstract class MapInstance extends InstanceDetails {
-  factory MapInstance(List<InstanceDetails> keys,
-      {required int hash,
-      required String instanceRefId,
-      required Setter? setter}) = _$MapInstance;
+  factory MapInstance(final List<InstanceDetails> keys,
+      {required final int hash,
+      required final String instanceRefId,
+      required final Setter? setter}) = _$MapInstanceImpl;
   MapInstance._() : super._();
 
   List<InstanceDetails> get keys;
@@ -2506,54 +2428,58 @@ abstract class MapInstance extends InstanceDetails {
   String get instanceRefId;
   @override
   Setter? get setter;
+
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
-  $MapInstanceCopyWith<MapInstance> get copyWith =>
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$MapInstanceImplCopyWith<_$MapInstanceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ListInstanceCopyWith<$Res>
+abstract class _$$ListInstanceImplCopyWith<$Res>
     implements $InstanceDetailsCopyWith<$Res> {
-  factory $ListInstanceCopyWith(
-          ListInstance value, $Res Function(ListInstance) then) =
-      _$ListInstanceCopyWithImpl<$Res>;
+  factory _$$ListInstanceImplCopyWith(
+          _$ListInstanceImpl value, $Res Function(_$ListInstanceImpl) then) =
+      __$$ListInstanceImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({int length, int hash, String instanceRefId, Setter? setter});
 }
 
 /// @nodoc
-class _$ListInstanceCopyWithImpl<$Res>
-    extends _$InstanceDetailsCopyWithImpl<$Res>
-    implements $ListInstanceCopyWith<$Res> {
-  _$ListInstanceCopyWithImpl(
-      ListInstance _value, $Res Function(ListInstance) _then)
-      : super(_value, (v) => _then(v as ListInstance));
+class __$$ListInstanceImplCopyWithImpl<$Res>
+    extends _$InstanceDetailsCopyWithImpl<$Res, _$ListInstanceImpl>
+    implements _$$ListInstanceImplCopyWith<$Res> {
+  __$$ListInstanceImplCopyWithImpl(
+      _$ListInstanceImpl _value, $Res Function(_$ListInstanceImpl) _then)
+      : super(_value, _then);
 
-  @override
-  ListInstance get _value => super._value as ListInstance;
-
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? length = freezed,
-    Object? hash = freezed,
-    Object? instanceRefId = freezed,
+    Object? length = null,
+    Object? hash = null,
+    Object? instanceRefId = null,
     Object? setter = freezed,
   }) {
-    return _then(ListInstance(
-      length: length == freezed
+    return _then(_$ListInstanceImpl(
+      length: null == length
           ? _value.length
           : length // ignore: cast_nullable_to_non_nullable
               as int,
-      hash: hash == freezed
+      hash: null == hash
           ? _value.hash
           : hash // ignore: cast_nullable_to_non_nullable
               as int,
-      instanceRefId: instanceRefId == freezed
+      instanceRefId: null == instanceRefId
           ? _value.instanceRefId
           : instanceRefId // ignore: cast_nullable_to_non_nullable
               as String,
-      setter: setter == freezed
+      setter: freezed == setter
           ? _value.setter
           : setter // ignore: cast_nullable_to_non_nullable
               as Setter?,
@@ -2563,8 +2489,8 @@ class _$ListInstanceCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ListInstance extends ListInstance with DiagnosticableTreeMixin {
-  _$ListInstance(
+class _$ListInstanceImpl extends ListInstance with DiagnosticableTreeMixin {
+  _$ListInstanceImpl(
       {required this.length,
       required this.hash,
       required this.instanceRefId,
@@ -2597,29 +2523,28 @@ class _$ListInstance extends ListInstance with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is ListInstance &&
-            const DeepCollectionEquality().equals(other.length, length) &&
-            const DeepCollectionEquality().equals(other.hash, hash) &&
-            const DeepCollectionEquality()
-                .equals(other.instanceRefId, instanceRefId) &&
+            other is _$ListInstanceImpl &&
+            (identical(other.length, length) || other.length == length) &&
+            (identical(other.hash, hash) || other.hash == hash) &&
+            (identical(other.instanceRefId, instanceRefId) ||
+                other.instanceRefId == instanceRefId) &&
             (identical(other.setter, setter) || other.setter == setter));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(length),
-      const DeepCollectionEquality().hash(hash),
-      const DeepCollectionEquality().hash(instanceRefId),
-      setter);
+  int get hashCode =>
+      Object.hash(runtimeType, length, hash, instanceRefId, setter);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  $ListInstanceCopyWith<ListInstance> get copyWith =>
-      _$ListInstanceCopyWithImpl<ListInstance>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$ListInstanceImplCopyWith<_$ListInstanceImpl> get copyWith =>
+      __$$ListInstanceImplCopyWithImpl<_$ListInstanceImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -2658,23 +2583,23 @@ class _$ListInstance extends ListInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Setter? setter)? nill,
-    TResult Function(
+    TResult? Function(Setter? setter)? nill,
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         boolean,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         number,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         string,
-    TResult Function(List<InstanceDetails> keys, int hash, String instanceRefId,
-            Setter? setter)?
+    TResult? Function(List<InstanceDetails> keys, int hash,
+            String instanceRefId, Setter? setter)?
         map,
-    TResult Function(
+    TResult? Function(
             int length, int hash, String instanceRefId, Setter? setter)?
         list,
-    TResult Function(
+    TResult? Function(
             List<ObjectField> fields,
             String type,
             int hash,
@@ -2682,7 +2607,7 @@ class _$ListInstance extends ListInstance with DiagnosticableTreeMixin {
             Setter? setter,
             EvalOnDartLibrary evalForInstance)?
         object,
-    TResult Function(
+    TResult? Function(
             String type, String value, Setter? setter, String instanceRefId)?
         enumeration,
   }) {
@@ -2745,14 +2670,14 @@ class _$ListInstance extends ListInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(NullInstance value)? nill,
-    TResult Function(BoolInstance value)? boolean,
-    TResult Function(NumInstance value)? number,
-    TResult Function(StringInstance value)? string,
-    TResult Function(MapInstance value)? map,
-    TResult Function(ListInstance value)? list,
-    TResult Function(ObjectInstance value)? object,
-    TResult Function(EnumInstance value)? enumeration,
+    TResult? Function(NullInstance value)? nill,
+    TResult? Function(BoolInstance value)? boolean,
+    TResult? Function(NumInstance value)? number,
+    TResult? Function(StringInstance value)? string,
+    TResult? Function(MapInstance value)? map,
+    TResult? Function(ListInstance value)? list,
+    TResult? Function(ObjectInstance value)? object,
+    TResult? Function(EnumInstance value)? enumeration,
   }) {
     return list?.call(this);
   }
@@ -2779,10 +2704,10 @@ class _$ListInstance extends ListInstance with DiagnosticableTreeMixin {
 
 abstract class ListInstance extends InstanceDetails {
   factory ListInstance(
-      {required int length,
-      required int hash,
-      required String instanceRefId,
-      required Setter? setter}) = _$ListInstance;
+      {required final int length,
+      required final int hash,
+      required final String instanceRefId,
+      required final Setter? setter}) = _$ListInstanceImpl;
   ListInstance._() : super._();
 
   int get length;
@@ -2790,19 +2715,23 @@ abstract class ListInstance extends InstanceDetails {
   String get instanceRefId;
   @override
   Setter? get setter;
+
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
-  $ListInstanceCopyWith<ListInstance> get copyWith =>
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ListInstanceImplCopyWith<_$ListInstanceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ObjectInstanceCopyWith<$Res>
+abstract class _$$ObjectInstanceImplCopyWith<$Res>
     implements $InstanceDetailsCopyWith<$Res> {
-  factory $ObjectInstanceCopyWith(
-          ObjectInstance value, $Res Function(ObjectInstance) then) =
-      _$ObjectInstanceCopyWithImpl<$Res>;
+  factory _$$ObjectInstanceImplCopyWith(_$ObjectInstanceImpl value,
+          $Res Function(_$ObjectInstanceImpl) then) =
+      __$$ObjectInstanceImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call(
       {List<ObjectField> fields,
       String type,
@@ -2813,47 +2742,47 @@ abstract class $ObjectInstanceCopyWith<$Res>
 }
 
 /// @nodoc
-class _$ObjectInstanceCopyWithImpl<$Res>
-    extends _$InstanceDetailsCopyWithImpl<$Res>
-    implements $ObjectInstanceCopyWith<$Res> {
-  _$ObjectInstanceCopyWithImpl(
-      ObjectInstance _value, $Res Function(ObjectInstance) _then)
-      : super(_value, (v) => _then(v as ObjectInstance));
+class __$$ObjectInstanceImplCopyWithImpl<$Res>
+    extends _$InstanceDetailsCopyWithImpl<$Res, _$ObjectInstanceImpl>
+    implements _$$ObjectInstanceImplCopyWith<$Res> {
+  __$$ObjectInstanceImplCopyWithImpl(
+      _$ObjectInstanceImpl _value, $Res Function(_$ObjectInstanceImpl) _then)
+      : super(_value, _then);
 
-  @override
-  ObjectInstance get _value => super._value as ObjectInstance;
-
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? fields = freezed,
-    Object? type = freezed,
-    Object? hash = freezed,
-    Object? instanceRefId = freezed,
+    Object? fields = null,
+    Object? type = null,
+    Object? hash = null,
+    Object? instanceRefId = null,
     Object? setter = freezed,
-    Object? evalForInstance = freezed,
+    Object? evalForInstance = null,
   }) {
-    return _then(ObjectInstance(
-      fields == freezed
-          ? _value.fields
+    return _then(_$ObjectInstanceImpl(
+      null == fields
+          ? _value._fields
           : fields // ignore: cast_nullable_to_non_nullable
               as List<ObjectField>,
-      type: type == freezed
+      type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
-      hash: hash == freezed
+      hash: null == hash
           ? _value.hash
           : hash // ignore: cast_nullable_to_non_nullable
               as int,
-      instanceRefId: instanceRefId == freezed
+      instanceRefId: null == instanceRefId
           ? _value.instanceRefId
           : instanceRefId // ignore: cast_nullable_to_non_nullable
               as String,
-      setter: setter == freezed
+      setter: freezed == setter
           ? _value.setter
           : setter // ignore: cast_nullable_to_non_nullable
               as Setter?,
-      evalForInstance: evalForInstance == freezed
+      evalForInstance: null == evalForInstance
           ? _value.evalForInstance
           : evalForInstance // ignore: cast_nullable_to_non_nullable
               as EvalOnDartLibrary,
@@ -2863,17 +2792,24 @@ class _$ObjectInstanceCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ObjectInstance extends ObjectInstance with DiagnosticableTreeMixin {
-  _$ObjectInstance(this.fields,
+class _$ObjectInstanceImpl extends ObjectInstance with DiagnosticableTreeMixin {
+  _$ObjectInstanceImpl(final List<ObjectField> fields,
       {required this.type,
       required this.hash,
       required this.instanceRefId,
       required this.setter,
       required this.evalForInstance})
-      : super._();
+      : _fields = fields,
+        super._();
 
+  final List<ObjectField> _fields;
   @override
-  final List<ObjectField> fields;
+  List<ObjectField> get fields {
+    if (_fields is EqualUnmodifiableListView) return _fields;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_fields);
+  }
+
   @override
   final String type;
   @override
@@ -2882,11 +2818,11 @@ class _$ObjectInstance extends ObjectInstance with DiagnosticableTreeMixin {
   final String instanceRefId;
   @override
   final Setter? setter;
-  @override
 
   /// An [EvalOnDartLibrary] associated with the library of this object
   ///
   /// This allows to edit private properties.
+  @override
   final EvalOnDartLibrary evalForInstance;
 
   @override
@@ -2908,34 +2844,38 @@ class _$ObjectInstance extends ObjectInstance with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is ObjectInstance &&
-            const DeepCollectionEquality().equals(other.fields, fields) &&
-            const DeepCollectionEquality().equals(other.type, type) &&
-            const DeepCollectionEquality().equals(other.hash, hash) &&
-            const DeepCollectionEquality()
-                .equals(other.instanceRefId, instanceRefId) &&
+            other is _$ObjectInstanceImpl &&
+            const DeepCollectionEquality().equals(other._fields, _fields) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.hash, hash) || other.hash == hash) &&
+            (identical(other.instanceRefId, instanceRefId) ||
+                other.instanceRefId == instanceRefId) &&
             (identical(other.setter, setter) || other.setter == setter) &&
-            const DeepCollectionEquality()
-                .equals(other.evalForInstance, evalForInstance));
+            (identical(other.evalForInstance, evalForInstance) ||
+                other.evalForInstance == evalForInstance));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(fields),
-      const DeepCollectionEquality().hash(type),
-      const DeepCollectionEquality().hash(hash),
-      const DeepCollectionEquality().hash(instanceRefId),
+      const DeepCollectionEquality().hash(_fields),
+      type,
+      hash,
+      instanceRefId,
       setter,
-      const DeepCollectionEquality().hash(evalForInstance));
+      evalForInstance);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  $ObjectInstanceCopyWith<ObjectInstance> get copyWith =>
-      _$ObjectInstanceCopyWithImpl<ObjectInstance>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$ObjectInstanceImplCopyWith<_$ObjectInstanceImpl> get copyWith =>
+      __$$ObjectInstanceImplCopyWithImpl<_$ObjectInstanceImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -2974,23 +2914,23 @@ class _$ObjectInstance extends ObjectInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Setter? setter)? nill,
-    TResult Function(
+    TResult? Function(Setter? setter)? nill,
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         boolean,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         number,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         string,
-    TResult Function(List<InstanceDetails> keys, int hash, String instanceRefId,
-            Setter? setter)?
+    TResult? Function(List<InstanceDetails> keys, int hash,
+            String instanceRefId, Setter? setter)?
         map,
-    TResult Function(
+    TResult? Function(
             int length, int hash, String instanceRefId, Setter? setter)?
         list,
-    TResult Function(
+    TResult? Function(
             List<ObjectField> fields,
             String type,
             int hash,
@@ -2998,7 +2938,7 @@ class _$ObjectInstance extends ObjectInstance with DiagnosticableTreeMixin {
             Setter? setter,
             EvalOnDartLibrary evalForInstance)?
         object,
-    TResult Function(
+    TResult? Function(
             String type, String value, Setter? setter, String instanceRefId)?
         enumeration,
   }) {
@@ -3062,14 +3002,14 @@ class _$ObjectInstance extends ObjectInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(NullInstance value)? nill,
-    TResult Function(BoolInstance value)? boolean,
-    TResult Function(NumInstance value)? number,
-    TResult Function(StringInstance value)? string,
-    TResult Function(MapInstance value)? map,
-    TResult Function(ListInstance value)? list,
-    TResult Function(ObjectInstance value)? object,
-    TResult Function(EnumInstance value)? enumeration,
+    TResult? Function(NullInstance value)? nill,
+    TResult? Function(BoolInstance value)? boolean,
+    TResult? Function(NumInstance value)? number,
+    TResult? Function(StringInstance value)? string,
+    TResult? Function(MapInstance value)? map,
+    TResult? Function(ListInstance value)? list,
+    TResult? Function(ObjectInstance value)? object,
+    TResult? Function(EnumInstance value)? enumeration,
   }) {
     return object?.call(this);
   }
@@ -3095,12 +3035,12 @@ class _$ObjectInstance extends ObjectInstance with DiagnosticableTreeMixin {
 }
 
 abstract class ObjectInstance extends InstanceDetails {
-  factory ObjectInstance(List<ObjectField> fields,
-      {required String type,
-      required int hash,
-      required String instanceRefId,
-      required Setter? setter,
-      required EvalOnDartLibrary evalForInstance}) = _$ObjectInstance;
+  factory ObjectInstance(final List<ObjectField> fields,
+      {required final String type,
+      required final int hash,
+      required final String instanceRefId,
+      required final Setter? setter,
+      required final EvalOnDartLibrary evalForInstance}) = _$ObjectInstanceImpl;
   ObjectInstance._() : super._();
 
   List<ObjectField> get fields;
@@ -3114,54 +3054,58 @@ abstract class ObjectInstance extends InstanceDetails {
   ///
   /// This allows to edit private properties.
   EvalOnDartLibrary get evalForInstance;
+
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
-  $ObjectInstanceCopyWith<ObjectInstance> get copyWith =>
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ObjectInstanceImplCopyWith<_$ObjectInstanceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $EnumInstanceCopyWith<$Res>
+abstract class _$$EnumInstanceImplCopyWith<$Res>
     implements $InstanceDetailsCopyWith<$Res> {
-  factory $EnumInstanceCopyWith(
-          EnumInstance value, $Res Function(EnumInstance) then) =
-      _$EnumInstanceCopyWithImpl<$Res>;
+  factory _$$EnumInstanceImplCopyWith(
+          _$EnumInstanceImpl value, $Res Function(_$EnumInstanceImpl) then) =
+      __$$EnumInstanceImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({String type, String value, Setter? setter, String instanceRefId});
 }
 
 /// @nodoc
-class _$EnumInstanceCopyWithImpl<$Res>
-    extends _$InstanceDetailsCopyWithImpl<$Res>
-    implements $EnumInstanceCopyWith<$Res> {
-  _$EnumInstanceCopyWithImpl(
-      EnumInstance _value, $Res Function(EnumInstance) _then)
-      : super(_value, (v) => _then(v as EnumInstance));
+class __$$EnumInstanceImplCopyWithImpl<$Res>
+    extends _$InstanceDetailsCopyWithImpl<$Res, _$EnumInstanceImpl>
+    implements _$$EnumInstanceImplCopyWith<$Res> {
+  __$$EnumInstanceImplCopyWithImpl(
+      _$EnumInstanceImpl _value, $Res Function(_$EnumInstanceImpl) _then)
+      : super(_value, _then);
 
-  @override
-  EnumInstance get _value => super._value as EnumInstance;
-
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? type = freezed,
-    Object? value = freezed,
+    Object? type = null,
+    Object? value = null,
     Object? setter = freezed,
-    Object? instanceRefId = freezed,
+    Object? instanceRefId = null,
   }) {
-    return _then(EnumInstance(
-      type: type == freezed
+    return _then(_$EnumInstanceImpl(
+      type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
-      value: value == freezed
+      value: null == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as String,
-      setter: setter == freezed
+      setter: freezed == setter
           ? _value.setter
           : setter // ignore: cast_nullable_to_non_nullable
               as Setter?,
-      instanceRefId: instanceRefId == freezed
+      instanceRefId: null == instanceRefId
           ? _value.instanceRefId
           : instanceRefId // ignore: cast_nullable_to_non_nullable
               as String,
@@ -3171,8 +3115,8 @@ class _$EnumInstanceCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$EnumInstance extends EnumInstance with DiagnosticableTreeMixin {
-  _$EnumInstance(
+class _$EnumInstanceImpl extends EnumInstance with DiagnosticableTreeMixin {
+  _$EnumInstanceImpl(
       {required this.type,
       required this.value,
       required this.setter,
@@ -3205,29 +3149,28 @@ class _$EnumInstance extends EnumInstance with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is EnumInstance &&
-            const DeepCollectionEquality().equals(other.type, type) &&
-            const DeepCollectionEquality().equals(other.value, value) &&
+            other is _$EnumInstanceImpl &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.value, value) || other.value == value) &&
             (identical(other.setter, setter) || other.setter == setter) &&
-            const DeepCollectionEquality()
-                .equals(other.instanceRefId, instanceRefId));
+            (identical(other.instanceRefId, instanceRefId) ||
+                other.instanceRefId == instanceRefId));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(type),
-      const DeepCollectionEquality().hash(value),
-      setter,
-      const DeepCollectionEquality().hash(instanceRefId));
+  int get hashCode =>
+      Object.hash(runtimeType, type, value, setter, instanceRefId);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  $EnumInstanceCopyWith<EnumInstance> get copyWith =>
-      _$EnumInstanceCopyWithImpl<EnumInstance>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$EnumInstanceImplCopyWith<_$EnumInstanceImpl> get copyWith =>
+      __$$EnumInstanceImplCopyWithImpl<_$EnumInstanceImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -3266,23 +3209,23 @@ class _$EnumInstance extends EnumInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Setter? setter)? nill,
-    TResult Function(
+    TResult? Function(Setter? setter)? nill,
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         boolean,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         number,
-    TResult Function(
+    TResult? Function(
             String displayString, String instanceRefId, Setter? setter)?
         string,
-    TResult Function(List<InstanceDetails> keys, int hash, String instanceRefId,
-            Setter? setter)?
+    TResult? Function(List<InstanceDetails> keys, int hash,
+            String instanceRefId, Setter? setter)?
         map,
-    TResult Function(
+    TResult? Function(
             int length, int hash, String instanceRefId, Setter? setter)?
         list,
-    TResult Function(
+    TResult? Function(
             List<ObjectField> fields,
             String type,
             int hash,
@@ -3290,7 +3233,7 @@ class _$EnumInstance extends EnumInstance with DiagnosticableTreeMixin {
             Setter? setter,
             EvalOnDartLibrary evalForInstance)?
         object,
-    TResult Function(
+    TResult? Function(
             String type, String value, Setter? setter, String instanceRefId)?
         enumeration,
   }) {
@@ -3353,14 +3296,14 @@ class _$EnumInstance extends EnumInstance with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(NullInstance value)? nill,
-    TResult Function(BoolInstance value)? boolean,
-    TResult Function(NumInstance value)? number,
-    TResult Function(StringInstance value)? string,
-    TResult Function(MapInstance value)? map,
-    TResult Function(ListInstance value)? list,
-    TResult Function(ObjectInstance value)? object,
-    TResult Function(EnumInstance value)? enumeration,
+    TResult? Function(NullInstance value)? nill,
+    TResult? Function(BoolInstance value)? boolean,
+    TResult? Function(NumInstance value)? number,
+    TResult? Function(StringInstance value)? string,
+    TResult? Function(MapInstance value)? map,
+    TResult? Function(ListInstance value)? list,
+    TResult? Function(ObjectInstance value)? object,
+    TResult? Function(EnumInstance value)? enumeration,
   }) {
     return enumeration?.call(this);
   }
@@ -3387,10 +3330,10 @@ class _$EnumInstance extends EnumInstance with DiagnosticableTreeMixin {
 
 abstract class EnumInstance extends InstanceDetails {
   factory EnumInstance(
-      {required String type,
-      required String value,
-      required Setter? setter,
-      required String instanceRefId}) = _$EnumInstance;
+      {required final String type,
+      required final String value,
+      required final Setter? setter,
+      required final String instanceRefId}) = _$EnumInstanceImpl;
   EnumInstance._() : super._();
 
   String get type;
@@ -3398,40 +3341,18 @@ abstract class EnumInstance extends InstanceDetails {
   @override
   Setter? get setter;
   String get instanceRefId;
+
+  /// Create a copy of InstanceDetails
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
-  $EnumInstanceCopyWith<EnumInstance> get copyWith =>
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$EnumInstanceImplCopyWith<_$EnumInstanceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-class _$InstancePathTearOff {
-  const _$InstancePathTearOff();
-
-  _InstancePathFromInstanceId fromInstanceId(String instanceId,
-      {List<PathToProperty> pathToProperty = const []}) {
-    return _InstancePathFromInstanceId(
-      instanceId,
-      pathToProperty: pathToProperty,
-    );
-  }
-
-  _InstancePathFromProviderId fromProviderId(String providerId,
-      {List<PathToProperty> pathToProperty = const []}) {
-    return _InstancePathFromProviderId(
-      providerId,
-      pathToProperty: pathToProperty,
-    );
-  }
-}
-
-/// @nodoc
-const $InstancePath = _$InstancePathTearOff();
-
-/// @nodoc
 mixin _$InstancePath {
   List<PathToProperty> get pathToProperty => throw _privateConstructorUsedError;
-
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(
@@ -3444,9 +3365,9 @@ mixin _$InstancePath {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String instanceId, List<PathToProperty> pathToProperty)?
+    TResult? Function(String instanceId, List<PathToProperty> pathToProperty)?
         fromInstanceId,
-    TResult Function(String providerId, List<PathToProperty> pathToProperty)?
+    TResult? Function(String providerId, List<PathToProperty> pathToProperty)?
         fromProviderId,
   }) =>
       throw _privateConstructorUsedError;
@@ -3467,8 +3388,8 @@ mixin _$InstancePath {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(_InstancePathFromInstanceId value)? fromInstanceId,
-    TResult Function(_InstancePathFromProviderId value)? fromProviderId,
+    TResult? Function(_InstancePathFromInstanceId value)? fromInstanceId,
+    TResult? Function(_InstancePathFromProviderId value)? fromProviderId,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -3479,7 +3400,9 @@ mixin _$InstancePath {
   }) =>
       throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstancePath
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $InstancePathCopyWith<InstancePath> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -3488,66 +3411,73 @@ mixin _$InstancePath {
 abstract class $InstancePathCopyWith<$Res> {
   factory $InstancePathCopyWith(
           InstancePath value, $Res Function(InstancePath) then) =
-      _$InstancePathCopyWithImpl<$Res>;
+      _$InstancePathCopyWithImpl<$Res, InstancePath>;
+  @useResult
   $Res call({List<PathToProperty> pathToProperty});
 }
 
 /// @nodoc
-class _$InstancePathCopyWithImpl<$Res> implements $InstancePathCopyWith<$Res> {
+class _$InstancePathCopyWithImpl<$Res, $Val extends InstancePath>
+    implements $InstancePathCopyWith<$Res> {
   _$InstancePathCopyWithImpl(this._value, this._then);
 
-  final InstancePath _value;
   // ignore: unused_field
-  final $Res Function(InstancePath) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  /// Create a copy of InstancePath
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? pathToProperty = freezed,
+    Object? pathToProperty = null,
   }) {
     return _then(_value.copyWith(
-      pathToProperty: pathToProperty == freezed
+      pathToProperty: null == pathToProperty
           ? _value.pathToProperty
           : pathToProperty // ignore: cast_nullable_to_non_nullable
               as List<PathToProperty>,
-    ));
+    ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$InstancePathFromInstanceIdCopyWith<$Res>
+abstract class _$$InstancePathFromInstanceIdImplCopyWith<$Res>
     implements $InstancePathCopyWith<$Res> {
-  factory _$InstancePathFromInstanceIdCopyWith(
-          _InstancePathFromInstanceId value,
-          $Res Function(_InstancePathFromInstanceId) then) =
-      __$InstancePathFromInstanceIdCopyWithImpl<$Res>;
+  factory _$$InstancePathFromInstanceIdImplCopyWith(
+          _$InstancePathFromInstanceIdImpl value,
+          $Res Function(_$InstancePathFromInstanceIdImpl) then) =
+      __$$InstancePathFromInstanceIdImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({String instanceId, List<PathToProperty> pathToProperty});
 }
 
 /// @nodoc
-class __$InstancePathFromInstanceIdCopyWithImpl<$Res>
-    extends _$InstancePathCopyWithImpl<$Res>
-    implements _$InstancePathFromInstanceIdCopyWith<$Res> {
-  __$InstancePathFromInstanceIdCopyWithImpl(_InstancePathFromInstanceId _value,
-      $Res Function(_InstancePathFromInstanceId) _then)
-      : super(_value, (v) => _then(v as _InstancePathFromInstanceId));
+class __$$InstancePathFromInstanceIdImplCopyWithImpl<$Res>
+    extends _$InstancePathCopyWithImpl<$Res, _$InstancePathFromInstanceIdImpl>
+    implements _$$InstancePathFromInstanceIdImplCopyWith<$Res> {
+  __$$InstancePathFromInstanceIdImplCopyWithImpl(
+      _$InstancePathFromInstanceIdImpl _value,
+      $Res Function(_$InstancePathFromInstanceIdImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _InstancePathFromInstanceId get _value =>
-      super._value as _InstancePathFromInstanceId;
-
+  /// Create a copy of InstancePath
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? instanceId = freezed,
-    Object? pathToProperty = freezed,
+    Object? instanceId = null,
+    Object? pathToProperty = null,
   }) {
-    return _then(_InstancePathFromInstanceId(
-      instanceId == freezed
+    return _then(_$InstancePathFromInstanceIdImpl(
+      null == instanceId
           ? _value.instanceId
           : instanceId // ignore: cast_nullable_to_non_nullable
               as String,
-      pathToProperty: pathToProperty == freezed
-          ? _value.pathToProperty
+      pathToProperty: null == pathToProperty
+          ? _value._pathToProperty
           : pathToProperty // ignore: cast_nullable_to_non_nullable
               as List<PathToProperty>,
     ));
@@ -3556,17 +3486,23 @@ class __$InstancePathFromInstanceIdCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_InstancePathFromInstanceId extends _InstancePathFromInstanceId
+class _$InstancePathFromInstanceIdImpl extends _InstancePathFromInstanceId
     with DiagnosticableTreeMixin {
-  const _$_InstancePathFromInstanceId(this.instanceId,
-      {this.pathToProperty = const []})
-      : super._();
+  const _$InstancePathFromInstanceIdImpl(this.instanceId,
+      {final List<PathToProperty> pathToProperty = const []})
+      : _pathToProperty = pathToProperty,
+        super._();
 
   @override
   final String instanceId;
-  @JsonKey()
+  final List<PathToProperty> _pathToProperty;
   @override
-  final List<PathToProperty> pathToProperty;
+  @JsonKey()
+  List<PathToProperty> get pathToProperty {
+    if (_pathToProperty is EqualUnmodifiableListView) return _pathToProperty;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_pathToProperty);
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -3583,27 +3519,28 @@ class _$_InstancePathFromInstanceId extends _InstancePathFromInstanceId
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _InstancePathFromInstanceId &&
+            other is _$InstancePathFromInstanceIdImpl &&
+            (identical(other.instanceId, instanceId) ||
+                other.instanceId == instanceId) &&
             const DeepCollectionEquality()
-                .equals(other.instanceId, instanceId) &&
-            const DeepCollectionEquality()
-                .equals(other.pathToProperty, pathToProperty));
+                .equals(other._pathToProperty, _pathToProperty));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(instanceId),
-      const DeepCollectionEquality().hash(pathToProperty));
+  int get hashCode => Object.hash(runtimeType, instanceId,
+      const DeepCollectionEquality().hash(_pathToProperty));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstancePath
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  _$InstancePathFromInstanceIdCopyWith<_InstancePathFromInstanceId>
-      get copyWith => __$InstancePathFromInstanceIdCopyWithImpl<
-          _InstancePathFromInstanceId>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$InstancePathFromInstanceIdImplCopyWith<_$InstancePathFromInstanceIdImpl>
+      get copyWith => __$$InstancePathFromInstanceIdImplCopyWithImpl<
+          _$InstancePathFromInstanceIdImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -3621,9 +3558,9 @@ class _$_InstancePathFromInstanceId extends _InstancePathFromInstanceId
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String instanceId, List<PathToProperty> pathToProperty)?
+    TResult? Function(String instanceId, List<PathToProperty> pathToProperty)?
         fromInstanceId,
-    TResult Function(String providerId, List<PathToProperty> pathToProperty)?
+    TResult? Function(String providerId, List<PathToProperty> pathToProperty)?
         fromProviderId,
   }) {
     return fromInstanceId?.call(instanceId, pathToProperty);
@@ -3656,8 +3593,8 @@ class _$_InstancePathFromInstanceId extends _InstancePathFromInstanceId
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(_InstancePathFromInstanceId value)? fromInstanceId,
-    TResult Function(_InstancePathFromProviderId value)? fromProviderId,
+    TResult? Function(_InstancePathFromInstanceId value)? fromInstanceId,
+    TResult? Function(_InstancePathFromProviderId value)? fromProviderId,
   }) {
     return fromInstanceId?.call(this);
   }
@@ -3677,54 +3614,59 @@ class _$_InstancePathFromInstanceId extends _InstancePathFromInstanceId
 }
 
 abstract class _InstancePathFromInstanceId extends InstancePath {
-  const factory _InstancePathFromInstanceId(String instanceId,
-      {List<PathToProperty> pathToProperty}) = _$_InstancePathFromInstanceId;
+  const factory _InstancePathFromInstanceId(final String instanceId,
+          {final List<PathToProperty> pathToProperty}) =
+      _$InstancePathFromInstanceIdImpl;
   const _InstancePathFromInstanceId._() : super._();
 
   String get instanceId;
   @override
   List<PathToProperty> get pathToProperty;
+
+  /// Create a copy of InstancePath
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
-  _$InstancePathFromInstanceIdCopyWith<_InstancePathFromInstanceId>
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$InstancePathFromInstanceIdImplCopyWith<_$InstancePathFromInstanceIdImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$InstancePathFromProviderIdCopyWith<$Res>
+abstract class _$$InstancePathFromProviderIdImplCopyWith<$Res>
     implements $InstancePathCopyWith<$Res> {
-  factory _$InstancePathFromProviderIdCopyWith(
-          _InstancePathFromProviderId value,
-          $Res Function(_InstancePathFromProviderId) then) =
-      __$InstancePathFromProviderIdCopyWithImpl<$Res>;
+  factory _$$InstancePathFromProviderIdImplCopyWith(
+          _$InstancePathFromProviderIdImpl value,
+          $Res Function(_$InstancePathFromProviderIdImpl) then) =
+      __$$InstancePathFromProviderIdImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({String providerId, List<PathToProperty> pathToProperty});
 }
 
 /// @nodoc
-class __$InstancePathFromProviderIdCopyWithImpl<$Res>
-    extends _$InstancePathCopyWithImpl<$Res>
-    implements _$InstancePathFromProviderIdCopyWith<$Res> {
-  __$InstancePathFromProviderIdCopyWithImpl(_InstancePathFromProviderId _value,
-      $Res Function(_InstancePathFromProviderId) _then)
-      : super(_value, (v) => _then(v as _InstancePathFromProviderId));
+class __$$InstancePathFromProviderIdImplCopyWithImpl<$Res>
+    extends _$InstancePathCopyWithImpl<$Res, _$InstancePathFromProviderIdImpl>
+    implements _$$InstancePathFromProviderIdImplCopyWith<$Res> {
+  __$$InstancePathFromProviderIdImplCopyWithImpl(
+      _$InstancePathFromProviderIdImpl _value,
+      $Res Function(_$InstancePathFromProviderIdImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _InstancePathFromProviderId get _value =>
-      super._value as _InstancePathFromProviderId;
-
+  /// Create a copy of InstancePath
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? providerId = freezed,
-    Object? pathToProperty = freezed,
+    Object? providerId = null,
+    Object? pathToProperty = null,
   }) {
-    return _then(_InstancePathFromProviderId(
-      providerId == freezed
+    return _then(_$InstancePathFromProviderIdImpl(
+      null == providerId
           ? _value.providerId
           : providerId // ignore: cast_nullable_to_non_nullable
               as String,
-      pathToProperty: pathToProperty == freezed
-          ? _value.pathToProperty
+      pathToProperty: null == pathToProperty
+          ? _value._pathToProperty
           : pathToProperty // ignore: cast_nullable_to_non_nullable
               as List<PathToProperty>,
     ));
@@ -3733,17 +3675,23 @@ class __$InstancePathFromProviderIdCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_InstancePathFromProviderId extends _InstancePathFromProviderId
+class _$InstancePathFromProviderIdImpl extends _InstancePathFromProviderId
     with DiagnosticableTreeMixin {
-  const _$_InstancePathFromProviderId(this.providerId,
-      {this.pathToProperty = const []})
-      : super._();
+  const _$InstancePathFromProviderIdImpl(this.providerId,
+      {final List<PathToProperty> pathToProperty = const []})
+      : _pathToProperty = pathToProperty,
+        super._();
 
   @override
   final String providerId;
-  @JsonKey()
+  final List<PathToProperty> _pathToProperty;
   @override
-  final List<PathToProperty> pathToProperty;
+  @JsonKey()
+  List<PathToProperty> get pathToProperty {
+    if (_pathToProperty is EqualUnmodifiableListView) return _pathToProperty;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_pathToProperty);
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -3760,27 +3708,28 @@ class _$_InstancePathFromProviderId extends _InstancePathFromProviderId
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _InstancePathFromProviderId &&
+            other is _$InstancePathFromProviderIdImpl &&
+            (identical(other.providerId, providerId) ||
+                other.providerId == providerId) &&
             const DeepCollectionEquality()
-                .equals(other.providerId, providerId) &&
-            const DeepCollectionEquality()
-                .equals(other.pathToProperty, pathToProperty));
+                .equals(other._pathToProperty, _pathToProperty));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(providerId),
-      const DeepCollectionEquality().hash(pathToProperty));
+  int get hashCode => Object.hash(runtimeType, providerId,
+      const DeepCollectionEquality().hash(_pathToProperty));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of InstancePath
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  _$InstancePathFromProviderIdCopyWith<_InstancePathFromProviderId>
-      get copyWith => __$InstancePathFromProviderIdCopyWithImpl<
-          _InstancePathFromProviderId>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$InstancePathFromProviderIdImplCopyWith<_$InstancePathFromProviderIdImpl>
+      get copyWith => __$$InstancePathFromProviderIdImplCopyWithImpl<
+          _$InstancePathFromProviderIdImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -3798,9 +3747,9 @@ class _$_InstancePathFromProviderId extends _InstancePathFromProviderId
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String instanceId, List<PathToProperty> pathToProperty)?
+    TResult? Function(String instanceId, List<PathToProperty> pathToProperty)?
         fromInstanceId,
-    TResult Function(String providerId, List<PathToProperty> pathToProperty)?
+    TResult? Function(String providerId, List<PathToProperty> pathToProperty)?
         fromProviderId,
   }) {
     return fromProviderId?.call(providerId, pathToProperty);
@@ -3833,8 +3782,8 @@ class _$_InstancePathFromProviderId extends _InstancePathFromProviderId
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(_InstancePathFromInstanceId value)? fromInstanceId,
-    TResult Function(_InstancePathFromProviderId value)? fromProviderId,
+    TResult? Function(_InstancePathFromInstanceId value)? fromInstanceId,
+    TResult? Function(_InstancePathFromProviderId value)? fromProviderId,
   }) {
     return fromProviderId?.call(this);
   }
@@ -3854,15 +3803,19 @@ class _$_InstancePathFromProviderId extends _InstancePathFromProviderId
 }
 
 abstract class _InstancePathFromProviderId extends InstancePath {
-  const factory _InstancePathFromProviderId(String providerId,
-      {List<PathToProperty> pathToProperty}) = _$_InstancePathFromProviderId;
+  const factory _InstancePathFromProviderId(final String providerId,
+          {final List<PathToProperty> pathToProperty}) =
+      _$InstancePathFromProviderIdImpl;
   const _InstancePathFromProviderId._() : super._();
 
   String get providerId;
   @override
   List<PathToProperty> get pathToProperty;
+
+  /// Create a copy of InstancePath
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
-  _$InstancePathFromProviderIdCopyWith<_InstancePathFromProviderId>
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$InstancePathFromProviderIdImplCopyWith<_$InstancePathFromProviderIdImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

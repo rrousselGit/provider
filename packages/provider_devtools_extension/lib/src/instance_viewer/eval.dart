@@ -14,21 +14,26 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vm_service/vm_service.dart';
 
-Stream<VmService> get _serviceConnectionStream =>
-    _serviceConnectionStreamController.stream;
-final _serviceConnectionStreamController =
-    StreamController<VmService>.broadcast();
-void setServiceConnectionForProviderScreen(VmService service) {
-  _serviceConnectionStreamController.add(service);
-}
+final serviceProvider = StreamProvider<VmService>((ref) {
+  final controller = StreamController<VmService>.broadcast();
+  void handleConnectionChange() {
+    final isConnected = serviceManager.connectedState.value.connected;
+    final isServiceAvailable = serviceManager.isServiceAvailable;
+    if (isConnected && isServiceAvailable) {
+      controller.add(serviceManager.service!);
+    }
+  }
 
-/// Exposes the current VmServiceWrapper.
-/// By listening to this provider instead of directly accessing `serviceManager.service`,
-/// this ensures that providers reload properly when the devtool is connected
-/// to a different application.
-final serviceProvider = StreamProvider<VmService>((ref) async* {
-  yield serviceManager.service!;
-  yield* _serviceConnectionStream;
+  serviceManager.connectedState.addListener(handleConnectionChange);
+
+  handleConnectionChange();
+
+  ref.onDispose(() {
+    serviceManager.connectedState.removeListener(handleConnectionChange);
+    controller.close();
+  });
+
+  return controller.stream;
 });
 
 /// An [EvalOnDartLibrary] that has access to no specific library in particular

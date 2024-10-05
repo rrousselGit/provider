@@ -2,17 +2,26 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@TestOn('vm')
+@TestOn('browser')
+import 'dart:async';
+
+import 'package:mockito/mockito.dart';
+import 'package:provider_devtools_extension/src/instance_viewer/eval.dart';
 import 'package:provider_devtools_extension/src/provider_screen.dart';
 import 'package:provider_devtools_extension/src/instance_viewer/instance_details.dart';
 import 'package:provider_devtools_extension/src/instance_viewer/instance_providers.dart';
 import 'package:provider_devtools_extension/src/provider_list.dart';
 import 'package:provider_devtools_extension/src/provider_nodes.dart';
+import 'package:devtools_extensions/devtools_extensions.dart';
+import 'package:devtools_app_shared/utils.dart';
+import 'package:devtools_app_shared/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:vm_service/vm_service.dart';
 import 'test_utils.dart';
+
+class MockVmService extends Mock implements VmService {}
 
 void main() {
   // Set a wide enough screen width that we do not run into overflow.
@@ -20,10 +29,8 @@ void main() {
 
   late Widget providerScreen;
 
-  setUpAll(() async => await loadFonts());
-
-  setUp(() {
-    // setGlobal(IdeTheme, getIdeTheme());
+  setUp(() async {
+    setGlobal(IdeTheme, getIdeTheme());
   });
 
   setUp(() {
@@ -32,7 +39,7 @@ void main() {
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: wrap(
-          const ProviderScreenBody(),
+          const DevToolsExtension(child: ProviderScreenBody()),
         ),
       ),
     );
@@ -84,9 +91,7 @@ void main() {
     test('selects the first provider available', () async {
       final container = ProviderContainer(
         overrides: [
-          sortedProviderNodesProvider.overrideWithValue(
-            const AsyncValue.loading(),
-          ),
+          sortedProviderNodesProvider.overrideWith((ref) => ref.future),
         ],
       );
       addTearDown(container.dispose);
@@ -99,14 +104,12 @@ void main() {
       expect(sub.read(), isNull);
 
       container.updateOverrides([
-        sortedProviderNodesProvider.overrideWithValue(
-          const AsyncValue.data([
-            ProviderNode(id: '0', type: 'Provider<A>'),
-            ProviderNode(id: '1', type: 'Provider<B>'),
-          ]),
-        ),
+        sortedProviderNodesProvider.overrideWith((ref) => const [
+              ProviderNode(id: '0', type: 'Provider<A>'),
+              ProviderNode(id: '1', type: 'Provider<B>'),
+            ]),
       ]);
-
+      container.invalidate(sortedProviderNodesProvider);
       await container.pump();
 
       expect(sub.read(), '0');
@@ -115,9 +118,7 @@ void main() {
     test('selects the first provider available after an error', () async {
       final container = ProviderContainer(
         overrides: [
-          sortedProviderNodesProvider.overrideWithValue(
-            AsyncValue.error(Error()),
-          ),
+          sortedProviderNodesProvider.overrideWith((ref) => throw Exception()),
         ],
       );
       addTearDown(container.dispose);
@@ -133,14 +134,14 @@ void main() {
       expect(sub.read(), isNull);
 
       container.updateOverrides([
-        sortedProviderNodesProvider.overrideWithValue(
-          const AsyncValue.data([
+        sortedProviderNodesProvider.overrideWith(
+          (ref) => const [
             ProviderNode(id: '0', type: 'Provider<A>'),
             ProviderNode(id: '1', type: 'Provider<B>'),
-          ]),
+          ],
         ),
       ]);
-
+      container.invalidate(sortedProviderNodesProvider);
       // wait for the ids update to be handled
       await container.pump();
 
@@ -152,10 +153,10 @@ void main() {
       () {
         final container = ProviderContainer(
           overrides: [
-            sortedProviderNodesProvider.overrideWithValue(
-              const AsyncValue.data([
+            sortedProviderNodesProvider.overrideWith(
+              (ref) => const [
                 ProviderNode(id: '0', type: 'Provider<A>'),
-              ]),
+              ],
             ),
           ],
         );
@@ -169,12 +170,14 @@ void main() {
         expect(sub.read(), '0');
 
         container.updateOverrides([
-          sortedProviderNodesProvider.overrideWithValue(
-            const AsyncValue.data([
+          sortedProviderNodesProvider.overrideWith(
+            (ref) => const [
               ProviderNode(id: '1', type: 'Provider<B>'),
-            ]),
+            ],
           ),
         ]);
+
+        container.invalidate(sortedProviderNodesProvider);
 
         expect(sub.read(), '1');
       },
@@ -183,10 +186,10 @@ void main() {
     test('Once a provider is selected, further updates are no-op', () async {
       final container = ProviderContainer(
         overrides: [
-          sortedProviderNodesProvider.overrideWithValue(
-            const AsyncValue.data([
+          sortedProviderNodesProvider.overrideWith(
+            (ref) => const [
               ProviderNode(id: '0', type: 'Provider<A>'),
-            ]),
+            ],
           ),
         ],
       );
@@ -202,12 +205,13 @@ void main() {
       expect(sub.read(), '0');
 
       container.updateOverrides([
-        sortedProviderNodesProvider.overrideWithValue(
-          // '0' is no-longer the first provider on purpose
-          const AsyncValue.data([
+        sortedProviderNodesProvider.overrideWith(
+          (ref) =>
+              // '0' is no-longer the first provider on purpose
+              const [
             ProviderNode(id: '1', type: 'Provider<B>'),
             ProviderNode(id: '0', type: 'Provider<A>'),
-          ]),
+          ],
         ),
       ]);
 
@@ -222,10 +226,10 @@ void main() {
       () async {
         final container = ProviderContainer(
           overrides: [
-            sortedProviderNodesProvider.overrideWithValue(
-              const AsyncValue.data([
+            sortedProviderNodesProvider.overrideWith(
+              (ref) => const [
                 ProviderNode(id: '0', type: 'Provider<A>'),
-              ]),
+              ],
             ),
           ],
         );
@@ -241,23 +245,23 @@ void main() {
         expect(sub.read(), '0');
 
         container.updateOverrides([
-          sortedProviderNodesProvider.overrideWithValue(
-            const AsyncValue.data([]),
+          sortedProviderNodesProvider.overrideWith(
+            (ref) => const [],
           ),
         ]);
-
+        container.invalidate(sortedProviderNodesProvider);
         await container.pump();
 
         expect(sub.read(), isNull);
 
         container.updateOverrides([
-          sortedProviderNodesProvider.overrideWithValue(
-            const AsyncValue.data([
+          sortedProviderNodesProvider.overrideWith(
+            (ref) => const [
               ProviderNode(id: '1', type: 'Provider<B>'),
-            ]),
+            ],
           ),
         ]);
-
+        container.invalidate(sortedProviderNodesProvider);
         await container.pump();
 
         expect(sub.read(), '1');
@@ -268,14 +272,12 @@ void main() {
   group('ProviderList', () {
     List<Override> getOverrides() {
       return [
-        instanceProvider(const InstancePath.fromProviderId('0'))
-            .overrideWithValue(
-          AsyncValue.data(
-            InstanceDetails.string(
-              'Value0',
-              instanceRefId: 'string/0',
-              setter: null,
-            ),
+        hasConnectionProvider.overrideWithValue(true),
+        instanceProvider(const InstancePath.fromProviderId('0')).overrideWith(
+          (ref) => InstanceDetails.string(
+            'Value0',
+            instanceRefId: 'string/0',
+            setter: null,
           ),
         ),
       ];
@@ -287,8 +289,7 @@ void main() {
       (tester) async {
         final container = ProviderContainer(
           overrides: [
-            sortedProviderNodesProvider
-                .overrideWithValue(const AsyncValue.loading()),
+            sortedProviderNodesProvider.overrideWith((ref) => <ProviderNode>[]),
             ...getOverrides(),
           ],
         );
@@ -299,9 +300,11 @@ void main() {
             child: providerScreen,
           ),
         );
+        await tester.pumpAndSettle();
 
         expect(container.read(selectedProviderIdProvider), isNull);
         expect(find.byType(ProviderNodeItem), findsNothing);
+        expect(find.byType(SplitPane), findsOne);
 
         await expectLater(
           find.byType(ProviderScreenBody),
@@ -311,16 +314,14 @@ void main() {
         );
 
         container.updateOverrides([
-          sortedProviderNodesProvider.overrideWithValue(
-            const AsyncValue.data([
-              ProviderNode(id: '0', type: 'Provider<A>'),
-              ProviderNode(id: '1', type: 'Provider<B>'),
-            ]),
-          ),
+          sortedProviderNodesProvider.overrideWith((ref) => const [
+                ProviderNode(id: '0', type: 'Provider<A>'),
+                ProviderNode(id: '1', type: 'Provider<B>'),
+              ]),
           ...getOverrides(),
         ]);
-
-        await tester.pump();
+        container.invalidate(sortedProviderNodesProvider);
+        await tester.pumpAndSettle();
 
         expect(container.read(selectedProviderIdProvider), '0');
         expect(find.byType(ProviderNodeItem), findsNWidgets(2));
@@ -404,5 +405,41 @@ void main() {
     //     );
     //   },
     // );
+  });
+
+  group('ServiceManager states', () {
+    final Override availableService =
+        serviceProvider.overrideWith((ref) => Stream.value(MockVmService()));
+    testWidgetsWithWindowSize('Loading state', windowSize, (tester) async {
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          hasConnectionProvider.overrideWithValue(false),
+          availableService,
+        ],
+        child: providerScreen,
+      ));
+
+      final finder = find.byType(Text);
+
+      expect(finder, findsOne);
+      expect((finder.found.first.widget as Text).data,
+          equals('Devtools are not connected to VmService'));
+    });
+
+    testWidgetsWithWindowSize('Data state', windowSize, (tester) async {
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          hasConnectionProvider.overrideWithValue(true),
+          availableService,
+        ],
+        child: providerScreen,
+      ));
+
+      await tester.pump();
+
+      final finder = find.byType(SplitPane);
+
+      expect(finder, findsOne);
+    });
   });
 }

@@ -11,13 +11,13 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  collection: ^1.15.0
-  devtools_extensions: ^0.0.6
-  devtools_app_shared: ^0.0.4
-  # TODO: https://github.com/flutter/devtools/issues/4569 - unpin this version
-  flutter_riverpod: 2.0.0-dev.9
+  collection: ^1.18.0
+  devtools_extensions: ^0.2.2
+  devtools_app_shared: ^0.2.2
+  flutter_riverpod: ^2.5.1
   logging: ^1.1.1
-  vm_service: ">=11.9.0 <14.0.0"
+  vm_service: ^14.2.5
+  freezed_annotation: ^2.4.4
 
 dev_dependencies:
   flutter_driver:
@@ -27,6 +27,9 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   integration_test:
     sdk: flutter
+  mockito: ^5.4.4
+  freezed: ^2.5.7
+  build_runner: ^2.4.12
 
 flutter:
   uses-material-design: true
