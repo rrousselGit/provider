@@ -75,7 +75,8 @@ class MyHomePage extends StatelessWidget {
             ///
             /// This is totally optional (and rarely needed).
             /// Similarly, we could also use [Consumer] or [Selector].
-            Count(),
+            //Count(),
+            ExampleScreen(),
           ],
         ),
       ),
