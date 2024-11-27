@@ -115,34 +115,28 @@ class ExampleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => ExampleProvider(observer),
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Provider Observer Example')),
-        body: Center(
-          child:
-              Consumer<ExampleProvider>(builder: (context1, provider, child) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('Counter: ${provider.counter}'),
-                ElevatedButton(
-                  onPressed: () => provider.increment(),
-                  child: const Text('Increment Counter'),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                ElevatedButton(
-                  onPressed: () => provider.decrement(),
-                  child: const Text('decrement Counter'),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-              ],
-            );
-          }),
-        ),
-      ),
+      child: Consumer<ExampleProvider>(builder: (context1, provider, child) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Counter: ${provider.counter}'),
+            ElevatedButton(
+              onPressed: () => provider.increment(),
+              child: const Text('Increment Counter'),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            ElevatedButton(
+              onPressed: () => provider.decrement(),
+              child: const Text('decrement Counter'),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+          ],
+        );
+      }),
     );
   }
 }
