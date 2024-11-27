@@ -2,7 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'observer/app_observer.dart';
+import 'observer/provider_observer_example.dart';
+
 /// This is a reimplementation of the default Flutter application using provider + [ChangeNotifier].
+
+/// this is global app observer instance
+final observer = AppObserver();
 
 void main() {
   runApp(
@@ -10,6 +16,7 @@ void main() {
     /// can use [MyApp] while mocking the providers
     MultiProvider(
       providers: [
+        Provider<ChangeNotifierObserver>.value(value: observer),
         ChangeNotifierProvider(create: (_) => Counter()),
       ],
       child: const MyApp(),
@@ -69,7 +76,8 @@ class MyHomePage extends StatelessWidget {
             ///
             /// This is totally optional (and rarely needed).
             /// Similarly, we could also use [Consumer] or [Selector].
-            Count(),
+            //Count(),
+            ExampleScreen(),
           ],
         ),
       ),
@@ -96,6 +104,39 @@ class Count extends StatelessWidget {
       '${context.watch<Counter>().count}',
       key: const Key('counterState'),
       style: Theme.of(context).textTheme.headlineMedium,
+    );
+  }
+}
+
+/// example screen to test the provider observer
+class ExampleScreen extends StatelessWidget {
+  const ExampleScreen({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => ExampleProvider(observer),
+      child: Consumer<ExampleProvider>(builder: (context1, provider, child) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Counter: ${provider.counter}'),
+            ElevatedButton(
+              onPressed: () => provider.increment(),
+              child: const Text('Increment Counter'),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            ElevatedButton(
+              onPressed: () => provider.decrement(),
+              child: const Text('decrement Counter'),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+          ],
+        );
+      }),
     );
   }
 }
