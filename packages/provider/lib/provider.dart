@@ -24,7 +24,6 @@ export 'src/listenable_provider.dart'
         ListenableProxyProvider4,
         ListenableProxyProvider5,
         ListenableProxyProvider6;
-export 'src/observer/app_observer.dart';
 export 'src/observer/base_notifier.dart';
 export 'src/observer/change_notifier_observer.dart';
 export 'src/provider.dart'

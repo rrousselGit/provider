@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'change_notifier_observer.dart';
+import 'package:provider/provider.dart';
 
 class AppObserver extends ChangeNotifierObserver {
   @override

@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'provider_observer_example.dart';
+import 'observer/app_observer.dart';
+import 'observer/provider_observer_example.dart';
 
 /// This is a reimplementation of the default Flutter application using provider + [ChangeNotifier].
 
