@@ -15,6 +15,7 @@ class BaseNotifier extends ChangeNotifier {
     // call onCreate when the object is created
     _observer.onCreate(_providerName);
   }
+
   final ChangeNotifierObserver _observer;
   final String _providerName;
 

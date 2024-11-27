@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// An observer that tracks lifecycle events of ChangeNotifier instances.
 ///
 /// This observer can be used to monitor the creation, state changes, and disposal
@@ -7,16 +9,22 @@ abstract class ChangeNotifierObserver {
   /// Called when a new ChangeNotifier instance is created.
   ///
   /// [providerName] identifies the provider being created.
+  @protected
+  @mustCallSuper
   void onCreate(String? providerName) {}
 
   /// Called when the state of a ChangeNotifier changes.
   ///
   /// [providerName] identifies the provider that changed.
   /// [newState] represents the updated state.
+  @protected
+  @mustCallSuper
   void onChange(String? providerName, Object? newState) {}
 
   /// Called when a ChangeNotifier instance is disposed.
   ///
   /// [providerName] identifies the provider being disposed.
+  @protected
+  @mustCallSuper
   void onDispose(String? providerName) {}
 }

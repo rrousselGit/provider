@@ -9,7 +9,7 @@ class AppObserver extends ChangeNotifierObserver {
   }
 
   @override
-  void onChange(String? providerName, dynamic newState) {
+  void onChange(String? providerName, Object? newState) {
     super.onChange(providerName, newState);
     debugPrint('$providerName: State Changed to $newState (from AppObserver)');
   }
