@@ -6,6 +6,50 @@ import 'common.dart';
 
 void main() {
   group('MultiProvider', () {
+    testWidgets('Supports a large number of providers', (tester) async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            for (var i = 0; i < 1500; i++) Provider<int>.value(value: i),
+          ],
+          child: Container(),
+        ),
+      );
+    });
+
+    testWidgets('Simple', (tester) async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: 42),
+            Provider(
+              create: (context) => context.read<int>().toString(),
+            ),
+            Provider<double>(
+              create: (context) => double.parse(context.read<String>()),
+            ),
+          ],
+          child: Container(),
+        ),
+      );
+    });
+
+    testWidgets('Direct dependency', (tester) async {
+      final key = GlobalKey();
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider.value(value: 'foo'),
+            Provider.value(key: key, value: 42),
+          ],
+          child: Container(),
+        ),
+      );
+
+      expect(key.currentContext!.read<String>(), 'foo');
+      expect(key.currentContext!.read<int?>(), isNull);
+    });
+
     testWidgets('MultiProvider children can only access parent providers',
         (tester) async {
       final k1 = GlobalKey();

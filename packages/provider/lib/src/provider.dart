@@ -122,7 +122,50 @@ class MultiProvider extends Nested {
   ///
   /// For an explanation on the `child` parameter that `builder` receives,
   /// see the "Performance optimizations" section of [AnimatedBuilder].
-  MultiProvider({
+  factory MultiProvider({
+    Key? key,
+    required List<SingleChildWidget> providers,
+    Widget? child,
+    TransitionBuilder? builder,
+  }) {
+    // Merge InheritedProviders together
+    Widget Function(Widget? child)? previous;
+
+    var i = 0;
+    for (; i < providers.length; i++) {
+      final provider = providers[i];
+      if (provider is InheritedProvider) {
+        final p = previous;
+
+        final builder = p == null
+            ? (Widget? child) =>
+                provider._buildWithChild(child, key: provider.key)
+            : (Widget? child) {
+                return p(provider._buildWithChild(child, key: provider.key));
+              };
+
+        previous = builder;
+      } else {
+        break;
+      }
+    }
+
+    return MultiProvider._(
+      key: key,
+      // providers: providers,
+      providers: [
+        if (previous != null)
+          SingleChildBuilder(
+            builder: (context, child) => previous!(child),
+          ),
+        if (i < providers.length) ...providers.sublist(i),
+      ],
+      builder: builder,
+      child: child,
+    );
+  }
+
+  MultiProvider._({
     Key? key,
     required List<SingleChildWidget> providers,
     Widget? child,

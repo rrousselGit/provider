@@ -153,13 +153,17 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
   }
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
+  Widget buildWithChild(BuildContext context, Widget? child) =>
+      _buildWithChild(child);
+
+  Widget _buildWithChild(Widget? child, {Key? key}) {
     assert(
       builder != null || child != null,
       '$runtimeType used outside of MultiProvider must specify a child',
     );
     return _InheritedProviderScope<T?>(
       owner: this,
+      key: key,
       // ignore: no_runtimetype_tostring
       debugType: kDebugMode ? '$runtimeType' : '',
       child: builder != null
@@ -334,12 +338,16 @@ abstract class InheritedContext<T> extends BuildContext {
 }
 
 class _InheritedProviderScope<T> extends InheritedWidget {
-  const _InheritedProviderScope({
+  _InheritedProviderScope({
     required this.owner,
     required this.debugType,
     required Widget child,
+    Key? key,
   })  : assert(null is T),
-        super(child: child);
+        super(
+          key: key,
+          child: child,
+        );
 
   final InheritedProvider<T> owner;
   final String debugType;
@@ -385,10 +393,15 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
     // An InheritedProvider<T>'s update tries to obtain a parent provider of
     // the same type.
     visitAncestorElements((parent) {
+      if (parent.widget is InheritedWidgetType) {
+        inheritedElement = parent as InheritedElement;
+        return false;
+      }
       inheritedElement =
           parent.getElementForInheritedWidgetOfExactType<InheritedWidgetType>();
       return false;
     });
+
     return inheritedElement;
   }
 

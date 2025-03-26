@@ -1,3 +1,7 @@
+## Unreleased patch
+
+- Significantly increase the number of providers that MultiProvider can create at once without causing a `StackOverflow`.
+
 ## 6.1.2 - 2024-02-28
 
 - Fixed an issue with `Selector` not rebuilding when the `builder` listens
