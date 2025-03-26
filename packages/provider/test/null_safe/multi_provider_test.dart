@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import 'common.dart';
@@ -124,4 +125,12 @@ void main() {
       expect(find.text('Foo'), findsOneWidget);
     });
   });
+}
+
+class SubMulti extends MultiProvider {
+  SubMulti({
+    Key? key,
+    required List<SingleChildWidget> providers,
+    required Widget child,
+  }) : super(key: key, providers: providers, child: child);
 }

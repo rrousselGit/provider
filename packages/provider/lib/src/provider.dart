@@ -122,12 +122,24 @@ class MultiProvider extends Nested {
   ///
   /// For an explanation on the `child` parameter that `builder` receives,
   /// see the "Performance optimizations" section of [AnimatedBuilder].
-  factory MultiProvider({
+  MultiProvider({
     Key? key,
     required List<SingleChildWidget> providers,
     Widget? child,
     TransitionBuilder? builder,
-  }) {
+  }) : super(
+          key: key,
+          children: _collapseProviders(providers),
+          child: builder != null
+              ? Builder(
+                  builder: (context) => builder(context, child),
+                )
+              : child,
+        );
+
+  static List<SingleChildWidget> _collapseProviders(
+    List<SingleChildWidget> providers,
+  ) {
     // Merge InheritedProviders together
     Widget Function(Widget? child)? previous;
 
@@ -150,35 +162,14 @@ class MultiProvider extends Nested {
       }
     }
 
-    return MultiProvider._(
-      key: key,
-      // providers: providers,
-      providers: [
-        if (previous != null)
-          SingleChildBuilder(
-            builder: (context, child) => previous!(child),
-          ),
-        if (i < providers.length) ...providers.sublist(i),
-      ],
-      builder: builder,
-      child: child,
-    );
+    return [
+      if (previous != null)
+        SingleChildBuilder(
+          builder: (context, child) => previous!(child),
+        ),
+      if (i < providers.length) ...providers.sublist(i),
+    ];
   }
-
-  MultiProvider._({
-    Key? key,
-    required List<SingleChildWidget> providers,
-    Widget? child,
-    TransitionBuilder? builder,
-  }) : super(
-          key: key,
-          children: providers,
-          child: builder != null
-              ? Builder(
-                  builder: (context) => builder(context, child),
-                )
-              : child,
-        );
 }
 
 /// A [Provider] that manages the lifecycle of the value it provides by
