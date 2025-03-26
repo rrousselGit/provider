@@ -1,4 +1,4 @@
-## Unreleased patch
+## 6.1.3 - 2025-03-26
 
 - Significantly increase the number of providers that MultiProvider can create at once without causing a `StackOverflow`.
 
