@@ -69,6 +69,16 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
-        }
+        },
+        {
+            "name": "DevTools Extension Tests (Chrome)",
+            "request": "launch",
+            "type": "dart",
+            "program": "packages/provider_devtools_extension/test",
+            "args": [
+              "--platform",
+              "chrome"
+            ]
+          },
     ]
 }

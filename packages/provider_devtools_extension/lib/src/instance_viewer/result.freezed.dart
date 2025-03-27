@@ -1,6 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'result.dart';
 
@@ -11,28 +12,7 @@ part of 'result.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$ResultTearOff {
-  const _$ResultTearOff();
-
-  _ResultData<T> data<T>(T value) {
-    return _ResultData<T>(
-      value,
-    );
-  }
-
-  _ResultError<T> error<T>(Object error, StackTrace stackTrace) {
-    return _ResultError<T>(
-      error,
-      stackTrace,
-    );
-  }
-}
-
-/// @nodoc
-const $Result = _$ResultTearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$Result<T> {
@@ -44,8 +24,8 @@ mixin _$Result<T> {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(T value)? data,
-    TResult Function(Object error, StackTrace stackTrace)? error,
+    TResult? Function(T value)? data,
+    TResult? Function(Object error, StackTrace stackTrace)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -63,8 +43,8 @@ mixin _$Result<T> {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(_ResultData<T> value)? data,
-    TResult Function(_ResultError<T> value)? error,
+    TResult? Function(_ResultData<T> value)? data,
+    TResult? Function(_ResultError<T> value)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -79,42 +59,49 @@ mixin _$Result<T> {
 /// @nodoc
 abstract class $ResultCopyWith<T, $Res> {
   factory $ResultCopyWith(Result<T> value, $Res Function(Result<T>) then) =
-      _$ResultCopyWithImpl<T, $Res>;
+      _$ResultCopyWithImpl<T, $Res, Result<T>>;
 }
 
 /// @nodoc
-class _$ResultCopyWithImpl<T, $Res> implements $ResultCopyWith<T, $Res> {
+class _$ResultCopyWithImpl<T, $Res, $Val extends Result<T>>
+    implements $ResultCopyWith<T, $Res> {
   _$ResultCopyWithImpl(this._value, this._then);
 
-  final Result<T> _value;
   // ignore: unused_field
-  final $Res Function(Result<T>) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
-abstract class _$ResultDataCopyWith<T, $Res> {
-  factory _$ResultDataCopyWith(
-          _ResultData<T> value, $Res Function(_ResultData<T>) then) =
-      __$ResultDataCopyWithImpl<T, $Res>;
+abstract class _$$ResultDataImplCopyWith<T, $Res> {
+  factory _$$ResultDataImplCopyWith(
+          _$ResultDataImpl<T> value, $Res Function(_$ResultDataImpl<T>) then) =
+      __$$ResultDataImplCopyWithImpl<T, $Res>;
+  @useResult
   $Res call({T value});
 }
 
 /// @nodoc
-class __$ResultDataCopyWithImpl<T, $Res> extends _$ResultCopyWithImpl<T, $Res>
-    implements _$ResultDataCopyWith<T, $Res> {
-  __$ResultDataCopyWithImpl(
-      _ResultData<T> _value, $Res Function(_ResultData<T>) _then)
-      : super(_value, (v) => _then(v as _ResultData<T>));
+class __$$ResultDataImplCopyWithImpl<T, $Res>
+    extends _$ResultCopyWithImpl<T, $Res, _$ResultDataImpl<T>>
+    implements _$$ResultDataImplCopyWith<T, $Res> {
+  __$$ResultDataImplCopyWithImpl(
+      _$ResultDataImpl<T> _value, $Res Function(_$ResultDataImpl<T>) _then)
+      : super(_value, _then);
 
-  @override
-  _ResultData<T> get _value => super._value as _ResultData<T>;
-
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? value = freezed,
   }) {
-    return _then(_ResultData<T>(
-      value == freezed
+    return _then(_$ResultDataImpl<T>(
+      freezed == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as T,
@@ -124,8 +111,8 @@ class __$ResultDataCopyWithImpl<T, $Res> extends _$ResultCopyWithImpl<T, $Res>
 
 /// @nodoc
 
-class _$_ResultData<T> extends _ResultData<T> with DiagnosticableTreeMixin {
-  _$_ResultData(this.value) : super._();
+class _$ResultDataImpl<T> extends _ResultData<T> with DiagnosticableTreeMixin {
+  _$ResultDataImpl(this.value) : super._();
 
   @override
   final T value;
@@ -144,10 +131,10 @@ class _$_ResultData<T> extends _ResultData<T> with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _ResultData<T> &&
+            other is _$ResultDataImpl<T> &&
             const DeepCollectionEquality().equals(other.value, value));
   }
 
@@ -155,10 +142,13 @@ class _$_ResultData<T> extends _ResultData<T> with DiagnosticableTreeMixin {
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(value));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  _$ResultDataCopyWith<T, _ResultData<T>> get copyWith =>
-      __$ResultDataCopyWithImpl<T, _ResultData<T>>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$ResultDataImplCopyWith<T, _$ResultDataImpl<T>> get copyWith =>
+      __$$ResultDataImplCopyWithImpl<T, _$ResultDataImpl<T>>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -172,8 +162,8 @@ class _$_ResultData<T> extends _ResultData<T> with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(T value)? data,
-    TResult Function(Object error, StackTrace stackTrace)? error,
+    TResult? Function(T value)? data,
+    TResult? Function(Object error, StackTrace stackTrace)? error,
   }) {
     return data?.call(value);
   }
@@ -203,8 +193,8 @@ class _$_ResultData<T> extends _ResultData<T> with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(_ResultData<T> value)? data,
-    TResult Function(_ResultError<T> value)? error,
+    TResult? Function(_ResultData<T> value)? data,
+    TResult? Function(_ResultError<T> value)? error,
   }) {
     return data?.call(this);
   }
@@ -224,44 +214,46 @@ class _$_ResultData<T> extends _ResultData<T> with DiagnosticableTreeMixin {
 }
 
 abstract class _ResultData<T> extends Result<T> {
-  factory _ResultData(T value) = _$_ResultData<T>;
+  factory _ResultData(final T value) = _$ResultDataImpl<T>;
   _ResultData._() : super._();
 
   T get value;
-  @JsonKey(ignore: true)
-  _$ResultDataCopyWith<T, _ResultData<T>> get copyWith =>
+
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ResultDataImplCopyWith<T, _$ResultDataImpl<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$ResultErrorCopyWith<T, $Res> {
-  factory _$ResultErrorCopyWith(
-          _ResultError<T> value, $Res Function(_ResultError<T>) then) =
-      __$ResultErrorCopyWithImpl<T, $Res>;
+abstract class _$$ResultErrorImplCopyWith<T, $Res> {
+  factory _$$ResultErrorImplCopyWith(_$ResultErrorImpl<T> value,
+          $Res Function(_$ResultErrorImpl<T>) then) =
+      __$$ResultErrorImplCopyWithImpl<T, $Res>;
+  @useResult
   $Res call({Object error, StackTrace stackTrace});
 }
 
 /// @nodoc
-class __$ResultErrorCopyWithImpl<T, $Res> extends _$ResultCopyWithImpl<T, $Res>
-    implements _$ResultErrorCopyWith<T, $Res> {
-  __$ResultErrorCopyWithImpl(
-      _ResultError<T> _value, $Res Function(_ResultError<T>) _then)
-      : super(_value, (v) => _then(v as _ResultError<T>));
+class __$$ResultErrorImplCopyWithImpl<T, $Res>
+    extends _$ResultCopyWithImpl<T, $Res, _$ResultErrorImpl<T>>
+    implements _$$ResultErrorImplCopyWith<T, $Res> {
+  __$$ResultErrorImplCopyWithImpl(
+      _$ResultErrorImpl<T> _value, $Res Function(_$ResultErrorImpl<T>) _then)
+      : super(_value, _then);
 
-  @override
-  _ResultError<T> get _value => super._value as _ResultError<T>;
-
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? error = freezed,
-    Object? stackTrace = freezed,
+    Object? error = null,
+    Object? stackTrace = null,
   }) {
-    return _then(_ResultError<T>(
-      error == freezed
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as Object,
-      stackTrace == freezed
+    return _then(_$ResultErrorImpl<T>(
+      null == error ? _value.error : error,
+      null == stackTrace
           ? _value.stackTrace
           : stackTrace // ignore: cast_nullable_to_non_nullable
               as StackTrace,
@@ -271,8 +263,9 @@ class __$ResultErrorCopyWithImpl<T, $Res> extends _$ResultCopyWithImpl<T, $Res>
 
 /// @nodoc
 
-class _$_ResultError<T> extends _ResultError<T> with DiagnosticableTreeMixin {
-  _$_ResultError(this.error, this.stackTrace) : super._();
+class _$ResultErrorImpl<T> extends _ResultError<T>
+    with DiagnosticableTreeMixin {
+  _$ResultErrorImpl(this.error, this.stackTrace) : super._();
 
   @override
   final Object error;
@@ -294,25 +287,27 @@ class _$_ResultError<T> extends _ResultError<T> with DiagnosticableTreeMixin {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _ResultError<T> &&
+            other is _$ResultErrorImpl<T> &&
             const DeepCollectionEquality().equals(other.error, error) &&
-            const DeepCollectionEquality()
-                .equals(other.stackTrace, stackTrace));
+            (identical(other.stackTrace, stackTrace) ||
+                other.stackTrace == stackTrace));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(error),
-      const DeepCollectionEquality().hash(stackTrace));
+      runtimeType, const DeepCollectionEquality().hash(error), stackTrace);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  _$ResultErrorCopyWith<T, _ResultError<T>> get copyWith =>
-      __$ResultErrorCopyWithImpl<T, _ResultError<T>>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$ResultErrorImplCopyWith<T, _$ResultErrorImpl<T>> get copyWith =>
+      __$$ResultErrorImplCopyWithImpl<T, _$ResultErrorImpl<T>>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -326,8 +321,8 @@ class _$_ResultError<T> extends _ResultError<T> with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(T value)? data,
-    TResult Function(Object error, StackTrace stackTrace)? error,
+    TResult? Function(T value)? data,
+    TResult? Function(Object error, StackTrace stackTrace)? error,
   }) {
     return error?.call(this.error, stackTrace);
   }
@@ -357,8 +352,8 @@ class _$_ResultError<T> extends _ResultError<T> with DiagnosticableTreeMixin {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(_ResultData<T> value)? data,
-    TResult Function(_ResultError<T> value)? error,
+    TResult? Function(_ResultData<T> value)? data,
+    TResult? Function(_ResultError<T> value)? error,
   }) {
     return error?.call(this);
   }
@@ -378,12 +373,16 @@ class _$_ResultError<T> extends _ResultError<T> with DiagnosticableTreeMixin {
 }
 
 abstract class _ResultError<T> extends Result<T> {
-  factory _ResultError(Object error, StackTrace stackTrace) = _$_ResultError<T>;
+  factory _ResultError(final Object error, final StackTrace stackTrace) =
+      _$ResultErrorImpl<T>;
   _ResultError._() : super._();
 
   Object get error;
   StackTrace get stackTrace;
-  @JsonKey(ignore: true)
-  _$ResultErrorCopyWith<T, _ResultError<T>> get copyWith =>
+
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ResultErrorImplCopyWith<T, _$ResultErrorImpl<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }
