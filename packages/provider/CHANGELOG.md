@@ -1,3 +1,7 @@
+## Unreleased patch
+
+Fix a bug where a bug reading another provider may obtain the wrong value.
+
 ## 6.1.4 - 2025-03-27
 
 Fix `MultiProvider` not being inheritable anymore due to 6.1.3.

@@ -393,7 +393,7 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
     // An InheritedProvider<T>'s update tries to obtain a parent provider of
     // the same type.
     visitAncestorElements((parent) {
-      if (parent.widget is InheritedWidgetType) {
+      if (parent.widget.runtimeType == InheritedWidgetType) {
         inheritedElement = parent as InheritedElement;
         return false;
       }

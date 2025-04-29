@@ -157,6 +157,28 @@ void main() {
   });
 
   group('Provider', () {
+    testWidgets('Can read other providers', (tester) async {
+      // Regression test for https://github.com/rrousselGit/provider/issues/910
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: MultiProvider(
+            providers: [
+              Provider<num>.value(value: 21),
+              Provider<int>.value(value: 42),
+              Provider<String>(
+                  create: (context) => context.read<num>().toString()),
+            ],
+            child: Consumer<String>(
+              builder: (context, value, _) => Text(value),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('21'), findsOneWidget);
+    });
+
     testWidgets('throws if the provided value is a Listenable/Stream',
         (tester) async {
       expect(
