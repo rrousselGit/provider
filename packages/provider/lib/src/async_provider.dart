@@ -181,10 +181,15 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>?, T> {
   /// Creates a [Future] from `create` and subscribes to it.
   ///
   /// `create` must not be `null`.
+  ///
+  /// The optional [dispose] callback is invoked with the last exposed value
+  /// when the provider is removed from the widget tree, allowing cleanup of
+  /// resources (closing streams, cancelling timers, etc.).
   FutureProvider({
     Key? key,
     required Create<Future<T>?> create,
     required T initialData,
+    Dispose<T>? dispose,
     ErrorBuilder<T>? catchError,
     UpdateShouldNotify<T>? updateShouldNotify,
     bool? lazy,
@@ -195,6 +200,7 @@ class FutureProvider<T> extends DeferredInheritedProvider<Future<T>?, T> {
           lazy: lazy,
           builder: builder,
           create: create,
+          dispose: dispose,
           updateShouldNotify: updateShouldNotify,
           startListening: _futureStartListening(
             catchError: catchError,
