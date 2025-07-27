@@ -42,7 +42,8 @@ export 'src/provider.dart'
         SelectContext,
         StartListening,
         UpdateShouldNotify,
-        WatchContext;
+        WatchContext,
+        TryReadContext;
 export 'src/proxy_provider.dart'
     show
         ProxyProvider,

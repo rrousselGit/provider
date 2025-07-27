@@ -383,6 +383,79 @@ void main() {
       expect(curr, equals(25));
       expect(buildCount, equals(2));
     });
+
+    testWidgets('tryRead returns value if provider exists', (tester) async {
+      late int? value;
+      final builder = Builder(
+        builder: (context) {
+          value = context.tryRead<int>();
+          return Container();
+        },
+      );
+
+      await tester.pumpWidget(
+        Provider<int>.value(
+          value: 123,
+          child: builder,
+        ),
+      );
+
+      expect(value, equals(123));
+    });
+
+    testWidgets('tryRead returns null if provider does not exist',
+        (tester) async {
+      late int? value;
+      final builder = Builder(
+        builder: (context) {
+          value = context.tryRead<int>();
+          return Container();
+        },
+      );
+
+      await tester.pumpWidget(builder);
+
+      expect(value, isNull);
+    });
+
+    testWidgets('tryRead returns null if provider value is null',
+        (tester) async {
+      late int? value;
+      final builder = Builder(
+        builder: (context) {
+          value = context.tryRead<int>();
+          return Container();
+        },
+      );
+
+      await tester.pumpWidget(
+        Provider<int?>.value(
+          value: null,
+          child: builder,
+        ),
+      );
+
+      expect(value, isNull);
+    });
+
+    testWidgets('tryRead returns null if type does not match', (tester) async {
+      late String? value;
+      final builder = Builder(
+        builder: (context) {
+          value = context.tryRead<String>();
+          return Container();
+        },
+      );
+
+      await tester.pumpWidget(
+        Provider<int>.value(
+          value: 42,
+          child: builder,
+        ),
+      );
+
+      expect(value, isNull);
+    });
   });
 
   testWidgets('sound provide T inject T?', (tester) async {

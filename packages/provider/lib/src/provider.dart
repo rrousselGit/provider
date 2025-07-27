@@ -684,6 +684,44 @@ extension ReadContext on BuildContext {
   }
 }
 
+/// Exposes the [tryRead] method.
+extension TryReadContext on BuildContext {
+  /// Attempt to obtain a value from the nearest ancestor provider of type [T].
+  ///
+  /// This method is similar to [read], but instead of throwing an exception if
+  /// the provider is not found or the value is null, it will safely return `null`.
+  ///
+  /// This is useful when you want to optionally obtain a provider's value without
+  /// risking an exception if the provider does not exist or returns null.
+  ///
+  /// Example usage:
+  ///
+  /// ```dart
+  /// final model = context.tryRead<Model>();
+  /// if (model != null) {
+  ///   // Use model
+  /// }
+  /// ```
+  ///
+  /// See also:
+  ///
+  /// - [ReadContext] and its [read] method, which throws if the provider is not found or returns null.
+  /// - [WatchContext] and its `watch` method, which makes widgets rebuild when the value changes.
+  T? tryRead<T>() {
+    final element = Provider._inheritedElementOf<T>(this);
+    if (element == null) return null;
+    final value = element.value;
+    // In sound mode, check type.
+    if (_isSoundMode) {
+      if (value is! T) {
+        return null;
+      }
+      return value;
+    }
+    return value;
+  }
+}
+
 /// Exposes the [watch] method.
 extension WatchContext on BuildContext {
   /// Obtain a value from the nearest ancestor provider of type [T] or [T?], and subscribe
