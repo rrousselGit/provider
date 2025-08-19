@@ -1,4 +1,4 @@
-## Unreleased 6.1.5+1
+## 6.1.5+1 - 2025-08-19
 
 Updated Discord link.
 
