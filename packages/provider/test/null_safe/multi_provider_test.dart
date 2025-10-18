@@ -11,7 +11,7 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
-            for (var i = 0; i < 500; i++) Provider<int>.value(value: i),
+            for (var i = 0; i < 1500; i++) Provider<int>.value(value: i),
           ],
           child: Container(),
         ),
