@@ -488,12 +488,13 @@ void main() {
 
   testWidgets('watch in listView', (tester) async {
     final notifier = ValueNotifier([0, 0]);
+    addTearDown(notifier.dispose);
 
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: ChangeNotifierProvider(
-          create: (_) => notifier,
+        child: ChangeNotifierProvider.value(
+          value: notifier,
           child: ListView.builder(
             itemCount: 2,
             itemBuilder: (context, index) {
@@ -521,12 +522,13 @@ void main() {
 
   testWidgets('watch in gridView', (tester) async {
     final notifier = ValueNotifier([0, 0]);
+    addTearDown(notifier.dispose);
 
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: ChangeNotifierProvider(
-          create: (_) => notifier,
+        child: ChangeNotifierProvider.value(
+          value: notifier,
           child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -558,6 +560,7 @@ void main() {
   group('BuildContext', () {
     testWidgets('internal selected value is updated', (tester) async {
       final notifier = ValueNotifier([false, false, false]);
+      addTearDown(notifier.dispose);
 
       final callCounts = <int, int>{
         0: 0,
@@ -577,8 +580,8 @@ void main() {
       }
 
       await tester.pumpWidget(
-        ChangeNotifierProvider(
-          create: (_) => notifier,
+        ChangeNotifierProvider.value(
+          value: notifier,
           child: Directionality(
             textDirection: TextDirection.ltr,
             child: Column(
