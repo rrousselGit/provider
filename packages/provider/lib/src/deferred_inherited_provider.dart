@@ -35,7 +35,7 @@ class DeferredInheritedProvider<T, R> extends InheritedProvider<R> {
   DeferredInheritedProvider({
     Key? key,
     required Create<T> create,
-    Dispose<T>? dispose,
+    Dispose<R>? dispose,
     required DeferredStartListening<T, R> startListening,
     UpdateShouldNotify<R>? updateShouldNotify,
     bool? lazy,
@@ -165,7 +165,7 @@ class _CreateDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
   }) : super(updateShouldNotify, startListening);
 
   final Create<T> create;
-  final Dispose<T>? dispose;
+  final Dispose<R>? dispose;
 
   @override
   _CreateDeferredInheritedProviderElement<T, R> createState() {
@@ -220,7 +220,13 @@ class _CreateDeferredInheritedProviderElement<T, R>
   void dispose() {
     super.dispose();
     if (_didBuild) {
-      delegate.dispose?.call(element!, _controller as T);
+      if (T is Future<R>) {
+        (_controller as Future<R>).then((value) => delegate.dispose?.call(element!, value));
+      } else if (isLoaded) {
+        delegate.dispose?.call(element!, value);
+      } else {
+        delegate.dispose?.call(element!, _controller as R);
+      }
     }
   }
 
