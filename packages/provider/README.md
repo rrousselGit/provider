@@ -193,8 +193,9 @@ to `watch`. When the `listen` parameter is set to `false` (as in `Provider.of<T>
 it will behave similarly to `read`.
 
 It's worth noting that `context.read<T>()` won't make a widget rebuild when the value
-changes and it cannot be called inside `StatelessWidget.build`/`State.build`.
+changes and it shouldn't be called inside `StatelessWidget.build`/`State.build`.
 On the other hand, it can be freely called outside of these methods.
+Instead, `context.watch<T>()` cannot be called outside `StatelessWidget.build`/`State.build`.
 
 These methods will look up in the widget tree starting from the widget associated
 with the `BuildContext` passed and will return the nearest variable of type `T`
