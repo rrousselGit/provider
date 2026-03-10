@@ -54,58 +54,60 @@ class ProviderScreenBody extends ConsumerWidget {
       if (hasError) showProviderErrorBanner();
     });
 
-    return Split(
-      axis: splitAxis,
-      initialFractions: const [0.33, 0.67],
-      children: [
-        const RoundedOutlinedBorder(
-          clip: true,
-          child: Column(
-            children: [
-              AreaPaneHeader(
-                roundedTopBorder: false,
-                includeTopBorder: false,
-                title: Text('Providers'),
-              ),
-              Expanded(
-                child: ProviderList(),
-              ),
-            ],
-          ),
-        ),
-        RoundedOutlinedBorder(
-          clip: true,
-          child: Column(
-            children: [
-              AreaPaneHeader(
-                roundedTopBorder: false,
-                includeTopBorder: false,
-                title: Text(detailsTitleText),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.settings),
-                    onPressed: () {
-                      unawaited(
-                        showDialog(
-                          context: context,
-                          builder: (_) => _StateInspectorSettingsDialog(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              if (selectedProviderId != null)
-                Expanded(
-                  child: InstanceViewer(
-                    rootPath: InstancePath.fromProviderId(selectedProviderId),
-                    showInternalProperties: ref.watch(_showInternals),
-                  ),
+    return SelectionArea(
+      child: Split(
+        axis: splitAxis,
+        initialFractions: const [0.33, 0.67],
+        children: [
+          const RoundedOutlinedBorder(
+            clip: true,
+            child: Column(
+              children: [
+                AreaPaneHeader(
+                  roundedTopBorder: false,
+                  includeTopBorder: false,
+                  title: Text('Providers'),
                 ),
-            ],
+                Expanded(
+                  child: ProviderList(),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+          RoundedOutlinedBorder(
+            clip: true,
+            child: Column(
+              children: [
+                AreaPaneHeader(
+                  roundedTopBorder: false,
+                  includeTopBorder: false,
+                  title: Text(detailsTitleText),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () {
+                        unawaited(
+                          showDialog(
+                            context: context,
+                            builder: (_) => _StateInspectorSettingsDialog(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                if (selectedProviderId != null)
+                  Expanded(
+                    child: InstanceViewer(
+                      rootPath: InstancePath.fromProviderId(selectedProviderId),
+                      showInternalProperties: ref.watch(_showInternals),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
