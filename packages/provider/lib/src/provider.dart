@@ -715,7 +715,7 @@ extension WatchContext on BuildContext {
   ///
   /// This method is accessible only inside [StatelessWidget.build] and
   /// [State.build].\
-  /// If you need to use it outside of these methods, consider using [Provider.of]
+  /// If you need to use it outside of these methods, consider using [ReadContext.read]
   /// instead, which doesn't have this restriction.\
   /// The only exception to this rule is Providers's `update` method.
   ///

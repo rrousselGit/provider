@@ -181,10 +181,11 @@ Il modo più semplice per leggere un valore è utilizzare i metodi di estensione
 - `context.read<T>()`, che restituisce `T` senza ascoltarlo
 - `context.select<T, R>(R cb(T value))`, che consente a un widget di ascoltare solo una piccola parte di `T`.
 
-Si può anche usare il metodo statico `Provider.of<T>(context)`, che si comporterà in modo simile a `watch`. Quando il parametro `listen` è impostato su `false` (come in `Provider.of<T>(context, listen: false)`), si comporterà in modo simile a `read`.
+Si può anche usare il metodo statico `Provider.of<T>(context)`, che si comporterà esattamente come `watch`. Quando il parametro `listen` è impostato su `false` (come in `Provider.of<T>(context, listen: false)`), si comporterà esattamente come `read`.
 
-Vale la pena notare che `context.read<T>()` non farà ricostruire un widget quando il valore cambia e non può essere chiamato all'interno di `StatelessWidget.build`/`State.build`.
+Vale la pena notare che `context.read<T>()` non farà ricostruire un widget quando il valore cambia e non dovrebbe essere chiamato all'interno di `StatelessWidget.build`/`State.build`.
 D'altra parte, può essere chiamato liberamente al di fuori di questi metodi.
+Invece, `context.watch<T>()` può essere chiamato solo dentro `StatelessWidget.build`/`State.build` o il metodo `update` dei Provider.
 
 Questi metodi cercheranno nell'albero dei widget a partire dal widget associato al `BuildContext` passato e restituiranno la variabile più vicina di tipo `T` trovata (o lanceranno un'eccezione se nulla viene trovato).
 
