@@ -190,7 +190,7 @@ The easiest way to read a value is by using the extension methods on [BuildConte
 
 One can also use the static method `Provider.of<T>(context)`, which will behave exactly
 like `watch`. When the `listen` parameter is set to `false` (as in `Provider.of<T>(context, listen: false)`), then
-it will behave exactly as `read`.
+it will behave exactly like `read`.
 
 It's worth noting that `context.read<T>()` won't make a widget rebuild when the value
 changes and it shouldn't be called inside `StatelessWidget.build`/`State.build`.
