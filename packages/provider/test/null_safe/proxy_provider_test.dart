@@ -150,6 +150,63 @@ void main() {
       verifyNoMoreInteractions(combiner);
     });
 
+    testWidgets(
+        'can depend on an ancestor provider of the same type it provides '
+        '(regression #796)', (tester) async {
+      // Provides a [String] while also depending on an ancestor [String] of
+      // the same type. Rebuilding the proxy used to trigger an assertion
+      // failure inside InheritedElement.notifyClients because the proxy ended
+      // up depending on itself instead of the ancestor.
+      Widget build(String suffix) {
+        return Provider<String>.value(
+          value: 'base',
+          child: ProxyProvider0<String>(
+            update: (context, _) {
+              final base = Provider.of<String>(context);
+              return '$base-$suffix';
+            },
+            child: TextOf<String>(),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(build('a'));
+
+      expect(find.text('base-a'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      // Rebuilding with a new parameter forces the proxy to rebuild, which is
+      // where the assertion used to be thrown.
+      await tester.pumpWidget(build('b'));
+
+      expect(find.text('base-b'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets(
+        'ProxyProvider can consume an ancestor of the same type it provides '
+        '(regression #796)', (tester) async {
+      Widget build(String suffix) {
+        return Provider<String>.value(
+          value: 'base',
+          child: ProxyProvider<String, String>(
+            update: (context, base, _) => '$base-$suffix',
+            child: TextOf<String>(),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(build('a'));
+
+      expect(find.text('base-a'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await tester.pumpWidget(build('b'));
+
+      expect(find.text('base-b'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('rebuild descendants if value change', (tester) async {
       await tester.pumpWidget(
         MultiProvider(
