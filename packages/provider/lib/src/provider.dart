@@ -327,11 +327,21 @@ The context used was: $context
     final inheritedElement = _inheritedElementOf<T>(context);
 
     if (listen) {
-      // bind context with the element
-      // We have to use this method instead of dependOnInheritedElement, because
-      // dependOnInheritedElement does not support relocating using GlobalKey
-      // if no provider were found previously.
-      context.dependOnInheritedWidgetOfExactType<_InheritedProviderScope<T?>>();
+      if (inheritedElement != null) {
+        // bind context with the element.
+        // We use dependOnInheritedElement instead of
+        // dependOnInheritedWidgetOfExactType because the latter would resolve
+        // to the nearest provider of that type, which is the context itself
+        // when a provider depends on an ancestor provider of the same type
+        // (such as a ProxyProvider<T, T>). Depending on oneself triggers an
+        // assertion failure when the dependents are later notified.
+        context.dependOnInheritedElement(inheritedElement);
+      } else {
+        // tell Flutter to rebuild the widget when relocated using GlobalKey
+        // if no provider were found previously.
+        context
+            .dependOnInheritedWidgetOfExactType<_InheritedProviderScope<T?>>();
+      }
     }
 
     final value = inheritedElement?.value;

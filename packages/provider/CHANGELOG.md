@@ -1,3 +1,11 @@
+## Unreleased
+
+- Fixed an assertion failure when a provider depends on an ancestor provider of
+  the same type it provides (such as a `ProxyProvider<T, T>` or using
+  `context.watch<T>()`/`Provider.of<T>()` inside a `ProxyProvider0<T>`'s
+  `update`). The provider used to register a dependency on itself, which threw
+  inside `InheritedElement.notifyClients` on rebuild (#796).
+
 ## 6.1.5+1 - 2025-08-19
 
 Updated Discord link.
