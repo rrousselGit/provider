@@ -1,4 +1,6 @@
 @TestOn('browser')
+import 'package:devtools_app_shared/ui.dart' show IdeTheme;
+import 'package:devtools_app_shared/utils.dart' show setGlobal;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,6 +12,8 @@ import 'package:provider_devtools_extension/src/provider_screen.dart';
 import 'test_utils.dart';
 
 void main() {
+  setUp(() => setGlobal(IdeTheme, IdeTheme()));
+
   testWidgets('distinguishes an unread provider from an initialized null',
       (tester) async {
     tester.view.physicalSize = const Size(2225, 1000);
