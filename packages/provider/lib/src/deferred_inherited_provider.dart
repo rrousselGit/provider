@@ -276,18 +276,39 @@ class _ValueDeferredInheritedProvider<T, R> extends _DeferredDelegate<T, R> {
 
 class _ValueDeferredInheritedProviderState<T, R> extends _DeferredDelegateState<
     T, R, _ValueDeferredInheritedProvider<T, R>> {
+  bool _shouldReattachListener = false;
+  R? _previousValue;
+
   @override
   bool willUpdateDelegate(_ValueDeferredInheritedProvider<T, R> oldDelegate) {
     // Different controllers need independent subscriptions even when
     // their equality operators consider them equal.
     if (!identical(delegate.value, oldDelegate.value)) {
       if (_removeListener != null) {
+        _previousValue = _value;
+        _shouldReattachListener = true;
         _removeListener!();
         _removeListener = null;
       }
-      return true;
     }
     return false;
+  }
+
+  @override
+  void build({required bool isBuildFromExternalSources}) {
+    super.build(isBuildFromExternalSources: isBuildFromExternalSources);
+    if (_shouldReattachListener) {
+      _shouldReattachListener = false;
+      final previousValue = _previousValue as R;
+      _previousValue = null;
+      value;
+      final shouldNotify = delegate.updateShouldNotify != null
+          ? delegate.updateShouldNotify!(previousValue, _value as R)
+          : previousValue != _value;
+      if (shouldNotify) {
+        element!.markNeedsNotifyDependents();
+      }
+    }
   }
 
   @override
