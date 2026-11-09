@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:devtools_app_shared/ui.dart';
+import 'package:devtools_app_shared/ui.dart' hide Split;
+import 'package:devtools_app_shared/ui.dart' as devtools_ui show Split;
 import 'package:devtools_extensions/devtools_extensions.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,11 @@ final _hasErrorProvider = Provider.autoDispose<bool>((ref) {
   final selectedProviderId = ref.watch(selectedProviderIdProvider);
 
   if (selectedProviderId == null) return false;
+
+  final initialized =
+      ref.watch(providerIsInitializedProvider(selectedProviderId));
+  if (initialized is AsyncError) return true;
+  if (initialized.asData?.value != true) return false;
 
   final instance = ref.watch(
     instanceProvider(InstancePath.fromProviderId(selectedProviderId)),
@@ -42,7 +48,7 @@ class ProviderScreenBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final splitAxis = Split.axisFor(context, 0.85);
+    final splitAxis = devtools_ui.Split.axisFor(context, 0.85);
 
     // A provider will automatically be selected as soon as one is detected
     final selectedProviderId = ref.watch(selectedProviderIdProvider);
@@ -54,7 +60,7 @@ class ProviderScreenBody extends ConsumerWidget {
       if (hasError) showProviderErrorBanner();
     });
 
-    return Split(
+    return devtools_ui.Split(
       axis: splitAxis,
       initialFractions: const [0.33, 0.67],
       children: [
@@ -97,10 +103,20 @@ class ProviderScreenBody extends ConsumerWidget {
               ),
               if (selectedProviderId != null)
                 Expanded(
-                  child: InstanceViewer(
-                    rootPath: InstancePath.fromProviderId(selectedProviderId),
-                    showInternalProperties: ref.watch(_showInternals),
-                  ),
+                  child: ref
+                      .watch(providerIsInitializedProvider(selectedProviderId))
+                      .when(
+                        loading: () => const Text('loading...'),
+                        error: (_, __) => const Text('<unknown error>'),
+                        data: (initialized) => initialized
+                            ? InstanceViewer(
+                                rootPath: InstancePath.fromProviderId(
+                                    selectedProviderId),
+                                showInternalProperties:
+                                    ref.watch(_showInternals),
+                              )
+                            : const Text('<not yet initialized>'),
+                      ),
                 ),
             ],
           ),

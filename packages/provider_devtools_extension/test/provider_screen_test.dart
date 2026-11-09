@@ -268,6 +268,8 @@ void main() {
   group('ProviderList', () {
     List<Override> getOverrides() {
       return [
+        providerIsInitializedProvider('0')
+            .overrideWithValue(const AsyncValue.data(true)),
         instanceProvider(const InstancePath.fromProviderId('0'))
             .overrideWithValue(
           AsyncValue.data(

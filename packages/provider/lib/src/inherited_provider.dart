@@ -432,9 +432,8 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
   void reassemble() {
     super.reassemble();
 
-    final value = _delegateState.hasValue ? _delegateState.value : null;
-    if (value is ReassembleHandler) {
-      value.reassemble();
+    if (_delegateState.hasValue) {
+      _delegateState.reassemble();
     }
   }
 
@@ -600,7 +599,18 @@ If you're in this situation, consider passing a `key` unique to each individual 
   }
 
   @override
-  T get value => _delegateState.value;
+  T get value {
+    if (kDebugMode && !_delegateState.hasValue) {
+      try {
+        return _delegateState.value;
+      } finally {
+        if (_delegateState.hasValue) {
+          ProviderBinding.debugInstance.providerDidChange(_debugId);
+        }
+      }
+    }
+    return _delegateState.value;
+  }
 
   @override
   InheritedWidget dependOnInheritedElement(
@@ -658,6 +668,15 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
   _InheritedProviderScopeElement<T?>? element;
 
   T get value;
+
+  Object? get debugValue;
+
+  void reassemble() {
+    final value = debugValue;
+    if (value is ReassembleHandler) {
+      value.reassemble();
+    }
+  }
 
   D get delegate => element!.widget.owner._delegate as D;
 
@@ -904,6 +923,16 @@ class _CreateInheritedProviderState<T>
 
   @override
   bool get hasValue => _didInitValue;
+
+  @override
+  Object? get debugValue => _initError == null ? _value : value;
+
+  @override
+  void reassemble() {
+    if (_initError == null) {
+      super.reassemble();
+    }
+  }
 }
 
 class _ValueInheritedProvider<T> extends _Delegate<T> {
@@ -982,4 +1011,7 @@ class _ValueInheritedProviderState<T>
 
   @override
   bool get hasValue => true;
+
+  @override
+  Object? get debugValue => delegate.value;
 }

@@ -15,6 +15,20 @@ import 'eval.dart';
 import 'instance_details.dart';
 import 'result.dart';
 
+final providerIsInitializedProvider =
+    AutoDisposeFutureProviderFamily<bool, String>((ref, id) async {
+  ref.watch(hotRestartEventProvider);
+  ref.watch(_providerChanged(id));
+  final eval = await ref.watch(providerEvalProvider.future);
+  final isAlive = Disposable();
+  ref.onDispose(isAlive.dispose);
+  final initialized = await eval.safeEval(
+    'ProviderBinding.debugInstance.providerDetails["$id"]?.isInitialized',
+    isAlive: isAlive,
+  );
+  return initialized.valueAsString == 'true';
+});
+
 Future<InstanceRef> _resolveInstanceRefForPath(
   InstancePath path, {
   required AutoDisposeRef ref,
