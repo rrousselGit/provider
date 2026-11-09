@@ -136,4 +136,29 @@ void main() {
     );
     spy.logs.clear();
   });
+  testWidgets('mounting providers updates the registry in place',
+      (tester) async {
+    final registry = ProviderBinding.debugInstance.providerDetails;
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider<int>.value(value: 1),
+          Provider<String>.value(value: 'value'),
+        ],
+        child: Container(),
+      ),
+    );
+
+    expect(identical(ProviderBinding.debugInstance.providerDetails, registry),
+        isTrue);
+    expect(registry.length, 2);
+
+    await tester.pumpWidget(Container());
+
+    expect(identical(ProviderBinding.debugInstance.providerDetails, registry),
+        isTrue);
+    expect(registry, isEmpty);
+  });
+
 }
