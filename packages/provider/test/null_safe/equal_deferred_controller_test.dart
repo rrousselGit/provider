@@ -35,6 +35,81 @@ class _EqualSource {
 
 void main() {
   for (final lazy in [true, false]) {
+    testWidgets('replacement compares once lazy=$lazy', (tester) async {
+      final first = _EqualSource(0);
+      final second = _EqualSource(1);
+      var comparisons = 0;
+      var builds = 0;
+      final consumer = Builder(builder: (context) {
+        builds++;
+        return Text('${context.watch<int>()}',
+            textDirection: TextDirection.ltr);
+      });
+      Widget provider(_EqualSource source) =>
+          DeferredInheritedProvider<_EqualSource, int>.value(
+            value: source,
+            lazy: lazy,
+            updateShouldNotify: (_, __) => ++comparisons == 1,
+            startListening: (_, setState, controller, previous) {
+              setState(controller.current);
+              controller.subscribe(setState);
+              return controller.unsubscribe;
+            },
+            child: consumer,
+          );
+
+      await tester.pumpWidget(provider(first));
+      await tester.pumpWidget(provider(second));
+      expect(comparisons, 1);
+      expect(builds, 2);
+      expect(find.text('1'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets(
+        'read after failed replacement updates retained consumer lazy=$lazy',
+        (tester) async {
+      final first = _EqualSource(0);
+      final second = _EqualSource(1);
+      var attempts = 0;
+      BuildContext? readContext;
+      final consumer = Builder(builder: (context) {
+        readContext = context;
+        return Text('${context.watch<int>()}',
+            textDirection: TextDirection.ltr);
+      });
+      final previousErrorBuilder = ErrorWidget.builder;
+      ErrorWidget.builder = (_) => consumer;
+      addTearDown(() => ErrorWidget.builder = previousErrorBuilder);
+      Widget provider(_EqualSource source) =>
+          DeferredInheritedProvider<_EqualSource, int>.value(
+            value: source,
+            lazy: lazy,
+            startListening: (_, setState, controller, previous) {
+              setState(controller.current);
+              if (identical(controller, second) && attempts++ == 0) {
+                throw StateError('replacement failed');
+              }
+              controller.subscribe(setState);
+              return controller.unsubscribe;
+            },
+            child: consumer,
+          );
+
+      await tester.pumpWidget(provider(first));
+      await tester.pumpWidget(provider(second));
+      expect(tester.takeException(), isA<StateError>());
+      ErrorWidget.builder = previousErrorBuilder;
+      expect(find.text('0'), findsOneWidget);
+      expect(readContext!.read<int>(), 1);
+      await tester.pump();
+      expect(find.text('1'), findsOneWidget);
+      expect(first.isSubscribed, isFalse);
+      expect(second.isSubscribed, isTrue);
+      await tester.pumpWidget(const SizedBox());
+      expect(second.isSubscribed, isFalse);
+    });
+
     testWidgets(
         'replacement subscription errors propagate and retry lazy=$lazy',
         (tester) async {
