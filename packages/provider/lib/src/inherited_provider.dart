@@ -961,7 +961,7 @@ class _ValueInheritedProviderState<T>
         _removeListener != null) {
       _removeListener!();
       _removeListener = null;
-      _shouldReattachListener = true;
+      _shouldReattachListener = !shouldNotify;
     }
     return shouldNotify;
   }
