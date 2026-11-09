@@ -136,6 +136,7 @@ void main() {
     );
     spy.logs.clear();
   });
+
   testWidgets('mounting providers updates the registry in place',
       (tester) async {
     final registry = ProviderBinding.debugInstance.providerDetails;
@@ -150,8 +151,10 @@ void main() {
       ),
     );
 
-    expect(identical(ProviderBinding.debugInstance.providerDetails, registry),
-        isTrue);
+    expect(
+      identical(ProviderBinding.debugInstance.providerDetails, registry),
+      isTrue,
+    );
     expect(registry.length, 2);
 
     await tester.pumpWidget(Container());
@@ -160,5 +163,4 @@ void main() {
         isTrue);
     expect(registry, isEmpty);
   });
-
 }
