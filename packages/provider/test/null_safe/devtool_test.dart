@@ -165,4 +165,71 @@ void main() {
     );
     expect(registry, isEmpty);
   });
+
+  testWidgets('mounting accepts a const registry assignment', (tester) async {
+    final binding = ProviderBinding.debugInstance;
+    const assigned = <String, ProviderNode>{};
+    binding.providerDetails = assigned;
+
+    await tester.pumpWidget(
+      Provider<int>.value(value: 1, child: const SizedBox()),
+    );
+
+    expect(tester.takeException(), isNull);
+    final registry = binding.providerDetails;
+    expect(registry.values.single.value, 1);
+    expect(assigned, isEmpty);
+
+    await tester.pumpWidget(const SizedBox());
+
+    expect(tester.takeException(), isNull);
+    expect(identical(binding.providerDetails, registry), isTrue);
+    expect(registry, isEmpty);
+    expect(
+      spy.logs,
+      List.filled(
+          3, isPostEventCall('provider:provider_list_changed', isEmpty)),
+    );
+  });
+
+  testWidgets('lifecycle updates accept an unmodifiable populated registry',
+      (tester) async {
+    final binding = ProviderBinding.debugInstance;
+    await tester.pumpWidget(
+      Provider<int>.value(value: 1, child: const SizedBox()),
+    );
+    final assigned = Map<String, ProviderNode>.unmodifiable(
+      binding.providerDetails,
+    );
+    binding.providerDetails = assigned;
+    final registry = binding.providerDetails;
+    spy.logs.clear();
+
+    await tester.pumpWidget(
+      Provider<int>.value(
+        value: 1,
+        child: Provider<String>.value(
+          value: 'second',
+          child: const SizedBox(),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(identical(binding.providerDetails, registry), isTrue);
+    expect(registry.length, 2);
+    expect(registry[assigned.keys.single], same(assigned.values.single));
+
+    await tester.pumpWidget(const SizedBox());
+
+    expect(tester.takeException(), isNull);
+    expect(identical(binding.providerDetails, registry), isTrue);
+    expect(registry, isEmpty);
+    expect(assigned.length, 1);
+    expect(
+      spy.logs,
+      List.filled(
+          3, isPostEventCall('provider:provider_list_changed', isEmpty)),
+    );
+  });
 }

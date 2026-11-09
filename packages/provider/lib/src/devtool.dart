@@ -83,7 +83,7 @@ class ProviderBinding {
   Map<String, ProviderNode> get providerDetails => _providerDetails;
   set providerDetails(Map<String, ProviderNode> value) {
     debugPostEvent('provider:provider_list_changed', <dynamic, dynamic>{});
-    _providerDetails = value;
+    _providerDetails = Map<String, ProviderNode>.of(value);
   }
 
   /// Register a mounted provider without copying the entire registry.
