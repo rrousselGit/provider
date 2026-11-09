@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:devtools_app_shared/ui.dart';
 import 'package:devtools_extensions/devtools_extensions.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Split;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,6 +19,11 @@ final _hasErrorProvider = Provider.autoDispose<bool>((ref) {
   final selectedProviderId = ref.watch(selectedProviderIdProvider);
 
   if (selectedProviderId == null) return false;
+
+  final initialized =
+      ref.watch(providerIsInitializedProvider(selectedProviderId));
+  if (initialized is AsyncError) return true;
+  if (initialized.asData?.value != true) return false;
 
   final instance = ref.watch(
     instanceProvider(InstancePath.fromProviderId(selectedProviderId)),
@@ -97,10 +102,20 @@ class ProviderScreenBody extends ConsumerWidget {
               ),
               if (selectedProviderId != null)
                 Expanded(
-                  child: InstanceViewer(
-                    rootPath: InstancePath.fromProviderId(selectedProviderId),
-                    showInternalProperties: ref.watch(_showInternals),
-                  ),
+                  child: ref
+                      .watch(providerIsInitializedProvider(selectedProviderId))
+                      .when(
+                        loading: () => const Text('loading...'),
+                        error: (_, __) => const Text('<unknown error>'),
+                        data: (initialized) => initialized
+                            ? InstanceViewer(
+                                rootPath: InstancePath.fromProviderId(
+                                    selectedProviderId),
+                                showInternalProperties:
+                                    ref.watch(_showInternals),
+                              )
+                            : const Text('<not yet initialized>'),
+                      ),
                 ),
             ],
           ),

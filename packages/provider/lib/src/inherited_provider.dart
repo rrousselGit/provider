@@ -432,7 +432,7 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
   void reassemble() {
     super.reassemble();
 
-    final value = _delegateState.hasValue ? _delegateState.value : null;
+    final value = _delegateState.hasValue ? _delegateState.debugValue : null;
     if (value is ReassembleHandler) {
       value.reassemble();
     }
@@ -658,6 +658,8 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
   _InheritedProviderScopeElement<T?>? element;
 
   T get value;
+
+  Object? get debugValue;
 
   D get delegate => element!.widget.owner._delegate as D;
 
@@ -904,6 +906,9 @@ class _CreateInheritedProviderState<T>
 
   @override
   bool get hasValue => _didInitValue;
+
+  @override
+  Object? get debugValue => _initError == null ? _value : value;
 }
 
 class _ValueInheritedProvider<T> extends _Delegate<T> {
@@ -982,4 +987,7 @@ class _ValueInheritedProviderState<T>
 
   @override
   bool get hasValue => true;
+
+  @override
+  Object? get debugValue => delegate.value;
 }

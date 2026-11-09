@@ -142,6 +142,9 @@ DeferredInheritedProvider(
   @override
   bool get hasValue => _hasValue;
 
+  @override
+  Object? get debugValue => _value;
+
   void setState(R value) {
     if (_hasValue) {
       final shouldNotify = delegate.updateShouldNotify != null
