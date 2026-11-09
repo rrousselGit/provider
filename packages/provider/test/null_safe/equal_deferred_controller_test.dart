@@ -10,6 +10,7 @@ class _EqualSource {
 
   bool get isSubscribed => _listener != null;
 
+  // ignore: use_setters_to_change_properties
   void subscribe(void Function(int) listener) {
     _listener = listener;
   }
@@ -24,9 +25,11 @@ class _EqualSource {
   }
 
   @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) => other is _EqualSource;
 
   @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => 0;
 }
 
@@ -75,5 +78,8 @@ void main() {
     second.send(7);
     await tester.pump();
     expect(find.text('7'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox());
+    expect(second.isSubscribed, isFalse);
   });
 }
