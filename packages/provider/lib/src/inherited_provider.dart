@@ -932,6 +932,7 @@ class _ValueInheritedProvider<T> extends _Delegate<T> {
 class _ValueInheritedProviderState<T>
     extends _DelegateState<T, _ValueInheritedProvider<T>> {
   VoidCallback? _removeListener;
+  bool _shouldReattachListener = false;
 
   @override
   T get value {
@@ -954,11 +955,24 @@ class _ValueInheritedProviderState<T>
       shouldNotify = newDelegate.value != delegate.value;
     }
 
-    if (shouldNotify && _removeListener != null) {
+    // A new Listenable can compare equal to the previous one. We still need
+    // to detach from the old instance and subscribe to the new instance.
+    if (!identical(newDelegate.value, delegate.value) &&
+        _removeListener != null) {
       _removeListener!();
       _removeListener = null;
+      _shouldReattachListener = true;
     }
     return shouldNotify;
+  }
+
+  @override
+  void build({required bool isBuildFromExternalSources}) {
+    super.build(isBuildFromExternalSources: isBuildFromExternalSources);
+    if (_shouldReattachListener) {
+      _shouldReattachListener = false;
+      value;
+    }
   }
 
   @override
