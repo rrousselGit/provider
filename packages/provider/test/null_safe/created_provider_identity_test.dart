@@ -42,6 +42,13 @@ void main() {
     final first = _EqualNotifier('first');
     final second = _EqualNotifier('second');
     var current = first;
+    var builds = 0;
+    final consumer = Consumer<_EqualNotifier>(
+      builder: (context, notifier, _) {
+        builds++;
+        return Text(notifier.label, textDirection: TextDirection.ltr);
+      },
+    );
 
     Widget build() => InheritedProvider<_EqualNotifier>(
           create: (_) => first,
@@ -52,17 +59,13 @@ void main() {
                 notifier.removeListener(element.markNeedsNotifyDependents);
           },
           dispose: (_, notifier) => notifier.dispose(),
-          child: Consumer<_EqualNotifier>(
-            builder: (context, notifier, _) => Text(
-              notifier.label,
-              textDirection: TextDirection.ltr,
-            ),
-          ),
+          child: consumer,
         );
 
     await tester.pumpWidget(build());
     expect(first.isObserved, isTrue);
     expect(find.text('first'), findsOneWidget);
+    expect(builds, 1);
 
     current = second;
     await tester.pumpWidget(build());
@@ -71,10 +74,12 @@ void main() {
     expect(first.disposalCount, 1);
     expect(second.removalCount, 0);
     expect(second.isObserved, isTrue);
+    expect(builds, 1);
 
     second.sendNotification();
     await tester.pump();
     expect(find.text('second'), findsOneWidget);
+    expect(builds, 2);
 
     await tester.pumpWidget(const SizedBox());
     expect(second.wasDisposed, isTrue);
@@ -87,6 +92,13 @@ void main() {
   testWidgets('notify-only updates must not dispose an unchanged instance',
       (tester) async {
     final notifier = _EqualNotifier('same');
+    var builds = 0;
+    final consumer = Consumer<_EqualNotifier>(
+      builder: (_, value, child) {
+        builds++;
+        return Text(value.label, textDirection: TextDirection.ltr);
+      },
+    );
 
     Widget build() => InheritedProvider<_EqualNotifier>(
           create: (_) => notifier,
@@ -98,19 +110,18 @@ void main() {
                 current.removeListener(element.markNeedsNotifyDependents);
           },
           dispose: (_, current) => current.dispose(),
-          child: Consumer<_EqualNotifier>(
-            builder: (_, value, child) =>
-                Text(value.label, textDirection: TextDirection.ltr),
-          ),
+          child: consumer,
         );
 
     await tester.pumpWidget(build());
     expect(notifier.isObserved, isTrue);
     expect(notifier.wasDisposed, isFalse);
+    expect(builds, 1);
 
     await tester.pumpWidget(build());
     expect(notifier.wasDisposed, isFalse);
     expect(notifier.isObserved, isTrue);
+    expect(builds, 2);
 
     await tester.pumpWidget(const SizedBox());
     expect(notifier.wasDisposed, isTrue);
