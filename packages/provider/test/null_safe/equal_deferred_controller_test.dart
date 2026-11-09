@@ -35,6 +35,55 @@ class _EqualSource {
 
 void main() {
   for (final lazy in [true, false]) {
+    testWidgets(
+        'replacement subscription errors propagate and retry lazy=$lazy',
+        (tester) async {
+      final first = _EqualSource(0);
+      final second = _EqualSource(1);
+      final failure = StateError('subscription failed');
+      var attempts = 0;
+      var comparisons = 0;
+      final consumer = Builder(
+        builder: (context) =>
+            Text('${context.watch<int>()}', textDirection: TextDirection.ltr),
+      );
+      Widget provider(_EqualSource source) =>
+          DeferredInheritedProvider<_EqualSource, int>.value(
+            value: source,
+            lazy: lazy,
+            updateShouldNotify: (previous, current) {
+              comparisons++;
+              return previous != current;
+            },
+            startListening: (_, setState, controller, previous) {
+              if (identical(controller, second) && attempts++ == 0) {
+                throw failure;
+              }
+              setState(controller.current);
+              controller.subscribe(setState);
+              return controller.unsubscribe;
+            },
+            child: consumer,
+          );
+
+      await tester.pumpWidget(provider(first));
+      await tester.pumpWidget(provider(second));
+      expect(identical(tester.takeException(), failure), isTrue);
+      expect(first.isSubscribed, isFalse);
+      expect(second.isSubscribed, isFalse);
+      expect(comparisons, 0);
+
+      await tester.pumpWidget(provider(second));
+      expect(attempts, 2);
+      expect(second.isSubscribed, isTrue);
+      expect(find.text('1'), findsOneWidget);
+      second.send(2);
+      await tester.pump();
+      expect(find.text('2'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+      expect(second.isSubscribed, isFalse);
+    });
+
     for (final suppressNotification in [true, false]) {
       testWidgets(
           'synchronous replacement lazy=$lazy suppress=$suppressNotification',
