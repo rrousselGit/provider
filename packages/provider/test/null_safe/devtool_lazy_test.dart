@@ -106,6 +106,7 @@ void main() {
     final node = ProviderBinding.debugInstance.providerDetails.values.single;
     expect(node.isInitialized, isTrue);
     expect(node.value, same(notifier));
+    // ignore: unawaited_futures
     tester.binding.reassembleApplication();
     expect(notifier.reassembleCalls, 1);
     expect(notifier.isSubscribed, isFalse);
