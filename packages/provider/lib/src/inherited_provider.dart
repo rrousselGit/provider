@@ -889,12 +889,10 @@ class _CreateInheritedProviderState<T>
         }());
       }
 
-      // Lifecycle ownership depends on identity, not updateShouldNotify.
-      // A notifier can compare equal to a different instance; conversely a
-      // custom comparator can request notification for an unchanged instance.
+      // Ownership follows identity, independently of notification equality.
       final replacedInstance = !identical(_value, previousValue);
-      final restartListener = _removeListener != null &&
-          (replacedInstance || shouldNotify);
+      final restartListener =
+          _removeListener != null && (replacedInstance || shouldNotify);
       if (restartListener) {
         _removeListener!();
         _removeListener = null;
@@ -902,7 +900,7 @@ class _CreateInheritedProviderState<T>
       if (replacedInstance) {
         _previousWidget?.dispose?.call(element!, previousValue as T);
       }
-      if (restartListener) {
+      if (restartListener && !shouldNotify) {
         // Reattach before returning to the widget tree, including when two
         // different instances compare equal and dependents are not notified.
         value;

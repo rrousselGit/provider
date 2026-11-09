@@ -8,6 +8,8 @@ class _EqualNotifier extends ChangeNotifier {
   final String label;
   bool wasDisposed = false;
 
+  bool get isObserved => hasListeners;
+
   void sendNotification() => notifyListeners();
 
   @override
@@ -17,9 +19,11 @@ class _EqualNotifier extends ChangeNotifier {
   }
 
   @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) => other is _EqualNotifier;
 
   @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => 0;
 }
 
@@ -48,17 +52,20 @@ void main() {
         );
 
     await tester.pumpWidget(build());
-    expect(first.hasListeners, isTrue);
+    expect(first.isObserved, isTrue);
     expect(find.text('first'), findsOneWidget);
 
     current = second;
     await tester.pumpWidget(build());
     expect(first.wasDisposed, isTrue);
-    expect(second.hasListeners, isTrue);
+    expect(second.isObserved, isTrue);
 
     second.sendNotification();
     await tester.pump();
     expect(find.text('second'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox());
+    expect(second.wasDisposed, isTrue);
   });
 
   testWidgets('notify-only updates must not dispose an unchanged instance',
@@ -68,7 +75,7 @@ void main() {
     Widget build() => InheritedProvider<_EqualNotifier>(
           create: (_) => notifier,
           update: (_, previous) => notifier,
-          updateShouldNotify: (_, _) => true,
+          updateShouldNotify: (_, __) => true,
           startListening: (element, current) {
             current.addListener(element.markNeedsNotifyDependents);
             return () =>
@@ -82,11 +89,14 @@ void main() {
         );
 
     await tester.pumpWidget(build());
-    expect(notifier.hasListeners, isTrue);
+    expect(notifier.isObserved, isTrue);
     expect(notifier.wasDisposed, isFalse);
 
     await tester.pumpWidget(build());
     expect(notifier.wasDisposed, isFalse);
-    expect(notifier.hasListeners, isTrue);
+    expect(notifier.isObserved, isTrue);
+
+    await tester.pumpWidget(const SizedBox());
+    expect(notifier.wasDisposed, isTrue);
   });
 }
