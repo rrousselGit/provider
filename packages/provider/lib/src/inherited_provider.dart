@@ -796,8 +796,11 @@ class _CreateInheritedProviderState<T>
     }
 
     element!._isNotifyDependentsEnabled = false;
-    _removeListener ??= delegate.startListening?.call(element!, _value as T);
-    element!._isNotifyDependentsEnabled = true;
+    try {
+      _removeListener ??= delegate.startListening?.call(element!, _value as T);
+    } finally {
+      element!._isNotifyDependentsEnabled = true;
+    }
     assert(delegate.startListening == null || _removeListener != null);
     return _value as T;
   }
@@ -936,8 +939,11 @@ class _ValueInheritedProviderState<T>
   @override
   T get value {
     element!._isNotifyDependentsEnabled = false;
-    _removeListener ??= delegate.startListening?.call(element!, delegate.value);
-    element!._isNotifyDependentsEnabled = true;
+    try {
+      _removeListener ??= delegate.startListening?.call(element!, delegate.value);
+    } finally {
+      element!._isNotifyDependentsEnabled = true;
+    }
     assert(delegate.startListening == null || _removeListener != null);
     return delegate.value;
   }
