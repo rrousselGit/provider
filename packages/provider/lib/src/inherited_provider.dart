@@ -887,11 +887,23 @@ class _CreateInheritedProviderState<T>
           delegate.debugCheckInvalidValueType?.call(_value as T);
           return true;
         }());
-        if (_removeListener != null) {
-          _removeListener!();
-          _removeListener = null;
-        }
+      }
+
+      // Ownership follows identity, independently of notification equality.
+      final replacedInstance = !identical(_value, previousValue);
+      final restartListener =
+          _removeListener != null && (replacedInstance || shouldNotify);
+      if (restartListener) {
+        _removeListener!();
+        _removeListener = null;
+      }
+      if (replacedInstance) {
         _previousWidget?.dispose?.call(element!, previousValue as T);
+      }
+      if (restartListener && !shouldNotify) {
+        // Reattach before returning to the widget tree, including when two
+        // different instances compare equal and dependents are not notified.
+        value;
       }
     }
 
@@ -932,6 +944,7 @@ class _ValueInheritedProvider<T> extends _Delegate<T> {
 class _ValueInheritedProviderState<T>
     extends _DelegateState<T, _ValueInheritedProvider<T>> {
   VoidCallback? _removeListener;
+  bool _shouldReattachListener = false;
 
   @override
   T get value {
@@ -954,11 +967,24 @@ class _ValueInheritedProviderState<T>
       shouldNotify = newDelegate.value != delegate.value;
     }
 
-    if (shouldNotify && _removeListener != null) {
+    // A new Listenable can compare equal to the previous one. We still need
+    // to detach from the old instance and subscribe to the new instance.
+    if ((shouldNotify || !identical(newDelegate.value, delegate.value)) &&
+        _removeListener != null) {
       _removeListener!();
       _removeListener = null;
+      _shouldReattachListener = !shouldNotify;
     }
     return shouldNotify;
+  }
+
+  @override
+  void build({required bool isBuildFromExternalSources}) {
+    super.build(isBuildFromExternalSources: isBuildFromExternalSources);
+    if (_shouldReattachListener) {
+      _shouldReattachListener = false;
+      value;
+    }
   }
 
   @override
