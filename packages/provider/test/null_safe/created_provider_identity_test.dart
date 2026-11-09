@@ -7,13 +7,22 @@ class _EqualNotifier extends ChangeNotifier {
 
   final String label;
   bool wasDisposed = false;
+  int disposalCount = 0;
+  int removalCount = 0;
 
   bool get isObserved => hasListeners;
 
   void sendNotification() => notifyListeners();
 
   @override
+  void removeListener(VoidCallback listener) {
+    removalCount++;
+    super.removeListener(listener);
+  }
+
+  @override
   void dispose() {
+    disposalCount++;
     wasDisposed = true;
     super.dispose();
   }
@@ -58,6 +67,9 @@ void main() {
     current = second;
     await tester.pumpWidget(build());
     expect(first.wasDisposed, isTrue);
+    expect(first.removalCount, 1);
+    expect(first.disposalCount, 1);
+    expect(second.removalCount, 0);
     expect(second.isObserved, isTrue);
 
     second.sendNotification();
@@ -66,6 +78,10 @@ void main() {
 
     await tester.pumpWidget(const SizedBox());
     expect(second.wasDisposed, isTrue);
+    expect(first.removalCount, 1);
+    expect(first.disposalCount, 1);
+    expect(second.removalCount, 1);
+    expect(second.disposalCount, 1);
   });
 
   testWidgets('notify-only updates must not dispose an unchanged instance',
@@ -98,5 +114,51 @@ void main() {
 
     await tester.pumpWidget(const SizedBox());
     expect(notifier.wasDisposed, isTrue);
+    expect(notifier.disposalCount, 1);
+    expect(notifier.removalCount, 2);
+  });
+
+  testWidgets('suppressed notification still releases replaced resources',
+      (tester) async {
+    final first = _EqualNotifier('first');
+    final second = _EqualNotifier('second');
+    var current = first;
+    var builds = 0;
+    _EqualNotifier? visible;
+    final consumer = Consumer<_EqualNotifier>(
+      builder: (_, value, __) {
+        builds++;
+        visible = value;
+        return const SizedBox();
+      },
+    );
+    Widget build() => InheritedProvider<_EqualNotifier>(
+          update: (_, previous) => current,
+          updateShouldNotify: (_, __) => false,
+          startListening: (element, notifier) {
+            notifier.addListener(element.markNeedsNotifyDependents);
+            return () =>
+                notifier.removeListener(element.markNeedsNotifyDependents);
+          },
+          dispose: (_, notifier) => notifier.dispose(),
+          child: consumer,
+        );
+
+    await tester.pumpWidget(build());
+    current = second;
+    await tester.pumpWidget(build());
+    expect(builds, 1);
+    expect(identical(visible, first), isTrue);
+    expect(first.disposalCount, 1);
+    expect(first.removalCount, 1);
+    expect(second.isObserved, isTrue);
+
+    second.sendNotification();
+    await tester.pump();
+    expect(identical(visible, second), isTrue);
+    await tester.pumpWidget(const SizedBox());
+    expect(first.disposalCount, 1);
+    expect(second.disposalCount, 1);
+    expect(second.removalCount, 1);
   });
 }
