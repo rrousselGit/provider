@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:devtools_app_shared/ui.dart';
+import 'package:devtools_app_shared/ui.dart' hide Split;
+import 'package:devtools_app_shared/ui.dart' as devtools_ui show Split;
 import 'package:devtools_extensions/devtools_extensions.dart';
-import 'package:flutter/material.dart' hide Split;
+import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -47,7 +48,7 @@ class ProviderScreenBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final splitAxis = Split.axisFor(context, 0.85);
+    final splitAxis = devtools_ui.Split.axisFor(context, 0.85);
 
     // A provider will automatically be selected as soon as one is detected
     final selectedProviderId = ref.watch(selectedProviderIdProvider);
@@ -59,7 +60,7 @@ class ProviderScreenBody extends ConsumerWidget {
       if (hasError) showProviderErrorBanner();
     });
 
-    return Split(
+    return devtools_ui.Split(
       axis: splitAxis,
       initialFractions: const [0.33, 0.67],
       children: [
