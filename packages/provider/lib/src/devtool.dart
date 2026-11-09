@@ -86,6 +86,18 @@ class ProviderBinding {
     _providerDetails = value;
   }
 
+  /// Register a mounted provider without copying the entire registry.
+  void registerProvider(ProviderNode node) {
+    debugPostEvent('provider:provider_list_changed', <dynamic, dynamic>{});
+    _providerDetails[node.id] = node;
+  }
+
+  /// Remove an unmounted provider without copying the entire registry.
+  void unregisterProvider(String id) {
+    debugPostEvent('provider:provider_list_changed', <dynamic, dynamic>{});
+    _providerDetails.remove(id);
+  }
+
   void providerDidChange(String providerId) {
     debugPostEvent(
       'provider:provider_changed',
