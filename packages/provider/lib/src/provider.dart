@@ -415,14 +415,14 @@ If you want to expose a variable that can be anything, consider changing
   /// }
   /// ```
   // ignore: prefer_function_declarations_over_variables, false positive
-  static void Function<T>(T value)? debugCheckInvalidValueType = <T>(T value) {
+  static void Function<V>(V value)? debugCheckInvalidValueType = <V>(V value) {
     assert(() {
       if (value is Listenable || value is Stream) {
         throw FlutterError('''
-Tried to use Provider with a subtype of Listenable/Stream ($T).
+Tried to use Provider with a subtype of Listenable/Stream ($V).
 
 This is likely a mistake, as Provider will not automatically update dependents
-when $T is updated. Instead, consider changing Provider for more specific
+when $V is updated. Instead, consider changing Provider for more specific
 implementation that handles the update mechanism, such as:
 
 - ListenableProvider
