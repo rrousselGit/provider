@@ -940,7 +940,8 @@ class _ValueInheritedProviderState<T>
   T get value {
     element!._isNotifyDependentsEnabled = false;
     try {
-      _removeListener ??= delegate.startListening?.call(element!, delegate.value);
+      _removeListener ??=
+          delegate.startListening?.call(element!, delegate.value);
     } finally {
       element!._isNotifyDependentsEnabled = true;
     }
