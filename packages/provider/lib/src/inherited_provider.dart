@@ -957,7 +957,7 @@ class _ValueInheritedProviderState<T>
 
     // A new Listenable can compare equal to the previous one. We still need
     // to detach from the old instance and subscribe to the new instance.
-    if (!identical(newDelegate.value, delegate.value) &&
+    if ((shouldNotify || !identical(newDelegate.value, delegate.value)) &&
         _removeListener != null) {
       _removeListener!();
       _removeListener = null;
