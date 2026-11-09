@@ -37,6 +37,41 @@ class _EqualNotifier extends ChangeNotifier {
 }
 
 void main() {
+  testWidgets('equal replacement disposes old value after consumer removal',
+      (tester) async {
+    final first = _EqualNotifier('first');
+    final second = _EqualNotifier('second');
+    var current = first;
+    Widget build(Widget child) => InheritedProvider<_EqualNotifier>(
+          create: (_) => first,
+          update: (_, previous) => current,
+          startListening: (element, notifier) {
+            notifier.addListener(element.markNeedsNotifyDependents);
+            return () =>
+                notifier.removeListener(element.markNeedsNotifyDependents);
+          },
+          dispose: (_, notifier) => notifier.dispose(),
+          child: child,
+        );
+
+    await tester.pumpWidget(build(Consumer<_EqualNotifier>(
+      builder: (_, value, __) => const SizedBox(),
+    )));
+    expect(first.isObserved, isTrue);
+    await tester.pumpWidget(build(const SizedBox()));
+    expect(first.disposalCount, 0);
+
+    current = second;
+    await tester.pumpWidget(build(const SizedBox()));
+    expect(first.disposalCount, 1);
+    expect(first.removalCount, 1);
+    expect(second.disposalCount, 0);
+    await tester.pumpWidget(const SizedBox());
+    expect(first.disposalCount, 1);
+    expect(second.disposalCount, 1);
+    expect(second.removalCount, 1);
+  });
+
   testWidgets('replacing equal created values transfers listener and disposal',
       (tester) async {
     final first = _EqualNotifier('first');
