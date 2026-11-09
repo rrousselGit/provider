@@ -99,13 +99,16 @@ abstract class _DeferredDelegateState<T, R, W extends _DeferredDelegate<T, R>>
     // setState should be no-op inside startListening, as it's lazy-loaded
     // otherwise Flutter will throw an exception for no reason.
     element!._isNotifyDependentsEnabled = false;
-    _removeListener ??= delegate.startListening(
-      element!,
-      setState,
-      controller,
-      _value,
-    );
-    element!._isNotifyDependentsEnabled = true;
+    try {
+      _removeListener ??= delegate.startListening(
+        element!,
+        setState,
+        controller,
+        _value,
+      );
+    } finally {
+      element!._isNotifyDependentsEnabled = true;
+    }
     assert(element!.hasValue, '''
 The callback "startListening" was called, but it left DeferredInhertitedProviderElement<$T, $R>
 in an uninitialized state.
