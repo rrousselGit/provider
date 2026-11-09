@@ -278,7 +278,9 @@ class _ValueDeferredInheritedProviderState<T, R> extends _DeferredDelegateState<
     T, R, _ValueDeferredInheritedProvider<T, R>> {
   @override
   bool willUpdateDelegate(_ValueDeferredInheritedProvider<T, R> oldDelegate) {
-    if (delegate.value != oldDelegate.value) {
+    // Different controllers need independent subscriptions even when
+    // their equality operators consider them equal.
+    if (!identical(delegate.value, oldDelegate.value)) {
       if (_removeListener != null) {
         _removeListener!();
         _removeListener = null;
