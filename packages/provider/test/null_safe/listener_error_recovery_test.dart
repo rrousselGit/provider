@@ -7,33 +7,23 @@ Future<void> expectNotificationsAfterSubscriptionRetry(
   Widget Function(Widget child) wrap,
   InheritedContext<int?>? Function() subscribedContext,
 ) async {
-  final key = GlobalKey();
-  var shouldWatch = false;
   var buildCount = 0;
 
-  Widget createWidget() => wrap(
-        Builder(
-          key: key,
-          builder: (context) {
-            if (shouldWatch) {
-              context.watch<int>();
-              buildCount++;
-            }
-            return const SizedBox();
-          },
-        ),
-      );
-
-  await tester.pumpWidget(createWidget());
-
-  expect(
-    () => key.currentContext!.read<int>(),
-    throwsA(isA<StateError>()),
+  await tester.pumpWidget(
+    wrap(
+      Builder(
+        builder: (context) {
+          buildCount++;
+          if (buildCount == 1) {
+            expect(() => context.watch<int>(), throwsA(isA<StateError>()));
+          } else {
+            expect(context.watch<int>(), 1);
+          }
+          return const SizedBox();
+        },
+      ),
+    ),
   );
-  expect(key.currentContext!.read<int>(), 1);
-
-  shouldWatch = true;
-  await tester.pumpWidget(createWidget());
   expect(buildCount, 1);
 
   subscribedContext()!.markNeedsNotifyDependents();
@@ -52,8 +42,10 @@ void main() {
       (child) => InheritedProvider<int>.value(
         value: 1,
         startListening: (element, _) {
-          if (attempts++ == 0) throw StateError('transient failure');
           subscribedContext = element;
+          if (attempts++ == 0) {
+            throw StateError('transient failure');
+          }
           return () {};
         },
         child: child,
@@ -72,8 +64,10 @@ void main() {
       (child) => InheritedProvider<int>(
         create: (_) => 1,
         startListening: (element, _) {
-          if (attempts++ == 0) throw StateError('transient failure');
           subscribedContext = element;
+          if (attempts++ == 0) {
+            throw StateError('transient failure');
+          }
           return () {};
         },
         child: child,
@@ -93,8 +87,10 @@ void main() {
         value: 1,
         startListening: (element, setState, controller, previous) {
           setState(controller);
-          if (attempts++ == 0) throw StateError('transient failure');
           subscribedContext = element;
+          if (attempts++ == 0) {
+            throw StateError('transient failure');
+          }
           return () {};
         },
         child: child,
