@@ -159,8 +159,10 @@ void main() {
 
     await tester.pumpWidget(Container());
 
-    expect(identical(ProviderBinding.debugInstance.providerDetails, registry),
-        isTrue);
+    expect(
+      identical(ProviderBinding.debugInstance.providerDetails, registry),
+      isTrue,
+    );
     expect(registry, isEmpty);
   });
 }
