@@ -887,11 +887,25 @@ class _CreateInheritedProviderState<T>
           delegate.debugCheckInvalidValueType?.call(_value as T);
           return true;
         }());
-        if (_removeListener != null) {
-          _removeListener!();
-          _removeListener = null;
-        }
+      }
+
+      // Lifecycle ownership depends on identity, not updateShouldNotify.
+      // A notifier can compare equal to a different instance; conversely a
+      // custom comparator can request notification for an unchanged instance.
+      final replacedInstance = !identical(_value, previousValue);
+      final restartListener = _removeListener != null &&
+          (replacedInstance || shouldNotify);
+      if (restartListener) {
+        _removeListener!();
+        _removeListener = null;
+      }
+      if (replacedInstance) {
         _previousWidget?.dispose?.call(element!, previousValue as T);
+      }
+      if (restartListener) {
+        // Reattach before returning to the widget tree, including when two
+        // different instances compare equal and dependents are not notified.
+        value;
       }
     }
 
