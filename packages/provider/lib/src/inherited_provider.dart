@@ -409,16 +409,15 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
   void mount(Element? parent, dynamic newSlot) {
     if (kDebugMode) {
       _debugId = '${_nextProviderId++}';
-      ProviderBinding.debugInstance.providerDetails = {
-        ...ProviderBinding.debugInstance.providerDetails,
-        _debugId: ProviderNode(
+      ProviderBinding.debugInstance.registerProvider(
+        ProviderNode(
           id: _debugId,
           childrenNodeIds: const [],
           // ignore: no_runtimetype_tostring
           type: widget.debugType,
           element: this,
-        )
-      };
+        ),
+      );
     }
 
     super.mount(parent, newSlot);
@@ -571,9 +570,7 @@ If you're in this situation, consider passing a `key` unique to each individual 
   void unmount() {
     _delegateState.dispose();
     if (kDebugMode) {
-      ProviderBinding.debugInstance.providerDetails = {
-        ...ProviderBinding.debugInstance.providerDetails,
-      }..remove(_debugId);
+      ProviderBinding.debugInstance.unregisterProvider(_debugId);
     }
     super.unmount();
   }
