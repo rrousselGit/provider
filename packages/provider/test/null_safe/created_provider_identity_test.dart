@@ -42,9 +42,26 @@ void main() {
     final first = _EqualNotifier('first');
     final second = _EqualNotifier('second');
     var current = first;
-    Widget build(Widget child) => InheritedProvider<_EqualNotifier>(
+    var showConsumer = true;
+    var updateCalls = 0;
+    var consumerBuilds = 0;
+    _EqualNotifier? received;
+    late StateSetter setSubtreeState;
+    final consumer = Consumer<_EqualNotifier>(builder: (_, value, __) {
+      consumerBuilds++;
+      received = value;
+      return const SizedBox();
+    });
+    final child = StatefulBuilder(builder: (_, setState) {
+      setSubtreeState = setState;
+      return showConsumer ? consumer : const SizedBox();
+    });
+    Widget build() => InheritedProvider<_EqualNotifier>(
           create: (_) => first,
-          update: (_, previous) => current,
+          update: (_, previous) {
+            updateCalls++;
+            return current;
+          },
           startListening: (element, notifier) {
             notifier.addListener(element.markNeedsNotifyDependents);
             return () =>
@@ -54,18 +71,31 @@ void main() {
           child: child,
         );
 
-    await tester.pumpWidget(build(Consumer<_EqualNotifier>(
-      builder: (_, value, __) => const SizedBox(),
-    )));
+    await tester.pumpWidget(build());
     expect(first.isObserved, isTrue);
-    await tester.pumpWidget(build(const SizedBox()));
+    expect(updateCalls, 1);
+    setSubtreeState(() => showConsumer = false);
+    await tester.pump();
+    expect(updateCalls, 1);
     expect(first.disposalCount, 0);
 
     current = second;
-    await tester.pumpWidget(build(const SizedBox()));
+    await tester.pumpWidget(build());
     expect(first.disposalCount, 1);
     expect(first.removalCount, 1);
     expect(second.disposalCount, 0);
+    expect(updateCalls, 2);
+
+    setSubtreeState(() => showConsumer = true);
+    await tester.pump();
+    expect(identical(received, second), isTrue);
+    expect(consumerBuilds, 2);
+    expect(updateCalls, 2);
+
+    second.sendNotification();
+    await tester.pump();
+    expect(consumerBuilds, 3);
+    expect(updateCalls, 2);
     await tester.pumpWidget(const SizedBox());
     expect(first.disposalCount, 1);
     expect(second.disposalCount, 1);
