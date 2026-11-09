@@ -68,7 +68,14 @@ class ProviderNode {
   final List<String> childrenNodeIds;
   final _InheritedProviderScopeElement<Object?> _element;
 
-  Object? get value => _element._delegateState.value;
+  /// Whether the provider has already initialized its exposed value.
+  bool get isInitialized => _element.hasValue;
+
+  /// Inspect an existing value without eagerly creating a lazy provider.
+  ///
+  /// Check [isInitialized] to distinguish an uninitialized value from null.
+  Object? get value =>
+      isInitialized ? _element._delegateState.value : null;
 }
 
 @protected
